@@ -1,0 +1,13 @@
+## Interface: 11200
+## Title: |cff33ffccpf|cffffffffUI-zen
+## Version: 0.0.1
+## Notes: Type '/pfUI zen' the first time you use this addon in order to set it up in a way that suits you: This addon is meant to give the game sane(r) defaults and place certain tasks on autopilot boosting your in-game Zen ;) 
+## Author: dsidirop
+## LoadOnDemand: 0
+## Dependencies: pfUI
+## SavedVariables:
+## SavedVariablesPerCharacter:
+## X-Date: Oct 25, 2023
+## X-Website: github.com/dsidirop/pfUI-zen
+## X-Category: Interface Enhancements
+## X-License: GPL v3
