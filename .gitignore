@@ -1,3 +1,23 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Rider ignored files
+/contentModel.xml
+/modules.xml
+/projectSettingsUpdater.xml
+/.idea.pfUI-zen.iml
+
+# Editor-based HTTP Client requests
+/httpRequests/
+
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Jetbrains IDEs
+/.idea/
+
 # Compiled Lua sources
 luac.out
 
@@ -38,4 +58,3 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
-
