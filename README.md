@@ -7,6 +7,6 @@ Quality-of-life addon for vanilla-warcraft (1.12) providing in-game utilities, e
     Note: You're better off using the the official addon package (WIP - coming soon) for an in-game optimized version of this addon.
 
 ```bash
-git clone git@github.com:dsidirop/pfUI-zen.git
+git clone git@github.com:dsidirop/pfUI-zen.git   --recurse-submodules
 ```
 
