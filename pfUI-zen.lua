@@ -1,7 +1,8 @@
 ﻿-- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
 -- todo#2   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark  
 
-pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOverlay.lua
+pfUI:RegisterModule("Zen", "vanilla:tbc", function()
+    -- inspired by pfUI-eliteOverlay.lua
     local __ = {
         C = C,
         T = T,
@@ -22,35 +23,40 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOv
             :first() -- @formatter:on
 
     if (not __.pfUI.gui.CreateGUIEntry) then
-        -- new pfUI
         print("[PFUIZ.IM000] pfUI-zen needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!")
         return
     end
 
-    __.pfUI.gui.dropdowns.Zen_green_items_loot_autogambling_mode = {
+    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_mode = {
         "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
         "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
         "pass:" .. __.T["Just '|cff888888Pass|r'"],
         "disabled:" .. __.T["Let me handle it myself"],
     }
-    
-    local config_name = "green_items_loot_autogambling_mode"
+
+    local preferences = {
+        loot = {
+            green_items_autogambling_mode = "loot__green_items_autogambling_mode"
+        }
+    }
 
     __.pfUI.gui.CreateGUIEntry(
             __.T["Thirdparty"],
             __.T["|cFF7FFFD4Zen"],
             function()
                 __.pfUI.gui.CreateConfig(
-                        __.U["target"], -- nil causes a ui-reload whenever the setting changes
+                        function()
+                            -- print("** mode='" .. (C.Zen[props.loot.green_items_autogambling_mode] or "nil") .. "'")
+                        end,
                         __.T["When looting |cFF228B22Green|r items always ..."],
                         __.C.Zen,
-                        config_name,
+                        preferences.loot.green_items_autogambling_mode,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen_green_items_loot_autogambling_mode
+                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_mode
                 )
             end
     )
-
-    pfUI:UpdateConfig("Zen", nil, config_name, "roll_greed")
+    
+    pfUI:UpdateConfig("Zen", "Loot", preferences.loot.green_items_autogambling_mode, "roll_greed")
 
 end)
