@@ -1,4 +1,7 @@
-﻿pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOverlay.lua
+﻿-- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
+-- todo#2   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark  
+
+pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOverlay.lua
     local __ = {
         C = C,
         T = T,
