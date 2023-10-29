@@ -33,6 +33,8 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOv
         "pass:" .. __.T["Just '|cff888888Pass|r'"],
         "disabled:" .. __.T["Let me handle it myself"],
     }
+    
+    local config_name = "green_items_loot_autogambling_mode"
 
     __.pfUI.gui.CreateGUIEntry(
             __.T["Thirdparty"],
@@ -42,13 +44,13 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function() -- inspired by pfUI-eliteOv
                         __.U["target"], -- nil causes a ui-reload whenever the setting changes
                         __.T["When looting |cFF228B22Green|r items always ..."],
                         __.C.Zen,
-                        "green_items_loot_autogambling_mode",
+                        config_name,
                         "dropdown",
                         __.pfUI.gui.dropdowns.Zen_green_items_loot_autogambling_mode
                 )
             end
     )
 
-    pfUI:UpdateConfig("Zen", nil, "green_items_loot_autogambling_mode", "roll_greed")
+    pfUI:UpdateConfig("Zen", nil, config_name, "roll_greed")
 
 end)
