@@ -27,7 +27,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         return
     end
 
-    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_mode = {
+    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_modes = {
         "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
         "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
         "pass:" .. __.T["Just '|cff888888Pass|r'"],
@@ -52,7 +52,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                         __.C.Zen,
                         preferences.loot.green_items_autogambling_mode,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_mode
+                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_modes
                 )
             end
     )
