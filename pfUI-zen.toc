@@ -12,5 +12,7 @@
 ## X-Website: github.com/dsidirop/pfUI-zen
 ## X-Category: Interface Enhancements
 
+libs\lazylualinq\lazylualinq.xml
+
 # main
 pfUI-zen.lua
