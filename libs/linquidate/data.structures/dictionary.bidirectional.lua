@@ -23,41 +23,41 @@ _G.Linquidate_Loader(function(Linquidate)
 	local pcall = assert(_G.pcall)
 	local table_sort = assert(_G.table.sort)
 
-	local BidirectionalDictionary = Linquidate.BidirectionalDictionary or {}
-	if not BidirectionalDictionary.prototype then
-		BidirectionalDictionary.prototype = {}
+	local bidirectionalDictionary = Linquidate.BidirectionalDictionary or {}
+	if not bidirectionalDictionary.prototype then
+		bidirectionalDictionary.prototype = {}
 	end
-	setmetatable(BidirectionalDictionary.prototype, {__index=Enumerable.prototype})
+	setmetatable(bidirectionalDictionary.prototype, { __index=Enumerable.prototype})
 	
-	Linquidate.BidirectionalDictionary = BidirectionalDictionary
+	Linquidate.BidirectionalDictionary = bidirectionalDictionary
 	local BidirectionalDictionary_proxy = newproxy(true)
 	local BidirectionalDictionary_mt = getmetatable(BidirectionalDictionary_proxy)
-	BidirectionalDictionary_mt.__index = BidirectionalDictionary.prototype
+	BidirectionalDictionary_mt.__index = bidirectionalDictionary.prototype
 	function BidirectionalDictionary_mt:__tostring()
 		return self:ToString()
 	end
 
-	local NIL = BidirectionalDictionary.__NIL or newproxy()
-	BidirectionalDictionary.__NIL = NIL
+	local NIL = bidirectionalDictionary.__NIL or newproxy()
+	bidirectionalDictionary.__NIL = NIL
 	
-	local keys_to_values = make_weak_keyed_table(BidirectionalDictionary.__keys_to_values)
-	BidirectionalDictionary.__keys_to_values = keys_to_values
-	local values_to_keys = make_weak_keyed_table(BidirectionalDictionary.__values_to_keys)
-	BidirectionalDictionary.__values_to_keys = values_to_keys
-	local key_lookups = make_weak_keyed_table(BidirectionalDictionary.__key_lookups)
-	BidirectionalDictionary.__key_lookups = key_lookups
-	local value_lookups = make_weak_keyed_table(BidirectionalDictionary.__value_lookups)
-	BidirectionalDictionary.__value_lookups = value_lookups
-	local key_comparison_selectors = make_weak_keyed_table(BidirectionalDictionary.__key_comparison_selectors)
-	BidirectionalDictionary.__key_comparison_selectors = key_comparison_selectors
-	local value_comparison_selectors = make_weak_keyed_table(BidirectionalDictionary.__value_comparison_selectors)
-	BidirectionalDictionary.__key_comparison_selectors = value_comparison_selectors
-	local contracts = make_weak_keyed_table(BidirectionalDictionary.__contracts)
-	BidirectionalDictionary.__contracts = contracts
-	local readonlys = make_weak_keyed_table(BidirectionalDictionary.__readonlys)
-	BidirectionalDictionary.__readonlys = readonlys
-	local inverses = make_weak_keyed_table(BidirectionalDictionary.__inverses)
-	BidirectionalDictionary.__inverses = inverses
+	local keys_to_values = make_weak_keyed_table(bidirectionalDictionary.__keys_to_values)
+	bidirectionalDictionary.__keys_to_values = keys_to_values
+	local values_to_keys = make_weak_keyed_table(bidirectionalDictionary.__values_to_keys)
+	bidirectionalDictionary.__values_to_keys = values_to_keys
+	local key_lookups = make_weak_keyed_table(bidirectionalDictionary.__key_lookups)
+	bidirectionalDictionary.__key_lookups = key_lookups
+	local value_lookups = make_weak_keyed_table(bidirectionalDictionary.__value_lookups)
+	bidirectionalDictionary.__value_lookups = value_lookups
+	local key_comparison_selectors = make_weak_keyed_table(bidirectionalDictionary.__key_comparison_selectors)
+	bidirectionalDictionary.__key_comparison_selectors = key_comparison_selectors
+	local value_comparison_selectors = make_weak_keyed_table(bidirectionalDictionary.__value_comparison_selectors)
+	bidirectionalDictionary.__key_comparison_selectors = value_comparison_selectors
+	local contracts = make_weak_keyed_table(bidirectionalDictionary.__contracts)
+	bidirectionalDictionary.__contracts = contracts
+	local readonlys = make_weak_keyed_table(bidirectionalDictionary.__readonlys)
+	bidirectionalDictionary.__readonlys = readonlys
+	local inverses = make_weak_keyed_table(bidirectionalDictionary.__inverses)
+	bidirectionalDictionary.__inverses = inverses
 
 	--- Construct and return a new BidirectionalDictionary
 	-- @param dict optional: a BidirectionalDictionary or lua table to populate the new dictionary with
@@ -67,7 +67,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage BidirectionalDictionary.New({ a = 1, b = 2 })
 	-- @usage BidirectionalDictionary.New({ a = 1, b = 2 }, string.upper)
 	-- @usage BidirectionalDictionary.New(nil, string.upper)
-	function BidirectionalDictionary.New(dict, key_comparison_selector, value_comparison_selector)
+	function bidirectionalDictionary.New(dict, key_comparison_selector, value_comparison_selector)
 		check(1, dict, 'userdata', 'table', 'nil')
 		check(2, key_comparison_selector, 'function', 'string', 'nil')
 		check(3, value_comparison_selector, 'function', 'string', 'nil')
@@ -105,7 +105,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this BidirectionalDictionary is valid for all elements in the dictionary.
 	-- If there is no contract, this does nothing.
 	-- @usage dict:VerifyContract()
-	function BidirectionalDictionary.prototype:VerifyContract()
+	function bidirectionalDictionary.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -151,7 +151,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the key and value and should return whether the pair is valid.
 	-- @usage dict:SetContract(function(k, v) return type(k) == "string" and type(v) == "number" end)
-	function BidirectionalDictionary.prototype:SetContract(contract)
+	function bidirectionalDictionary.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 		
@@ -170,7 +170,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- There is no way to convert a Set back to being modifiable.
 	-- @return the same Set that was made read-only
 	-- @usage set:ConvertToReadOnly()
-	function BidirectionalDictionary.prototype:ConvertToReadOnly()
+	function bidirectionalDictionary.prototype:ConvertToReadOnly()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -188,14 +188,14 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the Set is read-only, and thus cannot have modifications made to it.
 	-- @return a boolean
 	-- @usage local read_only = set:IsReadOnly()
-	function BidirectionalDictionary.prototype:IsReadOnly()
+	function bidirectionalDictionary.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return not not readonlys[self]
 	end
 
 	--- Return an enumerator for the BidirectionalDictionary that returns the keys of the dictionary
-	function BidirectionalDictionary.prototype:GetEnumerator()
+	function bidirectionalDictionary.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
 		local key
@@ -234,7 +234,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to add
 	-- @param value the value of the element to add
 	-- @usage dict:Add("key", "value")
-	function BidirectionalDictionary.prototype:Add(key, value)
+	function bidirectionalDictionary.prototype:Add(key, value)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -303,7 +303,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to set
 	-- @param value the value of the element to set
 	-- @usage dict:Set("key", "value")
-	function BidirectionalDictionary.prototype:Set(key, value)
+	function bidirectionalDictionary.prototype:Set(key, value)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -392,7 +392,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Merge another dictionary onto the current BidirectionalDictionary.
 	-- @param other a BidirectionalDictionary to Merge onto the current
 	-- @usage BidirectionalDictionary.From({ alpha = 1, bravo = 2 }):Merge({ bravo = 3, charlie = 4 }) -- BidirectionalDictionary["alpha": 1, "bravo": 3, "charlie": 4]
-	function BidirectionalDictionary.prototype:Merge(other)
+	function bidirectionalDictionary.prototype:Merge(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -410,7 +410,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to get
 	-- @return the value requested
 	-- @usage local value = dict:Get("key")
-	function BidirectionalDictionary.prototype:Get(key)
+	function bidirectionalDictionary.prototype:Get(key)
 		check(1, self, 'userdata')
 
 		local success, value = self:TryGetValue(key)
@@ -427,7 +427,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param default the default value to return if the key is not found.
 	-- @return the value requested or the default value
 	-- @usage local value = dict:GetOrDefault("key", 0)
-	function BidirectionalDictionary.prototype:GetOrDefault(key, default)
+	function bidirectionalDictionary.prototype:GetOrDefault(key, default)
 		check(1, self, 'userdata')
 		
 		local success, value = self:TryGetValue(key)
@@ -443,7 +443,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return whether the get was successful
 	-- @return the value requested
 	-- @usage local success, value = dict:TryGetValue("key")
-	function BidirectionalDictionary.prototype:TryGetValue(key)
+	function bidirectionalDictionary.prototype:TryGetValue(key)
 		check(1, self, 'userdata')
 
 		local key_comparison_selector = key_comparison_selectors[self]
@@ -474,7 +474,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Clear all elements from the BidirectionalDictionary
 	-- @usage dict:Clear()
-	function BidirectionalDictionary.prototype:Clear()
+	function bidirectionalDictionary.prototype:Clear()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -497,7 +497,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key to check for
 	-- @return a boolean
 	-- @usage local found = dict:ContainsKey("key")
-	function BidirectionalDictionary.prototype:ContainsKey(key)
+	function bidirectionalDictionary.prototype:ContainsKey(key)
 		check(1, self, 'userdata')
 
 		local key_comparison_selector = key_comparison_selectors[self]
@@ -514,7 +514,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param value the value to check for
 	-- @return a boolean
 	-- @usage local found = dict:ContainsValue("value")
-	function BidirectionalDictionary.prototype:ContainsValue(value)
+	function bidirectionalDictionary.prototype:ContainsValue(value)
 		check(1, self, 'userdata')
 		
 		local value_comparison_selector = value_comparison_selectors[self]
@@ -531,7 +531,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key to remove
 	-- @return whether the element was removed
 	-- @usage local removed = dict:Remove("key")
-	function BidirectionalDictionary.prototype:Remove(key)
+	function bidirectionalDictionary.prototype:Remove(key)
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -580,7 +580,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param predicate a function which is passed each key and value and should return true to remove, false to keep
 	-- @return the number of elements removed
 	-- @usage local num = dict:RemoveWhere(function(k, v) return v % 2 == 0 end)
-	function BidirectionalDictionary.prototype:RemoveWhere(predicate)
+	function bidirectionalDictionary.prototype:RemoveWhere(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
@@ -642,10 +642,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Make a shallow clone of the Set.
 	-- @usage local other = dict:Clone()
-	function BidirectionalDictionary.prototype:Clone()
+	function bidirectionalDictionary.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = BidirectionalDictionary.New(nil, key_comparison_selectors[self], value_comparison_selectors[self])
+		local other = bidirectionalDictionary.New(nil, key_comparison_selectors[self], value_comparison_selectors[self])
 		local contract = contracts[self]
 		if contract then
 			other:SetContract(contracts[self])
@@ -657,7 +657,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Return the inverse of this BidirectionalDictionary, with the keys and values swapped.
 	-- @usage local inverse = dict:Inverse()
-	function BidirectionalDictionary.prototype:Inverse()
+	function bidirectionalDictionary.prototype:Inverse()
 		check(1, self, 'userdata')
 		
 		local inverse = inverses[self]
@@ -683,7 +683,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function BidirectionalDictionary.prototype:Any(predicate)
+	function bidirectionalDictionary.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -694,13 +694,13 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	BidirectionalDictionary.prototype.Contains = BidirectionalDictionary.prototype.ContainsKey
+	bidirectionalDictionary.prototype.Contains = bidirectionalDictionary.prototype.ContainsKey
 
-	function BidirectionalDictionary.prototype:MemoizeAll()
+	function bidirectionalDictionary.prototype:MemoizeAll()
 		return self
 	end
 	
-	function BidirectionalDictionary.prototype:ToString()
+	function bidirectionalDictionary.prototype:ToString()
 		check(1, self, 'userdata')
 
 		local t = {}
@@ -722,7 +722,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return table_concat(t)
 	end
 	
-	function BidirectionalDictionary.prototype:ForEach(action)
+	function bidirectionalDictionary.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -752,7 +752,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Return a lua iterator that returns the index, key, and value of each element and can be used in for loops.
 	-- @usage for index, key, value in BidirectionalDictionary.New({ a = 1, b = 2 }):Iterate() do end
-	function BidirectionalDictionary.prototype:Iterate()
+	function bidirectionalDictionary.prototype:Iterate()
 		local hash_key
 		return function(self, index)
 			local value
@@ -784,7 +784,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- If the action returns false, that will act as a break and prevent any more execution on the sequence.
 	-- @param action a function that takes the key, value, and the 1-based index of the element.
 	-- @usage dict:ForEachByPair(function(key, value, index) end)
-	function BidirectionalDictionary.prototype:ForEachByPair(action)
+	function bidirectionalDictionary.prototype:ForEachByPair(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -819,7 +819,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param selector the transform function which takes the key, value, and the 1-based index
 	-- @return an Enumerable
 	-- @usage dict:SelectByPair(function(key, value, index) return key.."="..value end)
-	function BidirectionalDictionary.prototype:SelectByPair(selector)
+	function bidirectionalDictionary.prototype:SelectByPair(selector)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 
@@ -863,7 +863,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This may not return in a known order.
 	-- @return an Enumerable
 	-- @usage local keys = dict:Keys()
-	function BidirectionalDictionary.prototype:Keys()
+	function bidirectionalDictionary.prototype:Keys()
 		check(1, self, 'userdata')
 
 		return Enumerable.New(function()
@@ -899,7 +899,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This may not return in a known order.
 	-- @return an Enumerable
 	-- @usage local values = dict:Values()
-	function BidirectionalDictionary.prototype:Values()
+	function bidirectionalDictionary.prototype:Values()
 		check(1, self, 'userdata')
 
 		return Enumerable.New(function()
@@ -977,7 +977,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return an Enumerable of KeyValuePair representing all the elements of the current BidirectionalDictionary.
 	-- @return an Enumerable
 	-- @usage local kvps = dict:ToKeyValuePairs()
-	function BidirectionalDictionary.prototype:ToKeyValuePairs()
+	function bidirectionalDictionary.prototype:ToKeyValuePairs()
 		check(1, self, 'userdata')
 
 		return Enumerable.New(function()
@@ -1017,7 +1017,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return a random key in the BidirectionalDictionary
 	-- @return a random value in the BidirectionalDictionary
 	-- @usage local key, value = dict:PickAndRemoveRandom()
-	function BidirectionalDictionary.prototype:PickAndRemoveRandom()
+	function bidirectionalDictionary.prototype:PickAndRemoveRandom()
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -1059,7 +1059,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage BidirectionalDictionary.New({ hey = "there" }):ToTable()["hey"] == "there"
 	-- @usage BidirectionalDictionary.New({ hey = "there" }):ToTable("list")[1] == "hey"
 	-- @usage BidirectionalDictionary.New({ hey = "there" }):ToTable("set")["hey"] == true
-	function BidirectionalDictionary.prototype:ToTable(kind)
+	function bidirectionalDictionary.prototype:ToTable(kind)
 		check(1, self, 'userdata')
 		check(2, kind, 'nil', 'string')
 
@@ -1109,7 +1109,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			value_selector = convertFunction(value_selector)
 		end
 
-		local dict = BidirectionalDictionary.New(nil, comparison_selector, value_comparison_selector)
+		local dict = bidirectionalDictionary.New(nil, comparison_selector, value_comparison_selector)
 		self:ForEach(function(item, index)
 			local key = key_selector(item, index)
 			local value
