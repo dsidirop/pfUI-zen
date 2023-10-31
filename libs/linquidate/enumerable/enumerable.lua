@@ -2,45 +2,45 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 	local check = assert(Linquidate.Utilities.check)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 	local tryfinally = assert(Linquidate.Utilities.tryfinally)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
-	local newproxy = assert(_G.newproxy)
-	local getmetatable = assert(_G.getmetatable)
 	local type = assert(_G.type)
-	local table_concat = assert(_G.table.concat)
+	local newproxy = assert(_G.newproxy)
 	local tostring = assert(_G.tostring)
+	local table_concat = assert(_G.table.concat)
+	local getmetatable = assert(_G.getmetatable)
 
 	--- A class that exposes an enumerator and supports simiple iteration as well as helper methods.
-	local Enumerable = Linquidate.Enumerable or {}
+	local enumerable = Linquidate.Enumerable or {}
 	do
-		Linquidate.Enumerable = Enumerable
-		if not Enumerable.prototype then
-			Enumerable.prototype = {}
+		Linquidate.Enumerable = enumerable
+		if not enumerable.prototype then
+			enumerable.prototype = {}
 		end
-		local Enumerable_proxy = newproxy(true)
-		local Enumerable_mt = getmetatable(Enumerable_proxy)
-		Enumerable_mt.__index = Enumerable.prototype
+		local enumerable_proxy = newproxy(true)
+		local enumerable_mt = getmetatable(enumerable_proxy)
+		enumerable_mt.__index = enumerable.prototype
 
-		local get_enumerators = make_weak_keyed_table(Enumerable.__get_enumerators)
-		Enumerable.__get_enumerators = get_enumerators
+		local get_enumerators = make_weak_keyed_table(enumerable.__get_enumerators)
+		enumerable.__get_enumerators = get_enumerators
 
 		--- Return the enumerator for the current Enumerable
 		-- @return an Enumerator
-		function Enumerable.prototype:GetEnumerator()
+		function enumerable.prototype:GetEnumerator()
 			return get_enumerators[self](self)
 		end
 
 		--- Construct and return a new Enumerable
 		-- @param enumerator_creator a function that will return an enumerator that will be called when :GetEnumerator() is called.
 		-- @return The new Enumerable
-		function Enumerable.New(get_enumerator)
+		function enumerable.New(get_enumerator)
 			check(1, get_enumerator, 'function')
 
-			local self = newproxy(Enumerable_proxy)
+			local self = newproxy(enumerable_proxy)
 
 			get_enumerators[self] = get_enumerator
 
@@ -50,7 +50,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		--- Return whether the provided object is an Enumerable
 		-- @param obj the object to check
 		-- @return whether the object inherits from or is an Enumerable
-		function Enumerable.IsEnumerable(obj)
+		function enumerable.IsEnumerable(obj)
 			local obj_type = type(obj)
 			if obj_type ~= 'userdata' then
 				return false
@@ -60,7 +60,7 @@ _G.Linquidate_Loader(function(Linquidate)
 				local mt = getmetatable(obj)
 				if not mt then
 					return false
-				elseif mt.__index == Enumerable.prototype then
+				elseif mt.__index == enumerable.prototype then
 					return true
 				end
 
@@ -69,7 +69,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return false
 		end
 
-		function Enumerable_mt:__tostring()
+		function enumerable_mt:__tostring()
 			return self:ToString()
 		end
 	end
@@ -84,7 +84,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Enumerable.From({ 'a', 'b', 'c' }):ToTable()[2] == 'b'
 	-- @usage Enumerable.From({ 'a', 'b', 'c' }):ToTable('list')[2] == 'b'
 	-- @usage Enumerable.From({ 'a', 'b', 'c' }):ToTable('set')['b'] == true
-	function Enumerable.prototype:ToTable(kind)
+	function enumerable.prototype:ToTable(kind)
 		check(1, self, 'userdata')
 		check(2, kind, 'nil', 'string')
 	
@@ -106,7 +106,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return a string representation of this Enumerable.
 	-- This should only show the first 10 elements of the Enumerable, after which it follows with an ellipsis (...).
 	-- @return a string
-	function Enumerable.prototype:ToString()
+	function enumerable.prototype:ToString()
 		check(1, self, 'userdata')
 	
 		local t = {}
@@ -136,7 +136,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Unpack the contents of the enumerable to a lua argument tuple
 	-- @return zero or more values
 	-- @usage a, b, c = Enumerable.From({ 1, 2, 3 }):Unpack()
-	function Enumerable.prototype:Unpack()
+	function enumerable.prototype:Unpack()
 		check(1, self, 'userdata')
 
 		local enumerator = self:GetEnumerator()
@@ -156,7 +156,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Enumerable.From({ 1, 2, 3 }):StringJoin(", ") == "1, 2, 3"
 	-- @usage Enumerable.From({ 1, 2, 3 }):StringJoin(", ", function(x) return x*x end) == "1, 4, 9"
 	-- @usage Enumerable.From({ 1, 2, 3 }):StringJoin(", ", "x => x*x") == "1, 4, 9"
-	function Enumerable.prototype:StringJoin(separator, selector)
+	function enumerable.prototype:StringJoin(separator, selector)
 		check(1, self, 'userdata')
 		check(2, separator, 'string', 'nil')
 		check(3, selector, 'function', 'string', 'nil')
@@ -178,7 +178,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local not_nil_filter = function(value) return value ~= nil end
 		--- Return all non-nil elements
 		-- @return an Enumerable
-		function Enumerable.prototype:WhereNotNil()
+		function enumerable.prototype:WhereNotNil()
 			check(1, self, 'userdata')
 
 			return self:Where(not_nil_filter)
@@ -196,7 +196,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return a lua iterator that returns the index and value of each element and can be used in for loops.
 	-- If the loop is not fully iterated through, some garbage may persist improperly.
 	-- @usage for index, value in Enumerable.From({ 1, 2, 3 }):Iterate() do end
-	function Enumerable.prototype:Iterate()
+	function enumerable.prototype:Iterate()
 		return iterator, self:GetEnumerator(), 0
 	end
 end)
