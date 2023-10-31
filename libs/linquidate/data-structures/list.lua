@@ -78,7 +78,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local list = List.FromArguments(nil, nil, 5)
 	function List.FromArguments(...)
 		local self = List.New()
-		self:AddMany(...)
+		self:AddMany(unpack(...))
 		return self
 	end
 
