@@ -8,7 +8,6 @@ _G.Linquidate_Loader(function(Linquidate)
 	local type = assert(_G.type)
 
 	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Apply an accumulation function over a sequence
 	-- @param seed optional: The initial accumulation seed
@@ -38,7 +37,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self:Select(selector):Average()
 		end
 
-		local sum = nil
+		local sum
 		local count = 0
 		self:ForEach(function(value)
 			if type(value) == "number" then
@@ -70,7 +69,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	
 		local count = 0
-		self:ForEach(function(x)
+		self:ForEach(function()
 			count = count + 1
 		end)
 		return count
@@ -91,7 +90,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self:Select(selector):Max()
 		end
 
-		local max = nil
+		local max
 		self:ForEach(function(x)
 			if x ~= nil and (max == nil or x > max) then
 				max = x
@@ -115,7 +114,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self:Select(selector):Min()
 		end
 
-		local min = nil
+		local min
 		self:ForEach(function(x)
 			if x ~= nil and (min == nil or x < min) then
 				min = x
@@ -135,8 +134,8 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		key_selector = convert_function(key_selector)
 
-		local max = nil
-		local max_key = nil
+		local max
+		local max_key
 		self:ForEach(function(x)
 			local x_key = key_selector(x)
 			if max_key == nil or (x_key ~= nil and x_key > max_key) then
@@ -159,8 +158,8 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		key_selector = convert_function(key_selector)
 
-		local min = nil
-		local min_key = nil
+		local min
+		local min_key
 		self:ForEach(function(x)
 			local x_key = key_selector(x)
 			if min_key == nil or (x_key ~= nil and x_key < min_key) then
@@ -187,7 +186,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self:Select(selector):Sum()
 		end
 
-		local sum = nil
+		local sum
 		self:ForEach(function(value)
 			if type(value) == "number" then
 				if not sum then
