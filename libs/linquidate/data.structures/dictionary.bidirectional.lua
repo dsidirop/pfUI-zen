@@ -2,38 +2,39 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local check = assert(Linquidate.Utilities.check)
-	local tostring_q = assert(Linquidate.Utilities.tostring_q)
-	local wipe = assert(Linquidate.Utilities.wipe)
-	local identity = assert(Linquidate.Utilities.identity)
-	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local enumerable = assert(Linquidate.Enumerable)
+	local enumerator = assert(Linquidate.Enumerator)
 	
-	local getmetatable = assert(_G.getmetatable)
-	local setmetatable = assert(_G.setmetatable)
-	local newproxy = assert(_G.newproxy)
+	local wipe = assert(Linquidate.Utilities.wipe)
+	local check = assert(Linquidate.Utilities.check)
+	local identity = assert(Linquidate.Utilities.identity)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	
 	local next = assert(_G.next)
-	local pairs = assert(_G.pairs)
 	local type = assert(_G.type)
 	local error = assert(_G.error)
-	local tostring = assert(_G.tostring)
-	local table_concat = assert(_G.table.concat)
 	local pcall = assert(_G.pcall)
+	local pairs = assert(_G.pairs)
+	local newproxy = assert(_G.newproxy)
+	local tostring = assert(_G.tostring)
 	local table_sort = assert(_G.table.sort)
+	local table_concat = assert(_G.table.concat)
+	local getmetatable = assert(_G.getmetatable)
+	local setmetatable = assert(_G.setmetatable)
 
 	local bidirectionalDictionary = Linquidate.BidirectionalDictionary or {}
 	if not bidirectionalDictionary.prototype then
 		bidirectionalDictionary.prototype = {}
 	end
-	setmetatable(bidirectionalDictionary.prototype, { __index=Enumerable.prototype})
+	setmetatable(bidirectionalDictionary.prototype, { __index= enumerable.prototype})
 	
 	Linquidate.BidirectionalDictionary = bidirectionalDictionary
-	local BidirectionalDictionary_proxy = newproxy(true)
-	local BidirectionalDictionary_mt = getmetatable(BidirectionalDictionary_proxy)
-	BidirectionalDictionary_mt.__index = bidirectionalDictionary.prototype
-	function BidirectionalDictionary_mt:__tostring()
+	local bidirectionalDictionary_proxy = newproxy(true)
+	local bidirectionalDictionary_mt = getmetatable(bidirectionalDictionary_proxy)
+	bidirectionalDictionary_mt.__index = bidirectionalDictionary.prototype
+	function bidirectionalDictionary_mt:__tostring()
 		return self:ToString()
 	end
 
@@ -72,7 +73,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(2, key_comparison_selector, 'function', 'string', 'nil')
 		check(3, value_comparison_selector, 'function', 'string', 'nil')
 
-		local self = newproxy(BidirectionalDictionary_proxy)
+		local self = newproxy(bidirectionalDictionary_proxy)
 
 		keys_to_values[self] = {}
 		values_to_keys[self] = {}
@@ -202,7 +203,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local table = keys_to_values[self]
 		local key_lookup = key_lookups[self]
 
-		return Enumerator.New(
+		return enumerator.New(
 			nil,
 			function(yield)
 				local value
@@ -665,7 +666,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return inverse
 		end
 
-		inverse = newproxy(BidirectionalDictionary_proxy)
+		inverse = newproxy(bidirectionalDictionary_proxy)
 
 		keys_to_values[inverse] = values_to_keys[self]
 		values_to_keys[inverse] = keys_to_values[self]
@@ -690,7 +691,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		if not predicate then
 			return (next(keys_to_values[self])) ~= nil
 		else
-			return Enumerable.prototype.Any(self, predicate)
+			return enumerable.prototype.Any(self, predicate)
 		end
 	end
 	
@@ -825,13 +826,13 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		selector = convert_function(selector)
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local k2v = keys_to_values[self]
 			local key_lookup = key_lookups[self]
 			local index = 0
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -866,12 +867,12 @@ _G.Linquidate_Loader(function(Linquidate)
 	function bidirectionalDictionary.prototype:Keys()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local k2v = keys_to_values[self]
 			local key_lookup = key_lookups[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					key = next(k2v, key)
@@ -902,11 +903,11 @@ _G.Linquidate_Loader(function(Linquidate)
 	function bidirectionalDictionary.prototype:Values()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local k2v = keys_to_values[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -980,12 +981,12 @@ _G.Linquidate_Loader(function(Linquidate)
 	function bidirectionalDictionary.prototype:ToKeyValuePairs()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local k2v = keys_to_values[self]
 			local key_lookup = key_lookups[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -1097,7 +1098,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToBidirectionalDictionary(function(x) return x:sub(1, 1) end, string.lower)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToBidirectionalDictionary(function(x) return x:sub(1, 1) end, nil, string.upper)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToBidirectionalDictionary(function(x) return x:sub(1, 1) end, nil, nil, string.upper)
-	function Enumerable.prototype:ToBidirectionalDictionary(key_selector, value_selector, key_comparison_selector, value_comparison_selector)
+	function enumerable.prototype:ToBidirectionalDictionary(key_selector, value_selector, key_comparison_selector, value_comparison_selector)
 		check(1, self, 'userdata')
 		check(2, key_selector, 'function', 'string')
 		check(3, value_selector, 'function', 'string', 'nil')
