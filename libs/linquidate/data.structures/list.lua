@@ -4,50 +4,50 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	local Enumerable = assert(Linquidate.Enumerable)
 	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local check = assert(Linquidate.Utilities.check)
-	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	
 	local wipe = assert(Linquidate.Utilities.wipe)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local check = assert(Linquidate.Utilities.check)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
+	local convert_function = assert(Linquidate.Utilities.convertFunction)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
-	local math_floor = assert(_G.math.floor)
 	local error = assert(_G.error)
-	local getmetatable = assert(_G.getmetatable)
-	local setmetatable = assert(_G.setmetatable)
 	local newproxy = assert(_G.newproxy)
-	local select = assert(_G.select)
+	local rawequal = assert(_G.rawequal)
+	local math_floor = assert(_G.math.floor)
 	local table_sort = assert(_G.table.sort)
 	local math_random = assert(_G.math.random)
-	local rawequal = assert(_G.rawequal)
+	local getmetatable = assert(_G.getmetatable)
+	local setmetatable = assert(_G.setmetatable)
 
-	local List = Linquidate.List or {}
+	local list = Linquidate.List or {}
 
-	Linquidate.List = List
+	Linquidate.List = list
 
-	if not List.prototype then
-		List.prototype = {}
+	if not list.prototype then
+		list.prototype = {}
 	end
-	setmetatable(List.prototype, {__index=Enumerable.prototype})
+	setmetatable(list.prototype, { __index=Enumerable.prototype})
 	
 	local List_proxy = newproxy(true)
 	local List_mt = getmetatable(List_proxy)
-	List_mt.__index = List.prototype
+	List_mt.__index = list.prototype
 	function List_mt:__tostring()
 		return self:ToString()
 	end
 	
-	local tables = make_weak_keyed_table(List.__tables)
-	List.__tables = tables
-	local counts = make_weak_keyed_table(List.__counts)
-	List.__counts = counts
-	local wrapped_tables = make_weak_table(List.__wrapped_tables)
-	List.__wrapped_tables = wrapped_tables
-	local contracts = make_weak_keyed_table(List.__contracts)
-	List.__contracts = contracts
-	local readonlys = make_weak_keyed_table(List.__readonlys)
-	List.__readonlys = readonlys
+	local tables = make_weak_keyed_table(list.__tables)
+	list.__tables = tables
+	local counts = make_weak_keyed_table(list.__counts)
+	list.__counts = counts
+	local wrapped_tables = make_weak_table(list.__wrapped_tables)
+	list.__wrapped_tables = wrapped_tables
+	local contracts = make_weak_keyed_table(list.__contracts)
+	list.__contracts = contracts
+	local readonlys = make_weak_keyed_table(list.__readonlys)
+	list.__readonlys = readonlys
 
 	--- Construct and return a new list
 	-- @param sequence optional: The sequence to fill the list with
@@ -55,7 +55,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local list = List.New()
 	-- @usage local list = List.New({ 1, 2, 3 })
 	-- @usage local list = List.New(Enumerable.RangeTo(1, 10))
-	function List.New(sequence)
+	function list.New(sequence)
 		check(1, sequence, 'userdata', 'table', 'nil')
 
 		local self = newproxy(List_proxy)
@@ -76,8 +76,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local list = List.FromArguments()
 	-- @usage local list = List.FromArguments(1, 2, 3)
 	-- @usage local list = List.FromArguments(nil, nil, 5)
-	function List.FromArguments(...)
-		local self = List.New()
+	function list.FromArguments(...)
+		local self = list.New()
 		self:AddMany(unpack(arg))
 		return self
 	end
@@ -87,7 +87,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param t the table to wrap around
 	-- @return a List
 	-- @usage local list = List.WrapTable({ 1, 2, 3 })
-	function List.WrapTable(t)
+	function list.WrapTable(t)
 		check(1, t, 'table')
 
 		local self = wrapped_tables[t]
@@ -102,11 +102,11 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		return self
 	end
-	Enumerable.SetTableWrapper(List.WrapTable)
+	Enumerable.SetTableWrapper(list.WrapTable)
 
 	--- Return an Enumerator for the current List
 	-- @return an Enumerator
-	function List.prototype:GetEnumerator()
+	function list.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
 		local table = tables[self]
@@ -128,7 +128,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this List is valid for all elements in the List.
 	-- If there is no contract, this does nothing.
 	-- @usage list:VerifyContract()
-	function List.prototype:VerifyContract()
+	function list.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -155,7 +155,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the element and should return whether the element is valid.
 	-- @usage list:SetContract(function(v) return type(v) == "string" end)
-	function List.prototype:SetContract(contract)
+	function list.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 
@@ -171,7 +171,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- There is no way to convert a List back to being modifiable.
 	-- @return the same List that was made read-only
 	-- @usage list:ConvertToReadOnly()
-	function List.prototype:ConvertToReadOnly()
+	function list.prototype:ConvertToReadOnly()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -190,7 +190,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the List is read-only, and thus cannot have modifications made to it.
 	-- @return a boolean
 	-- @usage local read_only = list:IsReadOnly()
-	function List.prototype:IsReadOnly()
+	function list.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return not not readonlys[self]
@@ -200,7 +200,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param sequence a sequence of elements to add
 	-- @usage list:AddRange(Enumerable.RangeTo(1, 10))
 	-- @usage list:AddRange({ 1, 2, 3 })
-	function List.prototype:AddRange(sequence)
+	function list.prototype:AddRange(sequence)
 		check(1, self, 'userdata')
 		check(2, sequence, 'userdata', 'table')
 
@@ -230,7 +230,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item the element to add
 	-- @usage list:Add(5)
 	-- @usage list:Add(nil)
-	function List.prototype:Add(item)
+	function list.prototype:Add(item)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -252,7 +252,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Add multiple elements to the current List
 	-- @param ... zero or more arguments to add
 	-- @usage list:AddMany(1, 2, 3)
-	function List.prototype:AddMany(...)
+	function list.prototype:AddMany(...)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -289,7 +289,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param index the position of the element. Cannot be less than 1 or greater than count+1
 	-- @param item the element to insert
 	-- @usage list:Insert(1, "hey")
-	function List.prototype:Insert(index, item)
+	function list.prototype:Insert(index, item)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -329,7 +329,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param sequence the sequence to insert
 	-- @usage list:InsertRange(1, { "hey", "there" })
 	-- @usage list:InsertRange(1, Enumerable.RangeTo(1, 5))
-	function List.prototype:InsertRange(index, sequence)
+	function list.prototype:InsertRange(index, sequence)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 		check(3, sequence, 'userdata', 'table')
@@ -359,7 +359,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract then
-			sequence:ForEach(function(item, i)
+			sequence:ForEach(function(item)
 				if not contract(item) then
 					error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
 				end
@@ -431,7 +431,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param ... zero or more arguments to add
 	-- @usage list:InsertMany(1, "hey", "there")
 	-- @usage list:InsertMany(1, 1, 2, 3, 4, 5)
-	function List.prototype:InsertMany(index, ...)
+	function list.prototype:InsertMany(index, ...)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -458,7 +458,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item the item to remove
 	-- @return whether the item was successfully removed
 	-- @usage local removed = list:Remove(5)
-	function List.prototype:Remove(item)
+	function list.prototype:Remove(item)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -478,7 +478,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Remove an item from the list at the given index.
 	-- @param index the 1-based index to remove
 	-- @usage list:RemoveAt(1)
-	function List.prototype:RemoveAt(index)
+	function list.prototype:RemoveAt(index)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -506,7 +506,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param predicate a function which is passed each element and should return true to remove, false to keep
 	-- @return the number of elements removed
 	-- @usage local num = list:RemoveWhere(function(x) return x % 2 == 0 end)
-	function List.prototype:RemoveWhere(predicate)
+	function list.prototype:RemoveWhere(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
@@ -514,7 +514,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove elements from a read-only List", 2)
 		end
 
-		predicate = convertFunction(predicate)
+		predicate = convert_function(predicate)
 
 		local i = 0
 		local table = tables[self]
@@ -536,7 +536,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Remove multiple elements from the List
 	-- @param index the starting 1-based index to remove
 	-- @param count the amount of elements to remove
-	function List.prototype:RemoveRange(index, count)
+	function list.prototype:RemoveRange(index, count)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 		check(3, count, 'number')
@@ -576,7 +576,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item the item to add
 	-- @usage List.New({ 1, 2 }):ReplaceAt(1, 3) -- [3, 2]
 	-- @usage List.New({ 1, 2 }):ReplaceAt(3, 2) -- [1, 2, 3]
-	function List.prototype:ReplaceAt(index, item)
+	function list.prototype:ReplaceAt(index, item)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -613,7 +613,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage List.New({ 1, 2 }):ReplaceRange(1, { 3, 4 }) -- [3, 4]
 	-- @usage List.New({ 1, 2 }):ReplaceRange(2, { 3, 4 }) -- [1, 3, 4]
 	-- @usage List.New({ 1, 2 }):ReplaceRange(3, { 3, 4 }) -- [1, 2, 3, 4]
-	function List.prototype:ReplaceRange(index, sequence)
+	function list.prototype:ReplaceRange(index, sequence)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 		check(3, sequence, 'userdata', 'table')
@@ -659,7 +659,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage List.New({ 1, 2 }):ReplaceMany(1, 3, 4) -- [3, 4]
 	-- @usage List.New({ 1, 2 }):ReplaceMany(2, 3, 4) -- [1, 3, 4]
 	-- @usage List.New({ 1, 2 }):ReplaceMany(3, 3, 4) -- [1, 2, 3, 4]
-	function List.prototype:ReplaceMany(index, ...)
+	function list.prototype:ReplaceMany(index, ...)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -699,7 +699,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Clear all elements from the List
 	-- @usage list:Clear()
-	function List.prototype:Clear()
+	function list.prototype:Clear()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -715,10 +715,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Make a shallow clone of the List.
 	-- If the previous List was read-only, the clone will not be.
 	-- @usage local other = list:Clone()
-	function List.prototype:Clone()
+	function list.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = List.New()
+		local other = list.New()
 		local contract = contracts[self]
 		if contract then
 			other:SetContract(contracts[self])
@@ -730,7 +730,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Reverse the current List in-place, thus changing the contents of the list.
 	-- @usage list:ReverseInPlace()
-	function List.prototype:ReverseInPlace()
+	function list.prototype:ReverseInPlace()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -770,7 +770,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		--- Sort the current List in-place based on the given comparison.
 		-- @param comparer a function which takes two elements and returns -1 if the first is less than the second, 1 for the opposite, and 0 if equivalent.
 		-- @usage list:Sort(function(a, b) if #a < #b then return -1 elseif #a > #b then return 1 elseif a < b then return -1 elseif a > b then return 1 else return 0 end end)
-		function List.prototype:Sort(comparer)
+		function list.prototype:Sort(comparer)
 			check(1, self, 'userdata')
 			check(2, comparer, 'function', 'nil')
 			
@@ -824,7 +824,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the List is empty.
 	-- @return a random value in the List
 	-- @usage local value = list:PickAndRemoveRandom()
-	function List.prototype:PickAndRemoveRandom()
+	function list.prototype:PickAndRemoveRandom()
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -844,7 +844,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function List.prototype:Any(predicate)
+	function list.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -855,7 +855,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 
-	function List.prototype:Count(predicate)
+	function list.prototype:Count(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -866,7 +866,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:ElementAt(index)
+	function list.prototype:ElementAt(index)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -881,7 +881,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][index]
 	end
 	
-	function List.prototype:ElementAtOrDefault(index, default)
+	function list.prototype:ElementAtOrDefault(index, default)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -892,7 +892,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:First(predicate)
+	function list.prototype:First(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -907,7 +907,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:FirstOrDefault(default, predicate)
+	function list.prototype:FirstOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -922,7 +922,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:Last(predicate)
+	function list.prototype:Last(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -938,7 +938,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:LastOrDefault(default, predicate)
+	function list.prototype:LastOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -954,7 +954,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:Single(predicate)
+	function list.prototype:Single(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -972,7 +972,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:SingleOrDefault(default, predicate)
+	function list.prototype:SingleOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -990,7 +990,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function List.prototype:Skip(count)
+	function list.prototype:Skip(count)
 		check(1, self, 'userdata')
 		check(2, count, 'number')
 
@@ -1015,7 +1015,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end)
 	end
 
-	function List.prototype:TakeExceptLast(count)
+	function list.prototype:TakeExceptLast(count)
 		check(1, self, 'userdata')
 		check(2, count, 'number', 'nil')
 
@@ -1041,7 +1041,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end)
 	end
 
-	function List.prototype:TakeFromLast(count)
+	function list.prototype:TakeFromLast(count)
 		check(1, self, 'userdata')
 		check(2, count, 'number', 'nil')
 
@@ -1067,7 +1067,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end)
 	end
 	
-	function List.prototype:Reverse()
+	function list.prototype:Reverse()
 		check(1, self, 'userdata')
 
 		return Enumerable.New(function()
@@ -1089,7 +1089,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end)
 	end
 
-	function List.prototype:SequenceEqual(second, compare_selector)
+	function list.prototype:SequenceEqual(second, compare_selector)
 		check(1, self, 'userdata')
 		check(2, second, 'userdata', 'table')
 		check(3, compare_selector, 'function', 'string', 'nil')
@@ -1102,24 +1102,24 @@ _G.Linquidate_Loader(function(Linquidate)
 		return Enumerable.prototype.SequenceEqual(self, second, compare_selector)
 	end
 	
-	function List.prototype:Force()
+	function list.prototype:Force()
 	end
 	
-	function List.prototype:MemoizeAll()
+	function list.prototype:MemoizeAll()
 		return self
 	end
 
-	function List.prototype:ToString()
+	function list.prototype:ToString()
 		check(1, self, 'userdata')
 
 		return "List" .. Enumerable.prototype.ToString(self)
 	end
 
-	function List.prototype:ForEach(action)
+	function list.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = convertFunction(action)
+		action = convert_function(action)
 
 		local table = tables[self]
 		local index = 0
@@ -1144,11 +1144,11 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		return index, tables[self][index]
 	end
-	function List.prototype:Iterate()
+	function list.prototype:Iterate()
 		return iterator, self, 0
 	end
 
-	function List.prototype:PickRandom()
+	function list.prototype:PickRandom()
 		check(1, self, 'userdata')
 
 		local count = self:Count()
@@ -1158,7 +1158,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][math_random(count)]
 	end
 	
-	function List.prototype:PickRandomOrDefault(default)
+	function list.prototype:PickRandomOrDefault(default)
 		check(1, self, 'userdata')
 		
 		local count = self:Count()
@@ -1174,6 +1174,6 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Enumerable.prototype:ToList()
 		check(1, self, 'userdata')
 
-		return List.New(self)
+		return list.New(self)
 	end
 end)
