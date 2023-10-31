@@ -8,7 +8,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 	local identity = assert(Linquidate.Utilities.identity)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 
 	local newproxy = assert(_G.newproxy)
 	local getmetatable = assert(_G.getmetatable)
@@ -37,11 +37,11 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(5, result_selector, 'function', 'string')
 		check(6, compare_selector, 'function', 'string', 'nil')
 
-		result_selector = convertFunction(result_selector)
-		outer_key_selector = convertFunction(outer_key_selector)
-		inner_key_selector = convertFunction(inner_key_selector)
+		result_selector = convert_function(result_selector)
+		outer_key_selector = convert_function(outer_key_selector)
+		inner_key_selector = convert_function(inner_key_selector)
 		if compare_selector then
-			compare_selector = convertFunction(compare_selector)
+			compare_selector = convert_function(compare_selector)
 		end
 
 		return Enumerable.New(function()
@@ -98,10 +98,10 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(5, result_selector, 'function', 'string')
 		check(6, compare_selector, 'function', 'string', 'nil')
 		
-		outer_key_selector = convertFunction(outer_key_selector)
-		inner_key_selector = convertFunction(inner_key_selector)
-		result_selector = convertFunction(result_selector)
-		compare_selector = compare_selector and convertFunction(compare_selector)
+		outer_key_selector = convert_function(outer_key_selector)
+		inner_key_selector = convert_function(inner_key_selector)
+		result_selector = convert_function(result_selector)
+		compare_selector = compare_selector and convert_function(compare_selector)
 
 		return Enumerable.New(function()
 			local enumerator
@@ -138,10 +138,10 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(4, result_selector, 'function', 'string', 'nil')
 		check(5, compare_selector, 'function', 'string', 'nil')
 
-		key_selector = convertFunction(key_selector)
-		element_selector = convertFunction(element_selector)
-		result_selector = result_selector and convertFunction(result_selector)
-		compare_selector = compare_selector and convertFunction(compare_selector)
+		key_selector = convert_function(key_selector)
+		element_selector = convert_function(element_selector)
+		result_selector = result_selector and convert_function(result_selector)
+		compare_selector = compare_selector and convert_function(compare_selector)
 
 		return Enumerable.New(function()
 			local enumerator
@@ -364,9 +364,9 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(3, element_selector, 'function', 'string', 'nil')
 			check(4, compare_selector, 'function', 'string', 'nil')
 
-			key_selector = convertFunction(key_selector)
-			element_selector = convertFunction(element_selector)
-			compare_selector = convertFunction(compare_selector)
+			key_selector = convert_function(key_selector)
+			element_selector = convert_function(element_selector)
+			compare_selector = convert_function(compare_selector)
 
 			local keys = {}
 			local dict = {}

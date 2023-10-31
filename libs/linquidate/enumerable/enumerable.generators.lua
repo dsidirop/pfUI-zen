@@ -3,7 +3,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local assert = _G.assert
 	
 	local check = assert(Linquidate.Utilities.check)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 
 	local type = assert(_G.type)
 	local select = assert(_G.select)
@@ -330,7 +330,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return Enumerable.Generate(generator):Take(count)
 		end
 
-		generator = convertFunction(generator)
+		generator = convert_function(generator)
 
 		return Enumerable.New(function()
 			return Enumerator.New(
@@ -423,7 +423,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Enumerable.Unfold(seed, func)
 		check(2, func, 'function', 'string')
 
-		func = convertFunction(func)
+		func = convert_function(func)
 
 		return Enumerable.New(function()
 			local is_first = true

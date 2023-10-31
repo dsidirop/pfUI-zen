@@ -2,32 +2,33 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local check = assert(Linquidate.Utilities.check)
+	local enumerable = assert(Linquidate.Enumerable)
+	local enumerator = assert(Linquidate.Enumerator)
+	
 	local wipe = assert(Linquidate.Utilities.wipe)
+	local check = assert(Linquidate.Utilities.check)
 	local identity = assert(Linquidate.Utilities.identity)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
-	local newproxy = assert(_G.newproxy)
+	
 	local next = assert(_G.next)
-	local pairs = assert(_G.pairs)
-	local select = assert(_G.select)
-	local error = assert(_G.error)
 	local type = assert(_G.type)
+	local error = assert(_G.error)
+	local pairs = assert(_G.pairs)
 	local pcall = assert(_G.pcall)
+	local newproxy = assert(_G.newproxy)
 	local table_sort = assert(_G.table.sort)
 
 	local Set = Linquidate.Set or {}
 	if not Set.prototype then
 		Set.prototype = {}
 	end
-	setmetatable(Set.prototype, {__index=Enumerable.prototype})
+	setmetatable(Set.prototype, {__index= enumerable.prototype})
 	
 	Linquidate.Set = Set
 	local Set_proxy = newproxy(true)
@@ -75,7 +76,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local self = newproxy(Set_proxy)
 
 		tables[self] = {}
-		comparison_selectors[self] = comparison_selector and convertFunction(comparison_selector)
+		comparison_selectors[self] = comparison_selector and convert_function(comparison_selector)
 
 		if sequence then
 			self:UnionWith(sequence)
@@ -90,7 +91,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Set.FromArguments(comparison_selector, ...)
 		check(1, comparison_selector, 'function', 'string', 'nil')
 
-		local self = Set.New(nil, comparison_selector and convertFunction(comparison_selector))
+		local self = Set.New(nil, comparison_selector and convert_function(comparison_selector))
 
 		self:AddMany(unpack(arg))
 
@@ -149,12 +150,11 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Set.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 		
+		local key
 		local table = tables[self]
 		local has_comparison_selector = not not comparison_selectors[self]
-		local index = 0
-		local key = nil
 
-		return Enumerator.New(
+		return enumerator.New(
 			nil,
 			function(yield)
 				local value
@@ -190,8 +190,9 @@ _G.Linquidate_Loader(function(Linquidate)
 		
 		local table = tables[self]
 		local has_comparison_selector = not not comparison_selectors[self]
+
+		local key
 		local index = 0
-		local key = nil
 		while true do
 			index = index + 1
 			
@@ -281,12 +282,13 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = convertFunction(action)
+		action = convert_function(action)
 
 		local table = tables[self]
 		local has_comparison_selector = not not comparison_selectors[self]
+
+		local key
 		local index = 0
-		local key = nil
 		while true do
 			index = index + 1
 			
@@ -311,7 +313,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	end
 
 	function Set.prototype:Iterate()
-		local key = nil
+		local key
 		return function(self, index)
 			local value
 			key, value = next(tables[self], key)
@@ -341,7 +343,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot add to a read-only Set", 2)
 		end
 
-		sequence = Enumerable.From(sequence)
+		sequence = enumerable.From(sequence)
 
 		sequence:ForEach(function(item)
 			self:Add(item)
@@ -451,7 +453,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove from a read-only Set", 2)
 		end
 
-		predicate = convertFunction(predicate)
+		predicate = convert_function(predicate)
 
 		local has_comparison_selector = not not comparison_selectors[self]
 		
@@ -496,7 +498,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		if not predicate then
 			return (next(tables[self])) ~= nil
 		else
-			return Enumerable.prototype.Any(self, predicate)
+			return enumerable.prototype.Any(self, predicate)
 		end
 	end
 	
@@ -522,7 +524,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Set.prototype:ToString()
 		check(1, self, 'userdata')
 
-		return "Set" .. Enumerable.prototype.ToString(self:OrderBy(identity))
+		return "Set" .. enumerable.prototype.ToString(self:OrderBy(identity))
 	end
 
 	--- Removes all elements in the specified sequence from the current Set
@@ -536,7 +538,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot alter a read-only Set", 2)
 		end
 
-		sequence = Enumerable.From(sequence)
+		sequence = enumerable.From(sequence)
 		if sequence == self then
 			self:Clear()
 			return
@@ -558,7 +560,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot alter a read-only Set", 2)
 		end
 
-		sequence = Enumerable.From(sequence)
+		sequence = enumerable.From(sequence)
 		if sequence == self then
 			return
 		end
@@ -573,7 +575,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local table = tables[self]
 		local other_table = tables[other_set]
-		for k, v in pairs(table) do
+		for k, _ in pairs(table) do
 			if other_table[k] == nil then
 				table[k] = nil
 			end
@@ -591,7 +593,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot alter a read-only Set", 2)
 		end
 
-		sequence = Enumerable.From(sequence)
+		sequence = enumerable.From(sequence)
 		if sequence == self then
 			self:Clear()
 			return
@@ -621,14 +623,14 @@ _G.Linquidate_Loader(function(Linquidate)
 	end
 
 	local function convert_to_set(self, other)
-		other = Enumerable.From(other)
+		other = enumerable.From(other)
+
 		local comparison_selector = comparison_selectors[self]
-		local other_set
 		if not tables[other] or comparison_selectors[other] ~= comparison_selector then
 			return Set.New(other, comparison_selector)
-		else
-			return other
 		end
+
+		return other
 	end
 	
 	local function is_subset(self, other)
@@ -740,7 +742,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return false
 		end
 
-		other = Enumerable.From(other)
+		other = enumerable.From(other)
 		if self == other then
 			return true
 		end
@@ -762,7 +764,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
-		other = Enumerable.From(other)
+		other = enumerable.From(other)
 		if self == other then
 			return true
 		end
@@ -790,7 +792,8 @@ _G.Linquidate_Loader(function(Linquidate)
 		if found_extra then
 			return false
 		end
-		for k, v in pairs(keys) do
+
+		for _, v in pairs(keys) do
 			if v then
 				return false
 			end
@@ -857,7 +860,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			end)
 			table_sort(t, sorter)
 		else
-			self:ForEach(function(x, i)
+			self:ForEach(function(x, _)
 				if x ~= nil then
 					t[x] = true
 				end
@@ -869,7 +872,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Make a new Set filled with the contents of the current Enumerable
 	-- @param comparison_selector optional: a function to generate a unique key per element
 	-- @return a Set
-	function Enumerable.prototype:ToSet(comparison_selector)
+	function enumerable.prototype:ToSet(comparison_selector)
 		check(1, self, 'userdata')
 		check(2, comparison_selector, 'function', 'string', 'nil')
 

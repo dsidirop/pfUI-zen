@@ -181,7 +181,7 @@ _G.Linquidate_Loader(function(Linquidate)
         return func
     end
 
-    function Utilities.convertFunction(func)
+    function Utilities.convert_function(func)
         local type_func = type(func)
         if type_func == 'function' then
             return func

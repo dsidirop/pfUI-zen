@@ -4,7 +4,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	local check = assert(Linquidate.Utilities.check)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 
 	local Enumerable = assert(Linquidate.Enumerable)
 	local Enumerator = assert(Linquidate.Enumerator)
@@ -17,7 +17,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, func, 'function', 'string')
 
-		func = convertFunction(func)
+		func = convert_function(func)
 
 		return Enumerable.New(function()
 			local enumerator

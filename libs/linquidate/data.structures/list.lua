@@ -10,7 +10,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
-	local convert_function = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
 	local error = assert(_G.error)

@@ -8,7 +8,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local wipe = assert(Linquidate.Utilities.wipe)
 	local check = assert(Linquidate.Utilities.check)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
 	local error = assert(_G.error)
@@ -442,7 +442,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = convertFunction(action)
+		action = convert_function(action)
 
 		local table = tables[self]
 		local i = 0

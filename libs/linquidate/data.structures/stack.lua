@@ -9,7 +9,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local check = assert(Linquidate.Utilities.check)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 	local wipe = assert(Linquidate.Utilities.wipe)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 
 	local math_floor = assert(_G.math.floor)
@@ -405,7 +405,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = convertFunction(action)
+		action = convert_function(action)
 
 		local table = tables[self]
 		local i = 0
