@@ -24,36 +24,36 @@ _G.Linquidate_Loader(function(Linquidate)
 	local newproxy = assert(_G.newproxy)
 	local table_sort = assert(_G.table.sort)
 
-	local Set = Linquidate.Set or {}
-	if not Set.prototype then
-		Set.prototype = {}
+	local set = Linquidate.Set or {}
+	if not set.prototype then
+		set.prototype = {}
 	end
-	setmetatable(Set.prototype, {__index= enumerable.prototype})
+	setmetatable(set.prototype, { __index= enumerable.prototype})
 	
-	Linquidate.Set = Set
-	local Set_proxy = newproxy(true)
-	local Set_mt = getmetatable(Set_proxy)
-	Set_mt.__index = Set.prototype
-	function Set_mt:__tostring()
+	Linquidate.Set = set
+	local set_proxy = newproxy(true)
+	local set_mt = getmetatable(set_proxy)
+	set_mt.__index = set.prototype
+	function set_mt:__tostring()
 		return self:ToString()
 	end
 
-	local NIL = Set.__NIL or newproxy()
-	Set.__NIL = NIL
+	local NIL = set.__NIL or newproxy()
+	set.__NIL = NIL
 
-	local tables = make_weak_keyed_table(Set.__tables)
-	Set.__tables = tables
-	local comparison_selectors = make_weak_keyed_table(Set.__comparison_selectors)
-	Set.__comparison_selectors = comparison_selectors
-	local contracts = make_weak_keyed_table(Set.__contracts)
-	Set.__contracts = contracts
-	local wrapped_tables = make_weak_table(Set.__wrapped_tables)
-	Set.__wrapped_tables = wrapped_tables
-	local readonlys = make_weak_keyed_table(Set.__readonlys)
-	Set.__readonlys = readonlys
-	if Set.__is_wrapped then
-		local is_wrapped = Set.__is_wrapped
-		Set.__is_wrapped = nil
+	local tables = make_weak_keyed_table(set.__tables)
+	set.__tables = tables
+	local comparison_selectors = make_weak_keyed_table(set.__comparison_selectors)
+	set.__comparison_selectors = comparison_selectors
+	local contracts = make_weak_keyed_table(set.__contracts)
+	set.__contracts = contracts
+	local wrapped_tables = make_weak_table(set.__wrapped_tables)
+	set.__wrapped_tables = wrapped_tables
+	local readonlys = make_weak_keyed_table(set.__readonlys)
+	set.__readonlys = readonlys
+	if set.__is_wrapped then
+		local is_wrapped = set.__is_wrapped
+		set.__is_wrapped = nil
 		for k, v in pairs(is_wrapped) do
 			if v then
 				wrapped_tables[tables[k]] = k
@@ -69,11 +69,11 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local set = Set.New({ 1, 2, 3, 2, 4 })
 	-- @usage local set = Set.New(nil, tostring)
 	-- @usage local set = Set.New({ "alpha", "Alpha", "ALPHA" }, string.upper)
-	function Set.New(sequence, comparison_selector)
+	function set.New(sequence, comparison_selector)
 		check(1, sequence, 'userdata', 'table', 'nil')
 		check(2, comparison_selector, 'function', 'string', 'nil')
 
-		local self = newproxy(Set_proxy)
+		local self = newproxy(set_proxy)
 
 		tables[self] = {}
 		comparison_selectors[self] = comparison_selector and convert_function(comparison_selector)
@@ -88,10 +88,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Construct and return a new Set
 	-- @param comparison_selector optional: a function to generate a unique key per element
 	-- @param ... arguments to populate the set with
-	function Set.FromArguments(comparison_selector, ...)
+	function set.FromArguments(comparison_selector, ...)
 		check(1, comparison_selector, 'function', 'string', 'nil')
 
-		local self = Set.New(nil, comparison_selector and convert_function(comparison_selector))
+		local self = set.New(nil, comparison_selector and convert_function(comparison_selector))
 
 		self:AddMany(unpack(arg))
 
@@ -106,20 +106,20 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local set = Set.FromSequenceOrItem("hey") -- Set containing "hey"
 	-- @usage local set = Set.FromSequenceOrItem({ alpha = true, bravo = true }) -- Set containing "alpha" and "bravo"
 	-- @usage local set = Set.FromSequenceOrItem(Enumerable.From({ 1, 2, 3 })) -- Set containing 1, 2, and 3
-	function Set.FromSequenceOrItem(sequence_or_item)
+	function set.FromSequenceOrItem(sequence_or_item)
 		local item_type = type(sequence_or_item)
 
 		if item_type == 'table' then
-			return Set.WrapTable(sequence_or_item)
+			return set.WrapTable(sequence_or_item)
 		elseif item_type == 'userdata' then
 			if tables[sequence_or_item] then
 				-- it's a Set already
 				return sequence_or_item
 			else
-				return Set.New(sequence_or_item)
+				return set.New(sequence_or_item)
 			end
 		else
-			return Set.FromArguments(nil, sequence_or_item)
+			return set.FromArguments(nil, sequence_or_item)
 		end
 	end
 
@@ -129,7 +129,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return a Set
 	-- @usage local set = Set.WrapTable({ [1] = true, [2] = true, [3] = true })
 	-- @usage local set = Set.WrapTable({ hey = true, there = true })
-	function Set.WrapTable(t)
+	function set.WrapTable(t)
 		check(1, t, 'table')
 
 		local self = wrapped_tables[t]
@@ -137,7 +137,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self
 		end
 
-		self = newproxy(Set_proxy)
+		self = newproxy(set_proxy)
 
 		tables[self] = t
 		wrapped_tables[t] = self
@@ -147,7 +147,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Get the enumerator for the Set
 	-- @return an Enumerator
-	function Set.prototype:GetEnumerator()
+	function set.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 		
 		local key
@@ -180,7 +180,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this List is valid for all elements in the List.
 	-- If there is no contract, this does nothing.
 	-- @usage list:VerifyContract()
-	function Set.prototype:VerifyContract()
+	function set.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -221,7 +221,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the element and should return whether the element is valid.
 	-- @usage set:SetContract(function(v) return type(v) == "string" end)
-	function Set.prototype:SetContract(contract)
+	function set.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 		
@@ -237,7 +237,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- There is no way to convert a Set back to being modifiable.
 	-- @return the same Set that was made read-only
 	-- @usage set:ConvertToReadOnly()
-	function Set.prototype:ConvertToReadOnly()
+	function set.prototype:ConvertToReadOnly()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -256,7 +256,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the Set is read-only, and thus cannot have modifications made to it.
 	-- @return a boolean
 	-- @usage local read_only = set:IsReadOnly()
-	function Set.prototype:IsReadOnly()
+	function set.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return not not readonlys[self]
@@ -265,10 +265,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Make a shallow clone of the Set.
 	-- If the previous Set was read-only, the clone will not be.
 	-- @usage local other = set:Clone()
-	function Set.prototype:Clone()
+	function set.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = Set.New(nil, comparison_selectors[self])
+		local other = set.New(nil, comparison_selectors[self])
 		local contract = contracts[self]
 		if contract then
 			other:SetContract(contracts[self])
@@ -278,7 +278,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return other
 	end
 
-	function Set.prototype:ForEach(action)
+	function set.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -312,7 +312,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 
-	function Set.prototype:Iterate()
+	function set.prototype:Iterate()
 		local key
 		return function(self, index)
 			local value
@@ -335,7 +335,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param sequence the sequence to union against
 	-- @usage set:UnionWith({ 1, 2, 3 })
 	-- @usage set:UnionWith(Enumerable.RangeTo(1, 3))
-	function Set.prototype:UnionWith(sequence)
+	function set.prototype:UnionWith(sequence)
 		check(1, self, 'userdata')
 		check(2, sequence, 'userdata', 'table')
 
@@ -355,7 +355,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return whether the element was inserted properly, this is typically false if the item already exists.
 	-- @usage local success = set:Add(5)
 	-- @usage local success = set:Add(nil)
-	function Set.prototype:Add(item)
+	function set.prototype:Add(item)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -402,7 +402,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Add multiple elements to the current Set
 	-- @param ... zero or more arguments to add
 	-- @usage set:AddMany(1, 2, 3)
-	function Set.prototype:AddMany(...)
+	function set.prototype:AddMany(...)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -418,7 +418,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item item to try to remove from the Set
 	-- @return whether succesfully removed the element
 	-- @usage local removed = set:Remove(1)
-	function Set.prototype:Remove(item)
+	function set.prototype:Remove(item)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -445,7 +445,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param predicate a function which is passed each element and should return true to remove, false to keep
 	-- @return the number of elements removed
 	-- @usage local num = set:RemoveWhere(function(x) return x % 2 == 0 end)
-	function Set.prototype:RemoveWhere(predicate)
+	function set.prototype:RemoveWhere(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
@@ -479,7 +479,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Clear all elements from the Set
 	-- @usage set:Clear()
-	function Set.prototype:Clear()
+	function set.prototype:Clear()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -491,7 +491,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function Set.prototype:Any(predicate)
+	function set.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -502,7 +502,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function Set.prototype:Contains(item)
+	function set.prototype:Contains(item)
 		check(1, self, 'userdata')
 
 		local comparison_selector = comparison_selectors[self]
@@ -515,13 +515,13 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][item] ~= nil
 	end
 
-	function Set.prototype:MemoizeAll()
+	function set.prototype:MemoizeAll()
 		check(1, self, 'userdata')
 
 		return self
 	end
 
-	function Set.prototype:ToString()
+	function set.prototype:ToString()
 		check(1, self, 'userdata')
 
 		return "Set" .. enumerable.prototype.ToString(self:OrderBy(identity))
@@ -530,7 +530,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Removes all elements in the specified sequence from the current Set
 	-- @param sequence the sequence of items to remove from the current Set
 	-- @usage set:ExceptWith({ 1, 2, 3 })
-	function Set.prototype:ExceptWith(sequence)
+	function set.prototype:ExceptWith(sequence)
 		check(1, self, 'userdata')
 		check(2, sequence, 'userdata', 'table')
 
@@ -552,7 +552,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Modifies the current Set to contain only items which also exist in the provided sequence
 	-- @param sequence the sequence of items to include in the current Set
 	-- @usage set:IntersectWith({ 1, 2, 3 })
-	function Set.prototype:IntersectWith(sequence)
+	function set.prototype:IntersectWith(sequence)
 		check(1, self, 'userdata')
 		check(2, sequence, 'userdata', 'table')
 
@@ -568,7 +568,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local comparison_selector = comparison_selectors[self]
 		local other_set
 		if not tables[sequence] or comparison_selectors[sequence] ~= comparison_selector then
-			other_set = Set.New(sequence, comparison_selector)
+			other_set = set.New(sequence, comparison_selector)
 		else
 			other_set = sequence
 		end
@@ -585,7 +585,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Modifies the current Set to only contain elements present in either that sequence or the other sequence, but not both.
 	-- @param sequence the sequence to compare to the current
 	-- @usage set:SymmetricExceptWith({ 1, 2, 3 })
-	function Set.prototype:SymmetricExceptWith(sequence)
+	function set.prototype:SymmetricExceptWith(sequence)
 		check(1, self, 'userdata')
 		check(2, sequence, 'userdata', 'table')
 		
@@ -602,7 +602,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local comparison_selector = comparison_selectors[self]
 		local other_set
 		if not tables[sequence] or comparison_selectors[sequence] ~= comparison_selector then
-			other_set = Set.New(sequence, comparison_selector)
+			other_set = set.New(sequence, comparison_selector)
 		else
 			other_set = sequence
 		end
@@ -627,7 +627,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local comparison_selector = comparison_selectors[self]
 		if not tables[other] or comparison_selectors[other] ~= comparison_selector then
-			return Set.New(other, comparison_selector)
+			return set.New(other, comparison_selector)
 		end
 
 		return other
@@ -646,7 +646,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set is a subset of the provided sequence
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:IsSubsetOf(other)
+	function set.prototype:IsSubsetOf(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -670,7 +670,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set is a superset of the provided sequence
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:IsSupersetOf(other)
+	function set.prototype:IsSupersetOf(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -694,7 +694,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set is a proper subset of the provided sequence
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:IsProperSubsetOf(other)
+	function set.prototype:IsProperSubsetOf(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -714,7 +714,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set is a proper superset of the provided sequence
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:IsProperSupersetOf(other)
+	function set.prototype:IsProperSupersetOf(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 		
@@ -734,7 +734,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set and a provided sequence share one or more common elements
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:Overlaps(other)
+	function set.prototype:Overlaps(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -760,7 +760,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Determines whether the current Set contains the same distinct elements as the provided collection
 	-- @param other a sequence to compare against
 	-- @return a boolean
-	function Set.prototype:SetEquals(other)
+	function set.prototype:SetEquals(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -805,7 +805,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the Set is empty.
 	-- @return a random value in the Set
 	-- @usage local value = set:PickAndRemoveRandom()
-	function Set.prototype:PickAndRemoveRandom()
+	function set.prototype:PickAndRemoveRandom()
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -847,7 +847,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Set.New({ "hey", "there" }):ToTable()["hey"] == true
 	-- @usage Set.New({ "hey", "there" }):ToTable('list')[1] == "hey"
 	-- @usage Set.New({ "hey", "there" }):ToTable('set')["hey"] == true
-	function Set.prototype:ToTable(kind)
+	function set.prototype:ToTable(kind)
 		check(1, self, 'userdata')
 		check(2, kind, 'nil', 'string')
 
@@ -876,6 +876,6 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, comparison_selector, 'function', 'string', 'nil')
 
-		return Set.New(self, comparison_selector)
+		return set.New(self, comparison_selector)
 	end
 end)
