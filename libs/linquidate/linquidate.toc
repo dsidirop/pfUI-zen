@@ -9,6 +9,6 @@
 ## X-Website: github.com/dsidirop/linquidate
 ## X-Category: Library
 
-libstub\libstub.lua
+_libstub\libstub.lua
 
-lib.xml
+linquidate.xml
