@@ -5,14 +5,13 @@ _G.Linquidate_Loader(function(Linquidate)
 
     local _G = _G
     local type = _G.type
-    local setmetatable = _G.setmetatable
-    local select = _G.select
-    local table_concat = _G.table.concat
-    local error = _G.error
-    local tostring = _G.tostring
-    local xpcall = _G.xpcall
     local pairs = _G.pairs
+    local error = _G.error
+    local xpcall = _G.xpcall
+    local tostring = _G.tostring
     local loadstring = _G.loadstring
+    local table_concat = _G.table.concat
+    local setmetatable = _G.setmetatable
 
     do
         local mt = { __mode = 'k' }

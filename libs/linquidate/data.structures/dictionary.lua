@@ -2,60 +2,62 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
-	local check = assert(Linquidate.Utilities.check)
-	local tostring_q = assert(Linquidate.Utilities.tostring_q)
-	local wipe = assert(Linquidate.Utilities.wipe)
-	local identity = assert(Linquidate.Utilities.identity)
-	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local enumerable = assert(Linquidate.Enumerable)
+	local enumerator = assert(Linquidate.Enumerator)
 	
-	local getmetatable = assert(_G.getmetatable)
-	local setmetatable = assert(_G.setmetatable)
-	local newproxy = assert(_G.newproxy)
+	local wipe = assert(Linquidate.Utilities.wipe)
+	local check = assert(Linquidate.Utilities.check)
+	local identity = assert(Linquidate.Utilities.identity)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	
+	local type = assert(_G.type)
 	local next = assert(_G.next)
 	local pairs = assert(_G.pairs)
-	local type = assert(_G.type)
 	local error = assert(_G.error)
-	local tostring = assert(_G.tostring)
-	local table_concat = assert(_G.table.concat)
 	local pcall = assert(_G.pcall)
+	local newproxy = assert(_G.newproxy)
+	local tostring = assert(_G.tostring)
 	local table_sort = assert(_G.table.sort)
+	local table_concat = assert(_G.table.concat)
+	local getmetatable = assert(_G.getmetatable)
+	local setmetatable = assert(_G.setmetatable)
 
-	local Dictionary = Linquidate.Dictionary or {}
-	if not Dictionary.prototype then
-		Dictionary.prototype = {}
+	local dictionary = Linquidate.Dictionary or {}
+	if not dictionary.prototype then
+		dictionary.prototype = {}
 	end
-	setmetatable(Dictionary.prototype, {__index=Enumerable.prototype})
+	setmetatable(dictionary.prototype, { __index= enumerable.prototype})
 	
-	Linquidate.Dictionary = Dictionary
-	local Dictionary_proxy = newproxy(true)
-	local Dictionary_mt = getmetatable(Dictionary_proxy)
-	Dictionary_mt.__index = Dictionary.prototype
-	function Dictionary_mt:__tostring()
+	Linquidate.Dictionary = dictionary
+
+	local dictionary_proxy = newproxy(true)
+	local dictionary_mt = getmetatable(dictionary_proxy)
+	dictionary_mt.__index = dictionary.prototype
+	function dictionary_mt:__tostring()
 		return self:ToString()
 	end
 
-	local NIL = Dictionary.__NIL or newproxy()
-	Dictionary.__NIL = NIL
+	local NIL = dictionary.__NIL or newproxy()
+	dictionary.__NIL = NIL
 	
-	local tables = make_weak_keyed_table(Dictionary.__tables)
-	Dictionary.__tables = tables
-	local key_lookups = make_weak_keyed_table(Dictionary.__key_lookups)
-	Dictionary.__key_lookups = key_lookups
-	local comparison_selectors = make_weak_keyed_table(Dictionary.__comparison_selectors)
-	Dictionary.__comparison_selectors = comparison_selectors
-	local contracts = make_weak_keyed_table(Dictionary.__contracts)
-	Dictionary.__contracts = contracts
-	local wrapped_tables = make_weak_table(Dictionary.__wrapped_tables)
-	Dictionary.__wrapped_tables = wrapped_tables
-	local readonlys = make_weak_keyed_table(Dictionary.__readonlys)
-	Dictionary.__readonlys = readonlys
-	if Dictionary.__is_wrapped then
-		local is_wrapped = Dictionary.__is_wrapped
-		Dictionary.__is_wrapped = nil
+	local tables = make_weak_keyed_table(dictionary.__tables)
+	dictionary.__tables = tables
+	local key_lookups = make_weak_keyed_table(dictionary.__key_lookups)
+	dictionary.__key_lookups = key_lookups
+	local comparison_selectors = make_weak_keyed_table(dictionary.__comparison_selectors)
+	dictionary.__comparison_selectors = comparison_selectors
+	local contracts = make_weak_keyed_table(dictionary.__contracts)
+	dictionary.__contracts = contracts
+	local wrapped_tables = make_weak_table(dictionary.__wrapped_tables)
+	dictionary.__wrapped_tables = wrapped_tables
+	local readonlys = make_weak_keyed_table(dictionary.__readonlys)
+	dictionary.__readonlys = readonlys
+	if dictionary.__is_wrapped then
+		local is_wrapped = dictionary.__is_wrapped
+		dictionary.__is_wrapped = nil
 		for k, v in pairs(is_wrapped) do
 			if v then
 				wrapped_tables[tables[k]] = k
@@ -70,11 +72,11 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Dictionary.New({ a = 1, b = 2 })
 	-- @usage Dictionary.New({ a = 1, b = 2 }, string.upper)
 	-- @usage Dictionary.New(nil, string.upper)
-	function Dictionary.New(dict, comparison_selector)
+	function dictionary.New(dict, comparison_selector)
 		check(1, dict, 'userdata', 'table', 'nil')
 		check(2, comparison_selector, 'function', 'string', 'nil')
 
-		local self = newproxy(Dictionary_proxy)
+		local self = newproxy(dictionary_proxy)
 
 		tables[self] = {}
 		if comparison_selector then
@@ -87,7 +89,7 @@ _G.Linquidate_Loader(function(Linquidate)
 				for k, v in pairs(dict) do
 					self:Add(k, v)
 				end
-			elseif Dictionary.IsDictionary(dict) then
+			elseif dictionary.IsDictionary(dict) then
 				dict:ForEachByPair(function(k, v)
 					self:Add(k, v)
 				end)
@@ -104,7 +106,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param t the table to wrap around
 	-- @return a Dictionary
 	-- @usage local dict = Dictionary.WrapTable({ alpha = 1, bravo = 2 })
-	function Dictionary.WrapTable(t)
+	function dictionary.WrapTable(t)
 		check(1, t, 'table')
 
 		local self = wrapped_tables[t]
@@ -112,7 +114,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			return self
 		end
 
-		self = newproxy(Dictionary_proxy)
+		self = newproxy(dictionary_proxy)
 
 		tables[self] = t
 		wrapped_tables[t] = self
@@ -123,7 +125,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the provided object is a Dictionary
 	-- @param obj the object to check
 	-- @return whether the object inherits from or is a Dictionary
-	function Dictionary.IsDictionary(obj)
+	function dictionary.IsDictionary(obj)
 		local obj_type = type(obj)
 		if obj_type ~= 'userdata' then
 			return false
@@ -133,7 +135,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			local mt = getmetatable(obj)
 			if not mt then
 				return false
-			elseif mt.__index == Dictionary.prototype or mt.__index == Linquidate.BidirectionalDictionary.prototype then
+			elseif mt.__index == dictionary.prototype or mt.__index == Linquidate.BidirectionalDictionary.prototype then
 				return true
 			end
 
@@ -151,15 +153,15 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Dictionary.From(Dictionary.New()):ToString() == "Dictionary[]"
 	-- @usage Dictionary.From({ 'a', 'b', 'c' }):ToString() == 'Dictionary[1: "a", 2: "b", 3: "c"]'
 	-- @usage Dictionary.From({ a = 1, b = 2, c = 3 }):ToString() == 'Dictionary["a": 1, "b": 2, "c": 3]'
-	function Dictionary.From(obj)
+	function dictionary.From(obj)
 		local obj_type = type(obj)
 		
 		if obj_type == 'nil' then
-			return Dictionary.New()
-		elseif obj_type == 'userdata' and Dictionary.IsDictionary(obj) then
+			return dictionary.New()
+		elseif obj_type == 'userdata' and dictionary.IsDictionary(obj) then
 			return obj
 		elseif obj_type == 'table' then
-			return Dictionary.WrapTable(obj)
+			return dictionary.WrapTable(obj)
 		else
 			error(("Don't know how to convert %s (%s) to an Enumerable"):format(obj_type, tostring(obj)), 2)
 		end
@@ -168,7 +170,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this Dictionary is valid for all elements in the dictionary.
 	-- If there is no contract, this does nothing.
 	-- @usage dict:VerifyContract()
-	function Dictionary.prototype:VerifyContract()
+	function dictionary.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -204,7 +206,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the key and value and should return whether the pair is valid.
 	-- @usage dict:SetContract(function(k, v) return type(k) == "string" and type(v) == "number" end)
-	function Dictionary.prototype:SetContract(contract)
+	function dictionary.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 		
@@ -220,7 +222,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- There is no way to convert a Set back to being modifiable.
 	-- @return the same Set that was made read-only
 	-- @usage set:ConvertToReadOnly()
-	function Dictionary.prototype:ConvertToReadOnly()
+	function dictionary.prototype:ConvertToReadOnly()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -239,21 +241,21 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the Set is read-only, and thus cannot have modifications made to it.
 	-- @return a boolean
 	-- @usage local read_only = set:IsReadOnly()
-	function Dictionary.prototype:IsReadOnly()
+	function dictionary.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return not not readonlys[self]
 	end
 
 	--- Return an enumerator for the Dictionary that returns the keys of the dictionary
-	function Dictionary.prototype:GetEnumerator()
+	function dictionary.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
 		local key
 		local table = tables[self]
 		local key_lookup = key_lookups[self]
 
-		return Enumerator.New(
+		return enumerator.New(
 			nil,
 			function(yield)
 				local value
@@ -284,7 +286,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to add
 	-- @param value the value of the element to add
 	-- @usage dict:Add("key", "value")
-	function Dictionary.prototype:Add(key, value)
+	function dictionary.prototype:Add(key, value)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -339,7 +341,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to set
 	-- @param value the value of the element to set
 	-- @usage dict:Set("key", "value")
-	function Dictionary.prototype:Set(key, value)
+	function dictionary.prototype:Set(key, value)
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -390,7 +392,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Merge another dictionary onto the current Dictionary.
 	-- @param other a Dictionary to Merge onto the current
 	-- @usage Dictionary.From({ alpha = 1, bravo = 2 }):Merge({ bravo = 3, charlie = 4 }) -- Dictionary["alpha": 1, "bravo": 3, "charlie": 4]
-	function Dictionary.prototype:Merge(other)
+	function dictionary.prototype:Merge(other)
 		check(1, self, 'userdata')
 		check(2, other, 'userdata', 'table')
 
@@ -398,7 +400,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot alter a read-only Dictionary", 2)
 		end
 
-		Dictionary.From(other):ForEachByPair(function(k, v)
+		dictionary.From(other):ForEachByPair(function(k, v)
 			self:Set(k, v)
 		end)
 	end
@@ -408,7 +410,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key of the element to get
 	-- @return the value requested
 	-- @usage local value = dict:Get("key")
-	function Dictionary.prototype:Get(key)
+	function dictionary.prototype:Get(key)
 		check(1, self, 'userdata')
 
 		local success, value = self:TryGetValue(key)
@@ -425,7 +427,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param default the default value to return if the key is not found.
 	-- @return the value requested or the default value
 	-- @usage local value = dict:GetOrDefault("key", 0)
-	function Dictionary.prototype:GetOrDefault(key, default)
+	function dictionary.prototype:GetOrDefault(key, default)
 		check(1, self, 'userdata')
 		
 		local success, value = self:TryGetValue(key)
@@ -441,7 +443,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return whether the get was successful
 	-- @return the value requested
 	-- @usage local success, value = dict:TryGetValue("key")
-	function Dictionary.prototype:TryGetValue(key)
+	function dictionary.prototype:TryGetValue(key)
 		check(1, self, 'userdata')
 
 		local comparison_selector = comparison_selectors[self]
@@ -472,7 +474,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Clear all elements from the Dictionary
 	-- @usage dict:Clear()
-	function Dictionary.prototype:Clear()
+	function dictionary.prototype:Clear()
 		check(1, self, 'userdata')
 
 		if readonlys[self] then
@@ -490,7 +492,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key to check for
 	-- @return a boolean
 	-- @usage local found = dict:ContainsKey("key")
-	function Dictionary.prototype:ContainsKey(key)
+	function dictionary.prototype:ContainsKey(key)
 		check(1, self, 'userdata')
 
 		local comparison_selector = comparison_selectors[self]
@@ -507,7 +509,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param value the value to check for
 	-- @return a boolean
 	-- @usage local found = dict:ContainsValue("value")
-	function Dictionary.prototype:ContainsValue(value)
+	function dictionary.prototype:ContainsValue(value)
 		check(1, self, 'userdata')
 
 		for _, v in pairs(tables[self]) do
@@ -526,7 +528,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param key the key to remove
 	-- @return whether the element was removed
 	-- @usage local removed = dict:Remove("key")
-	function Dictionary.prototype:Remove(key)
+	function dictionary.prototype:Remove(key)
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -557,7 +559,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param predicate a function which is passed each key and value and should return true to remove, false to keep
 	-- @return the number of elements removed
 	-- @usage local num = dict:RemoveWhere(function(k, v) return v % 2 == 0 end)
-	function Dictionary.prototype:RemoveWhere(predicate)
+	function dictionary.prototype:RemoveWhere(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
@@ -597,10 +599,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Make a shallow clone of the Set.
 	-- @usage local other = dict:Clone()
-	function Dictionary.prototype:Clone()
+	function dictionary.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = Dictionary.New(nil, comparison_selectors[self])
+		local other = dictionary.New(nil, comparison_selectors[self])
 		local contract = contracts[self]
 		if contract then
 			other:SetContract(contracts[self])
@@ -612,24 +614,24 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function Dictionary.prototype:Any(predicate)
+	function dictionary.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return (next(tables[self])) ~= nil
 		else
-			return Enumerable.prototype.Any(self, predicate)
+			return enumerable.prototype.Any(self, predicate)
 		end
 	end
 	
-	Dictionary.prototype.Contains = Dictionary.prototype.ContainsKey
+	dictionary.prototype.Contains = dictionary.prototype.ContainsKey
 
-	function Dictionary.prototype:MemoizeAll()
+	function dictionary.prototype:MemoizeAll()
 		return self
 	end
 	
-	function Dictionary.prototype:ToString()
+	function dictionary.prototype:ToString()
 		check(1, self, 'userdata')
 
 		local t = {}
@@ -651,7 +653,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return table_concat(t)
 	end
 	
-	function Dictionary.prototype:ForEach(action)
+	function dictionary.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -681,7 +683,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	--- Return a lua iterator that returns the index, key, and value of each element and can be used in for loops.
 	-- @usage for index, key, value in Dictionary.New({ a = 1, b = 2 }):Iterate() do end
-	function Dictionary.prototype:Iterate()
+	function dictionary.prototype:Iterate()
 		local hash_key
 		return function(self, index)
 			local value
@@ -713,7 +715,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- If the action returns false, that will act as a break and prevent any more execution on the sequence.
 	-- @param action a function that takes the key, value, and the 1-based index of the element.
 	-- @usage dict:ForEachByPair(function(key, value, index) end)
-	function Dictionary.prototype:ForEachByPair(action)
+	function dictionary.prototype:ForEachByPair(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -748,19 +750,19 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param selector the transform function which takes the key, value, and the 1-based index
 	-- @return an Enumerable
 	-- @usage dict:SelectByPair(function(key, value, index) return key.."="..value end)
-	function Dictionary.prototype:SelectByPair(selector)
+	function dictionary.prototype:SelectByPair(selector)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 
 		selector = convert_function(selector)
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local table = tables[self]
 			local key_lookup = key_lookups[self]
 			local index = 0
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -792,15 +794,15 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This may not return in a known order.
 	-- @return an Enumerable
 	-- @usage local keys = dict:Keys()
-	function Dictionary.prototype:Keys()
+	function dictionary.prototype:Keys()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local table = tables[self]
 			local key_lookup = key_lookups[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					key = next(table, key)
@@ -828,14 +830,14 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This may not return in a known order.
 	-- @return an Enumerable
 	-- @usage local values = dict:Values()
-	function Dictionary.prototype:Values()
+	function dictionary.prototype:Values()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local table = tables[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -905,15 +907,15 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return an Enumerable of KeyValuePair representing all the elements of the current Dictionary.
 	-- @return an Enumerable
 	-- @usage local kvps = dict:ToKeyValuePairs()
-	function Dictionary.prototype:ToKeyValuePairs()
+	function dictionary.prototype:ToKeyValuePairs()
 		check(1, self, 'userdata')
 
-		return Enumerable.New(function()
+		return enumerable.New(function()
 			local key
 			local table = tables[self]
 			local key_lookup = key_lookups[self]
 
-			return Enumerator.New(
+			return enumerator.New(
 				nil,
 				function(yield)
 					local value
@@ -945,7 +947,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @return a random key in the Dictionary
 	-- @return a random value in the Dictionary
 	-- @usage local key, value = dict:PickAndRemoveRandom()
-	function Dictionary.prototype:PickAndRemoveRandom()
+	function dictionary.prototype:PickAndRemoveRandom()
 		check(1, self, 'userdata')
 		
 		if readonlys[self] then
@@ -987,7 +989,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Dictionary.New({ hey = "there" }):ToTable()["hey"] == "there"
 	-- @usage Dictionary.New({ hey = "there" }):ToTable("list")[1] == "hey"
 	-- @usage Dictionary.New({ hey = "there" }):ToTable("set")["hey"] == true
-	function Dictionary.prototype:ToTable(kind)
+	function dictionary.prototype:ToTable(kind)
 		check(1, self, 'userdata')
 		check(2, kind, 'nil', 'string')
 
@@ -1023,7 +1025,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToDictionary(function(x) return x:sub(1, 1) end)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToDictionary(function(x) return x:sub(1, 1) end, string.lower)
 	-- @usage Enumerable.From({ "Alpha", "Bravo", "Charlie" }):ToDictionary(function(x) return x:sub(1, 1) end, nil, string.upper)
-	function Enumerable.prototype:ToDictionary(key_selector, value_selector, comparison_selector)
+	function enumerable.prototype:ToDictionary(key_selector, value_selector, comparison_selector)
 		check(1, self, 'userdata')
 		check(2, key_selector, 'function', 'string')
 		check(3, value_selector, 'function', 'string', 'nil')
@@ -1034,7 +1036,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			value_selector = convert_function(value_selector)
 		end
 
-		local dict = Dictionary.New(nil, comparison_selector)
+		local dict = dictionary.New(nil, comparison_selector)
 		self:ForEach(function(item, index)
 			local key = key_selector(item, index)
 			local value
