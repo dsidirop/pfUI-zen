@@ -249,12 +249,9 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Dictionary.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
-		local source = self
-		local key_lookup = key_lookups[self]
+		local key
 		local table = tables[self]
-		local index = 0
-		
-		local key = nil
+		local key_lookup = key_lookups[self]
 
 		return Enumerator.New(
 			nil,
@@ -401,7 +398,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot alter a read-only Dictionary", 2)
 		end
 
-		Dictionary.From(other):ForEachByPair(function(k, v, i)
+		Dictionary.From(other):ForEachByPair(function(k, v)
 			self:Set(k, v)
 		end)
 	end
@@ -513,10 +510,11 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Dictionary.prototype:ContainsValue(value)
 		check(1, self, 'userdata')
 
-		for k, v in pairs(tables[self]) do
+		for _, v in pairs(tables[self]) do
 			if v == NIL then
 				v = nil
 			end
+
 			if v == value then
 				return true
 			end
@@ -684,7 +682,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return a lua iterator that returns the index, key, and value of each element and can be used in for loops.
 	-- @usage for index, key, value in Dictionary.New({ a = 1, b = 2 }):Iterate() do end
 	function Dictionary.prototype:Iterate()
-		local hash_key = nil
+		local hash_key
 		return function(self, index)
 			local value
 			hash_key, value = next(tables[self], hash_key)
