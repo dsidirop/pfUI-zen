@@ -10,7 +10,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 	local wipe = assert(Linquidate.Utilities.wipe)
 	local identity = assert(Linquidate.Utilities.identity)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
@@ -79,7 +79,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		tables[self] = {}
 		if comparison_selector then
 			key_lookups[self] = {}
-			comparison_selectors[self] = ConvertFunction(comparison_selector)
+			comparison_selectors[self] = convertFunction(comparison_selector)
 		end
 
 		if dict ~= nil then
@@ -567,7 +567,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove from a read-only Dictionary", 2)
 		end
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		local key_lookup = key_lookups[self]
 		
@@ -657,7 +657,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local index = 0
 		local key_lookup = key_lookups[self]
@@ -719,7 +719,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local index = 0
 		local key_lookup = key_lookups[self]
@@ -754,7 +754,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 
-		selector = ConvertFunction(selector)
+		selector = convertFunction(selector)
 
 		return Enumerable.New(function()
 			local key
@@ -1031,9 +1031,9 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(3, value_selector, 'function', 'string', 'nil')
 		check(4, comparison_selector, 'function', 'string', 'nil')
 
-		key_selector = ConvertFunction(key_selector)
+		key_selector = convertFunction(key_selector)
 		if value_selector then
-			value_selector = ConvertFunction(value_selector)
+			value_selector = convertFunction(value_selector)
 		end
 
 		local dict = Dictionary.New(nil, comparison_selector)

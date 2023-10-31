@@ -3,7 +3,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local assert = _G.assert
 	
 	local check = assert(Linquidate.Utilities.check)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 
 	local type = assert(_G.type)
 
@@ -133,7 +133,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, key_selector, 'function', 'string')
 
-		key_selector = ConvertFunction(key_selector)
+		key_selector = convertFunction(key_selector)
 
 		local max = nil
 		local max_key = nil
@@ -157,7 +157,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, key_selector, 'function', 'string')
 
-		key_selector = ConvertFunction(key_selector)
+		key_selector = convertFunction(key_selector)
 
 		local min = nil
 		local min_key = nil

@@ -4,7 +4,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 	local check = assert(Linquidate.Utilities.check)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 
 	local math_random = assert(_G.math.random)
 	local getmetatable = assert(_G.getmetatable)
@@ -58,7 +58,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(1, self, 'userdata')
 			check(2, key_selector, 'function', 'string')
 
-			return OrderedEnumerable.New(self, ConvertFunction(key_selector), false)
+			return OrderedEnumerable.New(self, convertFunction(key_selector), false)
 		end
 	
 		--- Sorts the elements of the sequence in descending order according to a key
@@ -70,7 +70,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(1, self, 'userdata')
 			check(2, key_selector, 'function', 'string')
 
-			return OrderedEnumerable.New(self, ConvertFunction(key_selector), true)
+			return OrderedEnumerable.New(self, convertFunction(key_selector), true)
 		end
 	
 		--- Adds a subsequent sort ordering the elements of the sequence in ascending order according to a key
@@ -82,7 +82,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(1, self, 'userdata')
 			check(2, key_selector, 'function', 'string')
 
-			return OrderedEnumerable.New(sources[self], ConvertFunction(key_selector), false, self)
+			return OrderedEnumerable.New(sources[self], convertFunction(key_selector), false, self)
 		end
 	
 		--- Adds a subsequent sort ordering the elements of the sequence in descending order according to a key
@@ -94,7 +94,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(1, self, 'userdata')
 			check(2, key_selector, 'function', 'string')
 
-			return OrderedEnumerable.New(sources[self], ConvertFunction(key_selector), true, self)
+			return OrderedEnumerable.New(sources[self], convertFunction(key_selector), true, self)
 		end
 
 		local generate_comparer

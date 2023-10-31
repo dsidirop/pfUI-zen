@@ -9,7 +9,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 	local wipe = assert(Linquidate.Utilities.wipe)
 	local identity = assert(Linquidate.Utilities.identity)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
@@ -78,11 +78,11 @@ _G.Linquidate_Loader(function(Linquidate)
 		values_to_keys[self] = {}
 		if key_comparison_selector then
 			key_lookups[self] = {}
-			key_comparison_selectors[self] = ConvertFunction(key_comparison_selector)
+			key_comparison_selectors[self] = convertFunction(key_comparison_selector)
 		end
 		if value_comparison_selector then
 			value_lookups[self] = {}
-			value_comparison_selectors[self] = ConvertFunction(value_comparison_selector)
+			value_comparison_selectors[self] = convertFunction(value_comparison_selector)
 		end
 
 		if dict ~= nil then
@@ -588,7 +588,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove from a read-only BidirectionalDictionary", 2)
 		end
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		local key_lookup = key_lookups[self]
 		local value_lookup = value_lookups[self]
@@ -726,7 +726,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local index = 0
 		local key_lookup = key_lookups[self]
@@ -788,7 +788,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local index = 0
 		local key_lookup = key_lookups[self]
@@ -823,7 +823,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 
-		selector = ConvertFunction(selector)
+		selector = convertFunction(selector)
 
 		return Enumerable.New(function()
 			local key
@@ -1104,9 +1104,9 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(4, key_comparison_selector, 'function', 'string', 'nil')
 		check(5, value_comparison_selector, 'function', 'string', 'nil')
 
-		key_selector = ConvertFunction(key_selector)
+		key_selector = convertFunction(key_selector)
 		if value_selector then
-			value_selector = ConvertFunction(value_selector)
+			value_selector = convertFunction(value_selector)
 		end
 
 		local dict = BidirectionalDictionary.New(nil, comparison_selector, value_comparison_selector)

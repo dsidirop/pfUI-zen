@@ -9,7 +9,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local check = assert(Linquidate.Utilities.check)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 	local wipe = assert(Linquidate.Utilities.wipe)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 
 	local math_floor = assert(_G.math.floor)
@@ -505,7 +505,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove elements from a read-only List", 2)
 		end
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		local i = 0
 		local table = tables[self]
@@ -1110,7 +1110,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local table = tables[self]
 		local index = 0

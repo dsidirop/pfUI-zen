@@ -6,7 +6,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 
 	local tryfinally = assert(Linquidate.Utilities.tryfinally)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 
 	local type = assert(_G.type)
 	
@@ -25,8 +25,8 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(2, func, 'function', 'string')
 			check(3, result_selector, 'function', 'string', 'nil')
 			
-			func = ConvertFunction(func)
-			result_selector = ConvertFunction(result_selector)
+			func = convertFunction(func)
+			result_selector = convertFunction(result_selector)
 
 			return Enumerable.New(function()
 				local enumerator
@@ -83,8 +83,8 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(2, func, 'function', 'string')
 		check(3, result_selector, 'function', 'string', 'nil')
 		
-		func = ConvertFunction(func)
-		result_selector = ConvertFunction(result_selector)
+		func = convertFunction(func)
+		result_selector = convertFunction(result_selector)
 
 		return Enumerable.New(function()
 			local enumerator_stack = {}
@@ -180,7 +180,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 
-		selector = ConvertFunction(selector)
+		selector = convertFunction(selector)
 
 		return Enumerable.New(function()
 			local enumerator
@@ -229,7 +229,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			func = seed
 		end
 
-		func = ConvertFunction(func)
+		func = convertFunction(func)
 
 		return Enumerable.New(function()
 			local enumerator
@@ -276,7 +276,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, selector, 'function', 'string')
 		
-		selector = ConvertFunction(selector)
+		selector = convertFunction(selector)
 	
 		return Enumerable.New(function()
 			local enumerator = nil
@@ -310,8 +310,8 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(2, collection_selector, 'function', 'string')
 			check(2, result_selector, 'function', 'string', 'nil')
 
-			collection_selector = ConvertFunction(collection_selector)
-			result_selector = ConvertFunction(result_selector or SelectMany_default_result_selector)
+			collection_selector = convertFunction(collection_selector)
+			result_selector = convertFunction(result_selector or SelectMany_default_result_selector)
 
 			return Enumerable.New(function()
 				local enumerator
@@ -361,7 +361,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 	
 		return Enumerable.New(function()
 			local enumerator
@@ -416,7 +416,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(2, second, 'userdata', 'table')
 		check(3, selector, 'function', 'string')
 
-		selector = ConvertFunction(selector)
+		selector = convertFunction(selector)
 
 		return Enumerable.New(function()
 			local first_enumerator

@@ -9,7 +9,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local check = assert(Linquidate.Utilities.check)
 	local wipe = assert(Linquidate.Utilities.wipe)
 	local identity = assert(Linquidate.Utilities.identity)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 
 	local getmetatable = assert(_G.getmetatable)
@@ -75,7 +75,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local self = newproxy(Set_proxy)
 
 		tables[self] = {}
-		comparison_selectors[self] = comparison_selector and ConvertFunction(comparison_selector)
+		comparison_selectors[self] = comparison_selector and convertFunction(comparison_selector)
 
 		if sequence then
 			self:UnionWith(sequence)
@@ -90,7 +90,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Set.FromArguments(comparison_selector, ...)
 		check(1, comparison_selector, 'function', 'string', 'nil')
 
-		local self = Set.New(nil, comparison_selector and ConvertFunction(comparison_selector))
+		local self = Set.New(nil, comparison_selector and convertFunction(comparison_selector))
 
 		self:AddMany(...)
 
@@ -281,7 +281,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
-		action = ConvertFunction(action)
+		action = convertFunction(action)
 
 		local table = tables[self]
 		local has_comparison_selector = not not comparison_selectors[self]
@@ -451,7 +451,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot remove from a read-only Set", 2)
 		end
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		local has_comparison_selector = not not comparison_selectors[self]
 		

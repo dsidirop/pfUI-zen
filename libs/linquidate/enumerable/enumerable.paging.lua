@@ -4,7 +4,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	local check = assert(Linquidate.Utilities.check)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 	
 	local error = assert(_G.error)
 	local math_floor = assert(_G.math.floor)
@@ -309,7 +309,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		return Enumerable.New(function()
 			local enumerator
@@ -386,7 +386,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		return Enumerable.New(function()
 			local enumerator

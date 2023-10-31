@@ -6,7 +6,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	local identity = assert(Linquidate.Utilities.identity)
 	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 	local tryfinally = assert(Linquidate.Utilities.tryfinally)
-	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
 
 	local Enumerable = assert(Linquidate.Enumerable)
 	local Enumerator = assert(Linquidate.Enumerator)
@@ -21,7 +21,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string')
 
-		predicate = ConvertFunction(predicate)
+		predicate = convertFunction(predicate)
 
 		local result = true
 		self:ForEach(function(x, i)
@@ -53,7 +53,7 @@ _G.Linquidate_Loader(function(Linquidate)
 				safe_dispose(enumerator)
 			end)
 		else
-			predicate = ConvertFunction(predicate)
+			predicate = convertFunction(predicate)
 			local result = false
 			self:ForEach(function(x, i)
 				if predicate(x, i) then
@@ -185,7 +185,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(2, second, 'userdata', 'table')
 			check(3, compare_selector, 'function', 'string', 'nil')
 
-			compare_selector = ConvertFunction(compare_selector)
+			compare_selector = convertFunction(compare_selector)
 
 			return Enumerable.New(function()
 				local enumerator
@@ -239,7 +239,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(2, second, 'userdata', 'table')
 			check(3, compare_selector, 'function', 'string', 'nil')
 
-			compare_selector = ConvertFunction(compare_selector)
+			compare_selector = convertFunction(compare_selector)
 
 			return Enumerable.New(function()
 				local enumerator
@@ -289,7 +289,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(2, second, 'userdata', 'table')
 		check(3, compare_selector, 'function', 'string', 'nil')
 
-		compare_selector = ConvertFunction(compare_selector)
+		compare_selector = convertFunction(compare_selector)
 
 		local first_enumerator = self:GetEnumerator()
 		return tryfinally(function()
@@ -322,7 +322,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			check(2, second, 'userdata', 'table')
 			check(3, compare_selector, 'function', 'string', 'nil')
 
-			compare_selector = ConvertFunction(compare_selector)
+			compare_selector = convertFunction(compare_selector)
 
 			return Enumerable.New(function()
 				local enumerator
