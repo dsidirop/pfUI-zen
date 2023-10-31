@@ -10,7 +10,7 @@ local assert = _G.assert(_G.assert)
 local table_remove = assert(_G.table.remove)
 local type = assert(_G.type)
 local Linquidate = _G.LibStub("Linquidate")
-while #funcs > 0 do
+while table.getn(funcs) > 0 do
 	local func = table_remove(funcs, 1)
 	if type(func) == "function" then
 		func(Linquidate)
