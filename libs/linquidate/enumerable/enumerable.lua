@@ -14,8 +14,6 @@ _G.Linquidate_Loader(function(Linquidate)
 	local table_concat = assert(_G.table.concat)
 	local tostring = assert(_G.tostring)
 
-	local Enumerator = assert(Linquidate.Enumerator)
-
 	--- A class that exposes an enumerator and supports simiple iteration as well as helper methods.
 	local Enumerable = Linquidate.Enumerable or {}
 	do
@@ -92,7 +90,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 		local t = {}
 		if kind == 'set' then
-			self:ForEach(function(x, i)
+			self:ForEach(function(x, _)
 				if x ~= nil then
 					t[x] = true
 				end

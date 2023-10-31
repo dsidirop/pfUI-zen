@@ -5,7 +5,7 @@
 ## Author: dsidirop
 ## LoadOnDemand: 0
 ## Dependencies: pfUI
-## OptionalDeps: libstub linquidate
+## OptionalDeps: LibStub Linquidate
 ## SavedVariables:
 ## SavedVariablesPerCharacter:
 ## X-Date: Oct 25, 2023
@@ -13,8 +13,10 @@
 ## X-Website: github.com/dsidirop/pfUI-zen
 ## X-Category: Interface Enhancements
 
+# startregion  localdev_libs
 libs\libstub\libstub.xml
 libs\linquidate\linquidate.xml
+# endregion    localdev_libs
 
 # main
 pfUI-zen.lua
