@@ -1,18 +1,18 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 	
 	local error = assert(_G.error)
 	local math_floor = assert(_G.math.floor)
 	local math_random = assert(_G.math.random)
 	local table_remove = assert(_G.table.remove)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Return the element at a specified index in a sequence.
 	-- This will error if the element does not exist.

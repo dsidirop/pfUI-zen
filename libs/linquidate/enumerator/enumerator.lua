@@ -1,12 +1,12 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local check = assert(LibLinq.Utilities.check)
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local TryCatch = assert(LibLinq.Utilities.TryCatch)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local tostring2 = assert(LibLinq.Utilities.tostring2)
+	local check = assert(Linquidate.Utilities.check)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local trycatch = assert(Linquidate.Utilities.trycatch)
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 
 	local newproxy = assert(_G.newproxy)
 	local getmetatable = assert(_G.getmetatable)
@@ -45,9 +45,9 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	end
 
 	--- A class that supports simple iteration
-	local Enumerator = LibLinq.Enumerator or {}
+	local Enumerator = Linquidate.Enumerator or {}
 	do
-		LibLinq.Enumerator = Enumerator
+		Linquidate.Enumerator = Enumerator
 		Enumerator.prototype = {} -- overwrite the prototype regardless, let old Enumerators live on old code.
 
 		local Enumerator_proxy = newproxy(true)
@@ -113,7 +113,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		--- Advances the Enumerator to the next item in the sequence
 		-- @return whether the Enumerator successfully advanced, false if passed the end of the sequence.
 		function Enumerator.prototype:MoveNext()
-			return TryCatch(function()
+			return trycatch(function()
 				return move_next_switch[states[self]](self)
 			end, function()
 				self:Dispose()
@@ -129,7 +129,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 			end
 
 			local dispose = disposers[self]
-			TryFinally(function()
+			tryfinally(function()
 				if dispose then
 					dispose()
 				end
@@ -166,7 +166,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				return "Enumerator-State:Before"
 			end,
 			[State.Running] = function(self)
-				return "Enumerator-State:Running-Current:" .. tostring2(self:Current())
+				return "Enumerator-State:Running-Current:" .. tostring_q(self:Current())
 			end,
 			[State.After] = function(self)
 				return "Enumerator-State:After"

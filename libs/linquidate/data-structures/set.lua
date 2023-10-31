@@ -1,16 +1,16 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
-	local make_weak_table = assert(LibLinq.Utilities.make_weak_table)
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local check = assert(LibLinq.Utilities.check)
-	local wipe = assert(LibLinq.Utilities.wipe)
-	local identity = assert(LibLinq.Utilities.identity)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
-	local tostring2 = assert(LibLinq.Utilities.tostring2)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
+	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local check = assert(Linquidate.Utilities.check)
+	local wipe = assert(Linquidate.Utilities.wipe)
+	local identity = assert(Linquidate.Utilities.identity)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
 
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
@@ -23,13 +23,13 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	local pcall = assert(_G.pcall)
 	local table_sort = assert(_G.table.sort)
 
-	local Set = LibLinq.Set or {}
+	local Set = Linquidate.Set or {}
 	if not Set.prototype then
 		Set.prototype = {}
 	end
 	setmetatable(Set.prototype, {__index=Enumerable.prototype})
 	
-	LibLinq.Set = Set
+	Linquidate.Set = Set
 	local Set_proxy = newproxy(true)
 	local Set_mt = getmetatable(Set_proxy)
 	Set_mt.__index = Set.prototype
@@ -210,7 +210,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 			end
 
 			if not contract(value) then
-				error(("Element %s does not meet the contract for this Set."):format(tostring2(value)), 2)
+				error(("Element %s does not meet the contract for this Set."):format(tostring_q(value)), 2)
 			end
 		end
 	end
@@ -362,7 +362,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this Set."):format(tostring2(item)), 2)
+			error(("Element %s does not meet the contract for this Set."):format(tostring_q(item)), 2)
 		end
 
 		local table = tables[self]
@@ -611,7 +611,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		for k, v in pairs(other_table) do
 			if table[k] == nil then
 				if contract and not contract(v) then
-					error(("Element %s does not meet the contract for this Set."):format(tostring2(v)), 2)
+					error(("Element %s does not meet the contract for this Set."):format(tostring_q(v)), 2)
 				end
 				table[k] = v
 			else

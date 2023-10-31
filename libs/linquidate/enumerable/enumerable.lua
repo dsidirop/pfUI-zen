@@ -1,12 +1,12 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local check = assert(LibLinq.Utilities.check)
-	local tostring2 = assert(LibLinq.Utilities.tostring2)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local check = assert(Linquidate.Utilities.check)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
 
 	local newproxy = assert(_G.newproxy)
 	local getmetatable = assert(_G.getmetatable)
@@ -14,12 +14,12 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	local table_concat = assert(_G.table.concat)
 	local tostring = assert(_G.tostring)
 
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- A class that exposes an enumerator and supports simiple iteration as well as helper methods.
-	local Enumerable = LibLinq.Enumerable or {}
+	local Enumerable = Linquidate.Enumerable or {}
 	do
-		LibLinq.Enumerable = Enumerable
+		Linquidate.Enumerable = Enumerable
 		if not Enumerable.prototype then
 			Enumerable.prototype = {}
 		end
@@ -121,7 +121,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				t[#t+1] = '...'
 				return false
 			end
-			t[#t+1] = tostring2(value)
+			t[#t+1] = tostring_q(value)
 		end)
 		t[#t+1] = ']'
 		return table_concat(t)
@@ -143,7 +143,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		local enumerator = self:GetEnumerator()
 
-		return TryFinally(function()
+		return tryfinally(function()
 			return unpack_helper(enumerator)
 		end, function()
 			safe_dispose(enumerator)

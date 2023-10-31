@@ -1,17 +1,17 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local check = assert(LibLinq.Utilities.check)
-	local identity = assert(LibLinq.Utilities.identity)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
 	local type = assert(_G.type)
 	
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	do
 		local NIL = _G.newproxy()
@@ -113,7 +113,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 						enumerator_stack[#enumerator_stack] = nil
 					end
 				end, function ()
-					TryFinally(function()
+					tryfinally(function()
 						safe_dispose(enumerator)
 					end, function()
 						for i = 1, #enumerator_stack do
@@ -162,7 +162,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 						end
 					end
 				end, function()
-					TryFinally(function()
+					tryfinally(function()
 						safe_dispose(enumerator)
 					end, function()
 						safe_dispose(middle_enumerator)
@@ -342,7 +342,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 					return false
 				end, function()
-					TryFinally(function()
+					tryfinally(function()
 						safe_dispose(enumerator)
 					end, function()
 						safe_dispose(middle_enumerator)
@@ -435,7 +435,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 						return false
 					end
 				end, function()
-					TryFinally(function()
+					tryfinally(function()
 						safe_dispose(first_enumerator)
 					end, function()
 						safe_dispose(second_enumerator)

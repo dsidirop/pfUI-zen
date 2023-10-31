@@ -1,13 +1,13 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local check = assert(LibLinq.Utilities.check)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Bind the enumerable to a parameter so that it can be used multiple times
 	-- @param func a function to act on the enumerable with that should return another sequence

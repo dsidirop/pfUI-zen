@@ -1,10 +1,10 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local check = assert(LibLinq.Utilities.check)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local check = assert(Linquidate.Utilities.check)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
 	local math_random = assert(_G.math.random)
 	local getmetatable = assert(_G.getmetatable)
@@ -15,8 +15,8 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	local tostring = assert(_G.tostring)
 	local table_sort = _G.table.sort
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 	do
 		local OrderedEnumerable = { prototype = {} }
 		setmetatable(OrderedEnumerable.prototype, {__index=Enumerable.prototype})
@@ -193,7 +193,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 			comparers['function'] = function(left, right)
 				return tostring(left) < tostring(right)
 			end
-			comparers['nil'] = function(left, right)
+			comparers['nil'] = function(_, _)
 				return 0
 			end
 			comparers.userdata = comparers.table
