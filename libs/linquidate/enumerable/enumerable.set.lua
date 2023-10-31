@@ -1,15 +1,15 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local identity = assert(LibLinq.Utilities.identity)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local identity = assert(Linquidate.Utilities.identity)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Return whether all elements in the sequence satisfy a predicate
 	-- @param predicate a function that takes an element and the index and returns a boolean
@@ -47,7 +47,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		if not predicate then
 			local enumerator = self:GetEnumerator()
-			return TryFinally(function()
+			return tryfinally(function()
 				return enumerator:MoveNext()
 			end, function()
 				safe_dispose(enumerator)
@@ -292,9 +292,9 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		compare_selector = ConvertFunction(compare_selector)
 
 		local first_enumerator = self:GetEnumerator()
-		return TryFinally(function()
+		return tryfinally(function()
 			local second_enumerator = Enumerable.From(second):GetEnumerator()
-			return TryFinally(function()
+			return tryfinally(function()
 				while first_enumerator:MoveNext() do
 					if not second_enumerator:MoveNext() or compare_selector(first_enumerator:Current()) ~= compare_selector(second_enumerator:Current()) then
 						return false

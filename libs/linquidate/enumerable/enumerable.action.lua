@@ -1,14 +1,14 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Return an enumerable that when looped over, runs an action but returns the current value regardless.
 	-- @param action a function to call that has the element and the 1-based index passed in.
@@ -53,7 +53,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		local index = 0
 		local enumerator = self:GetEnumerator()
-		TryFinally(function()
+		tryfinally(function()
 			while enumerator:MoveNext() do
 				index = index + 1
 				if action(enumerator:Current(), index) == false then
@@ -68,7 +68,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	--- Iterate over an enumerable, forcing it to execute
 	function Enumerable.prototype:Force()
 		local enumerator = self:GetEnumerator()
-		TryFinally(function()
+		tryfinally(function()
 			while enumerator:MoveNext() do
 				-- nothing
 			end

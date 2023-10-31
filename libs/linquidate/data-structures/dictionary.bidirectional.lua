@@ -1,16 +1,15 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local make_weak_table = assert(LibLinq.Utilities.make_weak_table)
-	local check = assert(LibLinq.Utilities.check)
-	local tostring2 = assert(LibLinq.Utilities.tostring2)
-	local wipe = assert(LibLinq.Utilities.wipe)
-	local identity = assert(LibLinq.Utilities.identity)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local check = assert(Linquidate.Utilities.check)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local wipe = assert(Linquidate.Utilities.wipe)
+	local identity = assert(Linquidate.Utilities.identity)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 	
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
@@ -24,13 +23,13 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	local pcall = assert(_G.pcall)
 	local table_sort = assert(_G.table.sort)
 
-	local BidirectionalDictionary = LibLinq.BidirectionalDictionary or {}
+	local BidirectionalDictionary = Linquidate.BidirectionalDictionary or {}
 	if not BidirectionalDictionary.prototype then
 		BidirectionalDictionary.prototype = {}
 	end
 	setmetatable(BidirectionalDictionary.prototype, {__index=Enumerable.prototype})
 	
-	LibLinq.BidirectionalDictionary = BidirectionalDictionary
+	Linquidate.BidirectionalDictionary = BidirectionalDictionary
 	local BidirectionalDictionary_proxy = newproxy(true)
 	local BidirectionalDictionary_mt = getmetatable(BidirectionalDictionary_proxy)
 	BidirectionalDictionary_mt.__index = BidirectionalDictionary.prototype
@@ -91,7 +90,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				for k, v in pairs(dict) do
 					self:Add(k, v)
 				end
-			elseif LibLinq.Dictionary.IsDictionary(dict) then
+			elseif Linquidate.Dictionary.IsDictionary(dict) then
 				dict:ForEachByPair(function(k, v)
 					self:Add(k, v)
 				end)
@@ -131,7 +130,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 			end
 
 			if not contract(key, value) then
-				error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary."):format(tostring2(key), tostring2(value)), 2)
+				error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary."):format(tostring_q(key), tostring_q(value)), 2)
 				break
 			end
 		end
@@ -199,12 +198,9 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	function BidirectionalDictionary.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
-		local source = self
-		local key_lookup = key_lookups[self]
+		local key
 		local table = keys_to_values[self]
-		local index = 0
-		
-		local key = nil
+		local key_lookup = key_lookups[self]
 
 		return Enumerator.New(
 			nil,
@@ -247,7 +243,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		local contract = contracts[self]
 		if contract and not contract(key, value) then
-			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring2(key), tostring2(value)), 2)
+			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring_q(key), tostring_q(value)), 2)
 		end
 
 		local key_comparison_selector = key_comparison_selectors[self]
@@ -316,7 +312,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 
 		local contract = contracts[self]
 		if contract and not contract(key, value) then
-			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring2(key), tostring2(value)), 2)
+			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring_q(key), tostring_q(value)), 2)
 		end
 
 		local key_comparison_selector = key_comparison_selectors[self]
@@ -404,7 +400,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 			error("Cannot alter a read-only BidirectionalDictionary", 2)
 		end
 
-		LibLinq.Dictionary.From(other):ForEachByPair(function(k, v, i)
+		Linquidate.Dictionary.From(other):ForEachByPair(function(k, v, _)
 			self:Set(k, v)
 		end)
 	end
@@ -718,9 +714,9 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				t[#t+1] = '...'
 				return false
 			end
-			t[#t+1] = tostring2(key)
+			t[#t+1] = tostring_q(key)
 			t[#t+1] = ': '
-			t[#t+1] = tostring2(value)
+			t[#t+1] = tostring_q(value)
 		end)
 		t[#t+1] = ']'
 		return table_concat(t)
@@ -757,7 +753,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	--- Return a lua iterator that returns the index, key, and value of each element and can be used in for loops.
 	-- @usage for index, key, value in BidirectionalDictionary.New({ a = 1, b = 2 }):Iterate() do end
 	function BidirectionalDictionary.prototype:Iterate()
-		local hash_key = nil
+		local hash_key
 		return function(self, index)
 			local value
 			hash_key, value = next(keys_to_values[self], hash_key)
@@ -952,7 +948,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		end
 
 		function KeyValuePair.prototype:ToString()
-			return "KeyValuePair(" .. tostring2(keys[self]) .. ", " .. tostring2(values[self]) .. ")"
+			return "KeyValuePair(" .. tostring_q(keys[self]) .. ", " .. tostring_q(values[self]) .. ")"
 		end
 
 		--- Return the key of the current KeyValuePair

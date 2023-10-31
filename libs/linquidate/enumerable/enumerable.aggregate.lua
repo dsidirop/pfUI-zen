@@ -1,14 +1,14 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
 	local type = assert(_G.type)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Apply an accumulation function over a sequence
 	-- @param seed optional: The initial accumulation seed

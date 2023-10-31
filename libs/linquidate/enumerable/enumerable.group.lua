@@ -1,14 +1,14 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local make_weak_keyed_table = assert(LibLinq.Utilities.make_weak_keyed_table)
-	local TryFinally = assert(LibLinq.Utilities.TryFinally)
-	local safe_dispose = assert(LibLinq.Utilities.safe_dispose)
-	local identity = assert(LibLinq.Utilities.identity)
-	local tostring2 = assert(LibLinq.Utilities.tostring2)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
+	local tryfinally = assert(Linquidate.Utilities.tryfinally)
+	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local identity = assert(Linquidate.Utilities.identity)
+	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
 	local newproxy = assert(_G.newproxy)
 	local getmetatable = assert(_G.getmetatable)
@@ -18,8 +18,8 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 	local type = assert(_G.type)
 	local rawget = assert(_G.rawget)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 	
 	--- Correlate the elements of two sequences based on matching keys
 	-- @param inner the inner sequence to join on
@@ -37,9 +37,9 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		check(5, result_selector, 'function', 'string')
 		check(6, compare_selector, 'function', 'string', 'nil')
 
+		result_selector = ConvertFunction(result_selector)
 		outer_key_selector = ConvertFunction(outer_key_selector)
 		inner_key_selector = ConvertFunction(inner_key_selector)
-		result_selector = ConvertFunction(result_selector)
 		if compare_selector then
 			compare_selector = ConvertFunction(compare_selector)
 		end
@@ -47,7 +47,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 		return Enumerable.New(function()
 			local outer_enumerator
 			local lookup
-			local inner_enumerator = nil
+			local inner_enumerator
 
 			return Enumerator.New(
 				function()
@@ -73,7 +73,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 					end
 				end,
 				function()
-					TryFinally(function()
+					tryfinally(function()
 						inner_enumerator = safe_dispose(inner_enumerator)
 					end, function()
 						outer_enumerator = safe_dispose(outer_enumerator)
@@ -208,7 +208,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				check(1, self, 'userdata')
 			
 				local i = 0
-				for k in pairs(dicts[self]) do
+				for _ in pairs(dicts[self]) do
 					i = i + 1
 				end
 				return i
@@ -271,7 +271,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				local key_lookup = key_lookups[self]
 
 				return Enumerable.New(function()
-					local key = nil
+					local key
 					return Enumerator.New(
 						nil,
 						function(yield)
@@ -301,7 +301,7 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				local keys = make_weak_keyed_table()
 				local lists = make_weak_keyed_table()
 
-				--- Contruct and return a grouping based on the key and sequence provided
+				--- Construct and return a grouping based on the key and sequence provided
 				-- @param key the key representative of the grouping
 				-- @param elements the elements contained within the grouping
 				-- @return a Grouping
@@ -337,10 +337,10 @@ _G.LibLinq_1_0_Loader(function(LibLinq)
 				function Grouping.prototype:ToString()
 					check(1, self, 'userdata')
 
-					return "Grouping(Key: " .. tostring2(keys[self]) .. ", Values: " .. Enumerable.prototype.ToString(self) .. ")"
+					return "Grouping(Key: " .. tostring_q(keys[self]) .. ", Values: " .. Enumerable.prototype.ToString(self) .. ")"
 				end
 
-				_G.LibLinq_1_0_Loader(function(LibLinq)
+				_G.Linquidate_Loader(function(_)
 					for k, v in pairs(Enumerable.prototype) do
 						if type(k) == "string" and type(v) == "function" and rawget(Grouping.prototype, k) == nil then
 							Grouping.prototype[k] = function(self, ...)

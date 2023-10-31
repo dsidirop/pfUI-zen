@@ -1,17 +1,17 @@
-_G.LibLinq_1_0_Loader(function(LibLinq)
+_G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 	
-	local check = assert(LibLinq.Utilities.check)
-	local ConvertFunction = assert(LibLinq.Utilities.ConvertFunction)
+	local check = assert(Linquidate.Utilities.check)
+	local ConvertFunction = assert(Linquidate.Utilities.ConvertFunction)
 
 	local type = assert(_G.type)
 	local select = assert(_G.select)
 	local error = assert(_G.error)
 	local math_random = assert(_G.math.random)
 
-	local Enumerable = assert(LibLinq.Enumerable)
-	local Enumerator = assert(LibLinq.Enumerator)
+	local Enumerable = assert(Linquidate.Enumerable)
+	local Enumerator = assert(Linquidate.Enumerator)
 
 	--- Return an Enumerable that represents an infinite sequence of randomly chosen items in the arguments.
 	-- @param ... Either a list-like table or multiple arguments to choose.
