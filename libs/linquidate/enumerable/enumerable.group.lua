@@ -389,7 +389,7 @@ _G.Linquidate_Loader(function(Linquidate)
 					dict[comparative_key] = array
 					keys[comparative_key] = key
 				else
-					array[#array+1] = element
+					array[table.getn(array)+1] = element
 				end
 			end)
 		

@@ -137,7 +137,7 @@ _G.Linquidate_Loader(function(Linquidate)
 					nil,
 					function(yield)
 						index = index + 1
-						if index <= #obj then
+						if index <= table.getn(obj) then
 							return yield(obj:sub(index, index))
 						else
 							return false

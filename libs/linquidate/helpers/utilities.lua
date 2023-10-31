@@ -70,12 +70,12 @@ _G.Linquidate_Loader(function(Linquidate)
 
             local t = {}
             for _ = 1, table.getn(arg) - 1 do
-                t[#t + 1] = (...)
-                t[#t + 1] = ", "
+                t[table.getn(t) + 1] = (...)
+                t[table.getn(t) + 1] = ", "
             end
 
-            t[#t + 1] = "or "
-            t[#t + 1] = select(table.getn(arg), ...)
+            t[table.getn(t) + 1] = "or "
+            t[table.getn(t) + 1] = select(table.getn(arg), ...)
             return table_concat(t)
         end
 

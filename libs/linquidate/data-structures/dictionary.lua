@@ -635,21 +635,21 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 
 		local t = {}
-		t[#t+1] = 'Dictionary['
+		t[table.getn(t)+1] = 'Dictionary['
 		self:OrderBy(identity):ForEach(function(key, i)
 			local value = self:Get(key)
 			if i > 1 then
-				t[#t+1] = ', '
+				t[table.getn(t)+1] = ', '
 			end
 			if i >= 11 then
-				t[#t+1] = '...'
+				t[table.getn(t)+1] = '...'
 				return false
 			end
-			t[#t+1] = tostring_q(key)
-			t[#t+1] = ': '
-			t[#t+1] = tostring_q(value)
+			t[table.getn(t)+1] = tostring_q(key)
+			t[table.getn(t)+1] = ': '
+			t[table.getn(t)+1] = tostring_q(value)
 		end)
-		t[#t+1] = ']'
+		t[table.getn(t)+1] = ']'
 		return table_concat(t)
 	end
 	
@@ -997,7 +997,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		if kind == "list" then
 			self:ForEach(function(k)
 				if k ~= nil then
-					t[#t + 1] = k
+					t[table.getn(t) + 1] = k
 				end
 			end)
 			table_sort(t, sorter)

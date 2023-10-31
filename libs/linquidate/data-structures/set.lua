@@ -852,7 +852,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		if kind == "list" then
 			self:ForEach(function(x)
 				if x ~= nil then
-					t[#t + 1] = x
+					t[table.getn(t) + 1] = x
 				end
 			end)
 			table_sort(t, sorter)

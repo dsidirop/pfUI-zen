@@ -860,7 +860,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
-			return counts[self] or #tables[self]
+			return counts[self] or table.getn(tables[self])
 		else
 			return Enumerable.prototype.Count(self, predicate)
 		end

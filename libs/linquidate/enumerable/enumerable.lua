@@ -112,18 +112,18 @@ _G.Linquidate_Loader(function(Linquidate)
 		check(1, self, 'userdata')
 	
 		local t = {}
-		t[#t+1] = '['
+		t[table.getn(t)+1] = '['
 		self:ForEach(function(value, i)
 			if i > 1 then
-				t[#t+1] = ', '
+				t[table.getn(t)+1] = ', '
 			end
 			if i >= 11 then
-				t[#t+1] = '...'
+				t[table.getn(t)+1] = '...'
 				return false
 			end
-			t[#t+1] = tostring_q(value)
+			t[table.getn(t)+1] = tostring_q(value)
 		end)
-		t[#t+1] = ']'
+		t[table.getn(t)+1] = ']'
 		return table_concat(t)
 	end
 
@@ -170,7 +170,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local t = {}
 		self:ForEach(function(item)
 			if item ~= nil then
-				t[#t+1] = tostring(item)
+				t[table.getn(t)+1] = tostring(item)
 			end
 		end)
 		return table_concat(t, separator or '')
