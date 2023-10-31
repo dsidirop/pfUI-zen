@@ -86,7 +86,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
             local type_argument = type(argument)
             for i = 1, table.getn(arg) do
-                if type_argument == (arg[i]) then
+                if type_argument == arg[i] then
                     return
                 end
             end
