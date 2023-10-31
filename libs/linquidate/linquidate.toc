@@ -3,12 +3,10 @@
 ## Notes: A collection and querying library for managing collections inspired by LINQ in C#
 ## Author: dsidirop
 ## LoadOnDemand: 1
-## Dependencies: wow-lua-polyfills
+## OptionalDeps: wow-lua-polyfills libstub
 ## X-Date: Oct 25, 2023
 ## X-License: GPL v3
 ## X-Website: github.com/dsidirop/linquidate
 ## X-Category: Library
-
-_libstub\libstub.lua
 
 linquidate.xml

@@ -5,6 +5,7 @@
 ## Author: dsidirop
 ## LoadOnDemand: 0
 ## Dependencies: pfUI
+## OptionalDeps: libstub linquidate
 ## SavedVariables:
 ## SavedVariablesPerCharacter:
 ## X-Date: Oct 25, 2023
@@ -12,7 +13,8 @@
 ## X-Website: github.com/dsidirop/pfUI-zen
 ## X-Category: Interface Enhancements
 
-libs\lazylualinq\lazylualinq.xml
+libs\libstub\libstub.xml
+libs\linquidate\linquidate.xml
 
 # main
 pfUI-zen.lua
