@@ -47,7 +47,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             __.T["Thirdparty"],
             __.T["|cFF7FFFD4Zen"],
             function()
-                __.pfUI.gui.CreateConfig(nil, "Loot", nil, nil, "header")
+                local lootHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
+                lootHeader:GetParent().objectCount = lootHeader:GetParent().objectCount - 1
+                lootHeader:SetHeight(20)
                 
                 __.pfUI.gui.CreateConfig(
                         function()
@@ -62,7 +64,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             end
     )
     
-    pfUI:UpdateConfig("Zen", "Loot", preferences.loot.green_items_autogambling_mode, "roll_greed")
+    pfUI:UpdateConfig("Zen", nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
     
     ----------------
 
