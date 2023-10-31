@@ -2,8 +2,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
+	local enumerable = assert(Linquidate.Enumerable)
+	local enumerator = assert(Linquidate.Enumerator)
 	
 	local wipe = assert(Linquidate.Utilities.wipe)
 	local check = assert(Linquidate.Utilities.check)
@@ -18,30 +18,30 @@ _G.Linquidate_Loader(function(Linquidate)
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
 
-	local Queue = Linquidate.Queue or {}
+	local queue = Linquidate.Queue or {}
 
-	Linquidate.Queue = Queue
+	Linquidate.Queue = queue
 
-	if not Queue.prototype then
-		Queue.prototype = {}
+	if not queue.prototype then
+		queue.prototype = {}
 	end
-	setmetatable(Queue.prototype, {__index=Enumerable.prototype})
+	setmetatable(queue.prototype, { __index= enumerable.prototype})
 	
-	local Queue_proxy = newproxy(true)
-	local Queue_mt = getmetatable(Queue_proxy)
-	Queue_mt.__index = Queue.prototype
-	function Queue_mt:__tostring()
+	local queue_proxy = newproxy(true)
+	local queue_mt = getmetatable(queue_proxy)
+	queue_mt.__index = queue.prototype
+	function queue_mt:__tostring()
 		return self:ToString()
 	end
 	
-	local tables = make_weak_keyed_table(Queue.__tables)
-	Queue.__tables = tables
-	local heads = make_weak_keyed_table(Queue.__heads)
-	Queue.__heads = heads
-	local tails = make_weak_keyed_table(Queue.__tails)
-	Queue.__tails = tails
-	local contracts = make_weak_keyed_table(Queue.__contracts)
-	Queue.__contracts = contracts
+	local tables = make_weak_keyed_table(queue.__tables)
+	queue.__tables = tables
+	local heads = make_weak_keyed_table(queue.__heads)
+	queue.__heads = heads
+	local tails = make_weak_keyed_table(queue.__tails)
+	queue.__tails = tails
+	local contracts = make_weak_keyed_table(queue.__contracts)
+	queue.__contracts = contracts
 	
 	local SHRINK_THRESHOLD = 32
 	assert(SHRINK_THRESHOLD >= 1) -- do not remove this
@@ -52,17 +52,17 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local queue = Queue.New()
 	-- @usage local queue = Queue.New({ 1, 2, 3 })
 	-- @usage local queue = Queue.New(Enumerable.RangeTo(1, 10))
-	function Queue.New(sequence)
+	function queue.New(sequence)
 		check(1, sequence, 'userdata', 'table', 'nil')
 
-		local self = newproxy(Queue_proxy)
+		local self = newproxy(queue_proxy)
 
 		tables[self] = {}
 		heads[self] = 1
 		tails[self] = 0
 
 		if sequence ~= nil then
-			Enumerable.From(sequence):ForEach(function(item)
+			enumerable.From(sequence):ForEach(function(item)
 				self:Enqueue(item)
 			end)
 		end
@@ -76,8 +76,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local queue = Queue.FromArguments()
 	-- @usage local queue = Queue.FromArguments(1, 2, 3)
 	-- @usage local queue = Queue.FromArguments(nil, nil, 5)
-	function Queue.FromArguments(...)
-		local self = Queue.New()
+	function queue.FromArguments(...)
+		local self = queue.New()
 
 		for i = 1, table.getn(arg) do
 			self:Enqueue((arg[i]))
@@ -88,13 +88,13 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Return an Enumerator for the current Queue
 	-- @return an Enumerator
-	function Queue.prototype:GetEnumerator()
+	function queue.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
 		local table = tables[self]
 		local index
 
-		return Enumerator.New(
+		return enumerator.New(
 			function()
 				index = heads[self] - 1
 			end,
@@ -112,7 +112,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this Queue is valid for all elements in the Queue.
 	-- If there is no contract, this does nothing.
 	-- @usage queue:VerifyContract()
-	function Queue.prototype:VerifyContract()
+	function queue.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -140,7 +140,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the element and should return whether the element is valid.
 	-- @usage queue:SetContract(function(v) return type(v) == "string" end)
-	function Queue.prototype:SetContract(contract)
+	function queue.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 
@@ -151,7 +151,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the Queue is read-only, always returns false.
 	-- @return a boolean
 	-- @usage local read_only = stack:IsReadOnly()
-	function Queue.prototype:IsReadOnly()
+	function queue.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return false
@@ -161,7 +161,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item the element to add
 	-- @usage queue:Enqueue(5)
 	-- @usage queue:Enqueue(nil)
-	function Queue.prototype:Enqueue(item)
+	function queue.prototype:Enqueue(item)
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -196,7 +196,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the Queue contains no elements.
 	-- @return The item removed.
 	-- @usage local removed = queue:Dequeue()
-	function Queue.prototype:Dequeue()
+	function queue.prototype:Dequeue()
 		check(1, self, 'userdata')
 
 		local head = heads[self]
@@ -218,7 +218,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the Queue contains no elements.
 	-- @return The item at the beginning.
 	-- @usage local item = queue:Peek()
-	function Queue.prototype:Peek()
+	function queue.prototype:Peek()
 		check(1, self, 'userdata')
 
 		local head = heads[self]
@@ -233,7 +233,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Clear all elements from the Queue
 	-- @usage queue:Clear()
-	function Queue.prototype:Clear()
+	function queue.prototype:Clear()
 		check(1, self, 'userdata')
 
 		wipe(tables[self])
@@ -243,10 +243,10 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Make a shallow clone of the Queue.
 	-- @usage local other = queue:Clone()
-	function Queue.prototype:Clone()
+	function queue.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = Queue.New()
+		local other = queue.New()
 		local contract = contracts[self]
 		if contract then
 			other:SetContract(contracts[self])
@@ -268,29 +268,29 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function Queue.prototype:Any(predicate)
+	function queue.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return tails[self] >= heads[self]
 		else
-			return Enumerable.prototype.Any(self, predicate)
+			return enumerable.prototype.Any(self, predicate)
 		end
 	end
 
-	function Queue.prototype:Count(predicate)
+	function queue.prototype:Count(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return tails[self] - heads[self] + 1
 		else
-			return Enumerable.prototype.Count(self, predicate)
+			return enumerable.prototype.Count(self, predicate)
 		end
 	end
 	
-	function Queue.prototype:ElementAt(index)
+	function queue.prototype:ElementAt(index)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -305,7 +305,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][heads[self] + index - 1]
 	end
 	
-	function Queue.prototype:ElementAtOrDefault(index, default)
+	function queue.prototype:ElementAtOrDefault(index, default)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -316,7 +316,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function Queue.prototype:First(predicate)
+	function queue.prototype:First(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -327,11 +327,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return self:Peek()
 			end
 		else
-			return Enumerable.prototype.First(self, predicate)
+			return enumerable.prototype.First(self, predicate)
 		end
 	end
 	
-	function Queue.prototype:FirstOrDefault(default, predicate)
+	function queue.prototype:FirstOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -342,11 +342,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return self:Peek()
 			end
 		else
-			return Enumerable.prototype.FirstOrDefault(self, default, predicate)
+			return enumerable.prototype.FirstOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Queue.prototype:Last(predicate)
+	function queue.prototype:Last(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -357,11 +357,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][heads[self]]
 			end
 		else
-			return Enumerable.prototype.Last(self, predicate)
+			return enumerable.prototype.Last(self, predicate)
 		end
 	end
 	
-	function Queue.prototype:LastOrDefault(default, predicate)
+	function queue.prototype:LastOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -372,11 +372,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][heads[self]]
 			end
 		else
-			return Enumerable.prototype.LastOrDefault(self, default, predicate)
+			return enumerable.prototype.LastOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Queue.prototype:Single(predicate)
+	function queue.prototype:Single(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -390,11 +390,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][heads[self]]
 			end
 		else
-			return Enumerable.prototype.Single(self, predicate)
+			return enumerable.prototype.Single(self, predicate)
 		end
 	end
 	
-	function Queue.prototype:SingleOrDefault(default, predicate)
+	function queue.prototype:SingleOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -408,37 +408,37 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][heads[self]]
 			end
 		else
-			return Enumerable.prototype.SingleOrDefault(self, default, predicate)
+			return enumerable.prototype.SingleOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Queue.prototype:SequenceEqual(second, compare_selector)
+	function queue.prototype:SequenceEqual(second, compare_selector)
 		check(1, self, 'userdata')
 		check(2, second, 'userdata', 'table')
 		check(3, compare_selector, 'function', 'string', 'nil')
 
-		second = Enumerable.From(second)
+		second = enumerable.From(second)
 		if tables[second] and self:Count() ~= second:Count() then
 			return false
 		end
 		
-		return Enumerable.prototype.SequenceEqual(self, second, compare_selector)
+		return enumerable.prototype.SequenceEqual(self, second, compare_selector)
 	end
 	
-	function Queue.prototype:Force()
+	function queue.prototype:Force()
 	end
 	
-	function Queue.prototype:MemoizeAll()
+	function queue.prototype:MemoizeAll()
 		return self
 	end
 
-	function Queue.prototype:ToString()
+	function queue.prototype:ToString()
 		check(1, self, 'userdata')
 
-		return "Queue" .. Enumerable.prototype.ToString(self)
+		return "Queue" .. enumerable.prototype.ToString(self)
 	end
 
-	function Queue.prototype:ForEach(action)
+	function queue.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -471,11 +471,11 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		return index, tables[self][real_index]
 	end
-	function Queue.prototype:Iterate()
+	function queue.prototype:Iterate()
 		return iterator, self, 0
 	end
 
-	function Queue.prototype:PickRandom()
+	function queue.prototype:PickRandom()
 		check(1, self, 'userdata')
 
 		local head = heads[self]
@@ -486,7 +486,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][math_random(head, tail)]
 	end
 	
-	function Queue.prototype:PickRandomOrDefault(default)
+	function queue.prototype:PickRandomOrDefault(default)
 		check(1, self, 'userdata')
 		
 		local head = heads[self]
@@ -500,9 +500,9 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Make a new Queue filled with the contents of the current Enumerable
 	-- @return a Queue
-	function Enumerable.prototype:ToQueue()
+	function enumerable.prototype:ToQueue()
 		check(1, self, 'userdata')
 
-		return Queue.New(self)
+		return queue.New(self)
 	end
 end)
