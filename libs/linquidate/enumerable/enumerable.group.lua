@@ -345,7 +345,7 @@ _G.Linquidate_Loader(function(Linquidate)
 						if type(k) == "string" and type(v) == "function" and rawget(Grouping.prototype, k) == nil then
 							Grouping.prototype[k] = function(self, ...)
 								local list = lists[self]
-								return list[k](list, ...)
+								return list[k](list, unpack(arg))
 							end
 						end
 					end

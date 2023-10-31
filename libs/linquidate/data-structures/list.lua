@@ -78,7 +78,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local list = List.FromArguments(nil, nil, 5)
 	function List.FromArguments(...)
 		local self = List.New()
-		self:AddMany(unpack(...))
+		self:AddMany(unpack(arg))
 		return self
 	end
 
@@ -448,9 +448,9 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local is_wrapped = not counts[self]
 		if is_wrapped then
-			return insert_many_helper(self, index, count, is_wrapped, remove_nils(...))
+			return insert_many_helper(self, index, count, is_wrapped, remove_nils(unpack(arg)))
 		else
-			return insert_many_helper(self, index, count, is_wrapped, ...)
+			return insert_many_helper(self, index, count, is_wrapped, unpack(arg))
 		end
 	end
 
@@ -673,7 +673,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 
 		if index > count then
-			return self:AddMany(...)
+			return self:AddMany(unpack(arg))
 		end
 		
 		local contract = contracts[self]

@@ -103,7 +103,7 @@ _G.Linquidate_Loader(function(Linquidate)
         local error_message
         local function wrap(status, ...)
             if status then
-                return ...
+                return unpack(arg)
             end
 
             if catch(error_message) == true then
@@ -128,7 +128,7 @@ _G.Linquidate_Loader(function(Linquidate)
 				error(error_message, 2)
             end
 
-			return ...
+			return unpack(arg)
         end
 
         return wrap(xpcall(try, function(e)
@@ -143,8 +143,9 @@ _G.Linquidate_Loader(function(Linquidate)
     end
 
     function Utilities.identity(...)
-        return ...
+        return unpack(arg)
     end
+
     local identity = Utilities.identity
 
     local wipe = _G.table.wipe or function(t)

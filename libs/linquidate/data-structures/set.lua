@@ -92,7 +92,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local self = Set.New(nil, comparison_selector and convertFunction(comparison_selector))
 
-		self:AddMany(...)
+		self:AddMany(unpack(arg))
 
 		return self
 	end
