@@ -4,19 +4,19 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	local Enumerable = assert(Linquidate.Enumerable)
 	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local check = assert(Linquidate.Utilities.check)
+	
 	local wipe = assert(Linquidate.Utilities.wipe)
-	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local check = assert(Linquidate.Utilities.check)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local convertFunction = assert(Linquidate.Utilities.convertFunction)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
-	local math_floor = assert(_G.math.floor)
 	local error = assert(_G.error)
+	local newproxy = assert(_G.newproxy)
+	local math_floor = assert(_G.math.floor)
+	local math_random = assert(_G.math.random)
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
-	local newproxy = assert(_G.newproxy)
-	local select = assert(_G.select)
-	local math_random = assert(_G.math.random)
 
 	local Queue = Linquidate.Queue or {}
 
