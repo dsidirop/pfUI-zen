@@ -380,15 +380,20 @@ _G.Linquidate_Loader(function(Linquidate)
 	end
 
 	local function remove_nils(...)
-		if table.getn(arg) == 0 then
+		local count = table.getn(arg) 
+		if count == 0 then
 			return
 		end
 
-		if (arg[1]) == nil then
-			return remove_nils(select(2, ...))
+		local tbl
+		for i = 1, count do
+			if (arg[i] ~= nil) then
+				tbl = tbl or {}
+				table.insert(tbl, arg[i])
+			end
 		end
 
-		return (...), remove_nils(select(2, ...))
+		return tbl or arg
 	end
 
 	local function insert_many_helper(self, index, count, is_wrapped, ...)
