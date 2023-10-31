@@ -2,48 +2,44 @@ _G.Linquidate_Loader(function(Linquidate)
 	local _G = _G
 	local assert = _G.assert
 
-	local Enumerable = assert(Linquidate.Enumerable)
-	local Enumerator = assert(Linquidate.Enumerator)
-	local make_weak_table = assert(Linquidate.Utilities.make_weak_table)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
-	local check = assert(Linquidate.Utilities.check)
-	local safe_dispose = assert(Linquidate.Utilities.safe_dispose)
+	local enumerable = assert(Linquidate.Enumerable)
+	local enumerator = assert(Linquidate.Enumerator)
+	
 	local wipe = assert(Linquidate.Utilities.wipe)
-	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local check = assert(Linquidate.Utilities.check)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local convert_function = assert(Linquidate.Utilities.convert_function)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
-	local math_floor = assert(_G.math.floor)
 	local error = assert(_G.error)
+	local newproxy = assert(_G.newproxy)
+	local math_floor = assert(_G.math.floor)
+	local math_random = assert(_G.math.random)
 	local getmetatable = assert(_G.getmetatable)
 	local setmetatable = assert(_G.setmetatable)
-	local newproxy = assert(_G.newproxy)
-	local select = assert(_G.select)
-	local table_sort = assert(_G.table.sort)
-	local math_random = assert(_G.math.random)
-	local rawequal = assert(_G.rawequal)
 
-	local Stack = Linquidate.Stack or {}
+	local stack = Linquidate.Stack or {}
 
-	Linquidate.Stack = Stack
+	Linquidate.Stack = stack
 
-	if not Stack.prototype then
-		Stack.prototype = {}
+	if not stack.prototype then
+		stack.prototype = {}
 	end
-	setmetatable(Stack.prototype, {__index=Enumerable.prototype})
+	setmetatable(stack.prototype, { __index= enumerable.prototype})
 	
-	local Stack_proxy = newproxy(true)
-	local Stack_mt = getmetatable(Stack_proxy)
-	Stack_mt.__index = Stack.prototype
-	function Stack_mt:__tostring()
+	local stack_proxy = newproxy(true)
+	local stack_mt = getmetatable(stack_proxy)
+	stack_mt.__index = stack.prototype
+	function stack_mt:__tostring()
 		return self:ToString()
 	end
 	
-	local tables = make_weak_keyed_table(Stack.__tables)
-	Stack.__tables = tables
-	local counts = make_weak_keyed_table(Stack.__counts)
-	Stack.__counts = counts
-	local contracts = make_weak_keyed_table(Stack.__contracts)
-	Stack.__contracts = contracts
+	local tables = make_weak_keyed_table(stack.__tables)
+	stack.__tables = tables
+	local counts = make_weak_keyed_table(stack.__counts)
+	stack.__counts = counts
+	local contracts = make_weak_keyed_table(stack.__contracts)
+	stack.__contracts = contracts
 
 	--- Construct and return a new Stack
 	-- @param sequence optional: The sequence to fill the stack with
@@ -51,15 +47,15 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local stack = Stack.New()
 	-- @usage local stack = Stack.New({ 1, 2, 3 })
 	-- @usage local stack = Stack.New(Enumerable.RangeTo(1, 10))
-	function Stack.New(sequence)
+	function stack.New(sequence)
 		check(1, sequence, 'userdata', 'table', 'nil')
 
-		local self = newproxy(Stack_proxy)
+		local self = newproxy(stack_proxy)
 
 		tables[self] = {}
 		counts[self] = 0
 
-		Enumerable.From(sequence):ForEach(function(item)
+		enumerable.From(sequence):ForEach(function(item)
 			self:Push(item)
 		end)
 
@@ -72,8 +68,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @usage local stack = Stack.FromArguments()
 	-- @usage local stack = Stack.FromArguments(1, 2, 3)
 	-- @usage local stack = Stack.FromArguments(nil, nil, 5)
-	function Stack.FromArguments(...)
-		local self = Stack.New()
+	function stack.FromArguments(...)
+		local self = stack.New()
 
 		for i = 1, table.getn(arg) do
 			self:Push((arg[i]))
@@ -84,13 +80,13 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Return an Enumerator for the current Stack
 	-- @return an Enumerator
-	function Stack.prototype:GetEnumerator()
+	function stack.prototype:GetEnumerator()
 		check(1, self, 'userdata')
 
 		local table = tables[self]
 		local index
 
-		return Enumerator.New(
+		return enumerator.New(
 			function()
 				index = counts[self] + 1
 			end,
@@ -108,7 +104,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Verify that the contract for this Stack is valid for all elements in the Stack.
 	-- If there is no contract, this does nothing.
 	-- @usage stack:VerifyContract()
-	function Stack.prototype:VerifyContract()
+	function stack.prototype:VerifyContract()
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -135,7 +131,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will call :VerifyContract()
 	-- @param contract a function that is passed the element and should return whether the element is valid.
 	-- @usage stack:SetContract(function(v) return type(v) == "string" end)
-	function Stack.prototype:SetContract(contract)
+	function stack.prototype:SetContract(contract)
 		check(1, self, 'userdata')
 		check(2, contract, 'function', 'nil')
 
@@ -146,7 +142,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	--- Return whether the Stack is read-only, always returns false.
 	-- @return a boolean
 	-- @usage local read_only = stack:IsReadOnly()
-	function Stack.prototype:IsReadOnly()
+	function stack.prototype:IsReadOnly()
 		check(1, self, 'userdata')
 
 		return false
@@ -156,7 +152,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- @param item the element to push
 	-- @usage stack:Push(5)
 	-- @usage stack:Push(nil)
-	function Stack.prototype:Push(item)
+	function stack.prototype:Push(item)
 		check(1, self, 'userdata')
 
 		local contract = contracts[self]
@@ -173,7 +169,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the Stack is empty.
 	-- @return The removed element at the top of the Stack.
 	-- @usage local item = stack:Pop()
-	function Stack.prototype:Pop()
+	function stack.prototype:Pop()
 		check(1, self, 'userdata')
 		
 		local table = tables[self]
@@ -192,7 +188,7 @@ _G.Linquidate_Loader(function(Linquidate)
 	-- This will error if the Stack is empty.
 	-- @return The element at the top of the Stack.
 	-- @usage local item = stack:Peek()
-	function Stack.prototype:Peek()
+	function stack.prototype:Peek()
 		check(1, self, 'userdata')
 		
 		local table = tables[self]
@@ -206,7 +202,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Clear all elements from the Stack
 	-- @usage stack:Clear()
-	function Stack.prototype:Clear()
+	function stack.prototype:Clear()
 		check(1, self, 'userdata')
 
 		wipe(tables[self])
@@ -215,10 +211,10 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Make a shallow clone of the Stack.
 	-- @usage local other = stack:Clone()
-	function Stack.prototype:Clone()
+	function stack.prototype:Clone()
 		check(1, self, 'userdata')
 
-		local other = Stack.New()
+		local other = stack.New()
 		local table = tables[self]
 		local other_table = tables[other]
 		for i = 1, counts[self] do
@@ -235,29 +231,29 @@ _G.Linquidate_Loader(function(Linquidate)
 	
 	-- Methods that are faster than using the standard Enumerable ones:
 	
-	function Stack.prototype:Any(predicate)
+	function stack.prototype:Any(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return counts[self] > 0
 		else
-			return Enumerable.prototype.Any(self, predicate)
+			return enumerable.prototype.Any(self, predicate)
 		end
 	end
 
-	function Stack.prototype:Count(predicate)
+	function stack.prototype:Count(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return counts[self]
 		else
-			return Enumerable.prototype.Count(self, predicate)
+			return enumerable.prototype.Count(self, predicate)
 		end
 	end
 	
-	function Stack.prototype:ElementAt(index)
+	function stack.prototype:ElementAt(index)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -272,7 +268,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][counts[self] - index + 1]
 	end
 	
-	function Stack.prototype:ElementAtOrDefault(index, default)
+	function stack.prototype:ElementAtOrDefault(index, default)
 		check(1, self, 'userdata')
 		check(2, index, 'number')
 
@@ -283,18 +279,18 @@ _G.Linquidate_Loader(function(Linquidate)
 		end
 	end
 	
-	function Stack.prototype:First(predicate)
+	function stack.prototype:First(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
 		if not predicate then
 			return self:Peek()
 		else
-			return Enumerable.prototype.First(self, predicate)
+			return enumerable.prototype.First(self, predicate)
 		end
 	end
 	
-	function Stack.prototype:FirstOrDefault(default, predicate)
+	function stack.prototype:FirstOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -305,11 +301,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return self:Peek()
 			end
 		else
-			return Enumerable.prototype.FirstOrDefault(self, default, predicate)
+			return enumerable.prototype.FirstOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Stack.prototype:Last(predicate)
+	function stack.prototype:Last(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -320,11 +316,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][1]
 			end
 		else
-			return Enumerable.prototype.Last(self, predicate)
+			return enumerable.prototype.Last(self, predicate)
 		end
 	end
 	
-	function Stack.prototype:LastOrDefault(default, predicate)
+	function stack.prototype:LastOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -335,11 +331,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][1]
 			end
 		else
-			return Enumerable.prototype.LastOrDefault(self, default, predicate)
+			return enumerable.prototype.LastOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Stack.prototype:Single(predicate)
+	function stack.prototype:Single(predicate)
 		check(1, self, 'userdata')
 		check(2, predicate, 'function', 'string', 'nil')
 
@@ -353,11 +349,11 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][1]
 			end
 		else
-			return Enumerable.prototype.Single(self, predicate)
+			return enumerable.prototype.Single(self, predicate)
 		end
 	end
 	
-	function Stack.prototype:SingleOrDefault(default, predicate)
+	function stack.prototype:SingleOrDefault(default, predicate)
 		check(1, self, 'userdata')
 		check(3, predicate, 'function', 'string', 'nil')
 
@@ -371,37 +367,37 @@ _G.Linquidate_Loader(function(Linquidate)
 				return tables[self][1]
 			end
 		else
-			return Enumerable.prototype.SingleOrDefault(self, default, predicate)
+			return enumerable.prototype.SingleOrDefault(self, default, predicate)
 		end
 	end
 	
-	function Stack.prototype:SequenceEqual(second, compare_selector)
+	function stack.prototype:SequenceEqual(second, compare_selector)
 		check(1, self, 'userdata')
 		check(2, second, 'userdata', 'table')
 		check(3, compare_selector, 'function', 'string', 'nil')
 
-		second = Enumerable.From(second)
+		second = enumerable.From(second)
 		if tables[second] and counts[self] ~= counts[second] then
 			return false
 		end
 		
-		return Enumerable.prototype.SequenceEqual(self, second, compare_selector)
+		return enumerable.prototype.SequenceEqual(self, second, compare_selector)
 	end
 	
-	function Stack.prototype:Force()
+	function stack.prototype:Force()
 	end
 	
-	function Stack.prototype:MemoizeAll()
+	function stack.prototype:MemoizeAll()
 		return self
 	end
 
-	function Stack.prototype:ToString()
+	function stack.prototype:ToString()
 		check(1, self, 'userdata')
 
-		return "Stack" .. Enumerable.prototype.ToString(self)
+		return "Stack" .. enumerable.prototype.ToString(self)
 	end
 
-	function Stack.prototype:ForEach(action)
+	function stack.prototype:ForEach(action)
 		check(1, self, 'userdata')
 		check(2, action, 'function', 'string')
 
@@ -433,11 +429,11 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		return index, tables[self][count - index + 1]
 	end
-	function Stack.prototype:Iterate()
+	function stack.prototype:Iterate()
 		return iterator, self, 0
 	end
 
-	function Stack.prototype:PickRandom()
+	function stack.prototype:PickRandom()
 		check(1, self, 'userdata')
 
 		local count = counts[self]
@@ -447,7 +443,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		return tables[self][math_random(count)]
 	end
 	
-	function Stack.prototype:PickRandomOrDefault(default)
+	function stack.prototype:PickRandomOrDefault(default)
 		check(1, self, 'userdata')
 		
 		local count = counts[self]
@@ -460,9 +456,9 @@ _G.Linquidate_Loader(function(Linquidate)
 
 	--- Make a new Stack filled with the contents of the current Enumerable
 	-- @return a Stack
-	function Enumerable.prototype:ToStack()
+	function enumerable.prototype:ToStack()
 		check(1, self, 'userdata')
 
-		return Stack.New(self)
+		return stack.New(self)
 	end
 end)
