@@ -45,7 +45,7 @@ _G.Linquidate_Loader(function(Linquidate)
 								if current == nil then
 									current = NIL
 								end
-								buffer[#buffer+1] = current
+								buffer[table.getn(buffer)+1] = current
 								return yield(result_selector(real_current, nest_level))
 							end
 
@@ -91,36 +91,42 @@ _G.Linquidate_Loader(function(Linquidate)
 			local enumerator
 
 			return Enumerator.New(
-				function()
-					enumerator = self:GetEnumerator()
-				end, function(yield)
-					while true do
-						if enumerator:MoveNext() then
-							local current = enumerator:Current()
-							local value = result_selector(current, #enumerator_stack)
-							enumerator_stack[#enumerator_stack + 1] = enumerator
-							enumerator = Enumerable.From(func(current)):GetEnumerator()
-							return yield(value)
+					function()
+						enumerator = self:GetEnumerator()
+					end,
+					function(yield)
+						while true do
+							if enumerator:MoveNext() then
+								local current = enumerator:Current()
+								local value = result_selector(current, table.getn(enumerator_stack))
+								enumerator_stack[table.getn(enumerator_stack) + 1] = enumerator
+								enumerator = Enumerable.From(func(current)):GetEnumerator()
+								return yield(value)
+							end
+
+							if table.getn(enumerator_stack) <= 0 then
+								return false
+							end
+
+							enumerator = safe_dispose(enumerator)
+
+							enumerator = enumerator_stack[table.getn(enumerator_stack)]
+							enumerator_stack[table.getn(enumerator_stack)] = nil
 						end
-
-						if #enumerator_stack <= 0 then
-							return false
-						end
-
-						enumerator = safe_dispose(enumerator)
-
-						enumerator = enumerator_stack[#enumerator_stack]
-						enumerator_stack[#enumerator_stack] = nil
+					end,
+					function()
+						tryfinally(
+								function()
+									safe_dispose(enumerator)
+								end,
+								function()
+									for i = 1, table.getn(enumerator_stack) do
+										safe_dispose(enumerator_stack[i])
+									end
+								end
+						)
 					end
-				end, function ()
-					tryfinally(function()
-						safe_dispose(enumerator)
-					end, function()
-						for i = 1, #enumerator_stack do
-							safe_dispose(enumerator_stack[i])
-						end
-					end)
-				end)
+			)
 		end)
 	end
 

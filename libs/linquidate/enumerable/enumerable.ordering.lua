@@ -124,8 +124,8 @@ _G.Linquidate_Loader(function(Linquidate)
 				local current = ordered_enumerable
 				repeat
 					selectors[table.getn(selectors)+1] = key_selectors[current]
-					desc[#desc+1] = descendings[current]
-					cache[#cache+1] = {}
+					desc[table.getn(desc)+1] = descendings[current]
+					cache[table.getn(cache)+1] = {}
 
 					current = parents[current]
 				until not current
@@ -230,7 +230,7 @@ _G.Linquidate_Loader(function(Linquidate)
 				local caches = sort_key_caches[self]
 				local selectors = context_selectors[self]
 
-				for i = #selectors, 1, -1 do
+				for i = table.getn(selectors), 1, -1 do
 					local selector = selectors[i]
 					local cache = caches[i]
 

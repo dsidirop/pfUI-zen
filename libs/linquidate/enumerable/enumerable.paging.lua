@@ -442,8 +442,8 @@ _G.Linquidate_Loader(function(Linquidate)
 							if current == nil then
 								current = NIL
 							end
-							queue[#queue + 1] = current
-							if #queue > count then
+							queue[table.getn(queue) + 1] = current
+							if table.getn(queue) > count then
 								local value = table_remove(queue, 1)
 								if value == NIL then
 									value = nil
@@ -489,14 +489,14 @@ _G.Linquidate_Loader(function(Linquidate)
 						queue = {}
 					end, function(yield)
 						while source_enumerator:MoveNext() do
-							if #queue >= count then
+							if table.getn(queue) >= count then
 								table_remove(queue, 1)
 							end
 							local current = source_enumerator:Current()
 							if current == nil then
 								current = NIL
 							end
-							queue[#queue+1] = current
+							queue[table.getn(queue)+1] = current
 						end
 
 						if not enumerator then
