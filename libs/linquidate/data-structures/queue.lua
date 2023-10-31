@@ -79,8 +79,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Queue.FromArguments(...)
 		local self = Queue.New()
 
-		for i = 1, select('#', ...) do
-			self:Enqueue((select(i, ...)))
+		for i = 1, table.getn(arg) do
+			self:Enqueue((arg[i]))
 		end
 
 		return self

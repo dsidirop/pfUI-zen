@@ -259,19 +259,22 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot add elements on a read-only List", 2)
 		end
 
-		local n = select('#', ...)
+		local n = table.getn(arg)
 		if n == 0 then
 			return
 		end
-		local contract = contracts[self]
+
 		local table = tables[self]
+		local contract = contracts[self]
 		local is_wrapped = not counts[self]
+
 		local count = self:Count()
 		for i = 1, n do
-			local item = (select(i, ...))
+			local item = (arg[i])
 			if contract and not contract(item) then
 				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
 			end
+
 			if not is_wrapped or item ~= nil then
 				count = count + 1
 				table[count] = item
@@ -377,18 +380,19 @@ _G.Linquidate_Loader(function(Linquidate)
 	end
 
 	local function remove_nils(...)
-		if select('#', ...) == 0 then
+		if table.getn(arg) == 0 then
 			return
 		end
 
-		if (...) == nil then
+		if (arg[1]) == nil then
 			return remove_nils(select(2, ...))
-		else
-			return (...), remove_nils(select(2, ...))
 		end
+
+		return (...), remove_nils(select(2, ...))
 	end
+
 	local function insert_many_helper(self, index, count, is_wrapped, ...)
-		local sequence_count = select('#', ...)
+		local sequence_count = table.getn(arg)
 		if sequence_count == 0 then
 			return
 		end
@@ -396,7 +400,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local contract = contracts[self]
 		if contract then
 			for i = 1, sequence_count do
-				local item = (select(i, ...))
+				local item = (arg[i])
 				if not contract(item) then
 					error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
 				end
@@ -412,7 +416,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			table[i] = table[i - sequence_count]
 		end
 		for i = 1, sequence_count do
-			local item = (select(i, ...))
+			local item = (arg[i])
 			table[index + i - 1] = item
 		end
 	end
@@ -670,8 +674,8 @@ _G.Linquidate_Loader(function(Linquidate)
 		local contract = contracts[self]
 		local is_wrapped = not counts[self]
 		local table = tables[self]
-		for i = 1, select('#', ...) do
-			local item = (select(i, ...))
+		for i = 1, table.getn(arg) do
+			local item = (arg[i])
 			if contract and not contract(item) then
 				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
 			end

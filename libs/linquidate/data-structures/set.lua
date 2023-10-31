@@ -407,8 +407,8 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot add to a read-only Set", 2)
 		end
 
-		for i = 1, select('#', ...) do
-			self:Add((select(i, ...)))
+		for i = 1, table.getn(arg) do
+			self:Add((arg[i]))
 		end
 	end
 	

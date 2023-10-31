@@ -21,12 +21,12 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Enumerable.Choice(...)
 		local args
 		local length
-		if type((...)) == 'table' and select('#', ...) == 1 then
+		if type((...)) == 'table' and table.getn(arg) == 1 then
 			args = (...)
 			length = #args
 		else
 			args = { ... }
-			length = select('#', ...)
+			length = table.getn(arg)
 		end
 
 		if length == 0 then
@@ -56,7 +56,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			length = #args
 		else
 			args = { ... }
-			length = select('#', ...)
+			length = table.getn(arg)
 		end
 	
 		if length == 0 then

@@ -75,8 +75,8 @@ _G.Linquidate_Loader(function(Linquidate)
 	function Stack.FromArguments(...)
 		local self = Stack.New()
 
-		for i = 1, select('#', ...) do
-			self:Push((select(i, ...)))
+		for i = 1, table.getn(arg) do
+			self:Push((arg[i]))
 		end
 
 		return self

@@ -55,27 +55,27 @@ _G.Linquidate_Loader(function(Linquidate)
 
     do
         local function combine_types(...)
-            local count = select('#', ...)
+            local count = table.getn(arg)
             if count == 1 then
-                return (...)
+                return (unpack(arg))
             end
 
             if count == 2 then
-                return ("%s or %s"):format(...)
+                return ("%s or %s"):format(unpack(arg))
             end
 
             if count == 3 then
-                return ("%s, %s, or %s"):format(...)
+                return ("%s, %s, or %s"):format(unpack(arg))
             end
 
             local t = {}
-            for _ = 1, select('#', ...) - 1 do
+            for _ = 1, table.getn(arg) - 1 do
                 t[#t + 1] = (...)
                 t[#t + 1] = ", "
             end
 
             t[#t + 1] = "or "
-            t[#t + 1] = select(select('#', ...), ...)
+            t[#t + 1] = select(table.getn(arg), ...)
             return table_concat(t)
         end
 
@@ -85,8 +85,8 @@ _G.Linquidate_Loader(function(Linquidate)
             end
 
             local type_argument = type(argument)
-            for i = 1, select('#', ...) do
-                if type_argument == (select(i, ...)) then
+            for i = 1, table.getn(arg) do
+                if type_argument == (arg[i]) then
                     return
                 end
             end
