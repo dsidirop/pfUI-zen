@@ -1,22 +1,22 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-  <Script file="linquidate.lua"/>
-  <Script file="helpers/utilities.lua"/>
-  <Script file="enumerator/enumerator.lua"/>
-  <Script file="enumerable/enumerable.lua"/>
-  <Script file="enumerable/enumerable.action.lua"/>
-  <Script file="enumerable/enumerable.aggregate.lua"/>
-  <Script file="enumerable/enumerable.functional.lua"/>
-  <Script file="enumerable/enumerable.generators.lua"/>
-  <Script file="enumerable/enumerable.group.lua"/>
-  <Script file="enumerable/enumerable.ordering.lua"/>
-  <Script file="enumerable/enumerable.paging.lua"/>
-  <Script file="enumerable/enumerable.projection.lua"/>
-  <Script file="enumerable/enumerable.set.lua"/>
-  <Script file="data.structures/list.lua"/>
-  <Script file="data.structures/set.lua"/>
-  <Script file="data.structures/dictionary.lua"/>
-  <Script file="data.structures/stack.lua"/>
-  <Script file="data.structures/queue.lua"/>
-  <Script file="linquidate.loader.lua"/>
+    <Include file="linquidate.lua"/>
+    <Include file="helpers\utilities.lua"/>
+    <Include file="enumerator\enumerator.lua"/>
+    <Include file="enumerable\enumerable.lua"/>
+    <Include file="enumerable\enumerable.action.lua"/>
+    <Include file="enumerable\enumerable.aggregate.lua"/>
+    <Include file="enumerable\enumerable.functional.lua"/>
+    <Include file="enumerable\enumerable.generators.lua"/>
+    <Include file="enumerable\enumerable.group.lua"/>
+    <Include file="enumerable\enumerable.ordering.lua"/>
+    <Include file="enumerable\enumerable.paging.lua"/>
+    <Include file="enumerable\enumerable.projection.lua"/>
+    <Include file="enumerable\enumerable.set.lua"/>
+    <Include file="data.structures\list.lua"/>
+    <Include file="data.structures\set.lua"/>
+    <Include file="data.structures\dictionary.lua"/>
+    <Include file="data.structures\stack.lua"/>
+    <Include file="data.structures\queue.lua"/>
+    <Include file="linquidate.loader.lua"/>
 </Ui>

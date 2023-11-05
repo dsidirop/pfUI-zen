@@ -1,6 +1,7 @@
 ## Interface: 11200
 ## Title: _WoWLuaPolyfills
-## Notes: Polyfills for the WoW Lua API providing symbols from standardized Lua such as _G, strmatch, string:format etc
+## Notes: Polyfills for the WoW Lua API providing symbols from standardized Lua and later versions of the WoW API (beyond 1.12) such as _G, strmatch, string:format etc
+## Notes: Make sure that this addon gets loaded as soon as possible ahead of any other addons
 ## Author: dsidirop
 ## LoadOnDemand: 1
 ## X-Date: Oct 25, 2023
@@ -8,4 +9,4 @@
 ## X-Website: github.com/dsidirop/_WoWLuaPolyfills
 ## X-Category: Library
 
-_wowluapolyfills.xml
+.xml
