@@ -22,7 +22,7 @@ function _stringMetatable:match(patternString, ...)
         return nil
     end
 
-    local startIndex, _,
+    local startIndex, endIndex,
     match01,
     match02,
     match03,
@@ -49,11 +49,15 @@ function _stringMetatable:match(patternString, ...)
     match24,
     match25 = _stringFind(self, patternString, unpack(arg))
 
-    if not startIndex then
+    if not startIndex then -- no match
         return nil
     end
 
-    return
+    if not match01 then -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+        return self:sub(startIndex, endIndex)
+    end
+
+    return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
     match01,
     match02,
     match03,
