@@ -3,10 +3,10 @@ _G.Linquidate_Loader(function(Linquidate)
 	local assert = _G.assert
 
 	local check = assert(Linquidate.Utilities.check)
-	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 	local trycatch = assert(Linquidate.Utilities.trycatch)
 	local tryfinally = assert(Linquidate.Utilities.tryfinally)
 	local tostring_q = assert(Linquidate.Utilities.tostring_q)
+	local make_weak_keyed_table = assert(Linquidate.Utilities.make_weak_keyed_table)
 
 	local newproxy = assert(_G.newproxy)
 	local getmetatable = assert(_G.getmetatable)

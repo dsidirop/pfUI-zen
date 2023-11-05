@@ -14,13 +14,14 @@ _G.Linquidate_Loader(function(Linquidate)
 	local table_concat = assert(_G.table.concat)
 	local getmetatable = assert(_G.getmetatable)
 
-	--- A class that exposes an enumerator and supports simiple iteration as well as helper methods.
+	--- a class that exposes an enumerator and supports simple iteration as well as helper methods
 	local enumerable = Linquidate.Enumerable or {}
 	do
 		Linquidate.Enumerable = enumerable
 		if not enumerable.prototype then
 			enumerable.prototype = {}
 		end
+
 		local enumerable_proxy = newproxy(true)
 		local enumerable_mt = getmetatable(enumerable_proxy)
 		enumerable_mt.__index = enumerable.prototype
