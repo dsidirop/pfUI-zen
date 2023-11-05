@@ -14,7 +14,6 @@ end
 if not strmatch then
     local _stringFind = string.find
     function strmatch(input, patternString, ...)
-        -- todo  ("a 11 b (12) c 13"):match("%(%d+%)") --> "(12)"
         if patternString == nil then
             error("patternString is nil", 1)
         end
