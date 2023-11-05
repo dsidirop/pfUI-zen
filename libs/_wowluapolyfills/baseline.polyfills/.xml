@@ -3,6 +3,7 @@
   <!-- its better if this xml file gets loaded first ahead of all other libs -->
   <Include file="g.lua"/>
   <Include file="load.lua"/>
+  <Include file="newproxy.lua"/>
   <Include file="string.match.lua"/>
   <Include file="string.format.lua"/>
 </Ui>
