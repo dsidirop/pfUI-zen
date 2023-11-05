@@ -7,6 +7,7 @@
 
     <!-- order is not important for the rest -->
     <Include file="load\.xml"/>
+    <Include file="unpack\.xml"/>
     <Include file="newproxy\.xml"/>
     <Include file="string.match\.xml"/>
     <Include file="string.format\.xml"/>
