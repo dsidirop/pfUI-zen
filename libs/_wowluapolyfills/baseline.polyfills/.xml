@@ -1,9 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
   <!-- its better if this xml file gets loaded first ahead of all other libs -->
-  <Include file="g.lua"/>
-  <Include file="load.lua"/>
-  <Include file="newproxy.lua"/>
-  <Include file="string.match.lua"/>
-  <Include file="string.format.lua"/>
+  
+  <!-- keep first -->
+  <Include file="_G\.xml"/>
+
+  <!-- order is not important for the rest -->
+  <Include file="load\.xml"/>
+  <Include file="newproxy\.xml"/>
+  <Include file="string.match\.xml"/>
+  <Include file="string.format\.xml"/>
 </Ui>

@@ -14,6 +14,9 @@ if newproxy then
     return -- already loaded
 end
 
+local _setmetatable = assert(setmetatable)
+local _getmetatable = assert(getmetatable)
+
 function newproxy(newMeta)
     local proxy = {}
 
@@ -23,12 +26,12 @@ function newproxy(newMeta)
 
     if (newMeta == true) then
         local mt = {}
-        setmetatable(proxy, mt)
+        _setmetatable(proxy, mt)
         return proxy
     end
 
-    local mt = getmetatable(newMeta) -- new_meta must have a metatable
-    setmetatable(proxy, mt)
+    local mt = _getmetatable(newMeta) -- new_meta must have a metatable
+    _setmetatable(proxy, mt)
 
     return proxy
 end

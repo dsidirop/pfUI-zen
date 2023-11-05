@@ -2,10 +2,7 @@ if string.match then
     return -- already loaded
 end
 
-local _stringFind = string.find
-if not _stringFind then
-    error("string.find() is not present at the global scope", 1)
-end
+local _stringFind = assert(string.find)
 
 function string:match(patternString, ...)
     if patternString == nil then

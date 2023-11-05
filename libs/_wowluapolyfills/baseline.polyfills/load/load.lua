@@ -5,10 +5,7 @@ if load then
     return -- already loaded
 end
 
-local _loadstring = loadstring -- vanilla wow lua does have loadstring on the global scope so we can use it here
-if not _loadstring then
-    error("loadstring() is not present at the global scope", 1)
-end
+local _loadstring = assert(loadstring) -- vanilla wow lua does have loadstring on the global scope so we can use it here
 
 function load(script, ...)
     return _loadstring(script, unpack(arg))
