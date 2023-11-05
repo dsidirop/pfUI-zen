@@ -125,10 +125,10 @@ _G.Linquidate_Loader(function(Linquidate)
             finally()
 
             if not status then
-				error(error_message, 2)
+                error(error_message, 2)
             end
 
-			return unpack(arg)
+            return unpack(arg)
         end
 
         return wrap(xpcall(try, function(e)
@@ -167,7 +167,7 @@ _G.Linquidate_Loader(function(Linquidate)
             error(("%q is not the right format to convert to a function"):format(code), 3)
         end
 
-        local func_creator, error_message = loadstring(([=[return function(%s) return %s end]=]):format(args, body))
+        local func_creator, error_message = loadstring(([[return function(%s) return %s end]]):format(args, body)) -- note   we cant use [=====[ to be on the safe(r) side here because wow-lua does not support this particular syntax
         if not func_creator then
             error(("%q is not proper code: %s"):format(code, error_message), 3)
         end
@@ -185,17 +185,17 @@ _G.Linquidate_Loader(function(Linquidate)
         local type_func = type(func)
         if type_func == 'function' then
             return func
-		end
-        
-		if type_func == 'string' then
-            return get_cached_function(func)
-		end
-        
-		if type_func ~= 'nil' then
-			error(("Cannot convert a %s to a function"):format(type_func), 2)
         end
 
-		return identity
+        if type_func == 'string' then
+            return get_cached_function(func)
+        end
+
+        if type_func ~= 'nil' then
+            error(("Cannot convert a %s to a function"):format(type_func), 2)
+        end
+
+        return identity
     end
 
     _G.Linquidate_Loader(function(linquidate)
