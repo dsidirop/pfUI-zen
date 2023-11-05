@@ -12,8 +12,6 @@ if not string.format then
 end
 
 if not strmatch then
-    local _stringSub = string.sub
-    local _stringGsub = string.gsub
     local _stringFind = string.find
     function strmatch(input, patternString, ...)
         -- todo  ("a 11 b (12) c 13"):match("%(%d+%)") --> "(12)"
