@@ -1,3 +1,5 @@
+-- this file should be loaded first ahead of all other addon
+
 _G = _G or getfenv(0)
 
 if not string.format then

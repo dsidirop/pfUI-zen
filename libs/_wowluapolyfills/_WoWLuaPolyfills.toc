@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: _WoWLuaPolyfills
+## Notes: Polyfills for the WoW Lua API providing symbols from standardized Lua such as _G, strmatch, string:format etc
+## Author: dsidirop
+## LoadOnDemand: 1
+## X-Date: Oct 25, 2023
+## X-License: GPL v3
+## X-Website: github.com/dsidirop/_WoWLuaPolyfills
+## X-Category: Library
+
+_wowluapolyfills.xml
