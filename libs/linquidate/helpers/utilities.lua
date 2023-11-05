@@ -45,7 +45,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
     function Utilities.tostring_q(obj)
         if type(obj) == "string" then
-            return ("%q"):format(obj)
+            return string.format("%q", obj)
         end
 
         return tostring(obj)
@@ -60,11 +60,11 @@ _G.Linquidate_Loader(function(Linquidate)
             end
 
             if count == 2 then
-                return ("%s or %s"):format(unpack(arg))
+                return string.format("%s or %s", unpack(arg))
             end
 
             if count == 3 then
-                return ("%s, %s, or %s"):format(unpack(arg))
+                return string.format("%s, %s, or %s", unpack(arg))
             end
 
             local t = {}
@@ -81,7 +81,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
         function Utilities.check(num, argument, ...)
             if type(num) ~= "number" then
-                error("Argument #1 to check must be a number, got %s (%s)"):format(type(num), tostring(num))
+                error(string.format("Argument #1 to check must be a number, got %s (%s)", type(num), tostring(num)))
             end
 
             local type_argument = type(argument)
@@ -91,7 +91,7 @@ _G.Linquidate_Loader(function(Linquidate)
                 end
             end
 
-            error(("Argument #%d must be a %s, got %s (%s)"):format(num, combine_types(unpack(arg)), type_argument, tostring_q(argument)), 3)
+            error(string.format("Argument #%d must be a %s, got %s (%s)", num, combine_types(unpack(arg)), type_argument, tostring_q(argument)), 3)
         end
     end
     local check = Utilities.check
@@ -164,17 +164,17 @@ _G.Linquidate_Loader(function(Linquidate)
 
         local args, body = code:match("(.*)=>(.*)")
         if not args then
-            error(("%q is not the right format to convert to a function"):format(code), 3)
+            error(string.format("%q is not the right format to convert to a function", code), 3)
         end
 
-        local func_creator, error_message = loadstring(([[return function(%s) return %s end]]):format(args, body)) -- note   in vanilla-wow-lua we cant use [=====[ to be on the safe(r) side here because wow-lua does not support this particular syntax
+        local func_creator, error_message = loadstring(string.format([[return function(%s) return %s end]], args, body)) -- note   in vanilla-wow-lua we cant use [=====[ to be on the safe(r) side here because wow-lua does not support this particular syntax
         if not func_creator then
-            error(("%q is not proper code: %s"):format(code, error_message), 3)
+            error(string.format("%q is not proper code: %s", code, error_message), 3)
         end
 
         func = func_creator()
         if type(func) ~= "function" then
-            error(("%q did not properly generate a function"):format(code), 3)
+            error(string.format("%q did not properly generate a function", code), 3)
         end
 
         cached_functions[code] = func
@@ -192,7 +192,7 @@ _G.Linquidate_Loader(function(Linquidate)
         end
 
         if type_func ~= 'nil' then
-            error(("Cannot convert a %s to a function"):format(type_func), 2)
+            error(string.format("Cannot convert a %s to a function", type_func), 2)
         end
 
         return identity

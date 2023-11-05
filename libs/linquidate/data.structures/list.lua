@@ -145,7 +145,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			end
 
 			if not contract(table[index]) then
-				error(("Element %s does not meet the contract for this List."):format(tostring_q(table[index])), 2)
+				error(string.format("Element %s does not meet the contract for this List.", tostring_q(table[index])), 2)
 			end
 		end
 	end
@@ -214,7 +214,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local count = self:Count()
 		Enumerable.From(sequence):ForEach(function(item)
 			if contract and not contract(item) then
-				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+				error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 			end
 			if not is_wrapped or item ~= nil then
 				count = count + 1
@@ -239,7 +239,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+			error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 		end
 
 		local count = self:Count() + 1
@@ -272,7 +272,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		for i = 1, n do
 			local item = arg[i]
 			if contract and not contract(item) then
-				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+				error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 			end
 
 			if not is_wrapped or item ~= nil then
@@ -306,7 +306,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+			error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 		end
 
 		local is_wrapped = not counts[self]
@@ -361,7 +361,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		if contract then
 			sequence:ForEach(function(item)
 				if not contract(item) then
-					error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+					error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 				end
 			end)
 		end
@@ -407,7 +407,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			for i = 1, sequence_count do
 				local item = arg[i]
 				if not contract(item) then
-					error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+					error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 				end
 			end
 		end
@@ -595,7 +595,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+			error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 		end
 
 		local is_wrapped = not counts[self]
@@ -638,7 +638,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		local table = tables[self]
 		sequence:ForEach(function(item)
 			if contract and not contract(item) then
-				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+				error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 			end
 
 			if is_wrapped and item == nil then
@@ -682,7 +682,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		for i = 1, table.getn(arg) do
 			local item = arg[i]
 			if contract and not contract(item) then
-				error(("Element %s does not meet the contract for this List."):format(tostring_q(item)), 2)
+				error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 			end
 
 			if is_wrapped and item == nil then

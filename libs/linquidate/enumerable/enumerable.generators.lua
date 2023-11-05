@@ -153,7 +153,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		elseif obj_type == 'number' or obj_type == 'boolean' then
 			return Enumerable.Return(obj)
 		else
-			error(("Don't know how to convert %s to an Enumerable"):format(obj_type), 2)
+			error(string.format("Don't know how to convert %s to an Enumerable", obj_type), 2)
 		end
 	end
 

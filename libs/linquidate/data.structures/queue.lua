@@ -130,7 +130,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			end
 
 			if not contract(table[index]) then
-				error(("Element %s does not meet the contract for this Queue."):format(tostring_q(table[index])), 2)
+				error(string.format("Element %s does not meet the contract for this Queue.", tostring_q(table[index])), 2)
 			end
 		end
 	end
@@ -166,7 +166,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this Queue."):format(tostring_q(item)), 2)
+			error(string.format("Element %s does not meet the contract for this Queue.", tostring_q(item)), 2)
 		end
 
 		local head = heads[self]

@@ -96,7 +96,7 @@ _G.Linquidate_Loader(function(Linquidate)
 					self:Add(k, v)
 				end)
 			else
-				error(("Can't convert %s (%s) to a dictionary"):format(type(dict), tostring(dict)), 2)
+				error(string.format("Can't convert %s (%s) to a dictionary", type(dict), tostring(dict)), 2)
 			end
 		end
 
@@ -131,7 +131,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			end
 
 			if not contract(key, value) then
-				error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary."):format(tostring_q(key), tostring_q(value)), 2)
+				error(string.format("Element (%s, %s) does not meet the contract for this BidirectionalDictionary.", tostring_q(key), tostring_q(value)), 2)
 				break
 			end
 		end
@@ -244,7 +244,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract and not contract(key, value) then
-			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring_q(key), tostring_q(value)), 2)
+			error(string.format("Element (%s, %s) does not meet the contract for this BidirectionalDictionary", tostring_q(key), tostring_q(value)), 2)
 		end
 
 		local key_comparison_selector = key_comparison_selectors[self]
@@ -313,7 +313,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract and not contract(key, value) then
-			error(("Element (%s, %s) does not meet the contract for this BidirectionalDictionary"):format(tostring_q(key), tostring_q(value)), 2)
+			error(string.format("Element (%s, %s) does not meet the contract for this BidirectionalDictionary", tostring_q(key), tostring_q(value)), 2)
 		end
 
 		local key_comparison_selector = key_comparison_selectors[self]

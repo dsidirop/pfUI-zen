@@ -211,7 +211,7 @@ _G.Linquidate_Loader(function(Linquidate)
 			end
 
 			if not contract(value) then
-				error(("Element %s does not meet the contract for this Set."):format(tostring_q(value)), 2)
+				error(string.format("Element %s does not meet the contract for this Set.", tostring_q(value)), 2)
 			end
 		end
 	end
@@ -364,7 +364,7 @@ _G.Linquidate_Loader(function(Linquidate)
 
 		local contract = contracts[self]
 		if contract and not contract(item) then
-			error(("Element %s does not meet the contract for this Set."):format(tostring_q(item)), 2)
+			error(string.format("Element %s does not meet the contract for this Set.", tostring_q(item)), 2)
 		end
 
 		local table = tables[self]
@@ -613,7 +613,7 @@ _G.Linquidate_Loader(function(Linquidate)
 		for k, v in pairs(other_table) do
 			if table[k] == nil then
 				if contract and not contract(v) then
-					error(("Element %s does not meet the contract for this Set."):format(tostring_q(v)), 2)
+					error(string.format("Element %s does not meet the contract for this Set.", tostring_q(v)), 2)
 				end
 				table[k] = v
 			else
