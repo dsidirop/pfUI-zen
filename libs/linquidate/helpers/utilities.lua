@@ -137,12 +137,17 @@ _G.Linquidate_Loader(function(Linquidate)
 
             local type_argument = type(argument)
             for i = 1, table.getn(arg) do
-                if type_argument == arg[i] then
+                local desired_type = arg[i]
+                if type_argument == desired_type then
+                    return
+                end
+
+                if desired_type == 'userdata' and type_argument == 'table' then -- dirty fix for wow-lua-1-12
                     return
                 end
             end
 
-            error(string.format("Argument #%d must be a %s, got %s (%s)", num, combine_types(unpack(arg)), type_argument, tostring_q(argument)), 3)
+            error(string.format("Argument#%d must be have a type of '%s', but it's a '%s' (%s)", num, combine_types(unpack(arg)), type_argument, tostring_q(argument)), 3)
         end
     end
     local check = Utilities.check
