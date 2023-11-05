@@ -2,7 +2,16 @@
 -- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
 -- todo#2   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
 
+local Linquidate = _G.LibStub("Linquidate")
+
+print(tostring_q(Linquidate.Enumerable.From({ 1, 2, 3, 4 }):Where("x => x%2 == 0"))) --  "[2, 4]"
+-- print(tostring_q(Enumerable.From({ 1, 2, 3, 4 }):Where(function(x) return x % 2 == 0 end)))  --  "[2, 4]"
+
+
 pfUI:RegisterModule("Zen", "vanilla:tbc", function()
+    print("** _G="..type(_G))
+    print("** match="..type(match))
+
     -- inspired by pfUI-eliteOverlay.lua
     local __ = {
         C = C,
