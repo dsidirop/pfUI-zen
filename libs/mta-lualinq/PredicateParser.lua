@@ -6,7 +6,7 @@ setmetatable(
         PredicateParser,
         {
             __call = function(self, ...)
-                return self:Get(...)
+                return self:Get(unpack(arg))
             end
         }
 )
@@ -94,13 +94,13 @@ end
 
 function PredicateParser:GetQueryFunction(predicate, ...)
     local localsString
-
-    local isNamed, pred, argsNames = self:IsNamedParameters(predicate, ...)
+    
+    local isNamed, pred, argsNames = self:IsNamedParameters(predicate, unpack(arg))
     if isNamed then
         predicate = pred
-        localsString = self:GetLocalsNamed(argsNames, ...)
+        localsString = self:GetLocalsNamed(argsNames, unpack(arg))
     else
-        localsString = self:GetLocalsUnrolled(...)
+        localsString = self:GetLocalsUnrolled(unpack(arg))
     end
 
     local argsCnt = table.getn(arg)
@@ -123,7 +123,7 @@ function PredicateParser:GetPredicateFunction(pred, ...)
     if type(pred) == "function" then
         func = pred
     elseif type(pred) == "string" then
-        func = PredicateParser():GetQueryFunction(pred, 1, ...)
+        func = PredicateParser():GetQueryFunction(pred, 1, unpack(arg))
     else
         return false
         -- error("Wrong argument to PredicateParser:GetPredicateFunction(), expected function or string predicate")
@@ -135,7 +135,7 @@ function PredicateParser:SortingFunction(data, predicate, ...)
     local sortingCache = {}
     local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
     for _, val in ipairs(data) do
-        sortingCache[val] = func(val, ...)
+        sortingCache[val] = func(val, unpack(arg))
     end
     table.sort(data, function(a, b)
         return sortingCache[a] < sortingCache[b]
@@ -156,7 +156,7 @@ function PredicateParser:Split(str, sep)
 
     local ret = {}
     local n = 1
-    for w in str:gmatch("([^" .. sep .. "]*)") do
+    for w in string.gmatch(str, "([^" .. sep .. "]*)") do
         ret[n] = ret[n] or w
         if w == "" then
             n = n + 1
@@ -169,5 +169,5 @@ function PredicateParser:Trim(str)
     if string and type(string.trim) == "function" then
         return string.trim(str)
     end
-    return (str:gsub("^%s*(.-)%s*$", "%1"))
+    return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
 end

@@ -387,7 +387,7 @@ function Enumerable:Last(predicate, ...)
         return self.data[self:Count()]
     end
 
-    local func = PredicateParser():GetPredicateFunction(predicate, ...)
+    local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
     if not func then
         return
     end
