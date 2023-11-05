@@ -91,7 +91,7 @@ _G.Linquidate_Loader(function(Linquidate)
                 end
             end
 
-            error(("Argument #%d must be a %s, got %s (%s)"):format(num, combine_types(...), type_argument, tostring_q(argument)), 3)
+            error(("Argument #%d must be a %s, got %s (%s)"):format(num, combine_types(unpack(arg)), type_argument, tostring_q(argument)), 3)
         end
     end
     local check = Utilities.check
