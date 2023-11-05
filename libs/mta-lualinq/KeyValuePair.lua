@@ -2,19 +2,27 @@ KeyValuePair = {}
 KeyValuePair.metatable = {
     __index = KeyValuePair,
 }
-setmetatable( KeyValuePair, { __call = function(self,...) return self:New(...) end } )
 
-function KeyValuePair:New(key,value)
-	local self = setmetatable( {}, KeyValuePair.metatable )
+setmetatable(
+        KeyValuePair,
+        {
+            __call = function(self, ...)
+                return self:New(unpack(arg))
+            end
+        }
+)
 
-	self.key = key
-	self.value = value
+function KeyValuePair:New(key, value)
+    local self = setmetatable({}, KeyValuePair.metatable)
 
-	return self
+    self.key = key
+    self.value = value
+
+    return self
 end
 
 function KeyValuePair:ToTable()
-	local ret = {}
-	ret[self.key] = self.value
-	return ret
+    local ret = {}
+    ret[self.key] = self.value
+    return ret
 end
