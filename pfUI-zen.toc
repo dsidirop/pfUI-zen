@@ -15,8 +15,8 @@
 
 # startregion  localdev_libs    order is important below
 libs\_wowluapolyfills\.xml
-libs\libstub\libstub.xml
-libs\linquidate\linquidate.xml
+libs\libstub\.xml
+libs\linquidate\.xml
 # endregion    localdev_libs
 
 pfUI-zen.lua

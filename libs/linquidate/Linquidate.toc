@@ -9,4 +9,4 @@
 ## X-Website: github.com/dsidirop/linquidate
 ## X-Category: Library
 
-linquidate.xml
+.xml
