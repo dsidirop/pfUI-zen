@@ -14,11 +14,22 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         Enumerable = Enumerable,
         GetAddOnInfo = GetAddOnInfo,
     }
+    
+    local addon = {
+        ownName = "Zen",
+        fullName = "pfUI [Zen]",
+        folderName = "pfUI-Zen",
+        
+        ownNameColored = "|cFF7FFFD4Zen|r",        
+        fullNameColored = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r",
+
+        fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
+    }
 
     local addonPath = __.Enumerable -- @formatter:off   detect current addon path
             .FromList({ "", "-dev", "-master", "-tbc", "-wotlk" })
             :Select(function (postfix)
-                local name, _, _, enabled = __.GetAddOnInfo("pfUI-zen" .. postfix)
+                local name, _, _, enabled = __.GetAddOnInfo(addon.folderName .. postfix)
                 return { path = name, enabled = enabled or 0 } 
              end)
             :Where(function (x) return x.enabled == 1 end)
@@ -26,12 +37,12 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             :FirstOrDefault() -- @formatter:on
 
     if (not addonPath) then
-        error("[PFUIZ.IM000] pfUI-zen: Failed to find addon folder - please make sure that pfUI-zen is installed correctly!", 1)
+        error(string.format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
         return
     end
 
     if (not __.pfUI.gui.CreateGUIEntry) then
-        error("[PFUIZ.IM010] pfUI-zen: The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", 1)
+        error(string.format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
         return
     end
 
@@ -50,7 +61,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
 
     __.pfUI.gui.CreateGUIEntry(
             __.T["Thirdparty"],
-            __.T["|cFF7FFFD4Zen"],
+            __.T[addon.ownNameColored],
             function()
                 local lootHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
                 lootHeader:GetParent().objectCount = lootHeader:GetParent().objectCount - 1
@@ -69,7 +80,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             end
     )
 
-    pfUI:UpdateConfig("Zen", nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
+    pfUI:UpdateConfig(addon.ownName, nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
 
     ----------------
 
