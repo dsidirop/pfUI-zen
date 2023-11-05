@@ -1,4 +1,5 @@
 if string.match then
+    -- todo   need to find a better way to test whether string:match() exists as a method (not as a function)
     return -- already loaded
 end
 
