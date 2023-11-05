@@ -43,9 +43,60 @@ _G.Linquidate_Loader(function(Linquidate)
         end
     end
 
+    function tableToString(theTable, multiline, indent)
+        local result = ""
+        local chunkSeparator = ""
+        if multiline then
+            chunkSeparator = "\r\n"
+
+            indent = indent or 0 --order
+            result = string.rep(" ", indent) .. "{" .. chunkSeparator --order
+            indent = indent + 2 --order
+        else
+            indent = 1
+            chunkSeparator = " "
+            result = "{" .. chunkSeparator
+        end
+
+        for k, v in pairs(theTable) do
+            result = result .. string.rep(" ", indent)
+
+            local kType = type(k)
+            if kType == "number" then
+                result = result .. "[" .. k .. "] = "
+            elseif kType == "string" then
+                result = result .. k .. " = "
+            end
+
+            local vType = type(v)
+            if vType == "number" then
+                result = result .. v .. "," .. chunkSeparator
+            elseif vType == "string" then
+                result = result .. "\"" .. v .. "\"," .. chunkSeparator
+            elseif vType == "table" then
+                result = result .. tableToString(v, multiline, indent + 2) .. "," .. chunkSeparator
+            else
+                result = result .. "\"" .. tostring(v) .. "\"," .. chunkSeparator
+            end
+        end
+
+        if multiline then
+            result = result .. string.rep(" ", indent - 2) .. "}"
+        else
+            result = result .. " }"
+        end
+
+        return result
+    end
+
     function Utilities.tostring_q(obj)
-        if type(obj) == "string" then
+        local objType = type(obj)
+        if objType == "string" then
             return string.format("%q", obj)
+        end
+
+        if objType == "table" then
+            return tableToString(obj)
         end
 
         return tostring(obj)
@@ -56,7 +107,7 @@ _G.Linquidate_Loader(function(Linquidate)
         local function combine_types(...)
             local count = table.getn(arg)
             if count == 1 then
-                return (unpack(arg))
+                return unpack(arg)
             end
 
             if count == 2 then
