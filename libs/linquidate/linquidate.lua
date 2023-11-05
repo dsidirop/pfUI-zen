@@ -1,7 +1,7 @@
 local MAJOR_VERSION = "Linquidate"
 local MINOR_VERSION = 14
 
-local _G = _G
+local _G = _G or getfenv(0)
 if not _G.LibStub then
 	_G.error(MAJOR_VERSION .. " requires LibStub.")
 end

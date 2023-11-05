@@ -18,5 +18,4 @@ libs\libstub\libstub.xml
 libs\linquidate\linquidate.xml
 # endregion    localdev_libs
 
-# main
 pfUI-zen.lua

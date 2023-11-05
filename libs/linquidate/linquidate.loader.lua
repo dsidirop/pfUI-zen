@@ -1,4 +1,4 @@
-local _G = _G
+local _G = _G or getfenv(0)
 local funcs = _G.Linquidate_Loader_funcs
 if not funcs then
 	_G.Linquidate_Loader = nil
