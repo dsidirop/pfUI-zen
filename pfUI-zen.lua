@@ -2,16 +2,7 @@
 -- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
 -- todo#2   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
 
-local Linquidate = _G.LibStub("Linquidate")
-
-print(tostring_q(Linquidate.Enumerable.From({ 1, 2, 3, 4 }):Where("x => x%2 == 0"))) --  "[2, 4]"
--- print(tostring_q(Enumerable.From({ 1, 2, 3, 4 }):Where(function(x) return x % 2 == 0 end)))  --  "[2, 4]"
-
-
 pfUI:RegisterModule("Zen", "vanilla:tbc", function()
-    print("** _G="..type(_G))
-    print("** match="..type(match))
-
     -- inspired by pfUI-eliteOverlay.lua
     local __ = {
         C = C,
@@ -20,22 +11,27 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         U = pfUI.gui.UpdaterFunctions,
         linq = linq,
         pfUI = pfUI,
+        Enumerable = Enumerable,
         GetAddOnInfo = GetAddOnInfo,
     }
 
-    --local addonPaths = __.linq({ "-dev", "", "-master", "-tbc", "-wotlk" }) -- @formatter:off   detect current addon path
-    --        :select(function (postfix)
-    --            local name, _, _, enabled = __.GetAddOnInfo("pfUI-zen" .. postfix)
-    --            return { path = name, enabled = enabled or 0 } 
-    --         end)
-    --        :where(function (x) return x.enabled == 1 end)
-    --        :select(function (x) return x.path end)
-    --        :toArray() -- @formatter:on
-    --
-    --print("[PFUIZ.IM000] addonPath='" .. table.getn(addonPaths) .. "'")
+    local addonPath = __.Enumerable -- @formatter:off   detect current addon path
+            .FromList({ "", "-dev", "-master", "-tbc", "-wotlk" })
+            :Select(function (postfix)
+                local name, _, _, enabled = __.GetAddOnInfo("pfUI-zen" .. postfix)
+                return { path = name, enabled = enabled or 0 } 
+             end)
+            :Where(function (x) return x.enabled == 1 end)
+            :Select(function (x) return x.path end)
+            :FirstOrDefault() -- @formatter:on
+
+    if (not addonPath) then
+        error("[PFUIZ.IM000] pfUI-zen: Failed to find addon folder - please make sure that pfUI-zen is installed correctly!", 1)
+        return
+    end
 
     if (not __.pfUI.gui.CreateGUIEntry) then
-        print("[PFUIZ.IM010] pfUI-zen needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!")
+        error("[PFUIZ.IM010] pfUI-zen: The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", 1)
         return
     end
 
@@ -59,7 +55,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                 local lootHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
                 lootHeader:GetParent().objectCount = lootHeader:GetParent().objectCount - 1
                 lootHeader:SetHeight(20)
-                
+
                 __.pfUI.gui.CreateConfig(
                         function()
                             -- print("** mode='" .. (__C.Zen[props.loot.green_items_autogambling_mode] or "nil") .. "'")
@@ -72,9 +68,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                 )
             end
     )
-    
+
     pfUI:UpdateConfig("Zen", nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
-    
+
     ----------------
 
     -- how often is 'onupdate' being triggered?
