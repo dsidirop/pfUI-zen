@@ -50,11 +50,11 @@ function _stringMetatable:match(patternString, ...)
     match24,
     match25 = _stringFind(self, patternString, unpack(arg))
 
-    if not startIndex then -- no match
+    if startIndex == nil then -- no match
         return nil
     end
 
-    if not match01 then -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+    if match01 == nil then -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
         return self:sub(startIndex, endIndex)
     end
 
