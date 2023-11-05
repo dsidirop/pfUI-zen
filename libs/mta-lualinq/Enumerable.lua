@@ -64,7 +64,7 @@ end
 
 function Enumerable:AddRange(tab)
     if self.type == "list" then
-        local tSize = #tab
+        local tSize = table.getn(tab)
         for i = 1, tSize do
             tabInsert(self.data, tab[i])
         end
@@ -94,7 +94,7 @@ function Enumerable:ToList()
     end
 
     local ret = {}
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         ret[i] = self.data[i]
     end
@@ -107,7 +107,7 @@ function Enumerable:ToDictionary()
     end
 
     local ret = {}
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         ret[self.data[i].key] = self.data[i].value
     end
@@ -123,7 +123,7 @@ function Enumerable:AsDictionary(predicate, ...)
     local enum = Enumerable()
     enum.type = "dict"
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         local key, val = func(self.data[i], unpack(arg))
         local pair = KeyValuePair(key, val)
@@ -140,7 +140,7 @@ function Enumerable:Keys()
     local enum = Enumerable()
     enum.type = "list"
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         enum:AddInternal(self.data[i].key)
     end
@@ -154,7 +154,7 @@ function Enumerable:Values()
     local enum = Enumerable()
     enum.type = "list"
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         enum:AddInternal(self.data[i].value)
     end
@@ -164,13 +164,13 @@ end
 function Enumerable:Where(predicate, ...)
     local enum = Enumerable()
     enum.type = self.type
-	
+
     local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
     if not func then
         return
     end
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         if func(self.data[i], unpack(arg)) then
             enum:AddInternal(self.data[i])
@@ -189,7 +189,7 @@ function Enumerable:Select(predicate, ...)
         return
     end
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         enum:AddInternal(func(self.data[i], unpack(arg)))
     end
@@ -205,7 +205,7 @@ function Enumerable:SelectMany(predicate, ...)
         return
     end
 
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         local tab = func(self.data[i], unpack(arg))
         if type(tab) ~= "table" then
@@ -420,7 +420,7 @@ function Enumerable:Single(predicate, ...)
     end
 
     local foundElem = nil
-    local tSize = #self.data
+    local tSize = table.getn(self.data)
     for i = 1, tSize do
         if func(self.data[i], unpack(arg)) then
             if foundElem then
@@ -450,7 +450,7 @@ end
 
 function Enumerable:Count(predicate, ...)
     if not predicate then
-        return #self.data
+        return table.getn(self.data)
     end
 
     local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
