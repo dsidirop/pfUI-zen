@@ -211,7 +211,7 @@ function Enumerable:SelectMany(predicate, ...)
         if type(tab) ~= "table" then
             error("Expected table as source of data in Enumerable:SelectMany(), but got: " .. tostring(type(tab)))
         end
-        for i, v in pairs(tab) do
+        for _, v in pairs(tab) do
             enum:AddInternal(v)
         end
     end
@@ -419,8 +419,8 @@ function Enumerable:Single(predicate, ...)
         return
     end
 
-    local foundElem = nil
     local tSize = table.getn(self.data)
+    local foundElem
     for i = 1, tSize do
         if func(self.data[i], unpack(arg)) then
             if foundElem then
