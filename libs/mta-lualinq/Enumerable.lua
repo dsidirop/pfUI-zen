@@ -6,12 +6,19 @@ Enumerable = {}
 Enumerable.emptyFunc = function(a)
     return a
 end
+
 Enumerable.metatable = {
     __index = Enumerable,
 }
-setmetatable(Enumerable, { __call = function(self, ...)
-    return self:New(unpack(arg))
-end })
+
+setmetatable(
+        Enumerable,
+        {
+            __call = function(self, ...)
+                return self:New(unpack(arg))
+            end
+        }
+)
 
 function Enumerable:New()
     local self = setmetatable({}, Enumerable.metatable)
