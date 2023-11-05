@@ -167,7 +167,7 @@ _G.Linquidate_Loader(function(Linquidate)
             error(("%q is not the right format to convert to a function"):format(code), 3)
         end
 
-        local func_creator, error_message = loadstring(([[return function(%s) return %s end]]):format(args, body)) -- note   we cant use [=====[ to be on the safe(r) side here because wow-lua does not support this particular syntax
+        local func_creator, error_message = loadstring(([[return function(%s) return %s end]]):format(args, body)) -- note   in vanilla-wow-lua we cant use [=====[ to be on the safe(r) side here because wow-lua does not support this particular syntax
         if not func_creator then
             error(("%q is not proper code: %s"):format(code, error_message), 3)
         end
