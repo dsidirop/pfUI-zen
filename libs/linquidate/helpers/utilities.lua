@@ -162,7 +162,7 @@ _G.Linquidate_Loader(function(Linquidate)
             return func
         end
 
-        local args, body = code:match("(.*)=>(.*)")
+        local args, body = string.match(code, "(.*)=>(.*)")
         if not args then
             error(string.format("%q is not the right format to convert to a function", code), 3)
         end
