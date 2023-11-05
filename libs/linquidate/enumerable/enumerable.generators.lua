@@ -6,7 +6,6 @@ _G.Linquidate_Loader(function(Linquidate)
 	local convert_function = assert(Linquidate.Utilities.convert_function)
 
 	local type = assert(_G.type)
-	local select = assert(_G.select)
 	local error = assert(_G.error)
 	local math_random = assert(_G.math.random)
 
