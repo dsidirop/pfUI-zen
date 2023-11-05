@@ -208,19 +208,22 @@ _G.Linquidate_Loader(function(Linquidate)
 			error("Cannot add elements on a read-only List", 2)
 		end
 
-		local contract = contracts[self]
 		local table = tables[self]
+		local contract = contracts[self]
 		local is_wrapped = not counts[self]
+
 		local count = self:Count()
 		Enumerable.From(sequence):ForEach(function(item)
 			if contract and not contract(item) then
 				error(string.format("Element %s does not meet the contract for this List.", tostring_q(item)), 2)
 			end
+
 			if not is_wrapped or item ~= nil then
 				count = count + 1
 				table[count] = item
 			end
 		end)
+
 		if not is_wrapped then
 			counts[self] = count
 		end
