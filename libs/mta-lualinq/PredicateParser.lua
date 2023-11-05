@@ -76,35 +76,37 @@ function PredicateParser:GetLocalsNamed(argsNames, ...)
 end
 
 function PredicateParser:IsNamedParameters(predicate, ...)
-    local arrowPos = predicate:find("=>")
+    local arrowPos = string.find(predicate, "=>")
     if not arrowPos then
         return false
     end
 
-    local args = self:Trim(predicate:sub(1, arrowPos - 1))
+    local args = self:Trim(string.sub(predicate, 1, arrowPos - 1))
     local argsNames = self:Split(args, ",")
     if not argsNames then
         return false
     end
 
-    local predReal = self:Trim(predicate:sub(arrowPos + 2, table.getn(predicate)))
+    local predReal = self:Trim(string.sub(predicate, arrowPos + 2, table.getn(predicate)))
 
     return true, predReal, argsNames
 end
 
 function PredicateParser:GetQueryFunction(predicate, ...)
+    local localsString
+
     local isNamed, pred, argsNames = self:IsNamedParameters(predicate, ...)
-    local localsString = nil
     if isNamed then
         predicate = pred
         localsString = self:GetLocalsNamed(argsNames, ...)
     else
         localsString = self:GetLocalsUnrolled(...)
     end
+
     local argsCnt = table.getn(arg)
     local hash = self:HashValue(argsCnt .. "-" .. predicate)
     if not self.compiledFunctions[hash] then
-        local hasReturn = predicate:find("return")
+        local hasReturn = string.find(predicate, "return")
         local fullFunc = self.funcHeader .. self.funcArgs .. localsString
         if not hasReturn then
             fullFunc = fullFunc .. "return "
@@ -131,8 +133,8 @@ end
 
 function PredicateParser:SortingFunction(data, predicate, ...)
     local sortingCache = {}
-    local func = PredicateParser():GetPredicateFunction(predicate, ...)
-    for ind, val in ipairs(data) do
+    local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
+    for _, val in ipairs(data) do
         sortingCache[val] = func(val, ...)
     end
     table.sort(data, function(a, b)
