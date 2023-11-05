@@ -3,8 +3,16 @@ if string.match then
 end
 
 local _stringFind = assert(string.find)
+local _getmetatable = assert(getmetatable)
+local _setmetatable = assert(setmetatable)
 
-function string:match(patternString, ...)
+local _stringMetatable = _getmetatable(string)
+if not _stringMetatable then
+    _stringMetatable = { __index = {} } -- standard-lua returns a metatable but wow-lua returns nil
+    _setmetatable(string, _stringMetatable)
+end
+
+function _stringMetatable:match(patternString, ...)
     if patternString == nil then
         error("patternString is nil", 1)
     end
@@ -72,3 +80,5 @@ function string:match(patternString, ...)
     match24,
     match25
 end
+
+_stringMetatable.__index.match = _stringMetatable.match
