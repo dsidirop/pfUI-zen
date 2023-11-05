@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Include file="enumerable.lua"/>
+    <Include file="enumerable.action.lua"/>
+    <Include file="enumerable.aggregate.lua"/>
+    <Include file="enumerable.functional.lua"/>
+    <Include file="enumerable.generators.lua"/>
+    <Include file="enumerable.group.lua"/>
+    <Include file="enumerable.ordering.lua"/>
+    <Include file="enumerable.paging.lua"/>
+    <Include file="enumerable.projection.lua"/>
+    <Include file="enumerable.set.lua"/>
+</Ui>
