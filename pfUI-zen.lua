@@ -63,11 +63,11 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             __.T["Thirdparty"],
             __.T[addon.ownNameColored],
             function()
-                local lootHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
-                lootHeader:GetParent().objectCount = lootHeader:GetParent().objectCount - 1
-                lootHeader:SetHeight(20)
+                local lblLootSectionHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
+                lblLootSectionHeader:GetParent().objectCount = lblLootSectionHeader:GetParent().objectCount - 1
+                lblLootSectionHeader:SetHeight(20)
 
-                __.pfUI.gui.CreateConfig(
+                local ddlGreenItemsAutogamblingMode = __.pfUI.gui.CreateConfig(
                         function()
                             -- print("** mode='" .. (__C.Zen[props.loot.green_items_autogambling_mode] or "nil") .. "'")
                         end,
@@ -80,7 +80,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             end
     )
 
-    pfUI:UpdateConfig(addon.ownName, nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
+    __.pfUI:UpdateConfig(addon.ownName, nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
 
     ----------------
 
