@@ -1,5 +1,4 @@
-﻿-- todo#0   the linq lib needs to be refactored into being wow1.12 compatible: replace match() and refactor format() for starters
--- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
+﻿-- todo#1   move pfUI:RegisterModule() to a separate file called addon.lua and refactor the corelogic of the callback into a separate class
 -- todo#2   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
 
 pfUI:RegisterModule("Zen", "vanilla:tbc", function()
@@ -46,16 +45,28 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         return
     end
 
-    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_modes = {
+    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__modes = {
         "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
         "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
         "pass:" .. __.T["Just '|cff888888Pass|r'"],
         "disabled:" .. __.T["Let me handle it myself"],
     }
 
-    local preferences = {
-        loot = {
-            green_items_autogambling_mode = "loot__green_items_autogambling_mode"
+    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__keybinds = {
+        "none:" .. __.T["Just roll immediately"],
+        "alt:" .. __.T["Alt"],
+        "ctrl:" .. __.T["Ctrl"],
+        "shift:" .. __.T["Shift"],
+        "ctrl_alt:" .. __.T["Ctrl + Alt"],
+        "ctrl_shift:" .. __.T["Ctrl + Shift"],
+        "alt_shift:" .. __.T["Alt + Shift"],
+        "ctrl_alt_shift:" .. __.T["Ctrl + Alt + Shift"],
+    }
+
+    local settingsNicknames = {
+        Greenies = {
+            Mode = "loot__green_items_autogambling__mode",
+            Keybind = "loot__green_items_autogambling__keybind"
         }
     }
 
@@ -66,21 +77,31 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                 local lblLootSectionHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
                 lblLootSectionHeader:GetParent().objectCount = lblLootSectionHeader:GetParent().objectCount - 1
                 lblLootSectionHeader:SetHeight(20)
-
+                
                 local ddlGreenItemsAutogamblingMode = __.pfUI.gui.CreateConfig(
                         function()
-                            -- print("** mode='" .. (__C.Zen[props.loot.green_items_autogambling_mode] or "nil") .. "'")
+                            print("** mode='" .. (__.C.Zen[settingsNicknames.Greenies.Mode] or "nil") .. "'")
                         end,
                         __.T["When looting |cFF228B22Green|r items always ..."],
                         __.C.Zen,
-                        preferences.loot.green_items_autogambling_mode,
+                        settingsNicknames.Greenies.Mode,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling_modes
+                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__modes
+                )
+
+                local ddlGreenItemsAutogamblingKeybind = __.pfUI.gui.CreateConfig(
+                        nil,
+                        __.T["Upon pressing ..."],
+                        __.C.Zen,
+                        settingsNicknames.Greenies.Keybind,
+                        "dropdown",
+                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__keybinds
                 )
             end
     )
 
-    __.pfUI:UpdateConfig(addon.ownName, nil, preferences.loot.green_items_autogambling_mode, "roll_greed")
+    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Mode, "roll_greed")
+    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Keybind, "none")
 
     ----------------
 
