@@ -12,14 +12,15 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         pfUI = pfUI,
         Enumerable = Enumerable,
         GetAddOnInfo = GetAddOnInfo,
+        GetLootRollItemInfo = GetLootRollItemInfo,
     }
-    
+
     local addon = {
         ownName = "Zen",
         fullName = "pfUI [Zen]",
         folderName = "pfUI-Zen",
-        
-        ownNameColored = "|cFF7FFFD4Zen|r",        
+
+        ownNameColored = "|cFF7FFFD4Zen|r",
         fullNameColored = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r",
 
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
@@ -45,14 +46,14 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         return
     end
 
-    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__modes = {
+    __.pfUI.gui.dropdowns.Zen__greenies__autogambling__modes = {
         "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
         "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
         "pass:" .. __.T["Just '|cff888888Pass|r'"],
-        "disabled:" .. __.T["Let me handle it myself"],
+        "let_user_choose:" .. __.T["Let me handle it myself"],
     }
 
-    __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__keybinds = {
+    __.pfUI.gui.dropdowns.Zen__greenies__autogambling__keybinds = {
         "none:" .. __.T["Just roll immediately"],
         "alt:" .. __.T["Alt"],
         "ctrl:" .. __.T["Ctrl"],
@@ -65,8 +66,8 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
 
     local settingsNicknames = {
         Greenies = {
-            Mode = "loot__green_items_autogambling__mode",
-            Keybind = "loot__green_items_autogambling__keybind"
+            Mode = "greenies__autogambling__mode",
+            Keybind = "greenies__autogambling__keybind"
         }
     }
 
@@ -77,16 +78,16 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                 local lblLootSectionHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
                 lblLootSectionHeader:GetParent().objectCount = lblLootSectionHeader:GetParent().objectCount - 1
                 lblLootSectionHeader:SetHeight(20)
-                
+
                 local ddlGreenItemsAutogamblingMode = __.pfUI.gui.CreateConfig(
                         function()
-                            print("** mode='" .. (__.C.Zen[settingsNicknames.Greenies.Mode] or "nil") .. "'")
+                            -- print("** mode='" .. (__.C.Zen[settingsNicknames.Greenies.Mode] or "nil") .. "'")
                         end,
                         __.T["When looting |cFF228B22Green|r items always ..."],
                         __.C.Zen,
                         settingsNicknames.Greenies.Mode,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__modes
+                        __.pfUI.gui.dropdowns.Zen__greenies__autogambling__modes
                 )
 
                 local ddlGreenItemsAutogamblingKeybind = __.pfUI.gui.CreateConfig(
@@ -95,51 +96,56 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                         __.C.Zen,
                         settingsNicknames.Greenies.Keybind,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__loot__green_items_autogambling__keybinds
+                        __.pfUI.gui.dropdowns.Zen__greenies__autogambling__keybinds
                 )
             end
     )
 
+    -- set default values for the first time we load the addon
     __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Mode, "roll_greed")
     __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Keybind, "none")
 
-    ----------------
+    function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
+        if greeniesAutogamblingMode == "pass" then
+            return "PASS"
+        end
 
-    -- how often is 'onupdate' being triggered?
-    -- consult pfui -> roll.lua
-    --  maybe we should intercept function pfUI.loot:UpdateLootFrame()
+        if greeniesAutogamblingMode == "roll_need" then
+            return "NEED"
+        end
 
-    --function LazyPig_GreenRoll()
-    --    RollReturn = function()
-    --        local txt = ""
-    --        if LPCONFIG.GREEN == 1 then
-    --            txt = "NEED"
-    --        elseif LPCONFIG.GREEN == 2 then
-    --            txt = "GREED"
-    --        elseif LPCONFIG.GREEN == 0 then
-    --            txt = "PASS"
-    --        end
-    --        return txt
-    --    end
-    --
-    --    local pass = nil
-    --    if LPCONFIG.GREEN then
-    --        for i=1, NUM_GROUP_LOOT_FRAMES do
-    --            local frame = getglobal("GroupLootFrame"..i);
-    --            if frame:IsVisible() then
-    --                local id = frame.rollID
-    --                local _, name, _, quality = GetLootRollItemInfo(id);
-    --                if quality == 2 then
-    --                    RollOnLoot(id, LPCONFIG.GREEN); -- https://wowwiki-archive.fandom.com/wiki/API_RollOnLoot
-    --                    local _, _, _, hex = GetItemQualityColor(quality)
-    --                    greenrolltime = GetTime() + 1
-    --                    DEFAULT_CHAT_FRAME:AddMessage("LazyPig: "..hex..RollReturn().."|cffffffff Roll "..GetLootRollItemLink(id))
-    --                    pass = true
-    --                end
-    --            end
-    --        end
-    --    end
-    --    return pass
-    --end
+        if greeniesAutogamblingMode == "roll_greed" then
+            return "GREED"
+        end
+
+        return nil -- let_user_choose
+    end
+
+    local QUALITY_GREEN = 2
+    local _, _, _, greenQualityHex = GetItemQualityColor(QUALITY_GREEN)
+    
+    local _hookUpdateLootRoll = __.pfUI.roll.UpdateLootRoll
+    function __.pfUI.roll:UpdateLootRoll(id)
+        _hookUpdateLootRoll(id)
+
+        local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C.Zen[settingsNicknames.Greenies.Mode])
+        if not rollMode then
+            return -- let the user choose
+        end
+
+        local frame = pfUI.roll.frames[id]
+        if not frame or not frame.rollID then
+            -- shouldnt happen but just in case
+            return
+        end
+
+        local _, _, _, quality = __.GetLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
+        if quality == QUALITY_GREEN and frame:IsVisible() then
+            -- todo   get keybind activation into account here
+            RollOnLoot(frame.rollID, rollMode)
+
+            DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greenQualityHex .. RollReturn() .. "|cffffffff Roll " .. GetLootRollItemLink(id))
+        end
+    end
 
 end)
