@@ -9,7 +9,6 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         pfUI = assert(pfUI),
         
         U = assert(pfUI.gui.UpdaterFunctions),
-        RollReturn = assert(RollReturn),
         RollOnLoot = assert(RollOnLoot),
         Enumerable = assert(Enumerable),
         GetAddOnInfo = assert(GetAddOnInfo),
@@ -131,7 +130,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
             -- todo   get keybind activation into account here
             __.RollOnLoot(frame.rollID, rollMode)
 
-            DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. __.RollReturn() .. "|cffffffff Roll " .. __.GetLootRollItemLink(frame.rollID))
+            DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. rollMode .. "|cffffffff Roll " .. __.GetLootRollItemLink(frame.rollID))
         end
     end
 
