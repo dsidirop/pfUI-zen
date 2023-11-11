@@ -4,18 +4,18 @@
 pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     -- inspired by pfUI-eliteOverlay.lua
     local __ = {
-        C = C,
-        T = T,
-        F = F,
-        U = pfUI.gui.UpdaterFunctions,
-        linq = linq,
-        pfUI = pfUI,
-        RollReturn = RollReturn,
-        RollOnLoot = RollOnLoot,
-        Enumerable = Enumerable,
-        GetAddOnInfo = GetAddOnInfo,
-        GetLootRollItemLink = GetLootRollItemLink,
-        GetLootRollItemInfo = GetLootRollItemInfo,
+        C = assert(C),
+        T = assert(T),
+        pfUI = assert(pfUI),
+        
+        U = assert(pfUI.gui.UpdaterFunctions),
+        RollReturn = assert(RollReturn),
+        RollOnLoot = assert(RollOnLoot),
+        Enumerable = assert(Enumerable),
+        GetAddOnInfo = assert(GetAddOnInfo),
+        GetItemQualityColor = assert(GetItemQualityColor),
+        GetLootRollItemLink = assert(GetLootRollItemLink),
+        GetLootRollItemInfo = assert(GetLootRollItemInfo),
     }
 
     local addon = {
@@ -107,25 +107,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     -- set default values for the first time we load the addon
     __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Mode, "roll_greed")
     __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Keybind, "none")
-
-    function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
-        if greeniesAutogamblingMode == "pass" then
-            return "PASS"
-        end
-
-        if greeniesAutogamblingMode == "roll_need" then
-            return "NEED"
-        end
-
-        if greeniesAutogamblingMode == "roll_greed" then
-            return "GREED"
-        end
-
-        return nil -- let_user_choose
-    end
     
     local QUALITY_GREEN = 2
-    local _, _, _, greeniesQualityHex = GetItemQualityColor(QUALITY_GREEN)
+    local _, _, _, greeniesQualityHex = __.GetItemQualityColor(QUALITY_GREEN)
     
     local _hookUpdateLootRoll = __.pfUI.roll.UpdateLootRoll
     function __.pfUI.roll:UpdateLootRoll(i)
@@ -149,6 +133,22 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
 
             DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. __.RollReturn() .. "|cffffffff Roll " .. __.GetLootRollItemLink(frame.rollID))
         end
+    end
+
+    function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
+        if greeniesAutogamblingMode == "pass" then
+            return "PASS"
+        end
+
+        if greeniesAutogamblingMode == "roll_need" then
+            return "NEED"
+        end
+
+        if greeniesAutogamblingMode == "roll_greed" then
+            return "GREED"
+        end
+
+        return nil -- let_user_choose
     end
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
