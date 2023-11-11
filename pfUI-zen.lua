@@ -112,9 +112,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     local QUALITY_GREEN = 2
     local _, _, _, greeniesQualityHex = __.GetItemQualityColor(QUALITY_GREEN)
     
-    local _hookUpdateLootRoll = __.pfUI.roll.UpdateLootRoll
-    function __.pfUI.roll:UpdateLootRoll(i)
-        _hookUpdateLootRoll(i)
+    local _base_pfuiRoll_UpdateLootRoll = __.pfUI.roll.UpdateLootRoll
+    function __.pfUI.roll:UpdateLootRoll(i) -- override pfUI's UpdateLootRoll
+        _base_pfuiRoll_UpdateLootRoll(i)
 
         local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C.Zen[settingsNicknames.GreeniesLoot.Mode])
         if not rollMode then
@@ -130,7 +130,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         local _, _, _, quality = __.GetLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
         if quality == QUALITY_GREEN and frame:IsVisible() then
             -- todo   get keybind activation into account here
-            __.RollOnLoot(frame.rollID, rollMode)
+            __.RollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
 
             DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. rollMode .. "|cffffffff Roll " .. __.GetLootRollItemLink(frame.rollID))
         end
