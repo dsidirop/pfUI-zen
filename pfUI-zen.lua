@@ -93,7 +93,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                 )
 
                 local ddlGreenItemsAutogamblingKeybind = __.pfUI.gui.CreateConfig(
-                        nil,
+                        function()
+                            -- todo
+                        end,
                         __.T["Upon pressing ..."],
                         __.C.Zen,
                         settingsNicknames.GreeniesLoot.Keybind,
