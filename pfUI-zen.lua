@@ -4,17 +4,19 @@
 pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     -- inspired by pfUI-eliteOverlay.lua
     local __ = {
-        C = assert(C),
-        T = assert(T),
-        pfUI = assert(pfUI),
-        
-        U = assert(pfUI.gui.UpdaterFunctions),
-        RollOnLoot = assert(RollOnLoot),
-        Enumerable = assert(Enumerable),
-        GetAddOnInfo = assert(GetAddOnInfo),
-        GetItemQualityColor = assert(GetItemQualityColor),
-        GetLootRollItemLink = assert(GetLootRollItemLink),
-        GetLootRollItemInfo = assert(GetLootRollItemInfo),
+        pfui = assert(_G.pfUI),
+        pfuiEnv = assert(_G.pfUI.env),
+        pfuiGui = assert(_G.pfUI.gui),
+
+        C = assert(_G.pfUI.env.C), -- pfUI config
+        T = assert(_G.pfUI.env.T), -- pfUI translations
+
+        RollOnLoot = assert(_G.RollOnLoot),
+        Enumerable = assert(_G.Enumerable),
+        GetAddOnInfo = assert(_G.GetAddOnInfo),
+        GetItemQualityColor = assert(_G.GetItemQualityColor),
+        GetLootRollItemLink = assert(_G.GetLootRollItemLink),
+        GetLootRollItemInfo = assert(_G.GetLootRollItemInfo),
     }
 
     local addon = {
@@ -43,85 +45,99 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         return
     end
 
-    if (not __.pfUI.gui.CreateGUIEntry) then
+    if (not __.pfuiGui.CreateGUIEntry) then
         error(string.format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
         return
     end
 
-    __.pfUI.gui.dropdowns.Zen__greenies__autogambling__modes = {
-        "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
-        "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
-        "pass:" .. __.T["Just '|cff888888Pass|r'"],
-        "let_user_choose:" .. __.T["Let me handle it myself"],
-    }
+    local settingsSpecsV1 = {
+        v = "v1", -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to 
+        
+        greenies_loot_autogambling = {
+            mode = {
+                keyname = "v1.greenies_loot_autogambling.v1.mode",
+                default = "roll_greed",
+                options = {
+                    "roll_need:" .. __.T["Roll '|cFFFF4500Need|r'"],
+                    "roll_greed:" .. __.T["Roll '|cFFFFD700Greed|r'"],
+                    "pass:" .. __.T["Just '|cff888888Pass|r'"],
+                    "let_user_choose:" .. __.T["Let me handle it myself"],
+                },
+            },
 
-    __.pfUI.gui.dropdowns.Zen__greenies__autogambling__keybinds = {
-        "none:" .. __.T["Just roll immediately"],
-        "alt:" .. __.T["Alt"],
-        "ctrl:" .. __.T["Ctrl"],
-        "shift:" .. __.T["Shift"],
-        "ctrl_alt:" .. __.T["Ctrl + Alt"],
-        "ctrl_shift:" .. __.T["Ctrl + Shift"],
-        "alt_shift:" .. __.T["Alt + Shift"],
-        "ctrl_alt_shift:" .. __.T["Ctrl + Alt + Shift"],
-    }
-
-    local settingsNicknames = {
-        GreeniesLoot = {
-            Mode = "v1.greenies_loot_autogambling.v1.mode",
-            Keybind = "v1.greenies_loot_autogambling.v1.keybind"
+            on_keybind = {
+                keyname = "v1.greenies_loot_autogambling.v1.keybind",
+                default = "just_roll_immediately",
+                options =  {
+                    "just_roll_immediately:" .. __.T["Just roll immediately"],
+                    "alt:" .. __.T["Alt"],
+                    "ctrl:" .. __.T["Ctrl"],
+                    "shift:" .. __.T["Shift"],
+                    "ctrl_alt:" .. __.T["Ctrl + Alt"],
+                    "ctrl_shift:" .. __.T["Ctrl + Shift"],
+                    "alt_shift:" .. __.T["Alt + Shift"],
+                    "ctrl_alt_shift:" .. __.T["Ctrl + Alt + Shift"],
+                },
+            },
         }
     }
 
-    __.pfUI.gui.CreateGUIEntry(
+    --if true then
+    --    __.C.Zen = nil  -- this resets the entire settings tree for this addon
+    --    __.C.Zen2 = nil
+    --    __.C.Zen3 = nil
+    --    return
+    --end
+
+    -- set default values for the first time we load the addon    this also creates __.C[addon.ownName]={} if it doesnt already exist 
+    __.pfui:UpdateConfig(addon.ownName, nil, settingsSpecsV1.greenies_loot_autogambling.mode.keyname, settingsSpecsV1.greenies_loot_autogambling.mode.default)
+    __.pfui:UpdateConfig(addon.ownName, nil, settingsSpecsV1.greenies_loot_autogambling.on_keybind.keyname, settingsSpecsV1.greenies_loot_autogambling.on_keybind.default)
+
+    __.pfuiGui.CreateGUIEntry(
             __.T["Thirdparty"],
             __.T[addon.ownNameColored],
-            function()
-                local lblLootSectionHeader = __.pfUI.gui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
+            function() -- this only gets called during a user session the very first time that the user explicitly navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
+                local lblLootSectionHeader = __.pfuiGui.CreateConfig(nil, __.T["Loot"], nil, nil, "header")
                 lblLootSectionHeader:GetParent().objectCount = lblLootSectionHeader:GetParent().objectCount - 1
                 lblLootSectionHeader:SetHeight(20)
 
-                local ddlGreenItemsAutogamblingMode = __.pfUI.gui.CreateConfig(
+                local ddlGreenItemsAutogamblingMode = __.pfuiGui.CreateConfig(
                         function()
-                            -- print("** mode='" .. (__.C.Zen[settingsNicknames.Greenies.Mode] or "nil") .. "'")
+                            -- print("** mode='" .. (__.C[addon.ownName][settingsNicknames.Greenies.Mode] or "nil") .. "'")
                         end,
                         __.T["When looting |cFF228B22Green|r items always ..."],
-                        __.C.Zen,
-                        settingsNicknames.GreeniesLoot.Mode,
+                        __.C[addon.ownName],
+                        settingsSpecsV1.greenies_loot_autogambling.mode.keyname,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__greenies__autogambling__modes
+                        settingsSpecsV1.greenies_loot_autogambling.mode.options
                 )
 
-                local ddlGreenItemsAutogamblingKeybind = __.pfUI.gui.CreateConfig(
+                local ddlGreenItemsAutogamblingKeybind = __.pfuiGui.CreateConfig(
                         function()
                             -- todo
                         end,
                         __.T["Upon pressing ..."],
-                        __.C.Zen,
-                        settingsNicknames.GreeniesLoot.Keybind,
+                        __.C[addon.ownName],
+                        settingsSpecsV1.greenies_loot_autogambling.on_keybind.keyname,
                         "dropdown",
-                        __.pfUI.gui.dropdowns.Zen__greenies__autogambling__keybinds
+                        settingsSpecsV1.greenies_loot_autogambling.on_keybind.options
                 )
             end
     )
 
-    -- set default values for the first time we load the addon
-    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Mode, "roll_greed")
-    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Keybind, "none")
-    
     local QUALITY_GREEN = 2
     local _, _, _, greeniesQualityHex = __.GetItemQualityColor(QUALITY_GREEN)
-    
-    local _base_pfuiRoll_UpdateLootRoll = __.pfUI.roll.UpdateLootRoll
-    function __.pfUI.roll:UpdateLootRoll(i) -- override pfUI's UpdateLootRoll
+
+    local _base_pfuiRoll_UpdateLootRoll = __.pfui.roll.UpdateLootRoll
+    function __.pfui.roll:UpdateLootRoll(i) -- override pfUI's UpdateLootRoll
         _base_pfuiRoll_UpdateLootRoll(i)
 
-        local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C.Zen[settingsNicknames.GreeniesLoot.Mode])
+        local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C[addon.ownName][settingsSpecsV1.greenies_loot_autogambling.mode])
         if not rollMode then
             return -- let the user choose
         end
 
-        local frame = __.pfUI.roll.frames[i]
+        local frame = __.pfui.roll.frames[i]
         if not frame or not frame.rollID or not frame:IsShown() then
             -- shouldnt happen but just in case
             return
