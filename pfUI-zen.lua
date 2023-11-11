@@ -10,8 +10,11 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         U = pfUI.gui.UpdaterFunctions,
         linq = linq,
         pfUI = pfUI,
+        RollReturn = RollReturn,
+        RollOnLoot = RollOnLoot,
         Enumerable = Enumerable,
         GetAddOnInfo = GetAddOnInfo,
+        GetLootRollItemLink = GetLootRollItemLink,
         GetLootRollItemInfo = GetLootRollItemInfo,
     }
 
@@ -65,9 +68,9 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     }
 
     local settingsNicknames = {
-        Greenies = {
-            Mode = "greenies__autogambling__mode",
-            Keybind = "greenies__autogambling__keybind"
+        GreeniesLoot = {
+            Mode = "v1.greenies_loot_autogambling.v1.mode",
+            Keybind = "v1.greenies_loot_autogambling.v1.keybind"
         }
     }
 
@@ -85,7 +88,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                         end,
                         __.T["When looting |cFF228B22Green|r items always ..."],
                         __.C.Zen,
-                        settingsNicknames.Greenies.Mode,
+                        settingsNicknames.GreeniesLoot.Mode,
                         "dropdown",
                         __.pfUI.gui.dropdowns.Zen__greenies__autogambling__modes
                 )
@@ -94,7 +97,7 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
                         nil,
                         __.T["Upon pressing ..."],
                         __.C.Zen,
-                        settingsNicknames.Greenies.Keybind,
+                        settingsNicknames.GreeniesLoot.Keybind,
                         "dropdown",
                         __.pfUI.gui.dropdowns.Zen__greenies__autogambling__keybinds
                 )
@@ -102,8 +105,8 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
     )
 
     -- set default values for the first time we load the addon
-    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Mode, "roll_greed")
-    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.Greenies.Keybind, "none")
+    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Mode, "roll_greed")
+    __.pfUI:UpdateConfig(addon.ownName, nil, settingsNicknames.GreeniesLoot.Keybind, "none")
 
     function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
         if greeniesAutogamblingMode == "pass" then
@@ -120,21 +123,21 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
 
         return nil -- let_user_choose
     end
-
+    
     local QUALITY_GREEN = 2
     local _, _, _, greeniesQualityHex = GetItemQualityColor(QUALITY_GREEN)
     
     local _hookUpdateLootRoll = __.pfUI.roll.UpdateLootRoll
-    function __.pfUI.roll:UpdateLootRoll(id)
-        _hookUpdateLootRoll(id)
+    function __.pfUI.roll:UpdateLootRoll(i)
+        _hookUpdateLootRoll(i)
 
-        local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C.Zen[settingsNicknames.Greenies.Mode])
+        local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(__.C.Zen[settingsNicknames.GreeniesLoot.Mode])
         if not rollMode then
             return -- let the user choose
         end
 
-        local frame = pfUI.roll.frames[id]
-        if not frame or not frame.rollID then
+        local frame = __.pfUI.roll.frames[i]
+        if not frame or not frame.rollID or not frame:IsShown() then
             -- shouldnt happen but just in case
             return
         end
@@ -142,10 +145,12 @@ pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         local _, _, _, quality = __.GetLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
         if quality == QUALITY_GREEN and frame:IsVisible() then
             -- todo   get keybind activation into account here
-            RollOnLoot(frame.rollID, rollMode)
+            __.RollOnLoot(frame.rollID, rollMode)
 
-            DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. RollReturn() .. "|cffffffff Roll " .. GetLootRollItemLink(id))
+            DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. __.RollReturn() .. "|cffffffff Roll " .. __.GetLootRollItemLink(frame.rollID))
         end
     end
+
+    -- todo   add take into account CANCEL_LOOT_ROLL event at some point
 
 end)
