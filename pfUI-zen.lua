@@ -102,8 +102,6 @@ function pfUIZenMain()
                 function()
                     -- this only gets called during a user session the very first time that the user explicitly
                     -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-                    
-                    print("** creating settings form **")
 
                     __.ZenSettingsPfuiForm:New(
                             __.T,
