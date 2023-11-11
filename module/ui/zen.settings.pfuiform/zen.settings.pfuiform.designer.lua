@@ -1,36 +1,37 @@
-﻿function ZenSettingsPfuiForm:InitializeControls()
+﻿function ZenSettingsPfuiForm:Initialize()
+    self.setfenv(1, self)
 
-    self.lblLootSectionHeader = self.pfuiGui.CreateConfig(nil, self.T["Loot"], nil, nil, "header")
-    self.lblLootSectionHeader:GetParent().objectCount = self.lblLootSectionHeader:GetParent().objectCount - 1
-    self.lblLootSectionHeader:SetHeight(20)
+    _lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Loot"], nil, nil, "header")
+    _lblLootSectionHeader:GetParent().objectCount = _lblLootSectionHeader:GetParent().objectCount - 1
+    _lblLootSectionHeader:SetHeight(20)
 
-    self.ddlGreenItemsLootAutogambling_modeSetting = self.pfuiGui.CreateConfig(
+    _ddlGreenItemsLootAutogambling_modeSetting = _pfuiGui.CreateConfig(
             function()
                 self:ddlGreenItemsLootAutogambling_modeSetting_selectionChanged(
                         self,
-                        self.addonRawPfuiSettings[self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname]
+                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname]
                 )
             end,
-            self.T["On |cFF228B22Greens|r ..."],
-            self.addonRawPfuiSettings,
-            self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname,
+            _t["On |cFF228B22Greens|r ..."],
+            _addonRawPfuiSettings,
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname,
             "dropdown",
-            self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.options
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.options
     )
 
     -- todo   render this as disabled if the mode is "let_user_choose"
-    self.ddlGreenItemsLootAutogambling_rollOnKeybindSetting = self.pfuiGui.CreateConfig(
+    _ddlGreenItemsLootAutogambling_rollOnKeybindSetting = _pfuiGui.CreateConfig(
             function()
                 self:ddlGreenItemsLootAutogambling_rollOnKeybindSetting_selectionChanged(
                         self,
-                        self.addonRawPfuiSettings[self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname]
+                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname]
                 )
             end,
-            self.T["Upon pressing ..."],
-            self.addonRawPfuiSettings,
-            self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname,
+            _t["Upon pressing ..."],
+            _addonRawPfuiSettings,
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname,
             "dropdown",
-            self.addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.options
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.options
     )
 
 end

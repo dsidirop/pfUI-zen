@@ -3,22 +3,23 @@
 -- inspired by pfUI-eliteOverlay.lua
 local function Main(_pfUI)
     _pfUI:RegisterModule("Zen", "vanilla:tbc", function()
-        setfenv(1, _pfUI:GetEnvironment()) -- order        
-        local _g = assert(_G) --              order    dont resort to getfenv(0)   this ought to succeed considering that we called setfenv right above 
+        setfenv(1, {}) -- we deliberately disable any and all implicit access to global variables inside this function    
 
-        local _c = assert(_g.pfUI.env.C) -- pfUI config
-        local _t = assert(_g.pfUI.env.T) -- pfUI translations
-        local _pfuiGui = assert(_g.pfUI.gui)
+        local _g = _pfUI:GetEnvironment()        
 
-        local _getAddOnInfo = assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
+        local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
+        local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
+        local _pfuiGui = _g.assert(_g.pfUI.gui)
+
+        local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
         
-        local _rollOnLoot = assert(_g.RollOnLoot) -- wow api   todo  put this in a custom class called Zen.LootHelpers or something        
-        local _getItemQualityColor = assert(_g.GetItemQualityColor)
-        local _getLootRollItemLink = assert(_g.GetLootRollItemLink)
-        local _getLootRollItemInfo = assert(_g.GetLootRollItemInfo)
+        local _rollOnLoot = _g.assert(_g.RollOnLoot) -- wow api   todo  put this in a custom class called Zen.LootHelpers or something        
+        local _getItemQualityColor = _g.assert(_g.GetItemQualityColor)
+        local _getLootRollItemLink = _g.assert(_g.GetLootRollItemLink)
+        local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
-        local _enumerable = assert(_g.Enumerable) -- addon specific
-        local _zenSettingsPfuiForm = assert(_g.ZenSettingsPfuiForm)
+        local _enumerable = _g.assert(_g.Enumerable) -- addon specific
+        local _zenSettingsPfuiForm = _g.assert(_g.ZenSettingsPfuiForm)
 
         local addon = {
             ownName = "Zen",
