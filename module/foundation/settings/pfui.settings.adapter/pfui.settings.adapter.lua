@@ -21,14 +21,14 @@ function Class:New(addonRawPfuiSettingsV1, addonRawPfuiSettingsSpecsV1)
     return instance
 end
 
-function Class.GreenItemsLootAutogambling_GetMode()
+function Class.GreenItemsAutolooting_GetMode()
     _setfenv(1, self)
     
-    return _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname]
+    return _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_autolooting.mode.keyname]
 end
 
-function Class.GreenItemsLootAutogambling_GetActOnKeybind()
+function Class.GreenItemsAutolooting_GetActOnKeybind()
     _setfenv(1, self)
 
-    return _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.keyname]
+    return _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_autolooting.mode.keyname]
 end

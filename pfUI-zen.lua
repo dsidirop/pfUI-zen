@@ -61,9 +61,9 @@ local function Main(_pfUI)
         local _addonPfuiRawSettingsSpecsV1 = {
             v = "V1", -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to 
 
-            greenies_loot_autogambling = {
+            greenies_autolooting = {
                 mode = {
-                    keyname = "greenies_loot_autogambling.v1.mode",
+                    keyname = "greenies_autolooting.v1.mode",
                     default = "roll_greed",
                     options = {
                         "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
@@ -74,7 +74,7 @@ local function Main(_pfUI)
                 },
 
                 act_on_keybind = {
-                    keyname = "greenies_loot_autogambling.v1.keybind",
+                    keyname = "greenies_autolooting.v1.keybind",
                     default = "automatic",
                     options = {
                         "automatic:" .. _t["|cff888888(Automatic)|r"],
@@ -107,8 +107,8 @@ local function Main(_pfUI)
 
             local isFirstTimeLoading = _c[addonSettingsKeyname] == nil -- keep this first
 
-            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default) -- 00
-            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.default)
+            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_autolooting.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_autolooting.mode.default) -- 00
+            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_autolooting.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_autolooting.act_on_keybind.default)
 
             if isFirstTimeLoading then
                 -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
@@ -140,7 +140,7 @@ local function Main(_pfUI)
             -- override pfUI's UpdateLootRoll
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiSettingsAdapter:GreenItemsLootAutogambling_GetMode())
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiSettingsAdapter:GreenItemsAutolooting_GetMode())
             if not rollMode then
                 return -- let the user choose
             end

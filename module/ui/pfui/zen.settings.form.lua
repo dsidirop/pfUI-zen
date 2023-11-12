@@ -17,10 +17,12 @@ function Class:New(T, pfuiGui, addonRawPfuiSettings, addonRawPfuiSettingsSpecsV1
         _pfuiGui =  _assert(pfuiGui),
         _addonRawPfuiSettings =  _assert(addonRawPfuiSettings),
         _addonRawPfuiSettingsSpecsV1 =  _assert(addonRawPfuiSettingsSpecsV1),
-
-        _lblLootSectionHeader = nil,
-        _ddlGreenItemsLootAutogambling_modeSetting = nil,
-        _ddlGreenItemsLootAutogambling_actOnKeybindSetting = nil,
+        
+        _ui = {
+            lblLootSectionHeader = nil,
+            ddlGreenItemsAutolooting_modeSetting = nil,
+            ddlGreenItemsAutolooting_actOnKeybindSetting = nil,    
+        },
     }
 
     _setmetatable(instance, self)
@@ -43,13 +45,13 @@ function Class:Initialize()
     )
 end
 
-function Class:ddlGreenItemsLootAutogambling_modeSetting_selectionChanged(_, newValue)
+function Class:ddlGreenItemsAutolooting_modeSetting_selectionChanged(_, newValue)
     _setfenv(1, self)
 
     if newValue == "let_user_choose" then
-        _ddlGreenItemsLootAutogambling_actOnKeybindSetting:Hide()
+        _ui.ddlGreenItemsAutolooting_actOnKeybindSetting:Hide()
     else
-        _ddlGreenItemsLootAutogambling_actOnKeybindSetting:Show()
+        _ui.ddlGreenItemsAutolooting_actOnKeybindSetting:Show()
     end
 
     -- todo   effectuate the change on the zen-engine
@@ -57,7 +59,7 @@ function Class:ddlGreenItemsLootAutogambling_modeSetting_selectionChanged(_, new
     -- the addon settings automatically get autoupdated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore
 end
 
-function Class:ddlGreenItemsLootAutogambling_actOnKeybindSetting_selectionChanged(_, _)
+function Class:ddlGreenItemsAutolooting_actOnKeybindSetting_selectionChanged(_, _)
     _setfenv(1, self)
     
     -- the settings automatically get updated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore
