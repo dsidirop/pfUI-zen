@@ -96,25 +96,21 @@ local function Main(_pfUI)
         --    _c.Zen3 = nil
         --    return
         --end
+
         
-        local _addonSettingsKeyname = addon.ownName .. _addonPfuiRawSettingsSpecsV1.v -- ZenV1
+        
+        local _addonPfuiRawSettings = EnsureAddonDefaultSettingsAreRegistered(addon.ownName, _addonPfuiRawSettingsSpecsV1)
 
-        -- set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist 
-        _pfUI:UpdateConfig(_addonSettingsKeyname, nil, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default)
-        _pfUI:UpdateConfig(_addonSettingsKeyname, nil, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.default)
+        local _pfuiSettingsAdapter = PfuiSettingsAdapter:New(_addonPfuiRawSettings, _addonPfuiRawSettingsSpecsV1)
 
-        local _addonPfuiRawSettings = _c[_addonSettingsKeyname] -- must be placed after the updateconfig() calls to ensure that the settings have been initialized on the very first time the user loads the addon
-
-        local pfuiSettingsAdapter = PfuiSettingsAdapter:New(_addonPfuiRawSettings, _addonPfuiRawSettingsSpecsV1)
-
-        local form = SettingsForm:New(
+        local _settingsForm = SettingsForm:New(
                 _t,
                 _pfuiGui,
                 _addonPfuiRawSettings,
                 _addonPfuiRawSettingsSpecsV1
         )
 
-        form:Initialize()
+        _settingsForm:Initialize()
 
         local QUALITY_GREEN = 2
         local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
@@ -124,7 +120,7 @@ local function Main(_pfUI)
             -- override pfUI's UpdateLootRoll
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(pfuiSettingsAdapter:GreenItemsLootAutogambling_GetMode())
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiSettingsAdapter:GreenItemsLootAutogambling_GetMode())
             if not rollMode then
                 return -- let the user choose
             end
@@ -163,6 +159,24 @@ local function Main(_pfUI)
         -- todo   add take into account CANCEL_LOOT_ROLL event at some point
 
     end)
+    
+    function EnsureAddonDefaultSettingsAreRegistered(addonName, addonPfuiRawSettingsSpecsV1)
+
+        local addonSettingsKeyname = addonName .. addonPfuiRawSettingsSpecsV1.v -- ZenV1
+
+        local isFirstTimeLoading = _c[addonSettingsKeyname] == nil -- keep this first
+
+        _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default) -- 00
+        _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.default)
+
+        if isFirstTimeLoading then
+            -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
+        end
+        
+        return _c[addonSettingsKeyname]
+        
+        -- 00  set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist
+    end
 end
 
 Main(assert(pfUI))
