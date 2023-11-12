@@ -20,7 +20,7 @@ local function _is_valid_namespace_component(name)
 end
 
 -- inspired by pfUI.api.strsplit 
-function _strsplit(subject, delimiter)
+function _strsplit(delimiter, subject)
     if not subject then
         return nil
     end
@@ -45,7 +45,7 @@ local function _namespacer(base_namespace_registry, namespace_path)
 
     local tmp
     local head = base_namespace_registry
-    local components = _strsplit(namespace_path, ".")
+    local components = _strsplit(".", namespace_path)
     for _, key in _pairs(components) do
         if not _is_valid_namespace_component(key) then
             _error("Namespace '" .. namespace_path .. "' has component '" .. key .. "' which is invalid: Each component must start with a letter or _ followed by any number of _ or alphanumeric characters.")
