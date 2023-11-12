@@ -59,7 +59,8 @@ local function Main(_pfUI)
         end
 
         local _addonPfuiRawSettingsSpecsV1 = {
-            v = "V1", -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to 
+            -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
+            addonSettingsKeyname = "zen.settings.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
             greenies_autolooting = {
                 mode = {
@@ -94,6 +95,9 @@ local function Main(_pfUI)
         --    _c.ZenV1 = nil
         --    _c.Zen_v1 = nil
         --
+        --    _c["zen.v1"] = nil
+        --    _c["zen.settings.v1"] = nil
+        --
         --    _c.Zen = nil  -- this resets the entire settings tree for this addon
         --    _c.Zen2 = nil
         --    _c.Zen3 = nil
@@ -101,25 +105,22 @@ local function Main(_pfUI)
         --end
 
 
-        function EnsureAddonDefaultSettingsAreRegistered(addonName, addonPfuiRawSettingsSpecsV1)
+        function EnsureAddonDefaultSettingsAreRegistered(specs)
+            local isFirstTimeLoading = _c[specs.addonSettingsKeyname] == nil -- keep this first
 
-            local addonSettingsKeyname = addonName .. addonPfuiRawSettingsSpecsV1.v -- ZenV1
-
-            local isFirstTimeLoading = _c[addonSettingsKeyname] == nil -- keep this first
-
-            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_autolooting.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_autolooting.mode.default) -- 00
-            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_autolooting.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_autolooting.act_on_keybind.default)
+            _pfUI:UpdateConfig(specs.addonSettingsKeyname, nil, specs.greenies_autolooting.mode.keyname, specs.greenies_autolooting.mode.default) -- 00
+            _pfUI:UpdateConfig(specs.addonSettingsKeyname, nil, specs.greenies_autolooting.act_on_keybind.keyname, specs.greenies_autolooting.act_on_keybind.default)
 
             if isFirstTimeLoading then
                 -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
             end
 
-            return _c[addonSettingsKeyname]
+            return _c[specs.addonSettingsKeyname]
 
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist
         end        
         
-        local _addonPfuiRawSettings = EnsureAddonDefaultSettingsAreRegistered(addon.ownName, _addonPfuiRawSettingsSpecsV1)
+        local _addonPfuiRawSettings = EnsureAddonDefaultSettingsAreRegistered(_addonPfuiRawSettingsSpecsV1)
 
         local _pfuiSettingsAdapter = PfuiSettingsAdapter:New(_addonPfuiRawSettings, _addonPfuiRawSettingsSpecsV1)
 
