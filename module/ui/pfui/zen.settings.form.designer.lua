@@ -1,12 +1,12 @@
 ﻿local _g =  assert(_G or getfenv(0))
 local _setfenv = assert(_g.setfenv)
-local _namespacer = assert(_g.pavilion_pfui_zen_namespacer)
+local _namespacer = assert(_g.pavilion_pfui_zen_class_namespacer__add)
 
 _setfenv(1, {})
 
-local class = _namespacer(_g, "Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm [Partial]") 
 
-function class:InitializeControls()
+function Class:InitializeControls()
     _setfenv(1, self)
 
     _lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Loot"], nil, nil, "header")

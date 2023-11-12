@@ -1,3 +1,5 @@
+-- todo   tweak pfui so that it wont autocommit the settings when the user tweaks the ui-controls    we want to be able to do that ourselves using standard patterns: commands + unit-of-work + repositories!
+-- todo   introduce commands, command-handlers and command-results
 -- todo   add reset-to-defaults button
 -- todo   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
 
@@ -11,6 +13,7 @@ local function Main(_pfUI)
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
         local _pfuiGui = _g.assert(_g.pfUI.gui)
+        local _importer = _g.assert(_g.pavilion_pfui_zen_class_namespacer__get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
         
@@ -21,8 +24,8 @@ local function Main(_pfUI)
 
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
         
-        local SettingsForm = _g.assert(_g.Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm)
-        local PfuiSettingsAdapter = _g.assert(_g.Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiSettingsAdapter)
+        local SettingsForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
+        local PfuiSettingsAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiSettingsAdapter")
 
         local addon = {
             ownName = "Zen",
@@ -97,7 +100,24 @@ local function Main(_pfUI)
         --    return
         --end
 
-        
+
+        function EnsureAddonDefaultSettingsAreRegistered(addonName, addonPfuiRawSettingsSpecsV1)
+
+            local addonSettingsKeyname = addonName .. addonPfuiRawSettingsSpecsV1.v -- ZenV1
+
+            local isFirstTimeLoading = _c[addonSettingsKeyname] == nil -- keep this first
+
+            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default) -- 00
+            _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.default)
+
+            if isFirstTimeLoading then
+                -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
+            end
+
+            return _c[addonSettingsKeyname]
+
+            -- 00  set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist
+        end        
         
         local _addonPfuiRawSettings = EnsureAddonDefaultSettingsAreRegistered(addon.ownName, _addonPfuiRawSettingsSpecsV1)
 
@@ -132,7 +152,7 @@ local function Main(_pfUI)
             end
 
             local _, _, _, quality = _getLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
-            if quality == QUALITY_GREEN and frame:IsVisible() then
+            if quality == QUALITY_GREEN and frame:IsVisible() then -- todo   add take into account CANCEL_LOOT_ROLL event at some point
                 -- todo   get keybind activation into account here
                 _rollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
 
@@ -156,27 +176,7 @@ local function Main(_pfUI)
             return nil -- let_user_choose
         end
 
-        -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-
     end)
-    
-    function EnsureAddonDefaultSettingsAreRegistered(addonName, addonPfuiRawSettingsSpecsV1)
-
-        local addonSettingsKeyname = addonName .. addonPfuiRawSettingsSpecsV1.v -- ZenV1
-
-        local isFirstTimeLoading = _c[addonSettingsKeyname] == nil -- keep this first
-
-        _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default) -- 00
-        _pfUI:UpdateConfig(addonSettingsKeyname, nil, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname, addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.default)
-
-        if isFirstTimeLoading then
-            -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
-        end
-        
-        return _c[addonSettingsKeyname]
-        
-        -- 00  set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist
-    end
 end
 
 Main(assert(pfUI))
