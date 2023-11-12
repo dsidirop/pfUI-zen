@@ -6,17 +6,17 @@ local _setmetatable = assert(_g.setmetatable)
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
 
 -- this only gets called during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(T, pfuiGui, addonRawPfuiSettings, addonRawPfuiSettingsSpecsV1)
+function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesSpecsV1)
 
     local instance = {
         _t =  _assert(T),
         _pfuiGui =  _assert(pfuiGui),
-        _addonRawPfuiSettings =  _assert(addonRawPfuiSettings),
-        _addonRawPfuiSettingsSpecsV1 =  _assert(addonRawPfuiSettingsSpecsV1),
+        _addonRawPfuiPreferences =  _assert(addonRawPfuiPreferences),
+        _addonRawPfuiPreferencesSpecsV1 =  _assert(addonRawPfuiPreferencesSpecsV1),
         
         _ui = {
             lblLootSectionHeader = nil,

@@ -4,7 +4,7 @@ local _namespacer = assert(_g.pavilion_pfui_zen_class_namespacer__add)
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm [Partial]") 
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm [Partial]") 
 
 function Class:InitializeControls()
     _setfenv(1, self)
@@ -17,28 +17,28 @@ function Class:InitializeControls()
             function()
                 self:ddlGreenItemsAutolooting_modeSetting_selectionChanged(
                         self,
-                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_autolooting.mode.keyname]
+                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname]
                 )
             end,
             _t["On |cFF228B22Greens|r ..."],
-            _addonRawPfuiSettings,
-            _addonRawPfuiSettingsSpecsV1.greenies_autolooting.mode.keyname,
+            _addonRawPfuiPreferences,
+            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname,
             "dropdown",
-            _addonRawPfuiSettingsSpecsV1.greenies_autolooting.mode.options
+            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.options
     )
 
     _ui.ddlGreenItemsAutolooting_actOnKeybindSetting = _pfuiGui.CreateConfig(
             function()
                 self:ddlGreenItemsAutolooting_actOnKeybindSetting_selectionChanged(
                         self,
-                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_autolooting.act_on_keybind.keyname]
+                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.keyname]
                 )
             end,
-            _t["Upon pressing ..."],
-            _addonRawPfuiSettings,
-            _addonRawPfuiSettingsSpecsV1.greenies_autolooting.act_on_keybind.keyname,
+            _t["Upon Pressing ..."],
+            _addonRawPfuiPreferences,
+            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.keyname,
             "dropdown",
-            _addonRawPfuiSettingsSpecsV1.greenies_autolooting.act_on_keybind.options
+            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.options
     )
 
 end

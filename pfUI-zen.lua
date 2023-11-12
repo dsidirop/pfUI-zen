@@ -24,8 +24,8 @@ local function Main(_pfUI)
 
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
         
-        local SettingsForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
-        local PfuiSettingsAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiSettingsAdapter")
+        local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
+        local PfuiUserPreferencesAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UserPreferences.PfuiUserPreferencesAdapter")
 
         local addon = {
             ownName = "Zen",
@@ -58,9 +58,9 @@ local function Main(_pfUI)
             return
         end
 
-        local _addonPfuiRawSettingsSpecsV1 = {
+        local _addonPfuiRawPreferencesSpecsV1 = {
             -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
-            addonSettingsKeyname = "zen.settings.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
+            addonPreferencesKeyname = "zen.config.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
             greenies_autolooting = {
                 mode = {
@@ -96,6 +96,7 @@ local function Main(_pfUI)
         --    _c.Zen_v1 = nil
         --
         --    _c["zen.v1"] = nil
+        --    _c["zen.config.v1"] = nil
         --    _c["zen.settings.v1"] = nil
         --
         --    _c.Zen = nil  -- this resets the entire settings tree for this addon
@@ -105,30 +106,30 @@ local function Main(_pfUI)
         --end
 
 
-        function EnsureAddonDefaultSettingsAreRegistered(specs)
-            local isFirstTimeLoading = _c[specs.addonSettingsKeyname] == nil -- keep this first
+        function EnsureAddonDefaultPreferencesAreRegistered(specs)
+            local isFirstTimeLoading = _c[specs.addonPreferencesKeyname] == nil -- keep this first
 
-            _pfUI:UpdateConfig(specs.addonSettingsKeyname, nil, specs.greenies_autolooting.mode.keyname, specs.greenies_autolooting.mode.default) -- 00
-            _pfUI:UpdateConfig(specs.addonSettingsKeyname, nil, specs.greenies_autolooting.act_on_keybind.keyname, specs.greenies_autolooting.act_on_keybind.default)
+            _pfUI:UpdateConfig(specs.addonPreferencesKeyname, nil, specs.greenies_autolooting.mode.keyname, specs.greenies_autolooting.mode.default) -- 00
+            _pfUI:UpdateConfig(specs.addonPreferencesKeyname, nil, specs.greenies_autolooting.act_on_keybind.keyname, specs.greenies_autolooting.act_on_keybind.default)
 
             if isFirstTimeLoading then
                 -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
             end
 
-            return _c[specs.addonSettingsKeyname]
+            return _c[specs.addonPreferencesKeyname]
 
-            -- 00  set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist
+            -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
         end        
         
-        local _addonPfuiRawSettings = EnsureAddonDefaultSettingsAreRegistered(_addonPfuiRawSettingsSpecsV1)
+        local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSpecsV1)
 
-        local _pfuiSettingsAdapter = PfuiSettingsAdapter:New(_addonPfuiRawSettings, _addonPfuiRawSettingsSpecsV1)
+        local _pfuiPreferencesAdapter = PfuiUserPreferencesAdapter:New(_addonPfuiRawPreferences, _addonPfuiRawPreferencesSpecsV1)
 
-        local _settingsForm = SettingsForm:New(
+        local _settingsForm = UserPreferencesForm:New(
                 _t,
                 _pfuiGui,
-                _addonPfuiRawSettings,
-                _addonPfuiRawSettingsSpecsV1
+                _addonPfuiRawPreferences,
+                _addonPfuiRawPreferencesSpecsV1
         )
 
         _settingsForm:Initialize()
@@ -141,7 +142,7 @@ local function Main(_pfUI)
             -- override pfUI's UpdateLootRoll
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiSettingsAdapter:GreenItemsAutolooting_GetMode())
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiPreferencesAdapter:GreenItemsAutolooting_GetMode())
             if not rollMode then
                 return -- let the user choose
             end
