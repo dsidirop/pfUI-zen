@@ -6,7 +6,7 @@ _setfenv(1, {})
 
 local class = _namespacer(_g, "Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
 
-function class:Initialize()
+function class:InitializeControls()
     _setfenv(1, self)
 
     _lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Loot"], nil, nil, "header")

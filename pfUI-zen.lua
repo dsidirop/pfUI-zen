@@ -56,11 +56,11 @@ local function Main(_pfUI)
         end
 
         local _addonPfuiRawSettingsSpecsV1 = {
-            v = "v1", -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to 
+            v = "V1", -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to 
 
             greenies_loot_autogambling = {
                 mode = {
-                    keyname = "v1.greenies_loot_autogambling.v1.mode",
+                    keyname = "greenies_loot_autogambling.v1.mode",
                     default = "roll_greed",
                     options = {
                         "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
@@ -71,7 +71,7 @@ local function Main(_pfUI)
                 },
 
                 act_on_keybind = {
-                    keyname = "v1.greenies_loot_autogambling.v1.keybind",
+                    keyname = "greenies_loot_autogambling.v1.keybind",
                     default = "automatic",
                     options = {
                         "automatic:" .. _t["|cff888888(Automatic)|r"],
@@ -88,15 +88,16 @@ local function Main(_pfUI)
         }
 
         --if true then
+        --    _c.ZenV1 = nil
         --    _c.Zen_v1 = nil
-        --    
+        --
         --    _c.Zen = nil  -- this resets the entire settings tree for this addon
         --    _c.Zen2 = nil
         --    _c.Zen3 = nil
         --    return
         --end
         
-        local _addonSettingsKeyname = addon.ownName .. "_" .. _addonPfuiRawSettingsSpecsV1.v -- Zen_v1
+        local _addonSettingsKeyname = addon.ownName .. _addonPfuiRawSettingsSpecsV1.v -- ZenV1
 
         -- set default values for the first time we load the addon    this also creates _c[_addonSettingsKeyname]={} if it doesnt already exist 
         _pfUI:UpdateConfig(_addonSettingsKeyname, nil, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.keyname, _addonPfuiRawSettingsSpecsV1.greenies_loot_autogambling.mode.default)
@@ -105,24 +106,15 @@ local function Main(_pfUI)
         local _addonPfuiRawSettings = _c[_addonSettingsKeyname] -- must be placed after the updateconfig() calls to ensure that the settings have been initialized on the very first time the user loads the addon
 
         local pfuiSettingsAdapter = PfuiSettingsAdapter:New(_addonPfuiRawSettings, _addonPfuiRawSettingsSpecsV1)
-        
-        _pfuiGui.CreateGUIEntry(
-                _t["Thirdparty"],
-                _t[addon.ownNameColored],
-                function()
-                    -- this only gets called during a user session the very first time that the user explicitly
-                    -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
 
-                    local form = SettingsForm:New(
-                            _t,
-                            _pfuiGui,
-                            _addonPfuiRawSettings,
-                            _addonPfuiRawSettingsSpecsV1
-                    )
-
-                    form:Initialize()
-                end
+        local form = SettingsForm:New(
+                _t,
+                _pfuiGui,
+                _addonPfuiRawSettings,
+                _addonPfuiRawSettingsSpecsV1
         )
+
+        form:Initialize()
 
         local QUALITY_GREEN = 2
         local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
