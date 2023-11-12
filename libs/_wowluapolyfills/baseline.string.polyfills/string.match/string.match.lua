@@ -3,6 +3,7 @@ if string.match then
     return -- already loaded
 end
 
+local _error = assert(error)
 local _stringSub = assert(string.sub)
 local _stringFind = assert(string.find)
 local _getmetatable = assert(getmetatable)
@@ -16,7 +17,7 @@ end
 
 function _stringMetatable:match(patternString, ...)
     if patternString == nil then
-        error("patternString is nil", 1)
+        _error("patternString is nil", 1)
     end
 
     if patternString == "" then
@@ -51,11 +52,13 @@ function _stringMetatable:match(patternString, ...)
     match24,
     match25 = _stringFind(self, patternString, unpack(arg))
 
-    if startIndex == nil then -- no match
+    if startIndex == nil then
+        -- no match
         return nil
     end
 
-    if match01 == nil then -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+    if match01 == nil then
+        -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
         return _stringSub(self, startIndex, endIndex)
     end
 
