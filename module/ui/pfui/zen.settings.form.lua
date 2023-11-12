@@ -6,7 +6,7 @@ local _setmetatable = assert(_g.setmetatable)
 
 _setfenv(1, {})
 
-local class = _namespacer(_g, "Pavilion.Pfui.Zen.UI.ZenSettingsPfuiForm")
+local class = _namespacer(_g, "Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
 
 -- this only gets called during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
@@ -20,7 +20,7 @@ function class:New(T, pfuiGui, addonRawPfuiSettings, addonRawPfuiSettingsSpecsV1
 
         _lblLootSectionHeader = nil,
         _ddlGreenItemsLootAutogambling_modeSetting = nil,
-        _ddlGreenItemsLootAutogambling_rollOnKeybindSetting = nil,
+        _ddlGreenItemsLootAutogambling_actOnKeybindSetting = nil,
     }
 
     _setmetatable(instance, self)
@@ -33,9 +33,9 @@ function class:ddlGreenItemsLootAutogambling_modeSetting_selectionChanged(_, new
     _setfenv(1, self)
 
     if newValue == "let_user_choose" then
-        _ddlGreenItemsLootAutogambling_rollOnKeybindSetting:Hide()
+        _ddlGreenItemsLootAutogambling_actOnKeybindSetting:Hide()
     else
-        _ddlGreenItemsLootAutogambling_rollOnKeybindSetting:Show()
+        _ddlGreenItemsLootAutogambling_actOnKeybindSetting:Show()
     end
 
     -- todo   effectuate the change on the zen-engine
@@ -43,7 +43,7 @@ function class:ddlGreenItemsLootAutogambling_modeSetting_selectionChanged(_, new
     -- the addon settings automatically get autoupdated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore
 end
 
-function class:ddlGreenItemsLootAutogambling_rollOnKeybindSetting_selectionChanged(_, _)
+function class:ddlGreenItemsLootAutogambling_actOnKeybindSetting_selectionChanged(_, _)
     _setfenv(1, self)
     
     -- the settings automatically get updated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore

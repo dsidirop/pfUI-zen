@@ -4,7 +4,7 @@ local _namespacer = assert(_g.pavilion_pfui_zen_namespacer)
 
 _setfenv(1, {})
 
-local class = _namespacer(_g, "Pavilion.Pfui.Zen.UI.ZenSettingsPfuiForm")
+local class = _namespacer(_g, "Pavilion.Warcraft.Addons.Zen.UI.Pfui.SettingsForm")
 
 function class:Initialize()
     _setfenv(1, self)
@@ -27,18 +27,18 @@ function class:Initialize()
             _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.mode.options
     )
 
-    _ddlGreenItemsLootAutogambling_rollOnKeybindSetting = _pfuiGui.CreateConfig(
+    _ddlGreenItemsLootAutogambling_actOnKeybindSetting = _pfuiGui.CreateConfig(
             function()
-                self:ddlGreenItemsLootAutogambling_rollOnKeybindSetting_selectionChanged(
+                self:ddlGreenItemsLootAutogambling_actOnKeybindSetting_selectionChanged(
                         self,
-                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname]
+                        _addonRawPfuiSettings[_addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname]
                 )
             end,
             _t["Upon pressing ..."],
             _addonRawPfuiSettings,
-            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.keyname,
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.keyname,
             "dropdown",
-            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.roll_on_keybind.options
+            _addonRawPfuiSettingsSpecsV1.greenies_loot_autogambling.act_on_keybind.options
     )
 
 end
