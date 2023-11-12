@@ -3,6 +3,7 @@ if string.match then
     return -- already loaded
 end
 
+local _stringSub = assert(string.sub)
 local _stringFind = assert(string.find)
 local _getmetatable = assert(getmetatable)
 local _setmetatable = assert(setmetatable)
@@ -55,7 +56,7 @@ function _stringMetatable:match(patternString, ...)
     end
 
     if match01 == nil then -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
-        return self:sub(startIndex, endIndex)
+        return _stringSub(self, startIndex, endIndex)
     end
 
     return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")

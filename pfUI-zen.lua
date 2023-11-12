@@ -19,7 +19,8 @@ local function Main(_pfUI)
         local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
-        local _zenSettingsPfuiForm = _g.assert(_g.ZenSettingsPfuiForm)
+        
+        local _zenSettingsPfuiForm = _g.assert(_g.Pavilion.Pfui.Zen.UI.ZenSettingsPfuiForm)
 
         local addon = {
             ownName = "Zen",
