@@ -2,5 +2,4 @@
 ..\FrameXML\UI.xsd">
     <Include file="zen.settings.pfuiform.lua"/>
     <Include file="zen.settings.pfuiform.designer.lua"/>
-    <Include file="zen.settings.pfuiform.g.lua"/>
 </Ui>
