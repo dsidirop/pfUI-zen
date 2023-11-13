@@ -1,13 +1,27 @@
-﻿local _g =  assert(_G or getfenv(0))
-local _setfenv = assert(_g.setfenv)
-local _namespacer = assert(_g.pavilion_pfui_zen_class_namespacer__add)
+﻿local _setfenv, _namespacer = (function() -- todo  consolidate this into a single function
+    local _g = assert(getfenv(0))
+    local _assert = assert(_g.assert)
 
-_setfenv(1, {})
+    local _setfenv = _assert(_g.setfenv)
+    local _namespacer = _assert(_g.pavilion_pfui_zen_class_namespacer__add)
+    
+    return _setfenv, _namespacer
+end)() --order
+
+_setfenv(1, {}) --order
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm [Partial]") 
 
 function Class:InitializeControls()
     _setfenv(1, self)
+
+    -- todo   add a "reset to defaults" button
+    --
+    -- todo   refactor the form so that its options are not hardbinded to the raw-pfui-preferences-table
+    -- todo   for this to work we will need to have "save/apply" buttons or raise domain events to notify the addon about the changes
+    -- todo   add polyfils for lua 5.2+ in regard to setfenv()/getfenv per  https://stackoverflow.com/a/14554565/863651
+    -- todo   make namespaces case-insensitive + make the registry smarter by having each entry being a tuple { type="class", instance=... }
+    -- todo   refactor the namespacer into a proper class and make a singleton instance out of it too 
 
     _ui.lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Loot"], nil, nil, "header")
     _ui.lblLootSectionHeader:GetParent().objectCount = _ui.lblLootSectionHeader:GetParent().objectCount - 1
