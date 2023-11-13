@@ -13,7 +13,7 @@ local function Main(_pfUI)
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
         local _pfuiGui = _g.assert(_g.pfUI.gui)
-        local _importer = _g.assert(_g.pavilion_pfui_zen_class_namespacer__get)
+        local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
         

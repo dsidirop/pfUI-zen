@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv = (function()
+﻿local _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -10,41 +10,56 @@
 
     local _gsub = _assert(_g.string.gsub)
     local _match = _assert(_g.string.match)
+    local _setmetatable = _assert(_g.setmetatable)
 
-    return _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv
+    return _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv, _setmetatable
 end)()
 
-if _g.pavilion_pfui_zen_class_namespacer__add then
+if _g.pvl_namespacer_add then
     return -- already in place
 end
 
---_g = nil --dont
 _setfenv(1, {})
 
-local EIntention = {
-    ForClass = "class", -- for classes declared by this project
-    ForClassPartial = "class-partial", -- for designer partial files   we must ensure that those are always loaded after their respective core classes
+local Class = {}
 
-    ForExternalSymbol = "external-symbol", -- external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+function Class:New()
+    _setfenv(1, {})
+
+    local instance = {
+        _namespace_registry = {}
+    }
+
+    _setmetatable(instance, self)
+    self.__index = self
+
+    return instance
+end
+
+local EIntention = {
+    ForClass = "class", --                     for classes declared by this project
+    ForClassPartial = "class-partial", --      for designer partial files   we must ensure that those are always loaded after their respective core classes
+    ForExternalSymbol = "external-symbol", --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
 }
 
-local _namespace_registry = {}
-local _pattern_to_detect_partial_keyword_postfix = "%s*%[[Pp]artial%]%s*$"
+local function _is_partial_class_entry(entry)
+    return entry and entry.intention == EIntention.ForClassPartial
+end
 
--- todo   in production builds this function should get obfuscated to something like  _g.ppzcn__some_guid_here__add
--- todo   to minimize the risk of conflicts with other addons that might have copy pasted the code from here
+-- meant to be used namespacer()
+local PatternToDetectPartialKeywordPostfix = "%s*%[[Pp]artial%]%s*$"
+function Class:Add(namespace_path)
+    _setfenv(1, self)
 
--- use this as namespacer()
-function _g.pavilion_pfui_zen_class_namespacer__add(namespace_path)
     _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
 
     namespace_path = _strtrim(namespace_path)
 
-    local intention = _match(namespace_path, _pattern_to_detect_partial_keyword_postfix)
+    local intention = _match(namespace_path, PatternToDetectPartialKeywordPostfix)
             and EIntention.ForClassPartial
             or EIntention.ForClass
     if intention == EIntention.ForClassPartial then
-        namespace_path = _gsub(namespace_path, _pattern_to_detect_partial_keyword_postfix, "") -- remove the [partial] postfix from the namespace path
+        namespace_path = _gsub(namespace_path, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
     end
 
     local entry = _namespace_registry[namespace_path]
@@ -75,7 +90,9 @@ end
 --     _namespacer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
 --     _namespacer("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
 --
-function _g.pavilion_pfui_zen_class_namespacer__bind(namespace_path, symbol)
+function Class:Bind(namespace_path, symbol)
+    _setfenv(1, self)
+
     _assert(symbol ~= nil, "symbol must not be nil")
     _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
 
@@ -88,15 +105,14 @@ function _g.pavilion_pfui_zen_class_namespacer__bind(namespace_path, symbol)
 
     _namespace_registry[namespace_path] = {
         value = symbol,
-        intention = EIntention.ForExternalSymbol,        
+        intention = EIntention.ForExternalSymbol,
     }
 end
 
--- todo   in production builds this function should get obfuscated to something like  _g.ppzcn__some_guid_here__get
--- todo   to minimize the risk of conflicts with other addons that might have copy pasted the code from here
+-- meant to be used namespacer()
+function Class:Get(namespace_path)
+    _setfenv(1, self)
 
--- use this as importer()
-function _g.pavilion_pfui_zen_class_namespacer__get(namespace_path)
     local entry = _assert(_namespace_registry[namespace_path])
 
     -- _assert(_is_activated_class_entry(entry)) -- dont   its perfectly ok if the user tries to get hold of a purely partial class entry
@@ -104,6 +120,22 @@ function _g.pavilion_pfui_zen_class_namespacer__get(namespace_path)
     return _assert(entry.value)
 end
 
-function _is_partial_class_entry(entry)
-    return entry and entry.intention == EIntention.ForClassPartial
+
+
+-- local singleton and simplified methods --
+local Singleton = Class:New() -- place the singleton instance into the global namespace
+
+-- namespacer()   todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__some_guid_here__add
+_g.pvl_namespacer_add = function(namespace_path)
+    return Singleton:Add(namespace_path)
+end
+
+-- namespacer_binder()
+_g.pvl_namespacer_bind = function(namespace_path, symbol)
+    return Singleton:Bind(namespace_path, symbol)
+end
+
+-- importer()
+_g.pvl_namespacer_get = function(namespace_path)
+    return Singleton:Get(namespace_path)
 end

@@ -3,7 +3,7 @@
     local _assert = assert(_g.assert)
 
     local _setfenv = _assert(_g.setfenv)
-    local _namespacer = _assert(_g.pavilion_pfui_zen_class_namespacer__add)
+    local _namespacer = _assert(_g.pvl_namespacer_add)
     
     return _setfenv, _namespacer
 end)() --order

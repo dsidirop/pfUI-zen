@@ -1,7 +1,7 @@
 ﻿local _g =  assert(_G or getfenv(0))
 local _assert = assert
 local _setfenv = assert(_g.setfenv)
-local _namespacer = assert(_g.pavilion_pfui_zen_class_namespacer__add)
+local _namespacer = assert(_g.pvl_namespacer_add)
 local _setmetatable = assert(_g.setmetatable)
 
 _setfenv(1, {})
