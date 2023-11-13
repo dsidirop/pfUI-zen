@@ -1,6 +1,8 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+    <!-- ordering is important here -->
     <Include file="namespacer.lua"/>
+    <Include file="namespacer.external.libs.registrar.lua"/>
 
     <Include file="foundation\.xml"/>
     <Include file="ui\.xml"/>
