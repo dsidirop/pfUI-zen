@@ -1,19 +1,24 @@
-﻿local _g = assert(_G or getfenv(0))
+﻿local _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv = (function()
+    local _g = assert(_G or getfenv(0))
+    local _assert = assert
+    local _setfenv = _assert(_g.setfenv)
+    _setfenv(1, {})
+
+    local _type = _assert(_g.type)
+    local _error = _assert(_g.error)
+    local _strtrim = _assert(_g.strtrim)
+
+    local _gsub = _assert(_g.string.gsub)
+    local _match = _assert(_g.string.match)
+
+    return _g, _assert, _type, _error, _strtrim, _gsub, _match, _setfenv
+end)()
 
 if _g.pavilion_pfui_zen_class_namespacer__add then
     return -- already in place
 end
 
-local _assert = assert
-
-local _type = _assert(_g.type)
-local _error = _assert(_g.error)
-local _strtrim = _assert(_g.strtrim)
-
-local _gsub = _assert(_g.string.gsub)
-local _match = _assert(_g.string.match)
-local _setfenv = _assert(_g.setfenv)
-
+--_g = nil --dont
 _setfenv(1, {})
 
 local EIntention = {
