@@ -7,7 +7,6 @@ end
 local _assert = assert
 
 local _type = _assert(_g.type)
-local _math = _assert(_g.math)
 local _error = _assert(_g.error)
 local _strtrim = _assert(_g.strtrim)
 
@@ -18,12 +17,13 @@ local _setfenv = _assert(_g.setfenv)
 _setfenv(1, {})
 
 local EIntention = {
-    ForMainClass = "class",
-    ForClassExtension = "class-extension", -- for designer partial files   we must ensure that those are always loaded after their respective core classes
+    ForClass = "class", -- for classes declared by this project
+    ForClassPartial = "class-partial", -- for designer partial files   we must ensure that those are always loaded after their respective core classes
+
+    ForExternalSymbol = "external-symbol", -- external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
 }
 
 local _namespace_registry = {}
-local _own_class_tellsign_property_ = "__" .. _math.random() .. "__"
 local _pattern_to_detect_partial_keyword_postfix = "%s*%[[Pp]artial%]%s*$"
 
 -- todo   in production builds this function should get obfuscated to something like  _g.ppzcn__some_guid_here__add
@@ -35,26 +35,31 @@ function _g.pavilion_pfui_zen_class_namespacer__add(namespace_path)
 
     namespace_path = _strtrim(namespace_path)
 
-    local intention = _match(namespace_path, _pattern_to_detect_partial_keyword_postfix) and EIntention.ForClassExtension or EIntention.ForMainClass
-    if intention == EIntention.ForClassExtension then
-        namespace_path = _gsub(namespace_path, _pattern_to_detect_partial_keyword_postfix, "")
+    local intention = _match(namespace_path, _pattern_to_detect_partial_keyword_postfix)
+            and EIntention.ForClassPartial
+            or EIntention.ForClass
+    if intention == EIntention.ForClassPartial then
+        namespace_path = _gsub(namespace_path, _pattern_to_detect_partial_keyword_postfix, "") -- remove the [partial] postfix from the namespace path
     end
 
     local entry = _namespace_registry[namespace_path]
     if entry == nil then
-        entry = {}
+        entry = {
+            value = {},
+            intention = intention,
+        }
         _namespace_registry[namespace_path] = entry
     end
 
-    if intention == EIntention.ForMainClass then
-        if _is_activated_class_entry(entry) then
+    if intention == EIntention.ForClass then
+        if _is_partial_class_entry(entry) then
             _error("class in namespace '" .. namespace_path .. "' has already been loaded - make sure you are not trying to load the same class twice.")
         end
 
-        entry[_own_class_tellsign_property_] = true -- to mark this main class as loaded
+        entry.intention = EIntention.ForClass
     end
 
-    return _assert(entry)
+    return _assert(entry.value)
 
     --00  notice that if the intention is to declare an extension-class then we dont care if the class already
     --    exists its also perfectly fine if the the core class gets loaded after its associated extension classes too
@@ -76,7 +81,10 @@ function _g.pavilion_pfui_zen_class_namespacer__bind(namespace_path, symbol)
         _error("namespace '" .. namespace_path .. "' has already been assigned to another symbol.")
     end
 
-    _namespace_registry[namespace_path] = symbol
+    _namespace_registry[namespace_path] = {
+        value = symbol,
+        intention = EIntention.ForExternalSymbol,        
+    }
 end
 
 -- todo   in production builds this function should get obfuscated to something like  _g.ppzcn__some_guid_here__get
@@ -88,9 +96,9 @@ function _g.pavilion_pfui_zen_class_namespacer__get(namespace_path)
 
     -- _assert(_is_activated_class_entry(entry)) -- dont   its perfectly ok if the user tries to get hold of a purely partial class entry
 
-    return entry
+    return _assert(entry.value)
 end
 
-function _is_activated_class_entry(entry)
-    return entry and entry[_own_class_tellsign_property_] == true
+function _is_partial_class_entry(entry)
+    return entry and entry.intention == EIntention.ForClassPartial
 end
