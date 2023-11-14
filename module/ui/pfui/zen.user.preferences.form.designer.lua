@@ -20,10 +20,8 @@ function Class:InitializeControls()
     -- todo   refactor the form so that its options are not hardbinded to the raw-pfui-preferences-table
     -- todo   for this to work we will need to have "save/apply" buttons or raise domain events to notify the addon about the changes
     -- todo   add polyfils for lua 5.2+ in regard to setfenv()/getfenv per  https://stackoverflow.com/a/14554565/863651
-    -- todo   make namespaces case-insensitive + make the registry smarter by having each entry being a tuple { type="class", instance=... }
-    -- todo   refactor the namespacer into a proper class and make a singleton instance out of it too 
 
-    _ui.lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Loot"], nil, nil, "header")
+    _ui.lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
     _ui.lblLootSectionHeader:GetParent().objectCount = _ui.lblLootSectionHeader:GetParent().objectCount - 1
     _ui.lblLootSectionHeader:SetHeight(20)
 

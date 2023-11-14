@@ -41,6 +41,10 @@ function Class:Initialize()
                 -- this only gets called during a user session the very first time that the user explicitly
                 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
                 self:InitializeControls()
+
+                if _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname] == "let_user_choose" then
+                    _ui.ddlGreenItemsAutolooting_actOnKeybindSetting:Hide()
+                end
             end
     )
 end
