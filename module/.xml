@@ -6,4 +6,7 @@
 
     <Include file="foundation\.xml"/>
     <Include file="ui\.xml"/>
+
+    <!-- better keep this last -->
+    <Include file="module.initializer.lua"/>
 </Ui>
