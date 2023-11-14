@@ -21,9 +21,9 @@ function Class:InitializeControls()
     -- todo   for this to work we will need to have "save/apply" buttons or raise domain events to notify the addon about the changes
     -- todo   add polyfils for lua 5.2+ in regard to setfenv()/getfenv per  https://stackoverflow.com/a/14554565/863651
 
-    _ui.lblLootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
-    _ui.lblLootSectionHeader:GetParent().objectCount = _ui.lblLootSectionHeader:GetParent().objectCount - 1
-    _ui.lblLootSectionHeader:SetHeight(20)
+    _ui.lblGrouplootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
+    _ui.lblGrouplootSectionHeader:GetParent().objectCount = _ui.lblGrouplootSectionHeader:GetParent().objectCount - 1
+    _ui.lblGrouplootSectionHeader:SetHeight(20)
 
     _ui.ddlGreenItemsAutolooting_modeSetting = _pfuiGui.CreateConfig(
             function()

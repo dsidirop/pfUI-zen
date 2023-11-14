@@ -19,7 +19,7 @@ function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesS
         _addonRawPfuiPreferencesSpecsV1 =  _assert(addonRawPfuiPreferencesSpecsV1),
         
         _ui = {
-            lblLootSectionHeader = nil,
+            lblGrouplootSectionHeader = nil,
             ddlGreenItemsAutolooting_modeSetting = nil,
             ddlGreenItemsAutolooting_actOnKeybindSetting = nil,    
         },
