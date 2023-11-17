@@ -1,7 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="list.lua"/>
-    <Include file="set.lua"/>
-    <Include file="dictionary.lua"/>
-    <Include file="stack.lua"/>
-    <Include file="queue.lua"/>
-</Ui>

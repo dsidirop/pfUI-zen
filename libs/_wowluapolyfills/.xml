@@ -1,6 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <!-- its better if this xml file gets loaded first ahead of all other libs -->
-    <Include file="baseline.polyfills\.xml"/>
-    <Include file="baseline.string.polyfills\.xml"/>
-    <Include file="futurewow.polyfills\.xml"/>
-</Ui>

@@ -1,4 +1,0 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="zen.user.preferences.form.lua"/>
-    <Include file="zen.user.preferences.form.designer.lua"/>
-</Ui>

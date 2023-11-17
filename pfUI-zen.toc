@@ -13,5 +13,4 @@
 ## X-Website: github.com/dsidirop/pfUI-zen
 ## X-Category: Interface Enhancements
 
-pfUI-zen.devel.xml
-pfUI-zen.module.xml
+pfUI-zen.xml
