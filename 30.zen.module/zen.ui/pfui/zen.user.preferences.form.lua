@@ -1,8 +1,12 @@
-﻿local _g =  assert(_G or getfenv(0))
-local _assert = assert
-local _setfenv = assert(_g.setfenv)
-local _namespacer = assert(_g.pvl_namespacer_add)
-local _setmetatable = assert(_g.setmetatable)
+﻿local _assert, _setfenv, _namespacer, _setmetatable = (function()
+    local _g = assert(_G or getfenv(0))
+    local _assert = assert
+    local _setfenv = assert(_g.setfenv)
+    local _namespacer = assert(_g.pvl_namespacer_add)
+    local _setmetatable = assert(_g.setmetatable)
+
+    return _assert, _setfenv, _namespacer, _setmetatable
+end)()
 
 _setfenv(1, {})
 
