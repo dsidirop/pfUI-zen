@@ -12,7 +12,9 @@ local function Main(_pfUI)
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
+        --local _print = _g.assert(_g.print)
         local _pfuiGui = _g.assert(_g.pfUI.gui)
+        local _setfenv = _g.assert(_g.setfenv)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
@@ -25,7 +27,6 @@ local function Main(_pfUI)
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
         
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
-        local PfuiUserPreferencesAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiUserPreferencesAdapter")
 
         local addon = {
             ownName = "Zen",
@@ -119,28 +120,29 @@ local function Main(_pfUI)
             return _c[specs.addonPreferencesKeyname]
 
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
-        end        
-        
+        end
+
         local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSchemaV1)
 
-        local _settingsForm = UserPreferencesForm:New(_t, _pfuiGui)
-
-        local _pfuiUserPreferencesAdapter = PfuiUserPreferencesAdapter -- todo   automapper
-                :New()
-                :GreenItemsAutolooting_ChainSetMode(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
-                :GreenItemsAutolooting_ChainSetActOnKeybind(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname])
-
-        _settingsForm:Initialize(_pfuiUserPreferencesAdapter) -- todo   we should be passing the adapter on the on-show event of the form instead of here
-
+        UserPreferencesForm
+                :New(_t, _pfuiGui)
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off
+                    ea.Response.UserPreferences = {
+                        Mode         = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname],
+                        ActOnKeybind = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname],
+                    }
+                end) -- @formatter:on
+                :Initialize()
+        
         local QUALITY_GREEN = 2
         local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
 
         local _base_pfuiRoll_UpdateLootRoll = _pfUI.roll.UpdateLootRoll
         function _pfUI.roll:UpdateLootRoll(i)
-            -- override pfUI's UpdateLootRoll
+            -- override pfUI:UpdateLootRoll()
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode())
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
             if not rollMode or rollMode == "let_user_choose" then --todo  use strongly typed enums here
                 return -- let the user choose
             end
@@ -153,7 +155,8 @@ local function Main(_pfUI)
 
             local _, _, _, quality = _getLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
             if quality == QUALITY_GREEN and frame:IsVisible() then -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-                -- todo   get keybind activation into account here
+                -- todo   get keybind activation into account here   _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname]
+
                 _rollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
 
                 DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. rollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))

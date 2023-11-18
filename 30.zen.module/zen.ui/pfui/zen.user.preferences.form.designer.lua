@@ -1,42 +1,41 @@
-﻿local _setfenv, _importer, _namespacer, _assert = (function() -- todo  consolidate this into a single function
+﻿local _setfenv, _importer, _namespacer, _assert = (function()
     local _g = assert(getfenv(0))
     local _assert = assert(_g.assert)
 
     local _setfenv = _assert(_g.setfenv)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    
+
     return _setfenv, _importer, _namespacer, _assert
-end)() --order
+end)()
 
-_setfenv(1, {}) --order
-
-local PfuiUserPreferencesAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiUserPreferencesAdapter")
+_setfenv(1, {})
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm [Partial]")
 
-function Class:InitializeControls(pfuiUserPreferencesAdapter)
+function Class:InitializeControls()
     _setfenv(1, self)
 
-    _assert(pfuiUserPreferencesAdapter ~= nil)
-
     -- todo   add a "reset to defaults" button
-    --
-    -- todo   refactor the form so that its options are not hardbinded to the raw-pfui-preferences-table
-    -- todo   for this to work we will need to have "save/apply" buttons or raise domain events to notify the addon about the changes
     -- todo   add polyfils for lua 5.2+ in regard to setfenv()/getfenv per  https://stackoverflow.com/a/14554565/863651
+    -- todo   introduce fluent builders for constructing families of ui elements like the ones below
 
     _ui.lblGrouplootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
-    _ui.lblGrouplootSectionHeader:GetParent().objectCount = _ui.lblGrouplootSectionHeader:GetParent().objectCount - 1
     _ui.lblGrouplootSectionHeader:SetHeight(20)
+    
+    _ui.frmContainer = _ui.lblGrouplootSectionHeader:GetParent()
+    _ui.frmContainer.objectCount = _ui.frmContainer.objectCount - 1 -- vital for lblGrouplootSectionHeader to be positioned properly
+    _ui.frmContainer:SetScript("OnShow", function()
+        self:OnShown()
+    end)
 
-    _ui.ddlGreenItemsAutolooting_modeSetting = _pfuiGui.CreateConfig(
+    _ui.ddlGreenItemsAutolooting_mode = _pfuiGui.CreateConfig(
             function()
-                self:ddlGreenItemsAutolooting_modeSetting_selectionChanged(self, pfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode())
+                self:ddlGreenItemsAutolooting_mode_selectionChanged(self, _userPreferencesAdapter:GreenItemsAutolooting_GetMode())
             end,
-            _t["On |cFF228B22Greens|r ..."],
-            pfuiUserPreferencesAdapter:GetRawTable(),
-            PfuiUserPreferencesAdapter.Schema.greenies_autolooting.mode.keyname,
+            _t["On |cFF228B22Greens|r"],
+            _userPreferencesAdapter:GetRawTable(),
+            _userPreferencesAdapter.Schema.greenies_autolooting.mode.keyname,
             "dropdown",
             {
                 "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
@@ -46,13 +45,13 @@ function Class:InitializeControls(pfuiUserPreferencesAdapter)
             }
     )
 
-    _ui.ddlGreenItemsAutolooting_actOnKeybindSetting = _pfuiGui.CreateConfig(
+    _ui.ddlGreenItemsAutolooting_actOnKeybind = _pfuiGui.CreateConfig(
             function()
-                self:ddlGreenItemsAutolooting_modeSetting_selectionChanged(self, pfuiUserPreferencesAdapter:GreenItemsAutolooting_GetActOnKeybind())
+                self:ddlGreenItemsAutolooting_mode_selectionChanged(self, _userPreferencesAdapter:GreenItemsAutolooting_GetActOnKeybind())
             end,
-            _t["Upon Pressing ..."],
-            pfuiUserPreferencesAdapter:GetRawTable(),
-            PfuiUserPreferencesAdapter.Schema.greenies_autolooting.act_on_keybind.keyname,
+            _t["Upon Pressing"],
+            _userPreferencesAdapter:GetRawTable(),
+            _userPreferencesAdapter.Schema.greenies_autolooting.act_on_keybind.keyname,
             "dropdown",
             {
                 "automatic:" .. _t["|cff888888(Simply Autoloot)|r"],
