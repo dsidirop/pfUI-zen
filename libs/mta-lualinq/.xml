@@ -1,5 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="KeyValuePair.lua"/>
-    <Include file="PredicateParser.lua"/>
-    <Include file="Enumerable.lua"/>
-</Ui>

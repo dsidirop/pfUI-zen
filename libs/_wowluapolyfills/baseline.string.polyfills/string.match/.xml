@@ -1,4 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="string.match.lua"/>
-    <Include file="string.match.g.lua"/>
-</Ui>

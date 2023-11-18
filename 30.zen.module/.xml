@@ -1,0 +1,14 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
+    <!-- ordering is important here -->
+    <Include file="foundation\.xml"/>
+    <Include file="foundation.contracts\.xml"/>
+
+    <Include file="engine\.xml"/>
+    <Include file="engine.contracts\.xml"/>
+    
+    <Include file="ui\.xml"/>
+    <Include file="ui.contracts\.xml"/>
+
+    <!-- better keep this last -->
+    <Include file="module.initializer.lua"/>
+</Ui>
