@@ -29,28 +29,28 @@ function Class:InitializeControls()
             function()
                 self:ddlGreenItemsAutolooting_modeSetting_selectionChanged(
                         self,
-                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname]
+                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname]
                 )
             end,
             _t["On |cFF228B22Greens|r ..."],
             _addonRawPfuiPreferences,
-            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname,
+            _addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname,
             "dropdown",
-            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.options
+            _addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.options
     )
 
     _ui.ddlGreenItemsAutolooting_actOnKeybindSetting = _pfuiGui.CreateConfig(
             function()
                 self:ddlGreenItemsAutolooting_actOnKeybindSetting_selectionChanged(
                         self,
-                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.keyname]
+                        _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname]
                 )
             end,
             _t["Upon Pressing ..."],
             _addonRawPfuiPreferences,
-            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.keyname,
+            _addonRawPfuiPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname,
             "dropdown",
-            _addonRawPfuiPreferencesSpecsV1.greenies_autolooting.act_on_keybind.options
+            _addonRawPfuiPreferencesSchemaV1.greenies_autolooting.act_on_keybind.options
     )
 
 end

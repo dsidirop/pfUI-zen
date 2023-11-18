@@ -10,13 +10,13 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesF
 
 -- this only gets called during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesSpecsV1)
+function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesSchemaV1)
 
     local instance = {
         _t =  _assert(T),
         _pfuiGui =  _assert(pfuiGui),
         _addonRawPfuiPreferences =  _assert(addonRawPfuiPreferences),
-        _addonRawPfuiPreferencesSpecsV1 =  _assert(addonRawPfuiPreferencesSpecsV1),
+        _addonRawPfuiPreferencesSchemaV1 =  _assert(addonRawPfuiPreferencesSchemaV1),
         
         _ui = {
             lblGrouplootSectionHeader = nil,
@@ -42,7 +42,7 @@ function Class:Initialize()
                 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
                 self:InitializeControls()
 
-                if _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname] == "let_user_choose" then
+                if _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname] == "let_user_choose" then
                     _ui.ddlGreenItemsAutolooting_actOnKeybindSetting:Hide()
                 end
             end

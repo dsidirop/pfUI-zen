@@ -58,7 +58,7 @@ local function Main(_pfUI)
             return
         end
 
-        local _addonPfuiRawPreferencesSpecsV1 = {
+        local _addonPfuiRawPreferencesSchemaV1 = {
             -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
             addonPreferencesKeyname = "zen.config.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
@@ -121,15 +121,15 @@ local function Main(_pfUI)
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
         end        
         
-        local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSpecsV1)
+        local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSchemaV1)
 
-        local _pfuiPreferencesAdapter = PfuiUserPreferencesAdapter:New(_addonPfuiRawPreferences, _addonPfuiRawPreferencesSpecsV1)
+        local _pfuiPreferencesAdapter = PfuiUserPreferencesAdapter:New(_addonPfuiRawPreferences, _addonPfuiRawPreferencesSchemaV1)
 
         local _settingsForm = UserPreferencesForm:New(
                 _t,
                 _pfuiGui,
                 _addonPfuiRawPreferences,
-                _addonPfuiRawPreferencesSpecsV1
+                _addonPfuiRawPreferencesSchemaV1
         )
 
         _settingsForm:Initialize()

@@ -9,11 +9,11 @@ _setfenv(1, {})
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiUserPreferencesAdapter")
 
 -- todo  this should be a simple dto and we should just introduce a mapper to map to it
-function Class:New(addonRawPfuiPreferencesV1, addonRawPfuiPreferencesSpecsV1)
+function Class:New(addonRawPfuiPreferencesV1, addonRawPfuiPreferencesSchemaV1)
 
     local instance = {
         _addonRawPfuiPreferences =  _assert(addonRawPfuiPreferencesV1),
-        _addonRawPfuiPreferencesSpecsV1 =  _assert(addonRawPfuiPreferencesSpecsV1),
+        _addonRawPfuiPreferencesSchemaV1 =  _assert(addonRawPfuiPreferencesSchemaV1),
     }
 
     _setmetatable(instance, self)
@@ -22,14 +22,14 @@ function Class:New(addonRawPfuiPreferencesV1, addonRawPfuiPreferencesSpecsV1)
     return instance
 end
 
-function Class.GreenItemsAutolooting_GetMode()
+function Class:GreenItemsAutolooting_GetMode()
     _setfenv(1, self)
     
-    return _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname]
+    return _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname]
 end
 
-function Class.GreenItemsAutolooting_GetActOnKeybind()
+function Class:GreenItemsAutolooting_GetActOnKeybind()
     _setfenv(1, self)
 
-    return _addonRawPfuiPreferences[_addonRawPfuiPreferencesSpecsV1.greenies_autolooting.mode.keyname]
+    return _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname]
 end
