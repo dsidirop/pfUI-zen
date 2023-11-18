@@ -123,16 +123,14 @@ local function Main(_pfUI)
         
         local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSchemaV1)
 
-        local _pfuiPreferencesAdapter = PfuiUserPreferencesAdapter:New(_addonPfuiRawPreferences, _addonPfuiRawPreferencesSchemaV1)
+        local _settingsForm = UserPreferencesForm:New(_t, _pfuiGui)
 
-        local _settingsForm = UserPreferencesForm:New(
-                _t,
-                _pfuiGui,
-                _addonPfuiRawPreferences,
-                _addonPfuiRawPreferencesSchemaV1
-        )
+        local _pfuiUserPreferencesAdapter = PfuiUserPreferencesAdapter -- todo   automapper
+                :New()
+                :GreenItemsAutolooting_ChainSetMode(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
+                :GreenItemsAutolooting_ChainSetActOnKeybind(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname])
 
-        _settingsForm:Initialize()
+        _settingsForm:Initialize(_pfuiUserPreferencesAdapter) -- todo   we should be passing the adapter on the on-show event of the form instead of here
 
         local QUALITY_GREEN = 2
         local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
@@ -142,8 +140,8 @@ local function Main(_pfUI)
             -- override pfUI's UpdateLootRoll
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiPreferencesAdapter:GreenItemsAutolooting_GetMode())
-            if not rollMode then
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode())
+            if not rollMode or rollMode == "let_user_choose" then --todo  use strongly typed enums here
                 return -- let the user choose
             end
 

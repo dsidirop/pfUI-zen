@@ -12,20 +12,19 @@ _setfenv(1, {})
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
 
--- this only gets called during a user session the very first time that the user explicitly
+-- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesSchemaV1)
+function Class:New(T, pfuiGui)
+    _setfenv(1, self)
 
     local instance = {
-        _t =  _assert(T),
-        _pfuiGui =  _assert(pfuiGui),
-        _addonRawPfuiPreferences =  _assert(addonRawPfuiPreferences),
-        _addonRawPfuiPreferencesSchemaV1 =  _assert(addonRawPfuiPreferencesSchemaV1),
-        
+        _t = _assert(T),
+        _pfuiGui = _assert(pfuiGui),
+
         _ui = {
             lblGrouplootSectionHeader = nil,
             ddlGreenItemsAutolooting_modeSetting = nil,
-            ddlGreenItemsAutolooting_actOnKeybindSetting = nil,    
+            ddlGreenItemsAutolooting_actOnKeybindSetting = nil,
         },
     }
 
@@ -35,20 +34,21 @@ function Class:New(T, pfuiGui, addonRawPfuiPreferences, addonRawPfuiPreferencesS
     return instance
 end
 
-function Class:Initialize()
+-- todo   introduce events on-show and on-hide
+
+function Class:Initialize(pfuiUserPreferencesAdapter)
     _setfenv(1, self)
-    
+    _assert(pfuiUserPreferencesAdapter ~= nil)
+
     _pfuiGui.CreateGUIEntry(
             _t["Thirdparty"],
             _t["|cFF7FFFD4Zen|r"],
             function()
                 -- this only gets called during a user session the very first time that the user explicitly
                 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-                self:InitializeControls()
+                self:InitializeControls(pfuiUserPreferencesAdapter)
 
-                if _addonRawPfuiPreferences[_addonRawPfuiPreferencesSchemaV1.greenies_autolooting.mode.keyname] == "let_user_choose" then
-                    _ui.ddlGreenItemsAutolooting_actOnKeybindSetting:Hide()
-                end
+                ddlGreenItemsAutolooting_modeSetting_selectionChanged(self, pfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode()) --vital
             end
     )
 end
@@ -63,14 +63,10 @@ function Class:ddlGreenItemsAutolooting_modeSetting_selectionChanged(_, newValue
     end
 
     -- todo   effectuate the change on the zen-engine
-
-    -- the addon settings automatically get autoupdated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore
 end
 
 function Class:ddlGreenItemsAutolooting_actOnKeybindSetting_selectionChanged(_, _)
     _setfenv(1, self)
-    
-    -- the settings automatically get updated inside pfUI_config by pfUI's dropdown control   so we dont need to worry about that anymore
 
     -- todo   effectuate the change on the zen-engine
 end 
