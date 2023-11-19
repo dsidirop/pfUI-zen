@@ -3,5 +3,5 @@ if strtrim then
 end
 
 function strtrim(input)
-    return string.match(input, '^%s*(.*%S)') or ''
+    return string.match(input, '^()%s*$') and '' or string.match(input, '^%s*(.*%S)')
 end

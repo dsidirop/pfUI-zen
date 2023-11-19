@@ -173,16 +173,20 @@ do
     function Namespacer:Get(namespace_path)
         _setfenv(1, self)
 
+        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
+
+        namespace_path = _strtrim(namespace_path)
+
         local entry = _namespace_registry[namespace_path]
 
-        _assert(entry, "namespace '" .. namespace_path .. "' doesn't point to anything")
+        _assert(entry, "namespace '" .. namespace_path .. "' has not been registered")
         _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' holds a partially-registered class - did you forget to load the main class definition?")
 
         return _assert(entry:GetSymbol())
     end
 end
 
-local Singleton = Namespacer:New() -- place the singleton instance into the global namespace
+local Singleton = Namespacer:New()
 do  
     -- namespacer()   todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__some_guid_here__add
     _g.pvl_namespacer_add = function(namespace_path)

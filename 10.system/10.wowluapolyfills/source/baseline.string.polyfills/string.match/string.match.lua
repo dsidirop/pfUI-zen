@@ -3,7 +3,6 @@ if string.match then
     return -- already loaded
 end
 
-local _error = assert(error)
 local _stringSub = assert(string.sub)
 local _stringFind = assert(string.find)
 local _getmetatable = assert(getmetatable)
@@ -16,9 +15,7 @@ if not _stringMetatable then
 end
 
 function _stringMetatable:match(patternString, ...)
-    if patternString == nil then
-        _error("patternString is nil", 1)
-    end
+    assert(patternString ~= nil)
 
     if patternString == "" then
         -- todo  test out these corner cases

@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+    <!-- order is important here -->
+    <Include file="future.wow.polyfills\.xml"/>
+    <Include file="libstub\.xml"/>
+    <Include file="mta.lualinq\.xml"/>
+    <Include file="pfui.gui\.xml"/>
+</Ui>
