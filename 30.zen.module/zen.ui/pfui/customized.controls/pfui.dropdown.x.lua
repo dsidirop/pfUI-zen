@@ -37,11 +37,12 @@ function Class:New()
 
         _caption = nil,
         _menuItems = {},
+        _menuIndexesToMenuValues = {},
         _menuEntryValuesToIndexes = {},
 
-        _oldValue = nil,        
-        _dummyCornerstone = {},
-        _dummyCornerstoneKeyname = "dummy_keyname_for_value",
+        _oldValue = nil,
+        _singlevalue = {},
+        _valuekeyname = "dummy_keyname_for_value",
 
         _eventSelectionChanged = Event:New(),
     }
@@ -69,6 +70,7 @@ function Class:ChainSetMenuItems(menuItems)
 
     _menuItems = menuItems
     _menuEntryValuesToIndexes, _menuIndexesToMenuValues = self:_ParseMenuItems(menuItems)
+    _assert(_menuEntryValuesToIndexes ~= nil, "menuItems contains duplicate values which is not allowed")
 
     return self
 end
@@ -83,12 +85,12 @@ function Class:Initialize()
             function()
                 self:_OnSelectionChanged({
                     Old = _oldValue,
-                    New = _dummyCornerstone[_dummyCornerstoneKeyname],
+                    New = _singlevalue[_valuekeyname],
                 }) 
             end,
             _caption,
-            _dummyCornerstone,
-            _dummyCornerstoneKeyname,
+            _singlevalue,
+            _valuekeyname,
             "dropdown",
             _menuItems
     )
@@ -96,43 +98,47 @@ function Class:Initialize()
     return self
 end
 
-function Class:SetSelectedOptionByValue(optionValue)
+function Class:TrySetSelectedOptionByValue(optionValue)
     _setfenv(1, self)
 
     _assert(_type(optionValue) == "string")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
-
-    local index = _menuEntryValuesToIndexes[optionValue]
-    _assert(index ~= nil, "invalid optionValue " .. (optionValue or "nil") .. " - must be one of the menu-values")
-
-    self:SetSelectedOptionByIndex(index)
-
-    return self, true
-end
-
-function Class:SetSelectedOptionByIndex(index)
-    _setfenv(1, self)
-
-    _assert(_type(index) == "number" and index >= 1 and index <= _getn(_menuIndexesToMenuValues), "index must be a number >= 1")
-    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
     
-    local newValue = _menuIndexesToMenuValues[index]
-    local originalValue = _dummyCornerstone[_dummyCornerstoneKeyname]
-    if newValue == originalValue then
-        return self -- nothing to do
+    local index = _menuEntryValuesToIndexes[optionValue]
+    if index == nil then
+        return false -- given option doesnt exist
     end
 
-    _dummyCornerstone[_dummyCornerstoneKeyname] = newValue --00 order
-    _nativePfuiControl.input:SetSelection(index)
- 
-    self:_OnSelectionChanged({
-        Old = originalValue,
-        New = newValue,
-    })
-    
-    return self
-    
-    --00  we have to emulate the selectionchanged event because the pfui control itself does not fire it
+    local success = self:TrySetSelectedOptionByIndex(index)
+    _assert(success, "failed to set the selection to option '" .. optionValue .. "' (index=" .. index .. " - but how did this happen?)")
+
+    return true
+end
+
+function Class:TrySetSelectedOptionByIndex(index)
+    _setfenv(1, self)
+
+    _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
+    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
+
+    if index > _getn(_menuIndexesToMenuValues) then -- we dont want to subject this to an assertion
+        return false
+    end
+
+    if _nativePfuiControl.input.id == index then
+        return true -- already selected   nothing to do
+    end
+
+    local newValue = _menuIndexesToMenuValues[index] --   order
+    _singlevalue[_valuekeyname] = newValue --             order
+    _nativePfuiControl.input:SetSelection(index) --       order
+    _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. "' (how did this happen?)")
+
+    self:_OnSelectionChanged({ Old = originalValue, New = newValue }) --00
+
+    return true
+
+    --00  we have to emulate the selectionchanged event because the underlying pfui control doesnt fire it automatically on its own
 end
 
 function Class:SetVisibility(showNotHide)
@@ -187,7 +193,8 @@ function Class:_OnSelectionChanged(eventArgs)
     
     _assert(_type(eventArgs) == "table", "event-args is not an object")
 
-    _oldValue = _eventSelectionChanged:Raise(self, eventArgs).New
+    _oldValue = eventArgs.New
+    _eventSelectionChanged:Raise(self, eventArgs)
 end
 
 function Class:_ParseMenuItems(menuItems)
@@ -199,9 +206,14 @@ function Class:_ParseMenuItems(menuItems)
     local menuEntryValuesToIndexes = {}
     for i, k in _pairs(menuItems) do
         local value, _ = _unpack(StringUtils.Split(k, ":"))
+        
+        value = value or ""
+        if menuEntryValuesToIndexes[value] ~= nil then
+            return nil, nil
+        end
 
-        menuIndexesToMenuValues[i] = value or ""
-        menuEntryValuesToIndexes[value or ""] = i
+        menuIndexesToMenuValues[i] = value
+        menuEntryValuesToIndexes[value] = i
     end
 
     return menuEntryValuesToIndexes, menuIndexesToMenuValues

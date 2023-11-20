@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _error, _, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _error, _print, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -37,7 +37,11 @@ function Class:New(T, pfuiGui)
             ddlGreenItemsAutolooting_actOnKeybind = nil,
         },
 
-        _requestingCurrentUserPreferences = Event:New(),
+        _eventRequestingCurrentUserPreferences = Event:New(),
+
+        _isAdvertisementOfChangesEnabled = false,
+        _eventGreenItemsAutolootingModeChanged = Event:New(),
+        _eventGreenItemsAutolootingOnActKeybindChanged = Event:New(),
     }
 
     _setmetatable(instance, self)
@@ -46,10 +50,42 @@ function Class:New(T, pfuiGui)
     return instance
 end
 
+function Class:EventGreenItemsAutolootingModeChanged_Subscribe(handler)
+    _setfenv(1, self)
+
+    _eventGreenItemsAutolootingModeChanged:Subscribe(handler)
+
+    return self
+end
+
+function Class:EventGreenItemsAutolootingModeChanged_Unsubscribe(handler)
+    _setfenv(1, self)
+
+    _eventGreenItemsAutolootingModeChanged:Unsubscribe(handler)
+
+    return self
+end
+
+function Class:EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(handler)
+    _setfenv(1, self)
+
+    _eventGreenItemsAutolootingOnActKeybindChanged:Subscribe(handler)
+
+    return self
+end
+
+function Class:EventGreenItemsAutolootingActOnKeybindChanged_Unsubscribe(handler)
+    _setfenv(1, self)
+
+    _eventGreenItemsAutolootingOnActKeybindChanged:Unsubscribe(handler)
+
+    return self
+end
+
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler)
     _setfenv(1, self)
 
-    _requestingCurrentUserPreferences:Subscribe(handler)
+    _eventRequestingCurrentUserPreferences:Subscribe(handler)
 
     return self
 end
@@ -57,7 +93,7 @@ end
 function Class:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
     _setfenv(1, self)
 
-    _requestingCurrentUserPreferences:Unsubscribe(handler)
+    _eventRequestingCurrentUserPreferences:Unsubscribe(handler)
 
     return self
 end
@@ -65,11 +101,10 @@ end
 function Class:Initialize()
     _setfenv(1, self)
 
-    _pfuiGui.CreateGUIEntry(
+    _pfuiGui.CreateGUIEntry(-- 00
             _t["Thirdparty"],
             _t["|cFF7FFFD4Zen|r"],
             function()
-                -- 00
                 self:_InitializeControls() --                   order
                 self:_OnRequestingCurrentUserPreferences() --   order
 
@@ -91,16 +126,23 @@ end
 function Class:_OnRequestingCurrentUserPreferences()
     _setfenv(1, self)
 
-    local response = _requestingCurrentUserPreferences:Raise(self, { Response = { UserPreferences = nil } }).Response -- todo    RequestingCurrentUserPreferencesEventArgs:New()
+    local response = _eventRequestingCurrentUserPreferences:Raise(self, { Response = { UserPreferences = nil } }).Response -- todo    RequestingCurrentUserPreferencesEventArgs:New()
     if not response.UserPreferences then
         _error("[ZUPF.OCUPR.010] failed to retrieve user-preferences")
         return nil
     end
 
-    _ui.ddlGreenItemsAutolooting_mode:SetSelectedOptionByValue(response.UserPreferences.Mode)
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetSelectedOptionByValue(response.UserPreferences.ActOnKeybind)
+    _isAdvertisementOfChangesEnabled = false --00
+    _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences.Mode)
+    _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences.ActOnKeybind)
+    _isAdvertisementOfChangesEnabled = true
 
     return response
+    
+    --00  we dont want these change-events to be advertised to the outside world when we are simply updating the
+    --    controls to reflect the current user-preferences
+    --
+    --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
 function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
@@ -111,11 +153,18 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
 
     _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea.New ~= "let_user_choose")
 
-    -- todo   effectuate the change on the zen-engine
+    if _isAdvertisementOfChangesEnabled then
+        _eventGreenItemsAutolootingModeChanged:Raise(self, { Old = ea.Old, New = ea.New })
+    end
 end
 
-function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(_, _)
+function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea)
     _setfenv(1, self)
 
-    -- todo   effectuate the change on the zen-engine
+    _assert(sender)
+    _assert(_type(ea) == "table")
+
+    if _isAdvertisementOfChangesEnabled then
+        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(self, { Old = ea.Old, New = ea.New })
+    end
 end
