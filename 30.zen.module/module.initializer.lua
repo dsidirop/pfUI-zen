@@ -67,27 +67,11 @@ local function Main(_pfUI)
                 mode = {
                     keyname = "greenies_autolooting.v1.mode",
                     default = "roll_greed",
-                    options = {
-                        "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
-                        "roll_greed:" .. _t["Roll '|cFFFFD700Greed|r'"],
-                        "just_pass:" .. _t["Just '|cff888888Pass|r'"],
-                        "let_user_choose:" .. _t["Let me handle it myself"],
-                    },
                 },
 
                 act_on_keybind = {
                     keyname = "greenies_autolooting.v1.keybind",
                     default = "automatic",
-                    options = {
-                        "automatic:" .. _t["|cff888888(Automatic)|r"],
-                        "alt:" .. _t["Alt"],
-                        "ctrl:" .. _t["Ctrl"],
-                        "shift:" .. _t["Shift"],
-                        "ctrl_alt:" .. _t["Ctrl + Alt"],
-                        "ctrl_shift:" .. _t["Ctrl + Shift"],
-                        "alt_shift:" .. _t["Alt + Shift"],
-                        "ctrl_alt_shift:" .. _t["Ctrl + Alt + Shift"],
-                    },
                 },
             }
         }
