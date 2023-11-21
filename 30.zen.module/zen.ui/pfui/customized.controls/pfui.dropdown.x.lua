@@ -25,7 +25,7 @@ _setfenv(1, {})
 
 local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
-local StringUtils  = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
+local StringUtils = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.CustomizedControls.PfuiDropdownX")
 
@@ -86,7 +86,7 @@ function Class:Initialize()
                 self:_OnSelectionChanged({
                     Old = _oldValue,
                     New = _singlevalue[_valuekeyname],
-                }) 
+                })
             end,
             _caption,
             _singlevalue,
@@ -130,6 +130,8 @@ function Class:TrySetSelectedOptionByIndex(index)
     end
 
     local newValue = _menuIndexesToMenuValues[index] --   order
+    local originalValue = _singlevalue[_valuekeyname] --  order
+    
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. "' (how did this happen?)")
@@ -190,7 +192,7 @@ end
 -- privates
 function Class:_OnSelectionChanged(eventArgs)
     _setfenv(1, self)
-    
+
     _assert(_type(eventArgs) == "table", "event-args is not an object")
 
     _oldValue = eventArgs.New
