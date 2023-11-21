@@ -199,14 +199,14 @@ function Class:_OnSelectionChanged(eventArgs)
     _eventSelectionChanged:Raise(self, eventArgs)
 end
 
-function Class:_ParseMenuItems(menuItems)
+function Class:_ParseMenuItems(menuItemsArray)
     _setfenv(1, self)
 
-    _assert(_type(menuItems) == "table")
+    _assert(_type(menuItemsArray) == "table")
 
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
-    for i, k in _pairs(menuItems) do
+    for i, k in _pairs(menuItemsArray) do
         local value, _ = _unpack(StringUtils.Split(k, ":"))
         
         value = value or ""
