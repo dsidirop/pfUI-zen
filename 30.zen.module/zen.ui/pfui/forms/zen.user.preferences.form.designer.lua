@@ -1,18 +1,21 @@
-﻿local _setfenv, _importer, _namespacer, _assert = (function()
+﻿local _print, _setfenv, _tostring, _importer, _namespacer, _assert = (function()
     local _g = assert(getfenv(0))
     local _assert = assert(_g.assert)
 
+    local _print = _assert(_g.print)
     local _setfenv = _assert(_g.setfenv)
+    local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
 
-    return _setfenv, _importer, _namespacer, _assert
+    return _print, _setfenv, _tostring, _importer, _namespacer, _assert
 end)()
 
 _setfenv(1, {})
 
 local PfuiDropdownX = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.CustomizedControls.PfuiDropdownX")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm [Partial]")
 
@@ -48,14 +51,14 @@ function Class:_InitializeControls()
     _ui.ddlGreenItemsAutolooting_actOnKeybind = PfuiDropdownX:New() --@formatter:off
                                                              :ChainSetCaption(_t["Upon Pressing"])
                                                              :ChainSetMenuItems({
-                                                                     "automatic:" .. _t["|cff888888(Simply Autoloot)|r"],
-                                                                     "alt:" .. _t["Alt"],
-                                                                     "ctrl:" .. _t["Ctrl"],
-                                                                     "shift:" .. _t["Shift"],
-                                                                     "ctrl_alt:" .. _t["Ctrl + Alt"],
-                                                                     "ctrl_shift:" .. _t["Ctrl + Shift"],
-                                                                     "alt_shift:" .. _t["Alt + Shift"],
-                                                                     "ctrl_alt_shift:" .. _t["Ctrl + Alt + Shift"],
+                                                                    SGreenItemsAutolootingActOnKeybind.Automatic .. ":" .. _t["|cff888888(Simply Autoloot)|r"],
+                                                                    SGreenItemsAutolootingActOnKeybind.Alt .. ":" .. _t["Alt"],
+                                                                    SGreenItemsAutolootingActOnKeybind.Ctrl .. ":" .. _t["Ctrl"],
+                                                                    SGreenItemsAutolootingActOnKeybind.Shift .. ":" .. _t["Shift"],
+                                                                    SGreenItemsAutolootingActOnKeybind.CtrlAlt .. ":" .. _t["Ctrl + Alt"],
+                                                                    SGreenItemsAutolootingActOnKeybind.CtrlShift .. ":" .. _t["Ctrl + Shift"],
+                                                                    SGreenItemsAutolootingActOnKeybind.AltShift .. ":" .. _t["Alt + Shift"],
+                                                                    SGreenItemsAutolootingActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
                                                              })
                                                              :EventSelectionChanged_Subscribe(function(sender, ea)
                                                                     self:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea)

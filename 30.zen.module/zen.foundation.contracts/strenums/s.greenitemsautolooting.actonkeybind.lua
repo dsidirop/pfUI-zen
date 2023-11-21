@@ -20,9 +20,13 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-SGreenItemsAutolootingMode.RollNeed = "roll_need"
-SGreenItemsAutolootingMode.RollGreed = "roll_greed"
-SGreenItemsAutolootingMode.JustPass = "just_pass"
-SGreenItemsAutolootingMode.LetUserChoose = "let_user_choose"
+SGreenItemsAutolootingActOnKeybind.Automatic = "automatic"
+SGreenItemsAutolootingActOnKeybind.Alt = "alt"
+SGreenItemsAutolootingActOnKeybind.Ctrl = "ctrl"
+SGreenItemsAutolootingActOnKeybind.Shift = "shift"
+SGreenItemsAutolootingActOnKeybind.CtrlAlt = "ctrl_alt"
+SGreenItemsAutolootingActOnKeybind.AltShift = "alt_shift"
+SGreenItemsAutolootingActOnKeybind.CtrlShift = "ctrl_shift"
+SGreenItemsAutolootingActOnKeybind.CtrlAltShift = "ctrl_alt_shift"
