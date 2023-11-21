@@ -18,6 +18,7 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
+local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
 
@@ -133,8 +134,15 @@ function Class:_OnRequestingCurrentUserPreferences()
     end
 
     _isAdvertisementOfChangesEnabled = false --00
-    _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences.Mode)
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences.ActOnKeybind)
+
+    if not _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences.Mode) then
+        _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(SGreenItemsAutolootingMode.RollGreed)
+    end
+
+    if not _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences.ActOnKeybind) then
+        _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByIndex(1)
+    end
+
     _isAdvertisementOfChangesEnabled = true
 
     return response

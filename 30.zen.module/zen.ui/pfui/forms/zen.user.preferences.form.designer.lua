@@ -12,6 +12,7 @@ end)()
 _setfenv(1, {})
 
 local PfuiDropdownX = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.CustomizedControls.PfuiDropdownX")
+local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm [Partial]")
 
@@ -34,10 +35,10 @@ function Class:_InitializeControls()
     _ui.ddlGreenItemsAutolooting_mode = PfuiDropdownX:New() --@formatter:off
                                                      :ChainSetCaption(_t["On |cFF228B22Greens|r"])
                                                      :ChainSetMenuItems({
-                                                            "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
-                                                            "roll_greed:" .. _t["Roll '|cFFFFD700Greed|r'"],
-                                                            "just_pass:" .. _t["Just '|cff888888Pass|r'"],
-                                                            "let_user_choose:" .. _t["Let me handle it myself"],
+                                                            SGreenItemsAutolootingMode.RollNeed .. ":" .. _t["Roll '|cFFFF4500Need|r'"],
+                                                            SGreenItemsAutolootingMode.RollGreed .. ":" .. _t["Roll '|cFFFFD700Greed|r'"],
+                                                            SGreenItemsAutolootingMode.JustPass .. ":" .. _t["Just '|cff888888Pass|r'"],
+                                                            SGreenItemsAutolootingMode.LetUserChoose .. ":" .. _t["Let me handle it myself"],
                                                      })
                                                      :EventSelectionChanged_Subscribe(function(sender, ea)
                                                             self:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
