@@ -130,7 +130,7 @@ do
         end
         
         if intention == EIntention.ForClass then
-            _assert(preExistingEntry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with another class (are you trying to register the same symbol twice?)")
+            _assert(preExistingEntry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with another class (are you trying to register the same symbol twice?)\n" .. _g.debugstack() .. "\n")
 
             preExistingEntry:UpgradeIntentionFromPartialToClass()
             
@@ -138,12 +138,12 @@ do
         end
 
         if intention == EIntention.ForClassPartial then
-            _assert(preExistingEntry:IsEitherFlavorOfClass(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with non-class intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with a partial class.")
-
+            _assert(preExistingEntry:IsEitherFlavorOfClass(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with non-class intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with a partial class.\n" .. _g.debugstack() .. "\n")
+            
             return preExistingEntry:GetSymbol()
         end
         
-        _assert(false, "how did we get here?")
+        _assert(false, "how did we get here?\n" .. _g.debugstack() .. "\n")
 
         --00  notice that if the intention is to declare an extension-class then we dont care if the class already
         --    exists its also perfectly fine if the the core class gets loaded after its associated extension classes too
@@ -179,8 +179,8 @@ do
 
         local entry = _namespace_registry[namespace_path]
 
-        _assert(entry, "namespace '" .. namespace_path .. "' has not been registered")
-        _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' holds a partially-registered class - did you forget to load the main class definition?")
+        _assert(entry, "namespace '" .. namespace_path .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
+        _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' holds a partially-registered class - did you forget to load the main class definition?\n" .. _g.debugstack() .. "\n")
 
         return _assert(entry:GetSymbol())
     end
