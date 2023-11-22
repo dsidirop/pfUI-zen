@@ -160,10 +160,10 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
     _assert(sender)
     _assert(_type(ea) == "table")
 
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea.New ~= "let_user_choose")
+    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNew() ~= "let_user_choose")
 
     if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingModeChanged:Raise(self, { Old = ea.Old, New = ea.New })
+        _eventGreenItemsAutolootingModeChanged:Raise(self, { Old = ea:GetOld(), New = ea:GetNew() })
     end
 end
 
@@ -174,6 +174,6 @@ function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea
     _assert(_type(ea) == "table")
 
     if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(self, { Old = ea.Old, New = ea.New })
+        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(self, { Old = ea:GetOld(), New = ea:GetNew() })
     end
 end

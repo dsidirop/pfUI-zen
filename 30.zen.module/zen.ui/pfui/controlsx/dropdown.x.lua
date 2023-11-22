@@ -26,6 +26,7 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringUtils = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
+local DropdownXSelectionChanged = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownXSelectionChanged")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownX")
 
@@ -83,10 +84,11 @@ function Class:Initialize()
 
     _nativePfuiControl = PfuiGui.CreateConfig(
             function()
-                self:_OnSelectionChanged({
-                    Old = _oldValue,
-                    New = _singlevalue[_valuekeyname],
-                })
+                self:_OnSelectionChanged(
+                        DropdownXSelectionChanged:New()
+                                                 :ChainSetOld(_oldValue)
+                                                 :ChainSetNew(_singlevalue[_valuekeyname])
+                )
             end,
             _caption,
             _singlevalue,
@@ -134,9 +136,13 @@ function Class:TrySetSelectedOptionByIndex(index)
     
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
-    _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. "' (how did this happen?)")
+    _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
-    self:_OnSelectionChanged({ Old = originalValue, New = newValue }) --00
+    self:_OnSelectionChanged(-- 00
+            DropdownXSelectionChanged:New()
+                                     :ChainSetOld(originalValue)
+                                     :ChainSetNew(newValue)
+    )
 
     return true
 
@@ -190,13 +196,13 @@ function Class:EventSelectionChanged_Unsubscribe(handler)
 end
 
 -- privates
-function Class:_OnSelectionChanged(eventArgs)
+function Class:_OnSelectionChanged(ea)
     _setfenv(1, self)
 
-    _assert(_type(eventArgs) == "table", "event-args is not an object")
+    _assert(_type(ea) == "table", "event-args is not an object")
 
-    _oldValue = eventArgs.New
-    _eventSelectionChanged:Raise(self, eventArgs)
+    _oldValue = ea:GetNew()
+    _eventSelectionChanged:Raise(self, ea)
 end
 
 function Class:_ParseMenuItems(menuItemsArray)
