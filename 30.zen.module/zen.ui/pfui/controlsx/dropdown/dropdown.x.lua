@@ -26,9 +26,9 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringUtils = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
-local DropdownXSelectionChanged = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownXSelectionChanged")
+local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownX")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
 
 function Class:New()
     _setfenv(1, self)
@@ -85,9 +85,9 @@ function Class:Initialize()
     _nativePfuiControl = PfuiGui.CreateConfig(
             function()
                 self:_OnSelectionChanged(
-                        DropdownXSelectionChanged:New()
-                                                 :ChainSetOld(_oldValue)
-                                                 :ChainSetNew(_singlevalue[_valuekeyname])
+                        SelectionChangedEventArgs:New()
+                                                          :ChainSetOld(_oldValue)
+                                                          :ChainSetNew(_singlevalue[_valuekeyname])
                 )
             end,
             _caption,
@@ -105,7 +105,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
 
     _assert(_type(optionValue) == "string")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
-    
+
     local index = _menuEntryValuesToIndexes[optionValue]
     if index == nil then
         return false -- given option doesnt exist
@@ -123,7 +123,8 @@ function Class:TrySetSelectedOptionByIndex(index)
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > _getn(_menuIndexesToMenuValues) then -- we dont want to subject this to an assertion
+    if index > _getn(_menuIndexesToMenuValues) then
+        -- we dont want to subject this to an assertion
         return false
     end
 
@@ -133,15 +134,15 @@ function Class:TrySetSelectedOptionByIndex(index)
 
     local newValue = _menuIndexesToMenuValues[index] --   order
     local originalValue = _singlevalue[_valuekeyname] --  order
-    
+
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
     self:_OnSelectionChanged(-- 00
-            DropdownXSelectionChanged:New()
-                                     :ChainSetOld(originalValue)
-                                     :ChainSetNew(newValue)
+            SelectionChangedEventArgs:New()
+                                              :ChainSetOld(originalValue)
+                                              :ChainSetNew(newValue)
     )
 
     return true
@@ -214,7 +215,7 @@ function Class:_ParseMenuItems(menuItemsArray)
     local menuEntryValuesToIndexes = {}
     for i, k in _pairs(menuItemsArray) do
         local value, _ = _unpack(StringUtils.Split(k, ":"))
-        
+
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then
             return nil, nil

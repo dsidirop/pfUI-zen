@@ -23,7 +23,7 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownXSelectionChanged")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 function Class:New()
     _setfenv(1, self)
