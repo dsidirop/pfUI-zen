@@ -30,3 +30,18 @@ SGreenItemsAutolootingActOnKeybind.CtrlAlt = "ctrl_alt"
 SGreenItemsAutolootingActOnKeybind.AltShift = "alt_shift"
 SGreenItemsAutolootingActOnKeybind.CtrlShift = "ctrl_shift"
 SGreenItemsAutolootingActOnKeybind.CtrlAltShift = "ctrl_alt_shift"
+
+function SGreenItemsAutolootingActOnKeybind.Validate(value)
+    if _type(value) ~= "string" then
+        return false
+    end
+
+    return value == SGreenItemsAutolootingActOnKeybind.Automatic
+            or value == SGreenItemsAutolootingActOnKeybind.Alt
+            or value == SGreenItemsAutolootingActOnKeybind.Ctrl
+            or value == SGreenItemsAutolootingActOnKeybind.Shift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlAlt
+            or value == SGreenItemsAutolootingActOnKeybind.AltShift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlShift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlAltShift
+end

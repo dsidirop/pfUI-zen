@@ -22,7 +22,19 @@ _setfenv(1, {})
 
 local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
 
+SGreenItemsAutolootingMode.JustPass = "just_pass"
 SGreenItemsAutolootingMode.RollNeed = "roll_need"
 SGreenItemsAutolootingMode.RollGreed = "roll_greed"
-SGreenItemsAutolootingMode.JustPass = "just_pass"
 SGreenItemsAutolootingMode.LetUserChoose = "let_user_choose"
+
+function SGreenItemsAutolootingMode.Validate(value)
+    if _type(value) ~= "string" then
+        return false
+    end
+
+    return value == SGreenItemsAutolootingMode.AutoLoot
+            or value == SGreenItemsAutolootingMode.JustPass
+            or value == SGreenItemsAutolootingMode.RollNeed
+            or value == SGreenItemsAutolootingMode.RollGreed
+            or value == SGreenItemsAutolootingMode.LetUserChoose
+end

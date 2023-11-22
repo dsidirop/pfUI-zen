@@ -117,7 +117,7 @@ local function Main(_pfUI)
                     }
                 end) 
                 :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea)
-                    _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname] = ea.New --todo   we should have commands here instead
+                    _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname] = ea:GetNew() --todo   we should have commands here instead
                 end)
                 :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea)
                     _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname] = ea.New

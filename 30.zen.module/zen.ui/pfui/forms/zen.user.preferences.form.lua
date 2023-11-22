@@ -20,6 +20,7 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
+local GreenItemsAutolootingModeChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
 
@@ -147,7 +148,7 @@ function Class:_OnRequestingCurrentUserPreferences()
     _isAdvertisementOfChangesEnabled = true
 
     return response
-    
+
     --00  we dont want these change-events to be advertised to the outside world when we are simply updating the
     --    controls to reflect the current user-preferences
     --
@@ -163,7 +164,10 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
     _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNew() ~= "let_user_choose")
 
     if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingModeChanged:Raise(self, { Old = ea:GetOld(), New = ea:GetNew() })
+        _eventGreenItemsAutolootingModeChanged:Raise(
+                self,
+                GreenItemsAutolootingModeChangedEventArgs:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
+        )
     end
 end
 
@@ -174,6 +178,9 @@ function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea
     _assert(_type(ea) == "table")
 
     if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(self, { Old = ea:GetOld(), New = ea:GetNew() })
+        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(
+                self,
+                { Old = ea:GetOld(), New = ea:GetNew() }
+        )
     end
 end
