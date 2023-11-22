@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _, _, _, _, _, _, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -20,21 +20,21 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
+local Strenum = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 
-SGreenItemsAutolootingMode.JustPass = "just_pass"
-SGreenItemsAutolootingMode.RollNeed = "roll_need"
-SGreenItemsAutolootingMode.RollGreed = "roll_greed"
-SGreenItemsAutolootingMode.LetUserChoose = "let_user_choose"
+Strenum.JustPass = "just_pass"
+Strenum.RollNeed = "roll_need"
+Strenum.RollGreed = "roll_greed"
+Strenum.LetUserChoose = "let_user_choose"
 
-function SGreenItemsAutolootingMode.Validate(value)
+function Strenum.Validate(value)
     if _type(value) ~= "string" then
         return false
     end
 
-    return value == SGreenItemsAutolootingMode.AutoLoot
-            or value == SGreenItemsAutolootingMode.JustPass
-            or value == SGreenItemsAutolootingMode.RollNeed
-            or value == SGreenItemsAutolootingMode.RollGreed
-            or value == SGreenItemsAutolootingMode.LetUserChoose
+    return value == Strenum.AutoLoot
+            or value == Strenum.JustPass
+            or value == Strenum.RollNeed
+            or value == Strenum.RollGreed
+            or value == Strenum.LetUserChoose
 end

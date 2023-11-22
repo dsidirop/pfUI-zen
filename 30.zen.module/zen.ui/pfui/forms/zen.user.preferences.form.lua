@@ -18,9 +18,10 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 local GreenItemsAutolootingModeChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
+local GreenItemsAutolootingActOnKeybindChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingActOnKeybindChangedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
 
@@ -44,7 +45,7 @@ function Class:New(T, pfuiGui)
 
         _isAdvertisementOfChangesEnabled = false,
         _eventGreenItemsAutolootingModeChanged = Event:New(),
-        _eventGreenItemsAutolootingOnActKeybindChanged = Event:New(),
+        _eventGreenItemsAutolootingActOnKeybindChanged = Event:New(),
     }
 
     _setmetatable(instance, self)
@@ -72,7 +73,7 @@ end
 function Class:EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(handler)
     _setfenv(1, self)
 
-    _eventGreenItemsAutolootingOnActKeybindChanged:Subscribe(handler)
+    _eventGreenItemsAutolootingActOnKeybindChanged:Subscribe(handler)
 
     return self
 end
@@ -80,7 +81,7 @@ end
 function Class:EventGreenItemsAutolootingActOnKeybindChanged_Unsubscribe(handler)
     _setfenv(1, self)
 
-    _eventGreenItemsAutolootingOnActKeybindChanged:Unsubscribe(handler)
+    _eventGreenItemsAutolootingActOnKeybindChanged:Unsubscribe(handler)
 
     return self
 end
@@ -178,9 +179,9 @@ function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea
     _assert(_type(ea) == "table")
 
     if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingOnActKeybindChanged:Raise(
+        _eventGreenItemsAutolootingActOnKeybindChanged:Raise(
                 self,
-                { Old = ea:GetOld(), New = ea:GetNew() }
+                GreenItemsAutolootingActOnKeybindChangedEventArgs:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
         )
     end
 end

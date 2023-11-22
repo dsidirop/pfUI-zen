@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _, _, _, _, _, _, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -20,28 +20,28 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
+local Strenum = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-SGreenItemsAutolootingActOnKeybind.Automatic = "automatic"
-SGreenItemsAutolootingActOnKeybind.Alt = "alt"
-SGreenItemsAutolootingActOnKeybind.Ctrl = "ctrl"
-SGreenItemsAutolootingActOnKeybind.Shift = "shift"
-SGreenItemsAutolootingActOnKeybind.CtrlAlt = "ctrl_alt"
-SGreenItemsAutolootingActOnKeybind.AltShift = "alt_shift"
-SGreenItemsAutolootingActOnKeybind.CtrlShift = "ctrl_shift"
-SGreenItemsAutolootingActOnKeybind.CtrlAltShift = "ctrl_alt_shift"
+Strenum.Automatic = "automatic"
+Strenum.Alt = "alt"
+Strenum.Ctrl = "ctrl"
+Strenum.Shift = "shift"
+Strenum.CtrlAlt = "ctrl_alt"
+Strenum.AltShift = "alt_shift"
+Strenum.CtrlShift = "ctrl_shift"
+Strenum.CtrlAltShift = "ctrl_alt_shift"
 
-function SGreenItemsAutolootingActOnKeybind.Validate(value)
+function Strenum.Validate(value)
     if _type(value) ~= "string" then
         return false
     end
 
-    return value == SGreenItemsAutolootingActOnKeybind.Automatic
-            or value == SGreenItemsAutolootingActOnKeybind.Alt
-            or value == SGreenItemsAutolootingActOnKeybind.Ctrl
-            or value == SGreenItemsAutolootingActOnKeybind.Shift
-            or value == SGreenItemsAutolootingActOnKeybind.CtrlAlt
-            or value == SGreenItemsAutolootingActOnKeybind.AltShift
-            or value == SGreenItemsAutolootingActOnKeybind.CtrlShift
-            or value == SGreenItemsAutolootingActOnKeybind.CtrlAltShift
+    return value == Strenum.Automatic
+            or value == Strenum.Alt
+            or value == Strenum.Ctrl
+            or value == Strenum.Shift
+            or value == Strenum.CtrlAlt
+            or value == Strenum.AltShift
+            or value == Strenum.CtrlShift
+            or value == Strenum.CtrlAltShift
 end
