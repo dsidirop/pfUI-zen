@@ -44,7 +44,10 @@ function Class:_InitializeControls()
                                                             SGreenItemsAutolootingMode.LetUserChoose .. ":" .. _t["Let me handle it myself"],
                                                      })
                                                      :EventSelectionChanged_Subscribe(function(sender, ea)
-                                                            self:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
+                                                            self:_ddlGreenItemsAutolootingMode_selectionChanged(sender, {
+                                                                Old = ea:GetOld(),
+                                                                New = ea:GetNew(),
+                                                            })
                                                      end)
                                                      :Initialize() --@formatter:on
 
@@ -61,7 +64,10 @@ function Class:_InitializeControls()
                                                                     SGreenItemsAutolootingActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
                                                              })
                                                              :EventSelectionChanged_Subscribe(function(sender, ea)
-                                                                    self:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea)
+                                                                    self:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, {
+                                                                        Old = ea:GetOld(),
+                                                                        New = ea:GetNew(),
+                                                                    })
                                                              end)
                                                              :Initialize() --@formatter:on
 
