@@ -27,7 +27,7 @@ local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringUtils = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.CustomizedControls.PfuiDropdownX")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownX")
 
 function Class:New()
     _setfenv(1, self)

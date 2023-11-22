@@ -12,7 +12,7 @@ local function Main(_pfUI)
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
-        --local _print = _g.assert(_g.print)
+        local _print = _g.assert(_g.print)
         local _pfuiGui = _g.assert(_g.pfUI.gui)
         local _setfenv = _g.assert(_g.setfenv)
         local _importer = _g.assert(_g.pvl_namespacer_get)

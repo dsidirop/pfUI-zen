@@ -13,7 +13,7 @@ end)()
 
 _setfenv(1, {})
 
-local PfuiDropdownX = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.CustomizedControls.PfuiDropdownX")
+local PfuiDropdownX = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.DropdownX")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Strenums.SGreenItemsAutolootingActOnKeybind")
 
