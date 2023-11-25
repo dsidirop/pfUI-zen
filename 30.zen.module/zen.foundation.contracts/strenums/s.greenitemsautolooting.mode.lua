@@ -20,21 +20,21 @@ end)()
 
 _setfenv(1, {})
 
-local Strenum = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 
-Strenum.JustPass = "just_pass"
-Strenum.RollNeed = "roll_need"
-Strenum.RollGreed = "roll_greed"
-Strenum.LetUserChoose = "let_user_choose"
+SGreenItemsAutolootingMode.JustPass = "just_pass"
+SGreenItemsAutolootingMode.RollNeed = "roll_need"
+SGreenItemsAutolootingMode.RollGreed = "roll_greed"
+SGreenItemsAutolootingMode.LetUserChoose = "let_user_choose"
 
-function Strenum.Validate(value)
+function SGreenItemsAutolootingMode.Validate(value)
     if _type(value) ~= "string" then
         return false
     end
 
-    return value == Strenum.AutoLoot
-            or value == Strenum.JustPass
-            or value == Strenum.RollNeed
-            or value == Strenum.RollGreed
-            or value == Strenum.LetUserChoose
+    return value == SGreenItemsAutolootingMode.AutoLoot
+            or value == SGreenItemsAutolootingMode.JustPass
+            or value == SGreenItemsAutolootingMode.RollNeed
+            or value == SGreenItemsAutolootingMode.RollGreed
+            or value == SGreenItemsAutolootingMode.LetUserChoose
 end

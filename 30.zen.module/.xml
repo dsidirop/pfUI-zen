@@ -3,6 +3,9 @@
     <Include file="zen.foundation\.xml"/>
     <Include file="zen.foundation.contracts\.xml"/>
 
+    <Include file="zen.persistence\.xml"/>
+    <Include file="zen.persistence.contracts\.xml"/>
+
     <Include file="zen.engine\.xml"/>
     <Include file="zen.engine.contracts\.xml"/>
     

@@ -20,28 +20,28 @@ end)()
 
 _setfenv(1, {})
 
-local Strenum = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-Strenum.Automatic = "automatic"
-Strenum.Alt = "alt"
-Strenum.Ctrl = "ctrl"
-Strenum.Shift = "shift"
-Strenum.CtrlAlt = "ctrl_alt"
-Strenum.AltShift = "alt_shift"
-Strenum.CtrlShift = "ctrl_shift"
-Strenum.CtrlAltShift = "ctrl_alt_shift"
+SGreenItemsAutolootingActOnKeybind.Automatic = "automatic"
+SGreenItemsAutolootingActOnKeybind.Alt = "alt"
+SGreenItemsAutolootingActOnKeybind.Ctrl = "ctrl"
+SGreenItemsAutolootingActOnKeybind.Shift = "shift"
+SGreenItemsAutolootingActOnKeybind.CtrlAlt = "ctrl_alt"
+SGreenItemsAutolootingActOnKeybind.AltShift = "alt_shift"
+SGreenItemsAutolootingActOnKeybind.CtrlShift = "ctrl_shift"
+SGreenItemsAutolootingActOnKeybind.CtrlAltShift = "ctrl_alt_shift"
 
-function Strenum.Validate(value)
+function SGreenItemsAutolootingActOnKeybind.Validate(value)
     if _type(value) ~= "string" then
         return false
     end
 
-    return value == Strenum.Automatic
-            or value == Strenum.Alt
-            or value == Strenum.Ctrl
-            or value == Strenum.Shift
-            or value == Strenum.CtrlAlt
-            or value == Strenum.AltShift
-            or value == Strenum.CtrlShift
-            or value == Strenum.CtrlAltShift
+    return value == SGreenItemsAutolootingActOnKeybind.Automatic
+            or value == SGreenItemsAutolootingActOnKeybind.Alt
+            or value == SGreenItemsAutolootingActOnKeybind.Ctrl
+            or value == SGreenItemsAutolootingActOnKeybind.Shift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlAlt
+            or value == SGreenItemsAutolootingActOnKeybind.AltShift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlShift
+            or value == SGreenItemsAutolootingActOnKeybind.CtrlAltShift
 end
