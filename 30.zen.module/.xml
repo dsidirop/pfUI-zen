@@ -1,16 +1,16 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
     <!-- ordering is important here -->
-    <Include file="zen.foundation\.xml"/>
     <Include file="zen.foundation.contracts\.xml"/>
+    <Include file="zen.foundation\.xml"/>
 
-    <Include file="zen.persistence\.xml"/>
     <Include file="zen.persistence.contracts\.xml"/>
+    <Include file="zen.persistence\.xml"/>
 
-    <Include file="zen.engine\.xml"/>
     <Include file="zen.engine.contracts\.xml"/>
+    <Include file="zen.engine\.xml"/>
     
-    <Include file="zen.ui\.xml"/>
     <Include file="zen.ui.contracts\.xml"/>
+    <Include file="zen.ui\.xml"/>
 
     <!-- better keep this last -->
     <Include file="module.initializer.lua"/>

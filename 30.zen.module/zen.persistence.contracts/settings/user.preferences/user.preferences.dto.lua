@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _, _, _, _, _, _, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)

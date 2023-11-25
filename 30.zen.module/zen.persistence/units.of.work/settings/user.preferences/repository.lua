@@ -20,8 +20,7 @@ end)()
 
 _setfenv(1, {})
 
--- local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
-local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
@@ -44,8 +43,14 @@ function Class:New(userPreferencesEntity)
     return instance
 end
 
+function Class:HasChanges()
+    _setfenv(1, self)
+
+    return _hasChanges
+end
+
 -- @return UserPreferencesDto
-function Class:Get()
+function Class:GetAllUserPreferences()
     _setfenv(1, self)
 
     return UserPreferencesDto
@@ -55,7 +60,7 @@ function Class:Get()
 end
 
 -- @return self
-function Class:GreeniesAutolooting_UpdateMode(value)
+function Class:GreeniesAutolooting_ChainUpdateMode(value)
     _setfenv(1, self)
     
     _assert(SGreenItemsAutolootingMode.Validate(value))
@@ -71,7 +76,7 @@ function Class:GreeniesAutolooting_UpdateMode(value)
 end
 
 -- @return self
-function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
+function Class:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
     _setfenv(1, self)
 
     _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
@@ -84,10 +89,4 @@ function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
     _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind = value
 
     return self
-end
-
-function Class:HasChanges()
-    _setfenv(1, self)
-    
-    return _hasChanges
 end

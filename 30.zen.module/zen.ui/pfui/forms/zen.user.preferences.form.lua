@@ -130,7 +130,15 @@ end
 function Class:_OnRequestingCurrentUserPreferences()
     _setfenv(1, self)
 
-    local response = _eventRequestingCurrentUserPreferences:Raise(self, { Response = { UserPreferences = nil } }).Response -- todo    RequestingCurrentUserPreferencesEventArgs:New()
+    local response = _eventRequestingCurrentUserPreferences:Raise( -- @formatter:off todo    RequestingCurrentUserPreferencesEventArgs:New()
+            self,
+            { 
+                 Response = {
+                     UserPreferences = nil -- type UserPreferencesDto
+                 }
+            })
+            .Response -- @formatter:on
+
     if not response.UserPreferences then
         _error("[ZUPF.OCUPR.010] failed to retrieve user-preferences")
         return nil
@@ -138,11 +146,11 @@ function Class:_OnRequestingCurrentUserPreferences()
 
     _isAdvertisementOfChangesEnabled = false --00
 
-    if not _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences.Mode) then
+    if not _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_Mode()) then
         _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(SGreenItemsAutolootingMode.RollGreed)
     end
 
-    if not _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences.ActOnKeybind) then
+    if not _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_ActOnKeybind()) then
         _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(SGreenItemsAutolootingActOnKeybind.Automatic)
     end
 

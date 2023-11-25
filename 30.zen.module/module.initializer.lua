@@ -27,6 +27,7 @@ local function Main(_pfUI)
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
         
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
+        local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
         local addon = {
             ownName = "Zen",
@@ -110,17 +111,20 @@ local function Main(_pfUI)
 
         UserPreferencesForm
                 :New(_t, _pfuiGui)
-                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off
-                    ea.Response.UserPreferences = { -- todo  use a query-action here instead
-                        Mode         = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname],
-                        ActOnKeybind = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname],
-                    }
-                end) 
-                :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea)
-                    _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname] = ea:GetNew() --todo   we should have commands here instead
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off  todo  use a query-action here instead
+                    ea.Response.UserPreferences = UserPreferencesUnitOfWork:New()
+                                                                           :GetUserPreferencesRepository()
+                                                                           :GetAllUserPreferences()
                 end)
-                :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea)
-                    _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname] = ea.New
+                :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                    local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
+                    userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateMode(ea:GetNew())
+                    userPreferencesUnitOfWork:SaveChanges()
+                end)
+                :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                    local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
+                    userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateActOnKeybind(ea:GetNew())
+                    userPreferencesUnitOfWork:SaveChanges()
                 end) -- @formatter:on
                 :Initialize()
         

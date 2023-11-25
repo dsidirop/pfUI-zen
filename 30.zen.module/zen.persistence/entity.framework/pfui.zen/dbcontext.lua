@@ -15,7 +15,7 @@
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable,
+    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -29,7 +29,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramew
 function Class:New()
     _setfenv(1, self)
     
-    local rawAddonSettings = PfuiConfiguration[Schema.RootKeyname] -- pfUI.env.C["zen.v1"]
+    local rawAddonSettings = PfuiConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.v1"]
 
     local instance = { -- @formatter:off
         
@@ -44,8 +44,8 @@ function Class:New()
             
             UserPreferences = {
                 GreeniesAutolooting = {
-                    Mode         = rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Default,
-                    ActOnKeybind = rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Default,
+                    Mode         = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Default),
+                    ActOnKeybind = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Default),
                 },
             },
         },

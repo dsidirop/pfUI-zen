@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local PfuiZenDbContext = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
+local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
