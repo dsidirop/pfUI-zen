@@ -23,20 +23,33 @@ _setfenv(1, {})
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-local SchemaV1 = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.Schemas.SchemaV1")
+local SchemaV1 = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
 
 -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
 
-SchemaV1.RootKeyname = "zen.config.v1" -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
+SchemaV1.RootKeyname = "zen.v1" -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
-SchemaV1.GreeniesAutolooting = {
-    Mode = {
-        Keyname = "greenies_autolooting.v1.mode",
-        Default = SGreenItemsAutolootingMode.RollGreed,
+SchemaV1.Settings = {
+    Logging = {
+        -- nothing yet
     },
+    
+    EngineSettings = {
+        -- nothing yet
+    },
+    
+    UserPreferences = {
+        GreeniesAutolooting = {
+            Mode = {
+                Keyname = "user_preferences.greenies_autolooting.mode",
+                Default = SGreenItemsAutolootingMode.RollGreed,
+            },
 
-    ActOnKeybind = {
-        Keyname = "greenies_autolooting.v1.act_on_keybind",
-        Default = SGreenItemsAutolootingActOnKeybind.Automatic,
+            ActOnKeybind = {
+                Keyname = "user_preferences.greenies_autolooting.act_on_keybind",
+                Default = SGreenItemsAutolootingActOnKeybind.Automatic,
+            },
+        },
     },
 }
+

@@ -25,7 +25,7 @@ _setfenv(1, {})
 
 local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
-local StringUtils = _importer("Pavilion.Warcraft.Addons.Zen.Externals.String.Utils")
+local StringsHelpers = _importer("Pavilion.Helpers.Strings")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
@@ -214,7 +214,7 @@ function Class:_ParseMenuItems(menuItemsArray)
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
     for i, k in _pairs(menuItemsArray) do
-        local value, _ = _unpack(StringUtils.Split(k, ":"))
+        local value, _ = _unpack(StringsHelpers.Split(k, ":"))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then

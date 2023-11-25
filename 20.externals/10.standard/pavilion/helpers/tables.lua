@@ -20,9 +20,9 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.TableHelpers")
+local Class = _namespacer("Pavilion.Helpers.Tables")
 
-function Class.Deepcopy(tableObject, seen)
+function Class.Clone(tableObject, seen)
     if _type(tableObject) ~= 'table' then
         return tableObject
     end
@@ -36,7 +36,7 @@ function Class.Deepcopy(tableObject, seen)
 
     s[tableObject] = res
     for k, v in _pairs(tableObject) do
-        res[Class.Deepcopy(k, s)] = Class.Deepcopy(v, s)
+        res[Class.Clone(k, s)] = Class.Clone(v, s)
     end
 
     return res

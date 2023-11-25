@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
--- local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.Schemas.SchemaV1")
+-- local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
 local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
@@ -46,7 +46,7 @@ end
 function Class:Get()
     _setfenv(1, self)
 
-    return UserPreferencesDto -- todo automapper
+    return UserPreferencesDto
             :New()
             :ChainSetGreeniesAutolooting_Mode(_userPreferencesEntity.GreeniesAutolooting.Mode)
             :ChainSetGreeniesAutolooting_ActOnKeybind(_userPreferencesEntity.GreeniesAutolooting.ActOnKeybind)

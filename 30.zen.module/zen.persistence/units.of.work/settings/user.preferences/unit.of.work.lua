@@ -20,16 +20,18 @@ end)()
 
 _setfenv(1, {})
 
-local Repository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
+local PfuiZenEntity = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Entity")
+local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
---todo   _C[Schema.RootKeyname]
-function Class:New(addonSettingsClone)
+function Class:New()
     _setfenv(1, self)
-
+    
+    local addonSettingsEntity = PfuiZenEntity:New() --todo  refactor this later on so that this gets injected through DI 
+    
     local instance = {
-        _Repository = Repository:New(addonSettingsClone),
+        _repository = UserPreferencesRepository:New(addonSettingsEntity.Settings.UserPreferences),
     }
     
     _setmetatable(instance, self)

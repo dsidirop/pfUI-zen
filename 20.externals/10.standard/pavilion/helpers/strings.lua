@@ -1,4 +1,4 @@
-local _g, _assert, _type, _, _gsub, _format, _strmatch, _setfenv, _tableInsert = (function()
+local _, _, _, _, _gsub, _format, _strmatch, _setfenv, _namespacer, _tableInsert = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -10,24 +10,22 @@ local _g, _assert, _type, _, _gsub, _format, _strmatch, _setfenv, _tableInsert =
     local _gsub = _assert(_g.string.gsub)
     local _format = _assert(_g.string.format)
     local _strmatch = _assert(_g.string.match)
+    local _namespacer = _assert(_g.pvl_namespacer_add)
     local _tableInsert = _assert(_g.table.insert)
 
-    return _g, _assert, _type, _error, _gsub, _format, _strmatch, _setfenv, _tableInsert
+    return _g, _assert, _type, _error, _gsub, _format, _strmatch, _setfenv, _namespacer, _tableInsert
 end)()
-
-if _g.PavilionStringUtils then
-    return -- already in place
-end
 
 _setfenv(1, {})
 
-_g.PavilionStringUtils = {}
+local StringHelpers = _namespacer("Pavilion.Helpers.Strings")
+
 do
-    function _g.PavilionStringUtils.Trim(input)
+    function StringHelpers.Trim(input)
         return _strmatch(input, '^()%s*$') and '' or _strmatch(input, '^%s*(.*%S)')
     end
 
-    function _g.PavilionStringUtils.Split(input, delimiter)
+    function StringHelpers.Split(input, delimiter)
         if not input then
             return {}
         end
