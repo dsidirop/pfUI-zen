@@ -24,12 +24,12 @@ local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramewo
 local TablesHelpers = _importer("Pavilion.Helpers.Tables")
 local PfuiConfiguration = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Entity")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 
 function Class:New()
     _setfenv(1, self)
     
-    local rawZenSettings = PfuiConfiguration[Schema.RootKeyname] -- pfUI.env.C["zen.v1"]
+    local rawAddonSettings = PfuiConfiguration[Schema.RootKeyname] -- pfUI.env.C["zen.v1"]
 
     local instance = { -- @formatter:off
         
@@ -44,8 +44,8 @@ function Class:New()
             
             UserPreferences = {
                 GreeniesAutolooting = {
-                    Mode         = rawZenSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Default,
-                    ActOnKeybind = rawZenSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Default,
+                    Mode         = rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Default,
+                    ActOnKeybind = rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Default,
                 },
             },
         },
@@ -56,4 +56,17 @@ function Class:New()
     self.__index = self
 
     return instance
+end
+
+function Class:SaveChanges()
+    _setfenv(1, self)
+
+    local rawAddonSettings = {}
+
+    -- @formatter:off
+    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         = Settings.UserPreferences.GreeniesAutolooting.Mode
+    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] = Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind
+    -- @formatter:on
+    
+    PfuiConfiguration[Schema.RootKeyname] = rawAddonSettings
 end

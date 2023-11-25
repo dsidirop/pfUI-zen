@@ -111,7 +111,7 @@ local function Main(_pfUI)
         UserPreferencesForm
                 :New(_t, _pfuiGui)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off
-                    ea.Response.UserPreferences = {
+                    ea.Response.UserPreferences = { -- todo  use a query-action here instead
                         Mode         = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname],
                         ActOnKeybind = _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname],
                     }

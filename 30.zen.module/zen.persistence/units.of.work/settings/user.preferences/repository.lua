@@ -33,6 +33,8 @@ function Class:New(userPreferencesEntity)
     _assert(_type(userPreferencesEntity) == "table")
 
     local instance = {
+        _hasChanges = false,
+        
         _userPreferencesEntity = userPreferencesEntity,
     }
 
@@ -62,6 +64,7 @@ function Class:GreeniesAutolooting_UpdateMode(value)
         return self
     end
 
+    _hasChanges = true
     _userPreferencesEntity.GreeniesAutolooting.Mode = value
 
     return self
@@ -77,7 +80,14 @@ function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
         return self
     end
 
+    _hasChanges = true
     _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind = value
 
     return self
-end 
+end
+
+function Class:HasChanges()
+    _setfenv(1, self)
+    
+    return _hasChanges
+end
