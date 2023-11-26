@@ -25,10 +25,10 @@ local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persis
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
-function Class:New()
+function Class:New(dbcontext)
     _setfenv(1, self)
 
-    local dbcontext = PfuiZenDbContext:New() --todo  refactor this later on so that this gets injected through DI
+    dbcontext = dbcontext or PfuiZenDbContext:New() --todo  refactor this later on so that this gets injected through DI
 
     local instance = {
         _dbcontext = dbcontext,

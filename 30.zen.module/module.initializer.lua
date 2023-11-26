@@ -27,6 +27,7 @@ local function Main(_pfUI)
         local _enumerable = _g.assert(_g.Enumerable) -- addon specific
         
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
+        local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
         local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
         local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
 
@@ -108,29 +109,18 @@ local function Main(_pfUI)
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
         end
 
-        -- local zenEngineCommandsService = ZenEngineCommandsService:New()
-        local addonSettingsQueryingService = AddonSettingsQueryingService:New()
-
         local addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
 
         UserPreferencesForm
                 :New(_t, _pfuiGui)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off  todo  use a query-action here instead
-                    ea.Response.UserPreferences = addonSettingsQueryingService:GetAllUserPreferences()
+                    ea.Response.UserPreferences = AddonSettingsQueryingService:New():GetAllUserPreferences()
                 end)
                 :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
-                    -- zenEngineCommandsService:GreeniesAutolooting_SwitchMode(ea:GetNew())
-
-                    local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
-                    userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateMode(ea:GetNew())
-                    userPreferencesUnitOfWork:SaveChanges()
+                    ZenEngineCommandsService:New():GreeniesAutolooting_SwitchMode(ea:GetNew())
                 end)
                 :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
-                    -- zenEngineCommandsService:GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
-
-                    local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
-                    userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateActOnKeybind(ea:GetNew())
-                    userPreferencesUnitOfWork:SaveChanges()
+                    ZenEngineCommandsService:New():GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
                 end) -- @formatter:on
                 :Initialize()
         
