@@ -28,6 +28,7 @@ local function Main(_pfUI)
         
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
         local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
+        local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
 
         local addon = {
             ownName = "Zen",
@@ -60,7 +61,7 @@ local function Main(_pfUI)
             return
         end
 
-        local _addonPfuiRawPreferencesSchemaV1 = {
+        local addonPfuiRawPreferencesSchemaV1 = {
             -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
             addonPreferencesKeyname = "zen.config.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
@@ -107,21 +108,26 @@ local function Main(_pfUI)
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
         end
 
-        local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSchemaV1)
+        -- local zenEngineCommandsService = ZenEngineCommandsService:New()
+        local addonSettingsQueryingService = AddonSettingsQueryingService:New()
+
+        local addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
 
         UserPreferencesForm
                 :New(_t, _pfuiGui)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off  todo  use a query-action here instead
-                    ea.Response.UserPreferences = UserPreferencesUnitOfWork:New()
-                                                                           :GetUserPreferencesRepository()
-                                                                           :GetAllUserPreferences()
+                    ea.Response.UserPreferences = addonSettingsQueryingService:GetAllUserPreferences()
                 end)
                 :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                    -- zenEngineCommandsService:GreeniesAutolooting_SwitchMode(ea:GetNew())
+
                     local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
                     userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateMode(ea:GetNew())
                     userPreferencesUnitOfWork:SaveChanges()
                 end)
                 :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                    -- zenEngineCommandsService:GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
+
                     local userPreferencesUnitOfWork = UserPreferencesUnitOfWork:New()
                     userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateActOnKeybind(ea:GetNew())
                     userPreferencesUnitOfWork:SaveChanges()
@@ -136,7 +142,7 @@ local function Main(_pfUI)
             -- override pfUI:UpdateLootRoll()
             _base_pfuiRoll_UpdateLootRoll(i)
 
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
+            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(addonPfuiRawPreferences[addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
             if not rollMode or rollMode == "let_user_choose" then --todo  use strongly typed enums here
                 return -- let the user choose
             end
@@ -149,7 +155,7 @@ local function Main(_pfUI)
 
             local _, _, _, quality = _getLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
             if quality == QUALITY_GREEN and frame:IsVisible() then -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-                -- todo   get keybind activation into account here   _addonPfuiRawPreferences[_addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname]
+                -- todo   get keybind activation into account here   addonPfuiRawPreferences[addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname]
 
                 _rollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
 

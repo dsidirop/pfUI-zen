@@ -8,6 +8,9 @@
 
     <Include file="zen.engine.contracts\.xml"/>
     <Include file="zen.engine\.xml"/>
+
+    <Include file="zen.domain.contracts\.xml"/>
+    <Include file="zen.domain\.xml"/>
     
     <Include file="zen.ui.contracts\.xml"/>
     <Include file="zen.ui\.xml"/>

@@ -23,39 +23,23 @@ _setfenv(1, {})
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
 
-function Class:New()
+function Class:New(userPreferencesRepository)
     _setfenv(1, self)
 
-    local dbcontext = PfuiZenDbContext:New() --todo  refactor this later on so that this gets injected through DI
-
     local instance = {
-        _dbcontext = dbcontext,
-        
-        _userPreferencesRepository = UserPreferencesRepository:New(dbcontext),
+        _userPreferencesRepository = userPreferencesRepository or UserPreferencesRepository:New(PfuiZenDbContext:New()), --todo   refactor this later on so that this gets injected through DI
     }
-    
+
     _setmetatable(instance, self)
     self.__index = self
-    
+
     return instance
 end
 
-function Class:GetUserPreferencesRepository()
-    _setfenv(1, self)
-    
-    return _userPreferencesRepository
-end
-
-function Class:SaveChanges()
+function Class:GetAllUserPreferences()
     _setfenv(1, self)
 
-    if not _userPreferencesRepository:HasChanges() then
-        return false -- nothing to do
-    end
-
-    _dbcontext:SaveChanges()
-
-    return true    
+    return _userPreferencesRepository:GetAllUserPreferences()
 end
