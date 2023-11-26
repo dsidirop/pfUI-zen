@@ -106,22 +106,20 @@ local function Main(_pfUI)
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
         end
 
-        local addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
+        EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
 
         UserPreferencesForm
                 :New(_t, _pfuiGui)
-                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off  todo  use a query-action here instead
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off
                     ea.Response.UserPreferences = AddonSettingsQueryingService:New():GetAllUserPreferences()
                 end)
-                :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea)
                     ZenEngineCommandsService:New():GreeniesAutolooting_SwitchMode(ea:GetNew())
                 end)
-                :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea) -- todo   we should have commands here instead
+                :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea)
                     ZenEngineCommandsService:New():GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
                 end) -- @formatter:on
                 :Initialize()
-        
-
     end)
 end
 
