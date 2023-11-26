@@ -23,8 +23,7 @@ local function Main(_pfUI)
         local _getLootRollItemLink = _g.assert(_g.GetLootRollItemLink)
         local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
-        local _enumerable = _g.assert(_g.Enumerable) -- addon specific
-        
+        local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")        
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
         local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
         local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
@@ -40,7 +39,7 @@ local function Main(_pfUI)
             fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
         }
 
-        local addonPath = _enumerable -- @formatter:off   detect current addon path
+        local addonPath = Enumerable -- @formatter:off   detect current addon path
                             .FromList({ "", "-dev", "-master", "-tbc", "-wotlk" })
                             :Select(function (postfix)
                                 local name, _, _, enabled = _getAddOnInfo(addon.folderName .. postfix)
