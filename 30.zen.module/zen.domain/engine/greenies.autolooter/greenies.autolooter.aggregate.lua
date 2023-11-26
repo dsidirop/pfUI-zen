@@ -20,11 +20,11 @@ end)()
 
 _setfenv(1, {})
 
-local LootItemBeingRolledInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
-local EWowRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
+local EWowRollMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.GroupLootingListener")
-local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local LootItemBeingRolledInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
+local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
@@ -33,11 +33,11 @@ local QUALITY_GREEN = 2
 function Class:New(groupLootingListener)
     _setfenv(1, self)
 
-    local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN) -- todo  consolidate this in a helper or something
-    
+    -- local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN) -- todo  consolidate this in a helper or something
+
     local instance = {
         _state = nil,
-        _greeniesQualityHex = greeniesQualityHex,
+        -- _greeniesQualityHex = greeniesQualityHex,
 
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
@@ -51,23 +51,23 @@ end
 -- state is expected to be AggregateStateDTO
 function Class:SetState(state)
     _setfenv(1, self)
-    
+
     _state = state
 end
 
 function Class:Run()
     _setfenv(1, self)
-    
+
     _assert(_state, "attempt to run without any state being loaded")
 
     if _state:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
         return self -- nothing to do
     end
-    
+
     -- todo   wire up a keybind interceptor too
 
     _groupLootingListener.EventNewItemGamblingStarted_Subscribe(_GroupLootingListener_NewItemGamblingStarted, self);
-    
+
     return self
 end
 
@@ -75,7 +75,7 @@ function Class:Shutdown()
     _setfenv(1, self)
 
     _groupLootingListener.EventNewItemGamblingStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingStarted);
-    
+
     return self
 end
 
@@ -87,8 +87,16 @@ function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
         return -- let the user choose
     end
 
-    local lootItemInfo = LootItemBeingRolledInformant:New(ea:GetRollId())
-    if not lootItemInfo:IsGreenQuality() then
+    local rolledItemInfo = LootItemBeingRolledInformant:New(ea:GetRollId())
+    if not rolledItemInfo:IsGreenQuality() then
+        return
+    end
+
+    if wowRollMode == SGreenItemsAutolootingMode.RollNeed and not rolledItemInfo:IsNeedable() then
+        return
+    end
+
+    if wowRollMode == SGreenItemsAutolootingMode.RollGreed and not rolledItemInfo:IsGreedable() then
         return
     end
 
@@ -105,11 +113,11 @@ end
 
 function Class:_RollOnLootItem(rollID, wowRollMode)
     _setfenv(1, self)
-    
+
     _assert(EWowRollMode.Validate(wowRollMode))
-    
+
     _rollOnLoot(rollID, wowRollMode) --00
-    
+
     -- 00 the rollid number increases with every roll you have in a party - till how high it counts is currently unknown
     --    blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
     --
