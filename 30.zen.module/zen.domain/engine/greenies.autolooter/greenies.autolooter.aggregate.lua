@@ -20,6 +20,7 @@ end)()
 
 _setfenv(1, {})
 
+local SWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SWowNativeRollMode")
 local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
@@ -61,7 +62,7 @@ function Class:Run()
     end
     
     -- todo   wire up a keybind interceptor too
-    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Subscribe(_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated, self);
+    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Subscribe(_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated, self);
     
     return self
 end
@@ -69,15 +70,15 @@ end
 function Class:Shutdown()
     _setfenv(1, self)
 
-    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Unsubscribe(_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated);
+    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Unsubscribe(_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated);
     
     return self
 end
 
-function Class:_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated(sender, ea)
+function Class:_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated(_, ea)
     _setfenv(1, self)
 
-    local wowRollMode = _TranslateAutogamblingModeSettingToWoWRollMode(_stage:GetMode())
+    local wowRollMode = _TranslateModeSettingToWoWNativeRollMode(_stage:GetMode())
     if not wowRollMode then
         return -- let the user choose
     end
@@ -108,6 +109,8 @@ end
 function Class:_RollOnLootItem(rollID, wowRollMode)
     _setfenv(1, self)
     
+    _assert(SWowNativeRollMode.Validate(wowRollMode))
+    
     _rollOnLoot(rollID, wowRollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
 
     -- todo  consolidate this into a console write or something
@@ -118,22 +121,21 @@ end
 --function _pfUI.roll:UpdateLootRoll(i)
 --    -- override pfUI:UpdateLootRoll()
 --    _base_pfuiRoll_UpdateLootRoll(i)
---
 --end
 
-function Class:_TranslateAutogamblingModeSettingToWoWRollMode(greeniesAutogamblingMode)
+function Class:_TranslateModeSettingToWoWNativeRollMode(greeniesAutogamblingMode)
     _setfenv(1, self)
-    
+
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then
-        return "PASS"
+        return SWowNativeRollMode.Pass
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollNeed then
-        return "NEED"
+        return SWowNativeRollMode.Need
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollGreed then
-        return "GREED"
+        return SWowNativeRollMode.Greed
     end
 
     return nil -- SGreenItemsAutolootingMode.LetUserChoose
