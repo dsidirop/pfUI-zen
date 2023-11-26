@@ -20,18 +20,20 @@ end)()
 
 _setfenv(1, {})
 
-local SWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SWowNativeRollMode")
+local EWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowNativeRollMode")
 
-SWowNativeRollMode.Pass = "PASS"
-SWowNativeRollMode.Need = "NEED"
-SWowNativeRollMode.Greed = "GREEN"
+EWowNativeRollMode.Pass = 0
+EWowNativeRollMode.Need = 1
+EWowNativeRollMode.Greed = 2
+-- EWowNativeRollMode.Disenchant = 3   --not supported in vanilla   introduced in wotlk patch 3.3 fall of the lich king
 
-function SWowNativeRollMode.Validate(value)
+function EWowNativeRollMode.Validate(value)
     if _type(value) ~= "string" then
         return false
     end
 
-    return value == SWowNativeRollMode.Pass
-            or value == SWowNativeRollMode.Need
-            or value == SWowNativeRollMode.Greed
+    return value == EWowNativeRollMode.Pass
+            or value == EWowNativeRollMode.Need
+            or value == EWowNativeRollMode.Greed
+            -- or value == EWowNativeRollMode.Disenchant  -- todo add support for this when we detect that the patch is wotlk or higher
 end

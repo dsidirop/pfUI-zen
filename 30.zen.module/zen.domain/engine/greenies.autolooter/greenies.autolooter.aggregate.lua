@@ -20,14 +20,17 @@ end)()
 
 _setfenv(1, {})
 
-local SWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SWowNativeRollMode")
+local LootItemInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemInformant")
+local EWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowNativeRollMode")
+local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.GroupLootingListener")
 local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
 local QUALITY_GREEN = 2
 
-function Class:New(pfuiGroupLootingFramesWatcher)
+function Class:New(groupLootingListener)
     _setfenv(1, self)
 
     local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN) -- todo  consolidate this in a helper or something
@@ -36,7 +39,7 @@ function Class:New(pfuiGroupLootingFramesWatcher)
         _state = nil,
         _greeniesQualityHex = greeniesQualityHex,
 
-        _pfuiGroupLootingFramesWatcher = pfuiGroupLootingFramesWatcher or PfuiGroupLootingFramesWatcher:New(),
+        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
 
     _setmetatable(instance, self)
@@ -62,7 +65,8 @@ function Class:Run()
     end
     
     -- todo   wire up a keybind interceptor too
-    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Subscribe(_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated, self);
+
+    _groupLootingListener.EventNewItemGamblingStarted_Subscribe(_GroupLootingListener_NewItemGamblingStarted, self);
     
     return self
 end
@@ -70,12 +74,12 @@ end
 function Class:Shutdown()
     _setfenv(1, self)
 
-    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Unsubscribe(_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated);
+    _groupLootingListener.EventNewItemGamblingStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingStarted);
     
     return self
 end
 
-function Class:_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated(_, ea)
+function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
     _setfenv(1, self)
 
     local wowRollMode = _TranslateModeSettingToWoWNativeRollMode(_stage:GetMode())
@@ -83,14 +87,13 @@ function Class:_PfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated(_, ea)
         return -- let the user choose
     end
 
-    local frame = ea:GetRollFrame() -- _pfUI.roll.frames[i]
-    local lootItemInfo = LootItemInfo:New(ea:GetRollId())
+    local lootItemInfo = LootItemInformant:New(ea:GetRollId())
     if not lootItemInfo:IsGreenQuality() then
         return
     end
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
-        _RollOnLootItem(frame.rollID, wowRollMode)
+        _RollOnLootItem(ea:GetRollId(), wowRollMode)
     end
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
@@ -109,10 +112,15 @@ end
 function Class:_RollOnLootItem(rollID, wowRollMode)
     _setfenv(1, self)
     
-    _assert(SWowNativeRollMode.Validate(wowRollMode))
+    _assert(EWowNativeRollMode.Validate(wowRollMode))
     
-    _rollOnLoot(rollID, wowRollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
-
+    _rollOnLoot(rollID, wowRollMode) --00
+    
+    -- 00 the rollid number increases with every roll you have in a party - till how high it counts is currently unknown
+    --    blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
+    --
+    -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
+    --
     -- todo  consolidate this into a console write or something
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
@@ -127,15 +135,15 @@ function Class:_TranslateModeSettingToWoWNativeRollMode(greeniesAutogamblingMode
     _setfenv(1, self)
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then
-        return SWowNativeRollMode.Pass
+        return EWowNativeRollMode.Pass
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollNeed then
-        return SWowNativeRollMode.Need
+        return EWowNativeRollMode.Need
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollGreed then
-        return SWowNativeRollMode.Greed
+        return EWowNativeRollMode.Greed
     end
 
     return nil -- SGreenItemsAutolootingMode.LetUserChoose

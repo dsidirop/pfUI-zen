@@ -1,3 +1,4 @@
+-- todo   save our settings outside pfui config   we are completely independent of pfui in that regard
 -- todo   adapt and adopt middleclass to implement inheritance and mixins https://github.com/kikito/middleclass/blob/master/middleclass.lua
 -- todo   add reset-to-defaults button
 -- todo   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
