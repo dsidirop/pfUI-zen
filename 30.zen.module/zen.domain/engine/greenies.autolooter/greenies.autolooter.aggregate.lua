@@ -20,8 +20,8 @@ end)()
 
 _setfenv(1, {})
 
-local LootItemInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemInformant")
-local EWowNativeRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowNativeRollMode")
+local LootItemBeingRolledInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
+local EWowRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.GroupLootingListener")
 local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
@@ -87,7 +87,7 @@ function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
         return -- let the user choose
     end
 
-    local lootItemInfo = LootItemInformant:New(ea:GetRollId())
+    local lootItemInfo = LootItemBeingRolledInformant:New(ea:GetRollId())
     if not lootItemInfo:IsGreenQuality() then
         return
     end
@@ -98,12 +98,6 @@ function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
-    -- todo  consolidate this into a helper class
-    -- local _, _, _, quality = _getLootRollItemInfo(frame.rollID)   
-    -- if quality ~= QUALITY_GREEN then
-    --     return
-    -- end
-    --
     -- todo   if not frame or not frame.rollID or not frame:IsShown() or not frame:IsVisible() then  <-- check these before we emit the event
     --
     -- todo   if we actually have a keybind we should put the lootid in an observable sink that merges with the keybinding events
@@ -112,7 +106,7 @@ end
 function Class:_RollOnLootItem(rollID, wowRollMode)
     _setfenv(1, self)
     
-    _assert(EWowNativeRollMode.Validate(wowRollMode))
+    _assert(EWowRollMode.Validate(wowRollMode))
     
     _rollOnLoot(rollID, wowRollMode) --00
     
@@ -135,15 +129,15 @@ function Class:_TranslateModeSettingToWoWNativeRollMode(greeniesAutogamblingMode
     _setfenv(1, self)
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then
-        return EWowNativeRollMode.Pass
+        return EWowRollMode.Pass
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollNeed then
-        return EWowNativeRollMode.Need
+        return EWowRollMode.Need
     end
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollGreed then
-        return EWowNativeRollMode.Greed
+        return EWowRollMode.Greed
     end
 
     return nil -- SGreenItemsAutolootingMode.LetUserChoose

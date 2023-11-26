@@ -18,29 +18,27 @@ end)()
 
 _setfenv(1, {})
 
-local StringHelpers = _namespacer("Pavilion.Helpers.Strings")
+local StringsHelpers = _namespacer("Pavilion.Helpers.Strings")
 
-do
-    function StringHelpers.Trim(input)
-        return _strmatch(input, '^()%s*$') and '' or _strmatch(input, '^%s*(.*%S)')
+function StringsHelpers.Trim(input)
+    return _strmatch(input, '^()%s*$') and '' or _strmatch(input, '^%s*(.*%S)')
+end
+
+function StringsHelpers.Split(input, delimiter)
+    if not input then
+        return {}
     end
 
-    function StringHelpers.Split(input, delimiter)
-        if not input then
-            return {}
-        end
+    local pattern = _format("([^%s]+)", delimiter or ",")
 
-        local pattern = _format("([^%s]+)", delimiter or ",")
+    local fields = {}
+    _gsub(
+            input,
+            pattern,
+            function(c)
+                _tableInsert(fields, c)
+            end
+    )
 
-        local fields = {}
-        _gsub(
-                input,
-                pattern,
-                function(c)
-                    _tableInsert(fields, c)
-                end
-        )
-
-        return fields
-    end
+    return fields
 end
