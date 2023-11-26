@@ -121,50 +121,6 @@ local function Main(_pfUI)
                 end) -- @formatter:on
                 :Initialize()
         
-        local QUALITY_GREEN = 2
-        local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
-
-        local _base_pfuiRoll_UpdateLootRoll = _pfUI.roll.UpdateLootRoll
-        function _pfUI.roll:UpdateLootRoll(i)
-            -- override pfUI:UpdateLootRoll()
-            _base_pfuiRoll_UpdateLootRoll(i)
-
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(addonPfuiRawPreferences[addonPfuiRawPreferencesSchemaV1.greenies_autolooting.mode.keyname])
-            if not rollMode or rollMode == "let_user_choose" then --todo  use strongly typed enums here
-                return -- let the user choose
-            end
-
-            local frame = _pfUI.roll.frames[i]
-            if not frame or not frame.rollID or not frame:IsShown() then
-                -- shouldnt happen but just in case
-                return
-            end
-
-            local _, _, _, quality = _getLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
-            if quality == QUALITY_GREEN and frame:IsVisible() then -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-                -- todo   get keybind activation into account here   addonPfuiRawPreferences[addonPfuiRawPreferencesSchemaV1.greenies_autolooting.act_on_keybind.keyname]
-
-                _rollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
-
-                DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. rollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
-            end
-        end
-
-        function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
-            if greeniesAutogamblingMode == "just_pass" then
-                return "PASS"
-            end
-
-            if greeniesAutogamblingMode == "roll_need" then
-                return "NEED"
-            end
-
-            if greeniesAutogamblingMode == "roll_greed" then
-                return "GREED"
-            end
-
-            return nil -- let_user_choose
-        end
 
     end)
 end

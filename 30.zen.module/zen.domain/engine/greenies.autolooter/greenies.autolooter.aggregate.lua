@@ -20,13 +20,22 @@ end)()
 
 _setfenv(1, {})
 
+local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
-function Class:New()
+local QUALITY_GREEN = 2
+
+function Class:New(pfuiGroupLootingFramesWatcher)
     _setfenv(1, self)
 
+    local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN) -- todo  consolidate this in a helper or something
+    
     local instance = {
         _state = nil,
+        _greeniesQualityHex = greeniesQualityHex,
+
+        _pfuiGroupLootingFramesWatcher = pfuiGroupLootingFramesWatcher or PfuiGroupLootingFramesWatcher:New(),
     }
 
     _setmetatable(instance, self)
@@ -45,7 +54,87 @@ end
 function Class:Run()
     _setfenv(1, self)
     
-    _assert(state, "attempt to run without any state being loaded")
+    _assert(_state, "attempt to run without any state being loaded")
 
+    if _state:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
+        return self -- nothing to do
+    end
+    
+    -- todo   wire up a keybind interceptor too
+    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Subscribe(_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated, self);
+    
     return self
+end
+
+function Class:Shutdown()
+    _setfenv(1, self)
+
+    _pfuiGroupLootingFramesWatcher.EventLootRollFrameUpdated_Unsubscribe(_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated);
+    
+    return self
+end
+
+function Class:_pfuiGroupLootingFramesWatcher_EventLootRollFrameUpdated(sender, ea)
+    _setfenv(1, self)
+
+    local wowRollMode = _TranslateAutogamblingModeSettingToWoWRollMode(_stage:GetMode())
+    if not wowRollMode then
+        return -- let the user choose
+    end
+
+    local frame = ea:GetRollFrame() -- _pfUI.roll.frames[i]
+    local lootItemInfo = LootItemInfo:New(ea:GetRollId())
+    if not lootItemInfo:IsGreenQuality() then
+        return
+    end
+
+    if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
+        _RollOnLootItem(frame.rollID, wowRollMode)
+    end
+
+    -- todo   add take into account CANCEL_LOOT_ROLL event at some point
+    --
+    -- todo  consolidate this into a helper class
+    -- local _, _, _, quality = _getLootRollItemInfo(frame.rollID)   
+    -- if quality ~= QUALITY_GREEN then
+    --     return
+    -- end
+    --
+    -- todo   if not frame or not frame.rollID or not frame:IsShown() or not frame:IsVisible() then  <-- check these before we emit the event
+    --
+    -- todo   if we actually have a keybind we should put the lootid in an observable sink that merges with the keybinding events
+end
+
+function Class:_RollOnLootItem(rollID, wowRollMode)
+    _setfenv(1, self)
+    
+    _rollOnLoot(rollID, wowRollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
+
+    -- todo  consolidate this into a console write or something
+    -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
+end
+
+--local _base_pfuiRoll_UpdateLootRoll = _pfUI.roll.UpdateLootRoll
+--function _pfUI.roll:UpdateLootRoll(i)
+--    -- override pfUI:UpdateLootRoll()
+--    _base_pfuiRoll_UpdateLootRoll(i)
+--
+--end
+
+function Class:_TranslateAutogamblingModeSettingToWoWRollMode(greeniesAutogamblingMode)
+    _setfenv(1, self)
+    
+    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then
+        return "PASS"
+    end
+
+    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollNeed then
+        return "NEED"
+    end
+
+    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollGreed then
+        return "GREED"
+    end
+
+    return nil -- SGreenItemsAutolootingMode.LetUserChoose
 end
