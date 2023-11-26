@@ -54,10 +54,10 @@ function Class:New(T, pfuiGui)
     return instance
 end
 
-function Class:EventGreenItemsAutolootingModeChanged_Subscribe(handler)
+function Class:EventGreenItemsAutolootingModeChanged_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventGreenItemsAutolootingModeChanged:Subscribe(handler)
+    _eventGreenItemsAutolootingModeChanged:Subscribe(handler, owner)
 
     return self
 end
@@ -70,10 +70,10 @@ function Class:EventGreenItemsAutolootingModeChanged_Unsubscribe(handler)
     return self
 end
 
-function Class:EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(handler)
+function Class:EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventGreenItemsAutolootingActOnKeybindChanged:Subscribe(handler)
+    _eventGreenItemsAutolootingActOnKeybindChanged:Subscribe(handler, owner)
 
     return self
 end
@@ -86,10 +86,10 @@ function Class:EventGreenItemsAutolootingActOnKeybindChanged_Unsubscribe(handler
     return self
 end
 
-function Class:EventRequestingCurrentUserPreferences_Subscribe(handler)
+function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventRequestingCurrentUserPreferences:Subscribe(handler)
+    _eventRequestingCurrentUserPreferences:Subscribe(handler, owner)
 
     return self
 end
@@ -170,7 +170,7 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
     _assert(sender)
     _assert(_type(ea) == "table")
 
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNew() ~= "let_user_choose")
+    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNew() ~= SGreenItemsAutolootingMode.LetUserChoose)
 
     if _isAdvertisementOfChangesEnabled then
         _eventGreenItemsAutolootingModeChanged:Raise(

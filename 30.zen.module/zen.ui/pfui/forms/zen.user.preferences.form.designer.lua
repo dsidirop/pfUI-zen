@@ -43,9 +43,7 @@ function Class:_InitializeControls()
                                                             SGreenItemsAutolootingMode.JustPass .. ":" .. _t["Just '|cff888888Pass|r'"],
                                                             SGreenItemsAutolootingMode.LetUserChoose .. ":" .. _t["Let me handle it myself"],
                                                      })
-                                                     :EventSelectionChanged_Subscribe(function(sender, ea)
-                                                            self:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
-                                                     end)
+                                                     :EventSelectionChanged_Subscribe(_ddlGreenItemsAutolootingMode_selectionChanged, self)
                                                      :Initialize() --@formatter:on
 
     _ui.ddlGreenItemsAutolooting_actOnKeybind = PfuiDropdownX:New() --@formatter:off
@@ -60,9 +58,7 @@ function Class:_InitializeControls()
                                                                     SGreenItemsAutolootingActOnKeybind.AltShift .. ":" .. _t["Alt + Shift"],
                                                                     SGreenItemsAutolootingActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
                                                              })
-                                                             :EventSelectionChanged_Subscribe(function(sender, ea)
-                                                                    self:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea)
-                                                             end)
+                                                             :EventSelectionChanged_Subscribe(_ddlGreenItemsAutolootingActOnKeybind_selectionChanged, self)
                                                              :Initialize() --@formatter:on
 
 end

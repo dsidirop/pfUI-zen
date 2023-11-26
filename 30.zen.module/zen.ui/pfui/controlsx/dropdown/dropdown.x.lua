@@ -180,10 +180,10 @@ function Class:Hide()
     return self
 end
 
-function Class:EventSelectionChanged_Subscribe(handler)
+function Class:EventSelectionChanged_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventSelectionChanged:Subscribe(handler)
+    _eventSelectionChanged:Subscribe(handler, owner)
 
     return self
 end
