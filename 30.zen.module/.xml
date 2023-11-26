@@ -9,8 +9,8 @@
     <Include file="zen.domain.contracts\.xml"/>
     <Include file="zen.domain\.xml"/>
     
-    <Include file="zen.ui.contracts\.xml"/>
-    <Include file="zen.ui\.xml"/>
+    <Include file="zen.pfui.contracts\.xml"/>
+    <Include file="zen.pfui\.xml"/>
 
     <!-- better keep this last -->
     <Include file="module.initializer.lua"/>
