@@ -21,7 +21,6 @@ end)()
 _setfenv(1, {})
 
 local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
-local TablesHelpers = _importer("Pavilion.Helpers.Tables")
 local PfuiConfiguration = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")

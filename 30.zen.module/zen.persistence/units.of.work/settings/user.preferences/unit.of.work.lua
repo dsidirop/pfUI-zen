@@ -25,26 +25,31 @@ local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persis
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
-function Class:New(dbcontext)
+--todo  refactor this later on so that this gets injected through DI
+function Class:New(dbcontext, userPreferencesRepository)
     _setfenv(1, self)
+    
+    _assert(dbcontext == nil or _type(dbcontext) == "table")
+    _assert(userPreferencesRepository == nil or _type(userPreferencesRepository) == "table")
 
-    dbcontext = dbcontext or PfuiZenDbContext:New() --todo  refactor this later on so that this gets injected through DI
-
+    dbcontext = dbcontext or PfuiZenDbContext:New()
+    userPreferencesRepository = userPreferencesRepository or UserPreferencesRepository:NewWithDBContext(dbcontext)
+    
     local instance = {
         _dbcontext = dbcontext,
-        
-        _userPreferencesRepository = UserPreferencesRepository:New(dbcontext),
+
+        _userPreferencesRepository = userPreferencesRepository,
     }
-    
+
     _setmetatable(instance, self)
     self.__index = self
-    
+
     return instance
 end
 
 function Class:GetUserPreferencesRepository()
     _setfenv(1, self)
-    
+
     return _userPreferencesRepository
 end
 
@@ -57,5 +62,5 @@ function Class:SaveChanges()
 
     _dbcontext:SaveChanges()
 
-    return true    
+    return true
 end

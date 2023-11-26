@@ -20,21 +20,31 @@ end)()
 
 _setfenv(1, {})
 
-local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto")
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
+local UserPreferencesRepositoryUpdatable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryUpdatable")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
-function Class:New(dbcontext)  
+function Class:NewWithDBContext(dbcontext)
     _setfenv(1, self)
 
     _assert(_type(dbcontext) == "table")
+    
+    return self:New(
+            UserPreferencesRepositoryQueryable:New(dbcontext),
+            UserPreferencesRepositoryUpdatable:New(dbcontext)
+    )
+end
+
+function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryUpdatable)
+    _setfenv(1, self)
+
+    _assert(_type(userPreferencesRepositoryQueryable) == "table")
+    _assert(_type(userPreferencesRepositoryUpdatable) == "table")
 
     local instance = {
-        _hasChanges = false,
-        
-        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
+        _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable,
+        _userPreferencesRepositoryUpdatable = userPreferencesRepositoryUpdatable,
     }
 
     _setmetatable(instance, self)
@@ -43,35 +53,25 @@ function Class:New(dbcontext)
     return instance
 end
 
-function Class:HasChanges()
-    _setfenv(1, self)
-
-    return _hasChanges
-end
-
 -- @return UserPreferencesDto
 function Class:GetAllUserPreferences()
     _setfenv(1, self)
 
-    return UserPreferencesDto
-            :New()
-            :ChainSetGreeniesAutolooting_Mode(_userPreferencesEntity.GreeniesAutolooting.Mode)
-            :ChainSetGreeniesAutolooting_ActOnKeybind(_userPreferencesEntity.GreeniesAutolooting.ActOnKeybind)
+    return _userPreferencesRepositoryQueryable:GetAllUserPreferences()
+end
+
+function Class:HasChanges()
+    _setfenv(1, self)
+
+    return _userPreferencesRepositoryUpdatable:HasChanges()
 end
 
 -- @return self
 function Class:GreeniesAutolooting_ChainUpdateMode(value)
     _setfenv(1, self)
     
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _userPreferencesRepositoryUpdatable:GreeniesAutolooting_ChainUpdateMode(value)
     
-    if _userPreferencesEntity.GreeniesAutolooting.Mode == value then
-        return self
-    end
-
-    _hasChanges = true
-    _userPreferencesEntity.GreeniesAutolooting.Mode = value
-
     return self
 end
 
@@ -79,14 +79,7 @@ end
 function Class:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
-
-    if _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind == value then
-        return self
-    end
-
-    _hasChanges = true
-    _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind = value
+    _userPreferencesRepositoryUpdatable:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
 
     return self
 end

@@ -1,5 +1,4 @@
--- todo   tweak pfui so that it wont autocommit the settings when the user tweaks the ui-controls    we want to be able to do that ourselves using standard patterns: commands + unit-of-work + repositories!
--- todo   introduce commands, command-handlers and command-results
+-- todo   adapt and adopt middleclass to implement inheritance and mixins https://github.com/kikito/middleclass/blob/master/middleclass.lua
 -- todo   add reset-to-defaults button
 -- todo   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
 
@@ -28,7 +27,6 @@ local function Main(_pfUI)
         
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
         local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
-        local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
         local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
 
         local addon = {
