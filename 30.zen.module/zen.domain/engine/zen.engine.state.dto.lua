@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local AggregateStateDTO = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateStateDTO")
+local AggregateStateDTO = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateStateDTO")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.StateDTO")
 

@@ -20,23 +20,24 @@ end)()
 
 _setfenv(1, {})
 
+local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo") -- todo   move this into the GroupLootingHelper 
+
 local EWowRollMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
+local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local LootItemBeingRolledInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
-function Class:New(groupLootingListener)
+function Class:New(groupLootingListener, groupLootingHelper)
     _setfenv(1, self)
 
-    -- local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN) -- todo  consolidate this in a helper or something
 
     local instance = {
         _state = nil,
-        -- _greeniesQualityHex = greeniesQualityHex,
-
+        
+        _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
 
@@ -85,7 +86,7 @@ function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
         return -- let the user choose
     end
 
-    local rolledItemInfo = LootItemBeingRolledInformant:New(ea:GetRollId())
+    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetRollId())
     if not rolledItemInfo:IsGreenQuality() then
         return
     end
@@ -99,29 +100,18 @@ function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
     end
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
-        _RollOnLootItem(ea:GetRollId(), wowRollMode)
+        _groupLootingHelper:RollFor(ea:GetRollId(), wowRollMode)
     end
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
-    -- todo   if not frame or not frame.rollID or not frame:IsShown() or not frame:IsVisible() then  <-- check these before we emit the event
-    --
     -- todo   if we actually have a keybind we should put the lootid in an observable sink that merges with the keybinding events
-end
-
-function Class:_RollOnLootItem(rollID, wowRollMode)
-    _setfenv(1, self)
-
-    _assert(EWowRollMode.Validate(wowRollMode))
-
-    _rollOnLoot(rollID, wowRollMode) --00 todo  consolidate this into a helper
-
-    -- 00 the rollid number increases with every roll you have in a party - till how high it counts is currently unknown
-    --    blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
     --
-    -- todo  ensure that pfUI reacts accordingly to this by hiding the green item roll frame
+    -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
     --
-    -- todo  consolidate this into a console write or something
+    -- todo   consolidate this into a console write or something
+    --
+    -- local _, _, _, _greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 

@@ -3,4 +3,5 @@
     <Include file="miscellaneous\.xml"/>
     <Include file="pfui\.xml"/>
     <Include file="pavilion\.xml"/>
+    <Include file="wow\.xml"/>
 </Ui>

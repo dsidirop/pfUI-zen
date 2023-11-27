@@ -20,31 +20,27 @@ end)()
 
 _setfenv(1, {})
 
-local EWowItemQuality = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
+local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo")
 
--- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
--- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo
-function Class:New(rollId)
+function Class:New(
+        rollId,
+        texture,
+        name,
+        count,
+        quality,
+        bindOnPickUp,
+        canNeed,
+        canGreed,
+        canDisenchant,
+        reasonNeed,
+        reasonGreed,
+        reasonDisenchant,
+        deSkillRequired,
+        canTransmog
+)
     _setfenv(1, self)
-
-    _assert(_type(rollId) == "number" and rollId >= 0, "rollId must be a positive number")
-
-    local
-    texture,
-    name,
-    count,
-    quality,
-    bindOnPickUp,
-    canNeed,
-    canGreed,
-    canDisenchant,
-    reasonNeed,
-    reasonGreed,
-    reasonDisenchant,
-    deSkillRequired,
-    canTransmog = _getLootRollItemInfo(frame.rollID)
 
     local instance = {
         _rollId = rollId,
