@@ -67,8 +67,8 @@ function Class:Start()
         return self -- nothing to do
     end
 
-    -- todo   wire up a keybind interceptor too here
-    _groupLootingListener:EventNewItemGamblingRoundStarted_Subscribe(_GroupLootingListener_NewItemGamblingRoundStarted, self);
+    _groupLootingListener:EventNewItemGamblingRoundStarted_Subscribe(_GroupLootingListener_NewItemGamblingRoundStarted, self)
+    _groupLootingListener:StartListening()
 
     return self
 end
@@ -76,7 +76,7 @@ end
 function Class:Stop()
     _setfenv(1, self)
 
-    -- todo   unwire the keybind interceptor too here
+    _groupLootingListener:StopListening()
     _groupLootingListener:EventNewItemGamblingRoundStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingRoundStarted);
 
     return self
@@ -135,6 +135,8 @@ function Class:_GroupLootingListener_NewItemGamblingRoundStarted(_, ea)
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(ea:GetItemGamblingRequestId(), _TranslateModeSettingToWoWNativeGamblingResponseType(desiredLootGamblingBehaviour))
+    else
+        -- todo   start the keybind interceptor here on demand if it is not already started
     end
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
