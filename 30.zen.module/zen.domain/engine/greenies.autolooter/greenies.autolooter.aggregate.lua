@@ -21,14 +21,12 @@ end)()
 _setfenv(1, {})
 
 local EWowRollMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
-local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.GroupLootingListener")
+local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local LootItemBeingRolledInformant = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.LootItemBeingRolledInformant")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
-
-local QUALITY_GREEN = 2
 
 function Class:New(groupLootingListener)
     _setfenv(1, self)
@@ -116,22 +114,16 @@ function Class:_RollOnLootItem(rollID, wowRollMode)
 
     _assert(EWowRollMode.Validate(wowRollMode))
 
-    _rollOnLoot(rollID, wowRollMode) --00
+    _rollOnLoot(rollID, wowRollMode) --00 todo  consolidate this into a helper
 
     -- 00 the rollid number increases with every roll you have in a party - till how high it counts is currently unknown
     --    blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
     --
-    -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
+    -- todo  ensure that pfUI reacts accordingly to this by hiding the green item roll frame
     --
     -- todo  consolidate this into a console write or something
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
-
---local _base_pfuiRoll_UpdateLootRoll = _pfUI.roll.UpdateLootRoll
---function _pfUI.roll:UpdateLootRoll(i)
---    -- override pfUI:UpdateLootRoll()
---    _base_pfuiRoll_UpdateLootRoll(i)
---end
 
 function Class:_TranslateModeSettingToWoWNativeRollMode(greeniesAutogamblingMode)
     _setfenv(1, self)
