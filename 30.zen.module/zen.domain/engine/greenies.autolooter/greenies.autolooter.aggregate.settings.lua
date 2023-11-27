@@ -20,15 +20,17 @@ end)()
 
 _setfenv(1, {})
 
-local AggregateStateDTO = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateStateDTO")
+local SGreenItemsAutolootingMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.StateDTO")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateSettings")
 
 function Class:New()
     _setfenv(1, self)
 
     local instance = {
-        _greeniesAutolooterAggregateStateDTO = AggregateStateDTO:New(),
+        _mode = nil,
+        _actOnKeybind = nil,
     }
 
     _setmetatable(instance, self)
@@ -37,8 +39,34 @@ function Class:New()
     return instance
 end
 
-function Class:GetGreeniesAutolooterAggregateStateDTO()
+function Class:GetMode()
     _setfenv(1, self)
+
+    return self._mode
+end
+
+function Class:GetActOnKeybind()
+    _setfenv(1, self)
+
+    return self._actOnKeybind
+end
+
+function Class:ChainSetMode(value)
+    _setfenv(1, self)
+
+    _assert(SGreenItemsAutolootingMode.Validate(value))
     
-    return _greeniesAutolooterAggregateStateDTO
+    _mode = value
+
+    return self
+end
+
+function Class:ChainSetActOnKeybind(value)
+    _setfenv(1, self)
+
+    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+
+    _actOnKeybind = value
+
+    return self
 end

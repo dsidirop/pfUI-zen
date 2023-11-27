@@ -20,16 +20,25 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateStateDTO")
+local GreeniesAutolooterAggregateSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateSettings")
+
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.StateDTO")
 
 function Class:New()
     _setfenv(1, self)
 
     local instance = {
+        _greeniesAutolooterAggregateSettings = GreeniesAutolooterAggregateSettings:New(),
     }
 
     _setmetatable(instance, self)
     self.__index = self
 
     return instance
+end
+
+function Class:GetGreeniesAutolooterAggregateSettings()
+    _setfenv(1, self)
+    
+    return _greeniesAutolooterAggregateSettings
 end

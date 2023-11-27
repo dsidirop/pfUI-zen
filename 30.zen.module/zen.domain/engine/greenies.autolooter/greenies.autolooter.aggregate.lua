@@ -20,8 +20,6 @@ end)()
 
 _setfenv(1, {})
 
-local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo") -- todo   move this into the GroupLootingHelper 
-
 local EWowRollMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting")
@@ -33,10 +31,9 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAu
 function Class:New(groupLootingListener, groupLootingHelper)
     _setfenv(1, self)
 
-
     local instance = {
-        _state = nil,
-        
+        _settings = nil,
+
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
@@ -47,19 +44,26 @@ function Class:New(groupLootingListener, groupLootingHelper)
     return instance
 end
 
--- state is expected to be AggregateStateDTO
-function Class:SetState(state)
+-- settings is expected to be AggregateSettings
+function Class:SetSettings(settings)
     _setfenv(1, self)
 
-    _state = state
+    _settings = settings
 end
 
-function Class:Run()
+function Class:Restart()
     _setfenv(1, self)
 
-    _assert(_state, "attempt to run without any state being loaded")
+    Stop()
+    Start()
+end
 
-    if _state:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
+function Class:Start()
+    _setfenv(1, self)
+
+    _assert(_settings, "attempt to run without any settings being loaded")
+
+    if _settings:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
         return self -- nothing to do
     end
 
@@ -70,13 +74,41 @@ function Class:Run()
     return self
 end
 
-function Class:Shutdown()
+function Class:Stop()
     _setfenv(1, self)
 
     _groupLootingListener.EventNewItemGamblingStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingStarted);
 
     return self
 end
+
+
+function Class:SwitchMode(value)
+    _setfenv(1, self)
+    
+    _assert(SGreenItemsAutolootingMode.Validate(value))
+
+    _settings.ChainSetMode(value) --00
+    
+    return self
+    
+    --00 this is a bit of a hack   normally we should deep clone the settings and then change the mode
+    --   on the clone and perform validation there   but for such a simple case it would be an overkill
+end
+
+function Class:SwitchActOnKeybind(value)
+    _setfenv(1, self)
+
+    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+
+    _settings.ChainSetActOnKeybind(value) --00
+    
+    return self
+
+    --00 this is a bit of a hack   normally we should deep clone the settings and then change the mode
+    --   on the clone and perform validation there   but for such a simple case it would be an overkill
+end
+
 
 function Class:_GroupLootingListener_NewItemGamblingStarted(_, ea)
     _setfenv(1, self)

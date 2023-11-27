@@ -20,6 +20,7 @@ end)()
 
 _setfenv(1, {})
 
+local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
@@ -28,7 +29,8 @@ function Class:New(userPreferencesUnitOfWork)
     _setfenv(1, self)
 
     local instance = {
-        _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(), --todo   refactor this later on so that this gets injected through DI
+        _zenEngineSingleton = ZenEngine.I, --todo   refactor this later on so that this gets injected through DI        
+        _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(),
     }
 
     _setmetatable(instance, self)
@@ -39,24 +41,26 @@ end
 
 function Class:GreeniesAutolooting_SwitchMode(value)
     _setfenv(1, self)
-    
-    -- todo   update zen engine aggregate root here
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateMode(value)
+    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(value) -- order
+
+    _userPreferencesUnitOfWork:GetUserPreferencesRepository() -- order
+                              :GreeniesAutolooting_ChainUpdateMode(value)
 
     if _userPreferencesUnitOfWork:SaveChanges() then
         -- todo   raise side-effect domain-events here
     end
-    
+
     return self
 end
 
 function Class:GreeniesAutolooting_SwitchActOnKeybind(value)
     _setfenv(1, self)
 
-    -- todo   update zen engine aggregate root here
+    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(value) -- order
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository():GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --         order
+                              :GreeniesAutolooting_ChainUpdateActOnKeybind(value)
 
     if _userPreferencesUnitOfWork:SaveChanges() then
         -- todo   raise side-effect domain-events here

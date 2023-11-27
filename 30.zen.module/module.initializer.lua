@@ -24,6 +24,7 @@ local function Main(_pfUI)
         local _getLootRollItemLink = _g.assert(_g.GetLootRollItemLink)
         local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
+        local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")        
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
         local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
@@ -91,7 +92,6 @@ local function Main(_pfUI)
         --    return
         --end
 
-
         function EnsureAddonDefaultPreferencesAreRegistered(specs)
             local isFirstTimeLoading = _c[specs.addonPreferencesKeyname] == nil -- keep this first
 
@@ -121,6 +121,10 @@ local function Main(_pfUI)
                     ZenEngineCommandsService:New():GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
                 end) -- @formatter:on
                 :Initialize()
+
+        ZenEngine:New():SetState(
+                
+        )
     end)
 end
 

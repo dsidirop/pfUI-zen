@@ -28,9 +28,10 @@ function Class:New(greeniesAutolooterAggregate)
     _setfenv(1, self)
 
     local instance = {
-        _state = nil,
+        _settings = nil,
         
-        _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(),
+        _isRunning = false,
+        _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(), -- todo  use di
     }
 
     _setmetatable(instance, self)
@@ -38,21 +39,76 @@ function Class:New(greeniesAutolooterAggregate)
 
     return instance
 end
+Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place
 
--- state is expected to be ZenEngineStateDTO
-function Class:SetState(state)
+
+
+-- settings is expected to be ZenEngineSettings
+function Class:SetSettings(settings)
     _setfenv(1, self)
     
-    -- todo validate state first
+    _assert(_type(settings) == "table", "settings parameter is expected to be an object")
     
-    _state = state
-    _greeniesAutolooterAggregate:ChainSetState(state:GetGreeniesAutolooterAggregateStateDTO())
-end
-
-function Class:Run()
-    _setfenv(1, self)
-
-    _greeniesAutolooterAggregate:Run()
+    if _isRunning then
+        _error("cannot change settings while engine is running - stop the engine first")
+        return self
+    end
+    
+    if settings == _settings then
+        return self -- nothing to do
+    end
+    
+    _settings = settings
+    _greeniesAutolooterAggregate:SetSettings(settings:GetGreeniesAutolooterAggregateSettings())
 
     return self
 end
+
+function Class:Restart() -- todo   partial classes
+    _setfenv(1, self)
+
+    Stop()
+    Start()
+
+    return self
+end
+
+function Class:Start()
+    _setfenv(1, self)
+    
+    if _isRunning then
+        return self -- nothing to do
+    end
+
+    _isRunning = true
+    _greeniesAutolooterAggregate:Start()
+
+    return self
+end
+
+function Class:Stop()
+    _setfenv(1, self)
+
+    _isRunning = false
+    _greeniesAutolooterAggregate:Stop()
+
+    return self
+end
+
+
+function Class:GreeniesAutolooting_SwitchMode(value) -- todo   partial classes
+    _setfenv(1, self)
+
+    _greeniesAutolooterAggregate:SwitchMode(value)
+
+    return self
+end
+
+function Class:GreeniesAutolooting_SwitchActOnKeybind(value)
+    _setfenv(1, self)
+
+    _greeniesAutolooterAggregate:SwitchActOnKeybind(value)
+
+    return self
+end
+
