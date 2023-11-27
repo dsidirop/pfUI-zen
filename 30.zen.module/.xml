@@ -6,11 +6,11 @@
     <Include file="zen.persistence.contracts\.xml"/>
     <Include file="zen.persistence\.xml"/>
 
-    <Include file="zen.domain.contracts\.xml"/>
-    <Include file="zen.domain\.xml"/>
-    
     <Include file="zen.pfui.contracts\.xml"/>
     <Include file="zen.pfui\.xml"/>
+
+    <Include file="zen.domain.contracts\.xml"/>
+    <Include file="zen.domain\.xml"/>
 
     <!-- better keep this last -->
     <Include file="module.initializer.lua"/>

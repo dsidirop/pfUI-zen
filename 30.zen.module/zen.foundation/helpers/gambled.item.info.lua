@@ -72,7 +72,7 @@ function Class:IsHealthy()
     return _name ~= nil
 end
 
-function Class:GetRollId()
+function Class:GetItemGamblingRequestId()
     _setfenv(1, self)
 
     return _rollId

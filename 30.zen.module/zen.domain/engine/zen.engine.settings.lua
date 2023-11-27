@@ -22,7 +22,7 @@ _setfenv(1, {})
 
 local GreeniesAutolooterAggregateSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateSettings")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.StateDTO")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
 
 function Class:New()
     _setfenv(1, self)

@@ -20,8 +20,9 @@ end)()
 
 _setfenv(1, {})
 
+local Event = _importer("System.Event")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
-local NewItemGamblingStartedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.NewItemGamblingStartedEventArgs")
+local NewItemGamblingRoundStartedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.NewItemGamblingRoundStartedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
@@ -32,7 +33,7 @@ function Class:New()
         _rollIdsAlreadySeen = {},
         _updateLootRollSnapshot = nil,
 
-        _eventNewItemGamblingStarted = Event:New(),
+        _eventNewItemGamblingRoundStarted = Event:New(),
     }
 
     _setmetatable(instance, self)
@@ -59,7 +60,7 @@ function Class:StartListening()
 
         _rollIdsAlreadySeen[frame.rollID] = true
 
-        _eventNewItemGamblingStarted:Raise(NewItemGamblingStartedEventArgs:New(frame.rollID))
+        _eventNewItemGamblingRoundStarted:Raise(NewItemGamblingRoundStartedEventArgs:New(frame.rollID))
     end
 end
 
@@ -69,14 +70,14 @@ function Class:StopListening()
     PfuiRoll.UpdateLootRoll = _updateLootRollSnapshot
 end
 
-function Class:EventNewItemGamblingStarted_Subscribe(handler, owner)
+function Class:EventNewItemGamblingRoundStarted_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventNewItemGamblingStarted:Subscribe(handler, owner)
+    _eventNewItemGamblingRoundStarted:Subscribe(handler, owner)
 end
 
-function Class:EventNewItemGamblingStarted_Unsubscribe(handler, owner)
+function Class:EventNewItemGamblingRoundStarted_Unsubscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventNewItemGamblingStarted:Unsubscribe(handler, owner)
+    _eventNewItemGamblingRoundStarted:Unsubscribe(handler, owner)
 end

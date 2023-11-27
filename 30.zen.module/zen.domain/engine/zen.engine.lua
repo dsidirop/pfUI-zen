@@ -42,11 +42,10 @@ end
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place
 
 
-
--- settings is expected to be ZenEngineSettings
-function Class:SetSettings(settings)
+-- settings is expected to be Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings
+function Class:SetSettings(settings) -- todo   partial classes
     _setfenv(1, self)
-    
+
     _assert(_type(settings) == "table", "settings parameter is expected to be an object")
     
     if _isRunning then
@@ -63,6 +62,8 @@ function Class:SetSettings(settings)
 
     return self
 end
+
+
 
 function Class:Restart() -- todo   partial classes
     _setfenv(1, self)

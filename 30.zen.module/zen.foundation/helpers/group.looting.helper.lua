@@ -23,7 +23,7 @@ _setfenv(1, {})
 local RollOnLoot = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
-local EWowRollMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
+local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 
@@ -77,10 +77,10 @@ function Class:GetGambledItemInfo(rollId)
     )
 end
 
-function Class:RollFor(rollID, wowRollMode)
+function Class:SubmitResponseToItemGamblingRequest(rollID, wowRollMode)
     _setfenv(1, self)
 
-    _assert(EWowRollMode.Validate(wowRollMode))
+    _assert(EWowGamblingResponseType.Validate(wowRollMode))
 
     RollOnLoot(rollID, wowRollMode) --00
 

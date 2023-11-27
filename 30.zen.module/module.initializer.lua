@@ -18,13 +18,7 @@ local function Main(_pfUI)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
-        
-        local _rollOnLoot = _g.assert(_g.RollOnLoot) -- wow api   todo  put this in a custom class called Zen.LootHelpers or something        
-        local _getItemQualityColor = _g.assert(_g.GetItemQualityColor)
-        local _getLootRollItemLink = _g.assert(_g.GetLootRollItemLink)
-        local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
-        local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")        
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
         local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
@@ -121,10 +115,8 @@ local function Main(_pfUI)
                     ZenEngineCommandsService:New():GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
                 end) -- @formatter:on
                 :Initialize()
-
-        ZenEngine:New():SetState(
-                
-        )
+        
+        ZenEngineCommandsService:New():EngineFreshStart()
     end)
 end
 

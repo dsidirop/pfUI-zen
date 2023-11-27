@@ -20,19 +20,20 @@ end)()
 
 _setfenv(1, {})
 
-local EWowRollMode = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowRollMode")
+-- aka roll-mode
+local EWowGamblingResponseType = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 
-EWowRollMode.Pass = 0
-EWowRollMode.Need = 1
-EWowRollMode.Greed = 2
--- EWowRollMode.Disenchant = 3   --not supported in vanilla   introduced in wotlk patch 3.3 fall of the lich king
+EWowGamblingResponseType.Pass = 0
+EWowGamblingResponseType.Need = 1
+EWowGamblingResponseType.Greed = 2
+-- EWowGamblingResponseType.Disenchant = 3   --not supported in vanilla   introduced in wotlk patch 3.3 fall of the lich king
 
-function EWowRollMode.Validate(value)
+function EWowGamblingResponseType.Validate(value)
     if _type(value) ~= "number" then
         return false
     end
 
-    return value >= EWowRollMode.Pass and value <= EWowRollMode.Greed
+    return value >= EWowGamblingResponseType.Pass and value <= EWowGamblingResponseType.Greed
     
-    -- or value == EWowRollMode.Disenchant  -- todo add support for this when we detect that the patch is wotlk or higher
+    -- or value == EWowGamblingResponseType.Disenchant  -- todo add support for this when we detect that the patch is wotlk or higher
 end

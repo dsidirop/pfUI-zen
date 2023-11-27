@@ -21,6 +21,7 @@ end)()
 _setfenv(1, {})
 
 local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
+local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
@@ -37,6 +38,23 @@ function Class:New(userPreferencesUnitOfWork)
     self.__index = self
 
     return instance
+end
+
+function Class:EngineFreshStart()
+    _setfenv(1, self)
+
+    local userPreferencesDto = _userPreferencesUnitOfWork:GetUserPreferencesRepository()
+                                                         :GetAllUserPreferences()
+
+    local zenEngineSettings = ZenEngineSettings:New() -- todo  automapper
+    zenEngineSettings:GetGreeniesAutolooterAggregateSettings():ChainSetMode(userPreferencesDto:GetGreeniesAutolooting_Mode())
+    zenEngineSettings:GetGreeniesAutolooterAggregateSettings():ChainSetActOnKeybind(userPreferencesDto:GetGreeniesAutolooting_ActOnKeybind())
+
+    _zenEngineSingleton:Stop()
+                       :SetSettings(zenEngineSettings)
+                       :Start()
+
+    return self
 end
 
 function Class:GreeniesAutolooting_SwitchMode(value)
