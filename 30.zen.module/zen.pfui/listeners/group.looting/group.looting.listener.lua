@@ -30,8 +30,9 @@ function Class:New()
     _setfenv(1, self)
 
     local instance = {
+        _active = false,
+        _hookApplied = false,
         _rollIdsAlreadySeen = {},
-        _updateLootRollSnapshot = nil,
 
         _eventNewItemGamblingRoundStarted = Event:New(),
     }
@@ -44,30 +45,60 @@ end
 
 function Class:StartListening()
     _setfenv(1, self)
-
-    _updateLootRollSnapshot = PfuiRoll.UpdateLootRoll
-    PfuiRoll.UpdateLootRoll = function(pfuiRoll, i)
-        _updateLootRollSnapshot(pfuiRoll, i)
-
-        local frame = pfuiRoll.frames[i] -- @formatter:off
-        if    frame == nil
-           or frame.rollID == nil
-           or _rollIdsAlreadySeen[frame.rollID] ~= nil -- already seen
-           or not frame:IsShown()
-           or not frame:IsVisible() then
-            return
-        end -- @formatter:on
-
-        _rollIdsAlreadySeen[frame.rollID] = true
-
-        _eventNewItemGamblingRoundStarted:Raise(NewItemGamblingRoundStartedEventArgs:New(frame.rollID))
+    
+    _active = true
+    if _hookApplied then
+        return
     end
+
+    local updateLootRollSnapshot = PfuiRoll.UpdateLootRoll
+    PfuiRoll.UpdateLootRoll = function(pfuiRoll, gambledItemFrameIndex) -- todo   create a general purpose hooking function that can be used for all hooks
+        updateLootRollSnapshot(pfuiRoll, gambledItemFrameIndex)
+
+        _OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+    end
+
+    _hookApplied = true
+end
+
+function Class:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+    if not _active then
+        return
+    end
+
+    local pfuiGambledItemFrame = pfuiRoll.frames
+            and pfuiRoll.frames[gambledItemFrameIndex]
+            or nil
+
+    if not _IsBrandNewItemGamblingUIFrame(pfuiGambledItemFrame) then
+        return
+    end
+
+    _eventNewItemGamblingRoundStarted:Raise(NewItemGamblingRoundStartedEventArgs:New(pfuiGambledItemFrame.rollID))
+end
+
+function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)
+    _setfenv(1, self)
+    
+    -- @formatter:off
+    if    pfuiItemFrame == nil
+       or pfuiItemFrame.rollID == nil
+       or _rollIdsAlreadySeen[pfuiItemFrame.rollID] ~= nil -- already seen
+       or not pfuiItemFrame:IsShown()
+       or not pfuiItemFrame:IsVisible() then
+        return false
+    end -- @formatter:on
+
+    _rollIdsAlreadySeen[pfuiItemFrame.rollID] = true
+    -- todo   trim down _rollIdsAlreadySeen to a reasonable size when it reaches a certain threshold
+
+    return true
 end
 
 function Class:StopListening()
     _setfenv(1, self)
 
-    PfuiRoll.UpdateLootRoll = _updateLootRollSnapshot
+    _active = false
 end
 
 function Class:EventNewItemGamblingRoundStarted_Subscribe(handler, owner)
