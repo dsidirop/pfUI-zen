@@ -21,6 +21,7 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
+local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
 local NewItemGamblingRoundStartedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.NewItemGamblingRoundStartedEventArgs")
 
@@ -32,7 +33,11 @@ function Class:New()
     local instance = {
         _active = false,
         _hookApplied = false,
-        _rollIdsAlreadySeen = {},
+        _rollIdsEncounteredCache = LRUCache:New {
+            maxSize = 10,
+            trimRatio = 0.25,
+            maxLifespanPerEntryInSeconds = 5 * 60,
+        },
 
         _eventNewItemGamblingRoundStarted = Event:New(),
     }
@@ -79,18 +84,17 @@ end
 
 function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)
     _setfenv(1, self)
-    
+
     -- @formatter:off
     if    pfuiItemFrame == nil
        or pfuiItemFrame.rollID == nil
-       or _rollIdsAlreadySeen[pfuiItemFrame.rollID] ~= nil -- already seen
+       or _rollIdsEncounteredCache:Get(pfuiItemFrame.rollID) ~= nil -- already seen
        or not pfuiItemFrame:IsShown()
        or not pfuiItemFrame:IsVisible() then
         return false
     end -- @formatter:on
 
-    _rollIdsAlreadySeen[pfuiItemFrame.rollID] = true
-    -- todo   trim down _rollIdsAlreadySeen to a reasonable size when it reaches a certain threshold
+    _rollIdsEncounteredCache:Set(pfuiItemFrame.rollID, true)
 
     return true
 end

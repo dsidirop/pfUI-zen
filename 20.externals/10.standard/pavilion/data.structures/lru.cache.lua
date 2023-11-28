@@ -85,6 +85,8 @@ function Class:Set(key, value)
     _Cleanup()
 end
 
+-- private space
+
 function Class:_Remove(key)
     _setfenv(1, self)
     
