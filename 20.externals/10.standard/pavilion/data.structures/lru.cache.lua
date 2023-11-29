@@ -18,7 +18,7 @@ local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _table
     local _tableSort = _assert(_g.table.sort)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _tableInsert = _assert(_g.table.insert)
-    
+
     return _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert
 end)()
 
@@ -29,7 +29,8 @@ local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 --@options.maxSize default 10 items - if set to nil there is no upper limit
 --@options.trimRatio default 0.25 of maximum size - cannot be nil
 --@options.maxLifespanPerEntryInSeconds default 5 minutes - if set to nil entries never expire
-function Class:New(options) -- { maxLifespanPerEntryInSeconds, maxSize }
+function Class:New(options)
+    -- { maxLifespanPerEntryInSeconds, maxSize }
     _setfenv(1, self)
 
     _assert(options == nil or _type(options) == "table", "options must be a table or nil")
@@ -56,15 +57,15 @@ function Class:New(options) -- { maxLifespanPerEntryInSeconds, maxSize }
 
     _setmetatable(instance, self)
     self.__index = self
-    
+
     return instance
 end
 
 function Class:Get(key)
     _setfenv(1, self)
-    
+
     _assert(key ~= nil, "key cannot be nil")
-    
+
     _Cleanup()
     if _values[key] == nil then
         return nil
@@ -74,36 +75,46 @@ function Class:Get(key)
     return _values[key]
 end
 
-function Class:Set(key, value)
+-- insert or update if the key already exists
+function Class:Upsert(key, valueOptional)
     _setfenv(1, self)
-    
+
+    _assert(key ~= nil, "key cannot be nil")
+
+    valueOptional = valueOptional or true --00 
+
     local t = _time()
-    _values[key] = value
+    _values[key] = valueOptional
     _deadlines[key] = t + _maxLifespanPerEntryInSeconds
     _mostRecentAccessTimestamps[key] = t
 
     _Cleanup()
+
+    -- 00  we allow values to be optional but we transform nil values to 'true' because if we
+    --     leave it to nil it will cause the tables involved to remove the key altogether
 end
 
--- private space
-
-function Class:_Remove(key)
+function Class:Remove(key)
     _setfenv(1, self)
-    
+
+    _assert(key ~= nil, "key cannot be nil")
+
     _values[key] = nil
     _deadlines[key] = nil
     _mostRecentAccessTimestamps[key] = nil
 end
 
+-- private space
+
 function Class:_Cleanup()
     _setfenv(1, self)
-    
+
     if _maxLifespanPerEntryInSeconds ~= nil then
         -- remove expired entries
         local t = _time()
         for k, v in _pairs(_deadlines) do
             if v < t then
-                _Remove(k)
+                Remove(k)
             end
         end
     end
@@ -114,14 +125,14 @@ function Class:_Cleanup()
         if currentLength <= _maxSize then
             return
         end
-        
+
         local sortedArray = _Sort(_mostRecentAccessTimestamps)
-        
+
         local desiredEventualSize = _maxSize * (1 - _trimRatio)
         local numberOfItemsToDelete = currentLength - desiredEventualSize
         for i = 1, numberOfItemsToDelete, 1
         do
-            _Remove(sortedArray[i].key)
+            Remove(sortedArray[i].key)
         end
     end
 
@@ -138,13 +149,13 @@ function Class:_Sort(t)
     _tableSort(array, function(a, b)
         return a.access < b.access
     end)
-    
+
     return array
 end
 
 function Class:__tostring()
     _setfenv(1, self)
-    
+
     local s = "{"
     local sep = ""
     for k, _ in _pairs(_values) do
@@ -157,7 +168,7 @@ end
 
 function Class:__len()
     _setfenv(1, self)
-    
+
     local count = 0
     for _ in _pairs(_values) do
         count = count + 1

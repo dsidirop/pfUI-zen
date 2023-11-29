@@ -94,7 +94,7 @@ function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)
         return false
     end -- @formatter:on
 
-    _rollIdsEncounteredCache:Set(pfuiItemFrame.rollID, true)
+    _rollIdsEncounteredCache:Upsert(pfuiItemFrame.rollID)
 
     return true
 end
