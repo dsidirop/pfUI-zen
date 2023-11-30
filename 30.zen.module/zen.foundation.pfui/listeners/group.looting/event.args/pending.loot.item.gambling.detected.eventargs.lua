@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.NewItemGamblingRoundStartedEventArgs")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
 
 function Class:New(rollId)
     _setfenv(1, self)
@@ -37,7 +37,7 @@ function Class:New(rollId)
     return instance
 end
 
-function Class:GetItemGamblingRequestId()
+function Class:GetGamblingId()
     _setfenv(1, self)
 
     return _rollId

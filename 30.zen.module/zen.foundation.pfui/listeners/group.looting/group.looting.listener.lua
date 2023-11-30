@@ -23,7 +23,7 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
-local NewItemGamblingRoundStartedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.NewItemGamblingRoundStartedEventArgs")
+local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
@@ -39,7 +39,7 @@ function Class:New()
             maxLifespanPerEntryInSeconds = 5 * 60,
         },
 
-        _eventNewItemGamblingRoundStarted = Event:New(),
+        _eventPendingLootItemGamblingDetected = Event:New(),
     }
 
     _setmetatable(instance, self)
@@ -50,22 +50,47 @@ end
 
 function Class:StartListening()
     _setfenv(1, self)
-    
+
+    if _active then
+        return self
+    end
+
+    self:ApplyHookOnce_()
+        :EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+
     _active = true
+
+    return self
+end
+
+function Class:EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+    _setfenv(1, self)
+
+    for rollFrameIndex in _pairs(PfuiRoll.frames) do
+        self:_EvaluateItemRollFrameAndReportIfNew(PfuiRoll, rollFrameIndex)
+    end
+
+    return self
+end
+
+function Class:ApplyHookOnce_()
+    _setfenv(1, self)
+
     if _hookApplied then
         return self
     end
 
     local selfSnapshot = self
     local updateLootRollSnapshot = PfuiRoll.UpdateLootRoll
-    PfuiRoll.UpdateLootRoll = function(pfuiRoll, gambledItemFrameIndex) -- todo   create a general purpose hooking function that can be used for all hooks
+    PfuiRoll.UpdateLootRoll = function(pfuiRoll, gambledItemFrameIndex)
+        -- todo   create a general purpose hooking function that can be used for all hooks
         updateLootRollSnapshot(pfuiRoll, gambledItemFrameIndex)
 
-        selfSnapshot:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+        selfSnapshot:_EvaluateItemRollFrameAndReportIfNew(pfuiRoll, gambledItemFrameIndex)
     end
 
     _hookApplied = true
-    
+
     return self
 end
 
@@ -77,26 +102,26 @@ function Class:StopListening()
     return self
 end
 
-function Class:EventNewItemGamblingRoundStarted_Subscribe(handler, owner)
+function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventNewItemGamblingRoundStarted:Subscribe(handler, owner)
-    
+    _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
+
     return self
 end
 
-function Class:EventNewItemGamblingRoundStarted_Unsubscribe(handler, owner)
+function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventNewItemGamblingRoundStarted:Unsubscribe(handler, owner)
+    _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
 
     return self
 end
 
 -- private space
-function Class:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+function Class:_EvaluateItemRollFrameAndReportIfNew(pfuiRoll, gambledItemFrameIndex)
     _setfenv(1, self)
-    
+
     if not _active then
         return
     end
@@ -109,7 +134,7 @@ function Class:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
         return
     end
 
-    _eventNewItemGamblingRoundStarted:Raise(NewItemGamblingRoundStartedEventArgs:New(pfuiGambledItemFrame.rollID))
+    _eventPendingLootItemGamblingDetected:Raise(PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
 end
 
 function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)

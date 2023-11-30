@@ -68,7 +68,7 @@ function Class:Start()
     end
 
     _groupLootingListener:StartListening()
-                         :EventNewItemGamblingRoundStarted_Subscribe(_GroupLootingListener_NewItemGamblingRoundStarted, self)
+                         :EventPendingLootItemGamblingDetected_Subscribe(_GroupLootingListener_PendingLootItemGamblingDetected, self)
 
     return self
 end
@@ -77,7 +77,7 @@ function Class:Stop()
     _setfenv(1, self)
 
     _groupLootingListener:StopListening()
-                         :EventNewItemGamblingRoundStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingRoundStarted);
+                         :EventPendingLootItemGamblingDetected_Unsubscribe(_GroupLootingListener_PendingLootItemGamblingDetected);
 
     return self
 end
@@ -112,7 +112,7 @@ function Class:SwitchActOnKeybind(value)
 end
 
 
-function Class:_GroupLootingListener_NewItemGamblingRoundStarted(_, ea)
+function Class:_GroupLootingListener_PendingLootItemGamblingDetected(_, ea)
     _setfenv(1, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode()
@@ -120,7 +120,7 @@ function Class:_GroupLootingListener_NewItemGamblingRoundStarted(_, ea)
         return -- let the user choose
     end
 
-    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetItemGamblingRequestId())
+    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId())
     if not rolledItemInfo:IsGreenQuality() then
         return
     end
@@ -135,7 +135,7 @@ function Class:_GroupLootingListener_NewItemGamblingRoundStarted(_, ea)
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
          _groupLootingHelper:SubmitResponseToItemGamblingRequest(
-                ea:GetItemGamblingRequestId(),
+                ea:GetGamblingId(),
                 self:_TranslateModeSettingToWoWNativeGamblingResponseType(desiredLootGamblingBehaviour)
         )
     else
