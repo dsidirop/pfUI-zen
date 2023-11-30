@@ -20,10 +20,10 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
-local GreenItemsAutolootingModeChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
-local GreenItemsAutolootingActOnKeybindChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingActOnKeybindChangedEventArgs")
+local GreenItemsAutolootingModeChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
+local GreenItemsAutolootingActOnKeybindChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingActOnKeybindChangedEventArgs")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called

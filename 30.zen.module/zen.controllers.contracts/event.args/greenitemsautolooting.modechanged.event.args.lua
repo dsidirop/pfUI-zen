@@ -25,7 +25,7 @@ _setfenv(1, {})
 
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.Forms.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
 
 function Class:New()
     _setfenv(1, self)
