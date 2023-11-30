@@ -105,7 +105,7 @@ function Class:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
             and pfuiRoll.frames[gambledItemFrameIndex]
             or nil
 
-    if not _IsBrandNewItemGamblingUIFrame(pfuiGambledItemFrame) then
+    if not self:_IsBrandNewItemGamblingUIFrame(pfuiGambledItemFrame) then
         return
     end
 

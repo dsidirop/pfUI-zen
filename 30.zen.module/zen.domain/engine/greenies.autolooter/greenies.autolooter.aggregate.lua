@@ -134,7 +134,10 @@ function Class:_GroupLootingListener_NewItemGamblingRoundStarted(_, ea)
     end
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
-        _groupLootingHelper:SubmitResponseToItemGamblingRequest(ea:GetItemGamblingRequestId(), _TranslateModeSettingToWoWNativeGamblingResponseType(desiredLootGamblingBehaviour))
+         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
+                ea:GetItemGamblingRequestId(),
+                self:_TranslateModeSettingToWoWNativeGamblingResponseType(desiredLootGamblingBehaviour)
+        )
     else
         -- todo   start the keybind interceptor here on demand if it is not already started
     end

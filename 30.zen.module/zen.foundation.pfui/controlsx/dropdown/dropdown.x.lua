@@ -86,8 +86,8 @@ function Class:Initialize()
             function()
                 self:_OnSelectionChanged(
                         SelectionChangedEventArgs:New()
-                                                          :ChainSetOld(_oldValue)
-                                                          :ChainSetNew(_singlevalue[_valuekeyname])
+                                                 :ChainSetOld(_oldValue)
+                                                 :ChainSetNew(_singlevalue[_valuekeyname])
                 )
             end,
             _caption,
@@ -141,8 +141,8 @@ function Class:TrySetSelectedOptionByIndex(index)
 
     self:_OnSelectionChanged(-- 00
             SelectionChangedEventArgs:New()
-                                              :ChainSetOld(originalValue)
-                                              :ChainSetNew(newValue)
+                                     :ChainSetOld(originalValue)
+                                     :ChainSetNew(newValue)
     )
 
     return true

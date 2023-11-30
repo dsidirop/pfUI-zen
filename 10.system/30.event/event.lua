@@ -47,8 +47,8 @@ function Class:SubscribeOnce(handler, owner)
     _assert(_type(handler) == "function")
     -- _assert(owner ~= nil) -- dont  specifying the owner is optional
 
-    Subscribe(handler, owner)
-    _SubscribeOnceImpl(handler, owner)
+    self:Subscribe(handler, owner)
+    self:_SubscribeOnceImpl(handler, owner)
 
     return self
 end
