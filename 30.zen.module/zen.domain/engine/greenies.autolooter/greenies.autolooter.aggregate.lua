@@ -29,7 +29,7 @@ local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Z
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
 function Class:New(groupLootingListener, groupLootingHelper)
-    _setfenv(1, self)
+    -- _setfenv(1, self)
 
     local instance = {
         _settings = nil,
@@ -54,8 +54,8 @@ end
 function Class:Restart()
     _setfenv(1, self)
 
-    Stop()
-    Start()
+    self:Stop()
+    self:Start()
 end
 
 function Class:Start()
@@ -67,8 +67,8 @@ function Class:Start()
         return self -- nothing to do
     end
 
-    _groupLootingListener:EventNewItemGamblingRoundStarted_Subscribe(_GroupLootingListener_NewItemGamblingRoundStarted, self)
     _groupLootingListener:StartListening()
+                         :EventNewItemGamblingRoundStarted_Subscribe(_GroupLootingListener_NewItemGamblingRoundStarted, self)
 
     return self
 end
@@ -77,7 +77,7 @@ function Class:Stop()
     _setfenv(1, self)
 
     _groupLootingListener:StopListening()
-    _groupLootingListener:EventNewItemGamblingRoundStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingRoundStarted);
+                         :EventNewItemGamblingRoundStarted_Unsubscribe(_GroupLootingListener_NewItemGamblingRoundStarted);
 
     return self
 end
@@ -89,8 +89,8 @@ function Class:SwitchMode(value)
     _assert(SGreenItemsAutolootingMode.Validate(value))
 
     _settings:ChainSetMode(value) --00 slight hack
-    
-    Restart() --vital
+
+    self:Restart() --vital
     
     return self
     

@@ -2,7 +2,7 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert = (function()
+local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -18,8 +18,9 @@ local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _table
     local _tableSort = _assert(_g.table.sort)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _tableInsert = _assert(_g.table.insert)
+    local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert
+    return _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -30,7 +31,6 @@ local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 --@options.trimRatio default 0.25 of maximum size - cannot be nil
 --@options.maxLifespanPerEntryInSeconds default 5 minutes - if set to nil entries never expire
 function Class:New(options)
-    -- { maxLifespanPerEntryInSeconds, maxSize }
     _setfenv(1, self)
 
     _assert(options == nil or _type(options) == "table", "options must be a table or nil")
@@ -42,7 +42,7 @@ function Class:New(options)
     }
 
     _assert(_type(options.maxSize) == nil or _type(options.maxSize) == "number" and options.maxSize > 0, "maxSize must either be nil or a positive number")
-    _assert(_type(options.trimRatio) == "number" and (options.maxSize >= 0 and options.maxSize <= 1), "trimRatio must between 0 and 1")
+    _assert(_type(options.trimRatio) == "number" and (options.trimRatio >= 0 and options.trimRatio <= 1), "trimRatio must between 0 and 1")
     _assert(_type(options.maxLifespanPerEntryInSeconds) == nil or _type(options.maxLifespanPerEntryInSeconds) == "number" and options.maxLifespanPerEntryInSeconds > 0, "maxLifespanPerEntryInSeconds must either be nil or a positive number")
 
     local instance = {

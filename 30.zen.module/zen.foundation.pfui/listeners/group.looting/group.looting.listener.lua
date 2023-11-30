@@ -53,20 +53,50 @@ function Class:StartListening()
     
     _active = true
     if _hookApplied then
-        return
+        return self
     end
 
+    local selfSnapshot = self
     local updateLootRollSnapshot = PfuiRoll.UpdateLootRoll
     PfuiRoll.UpdateLootRoll = function(pfuiRoll, gambledItemFrameIndex) -- todo   create a general purpose hooking function that can be used for all hooks
         updateLootRollSnapshot(pfuiRoll, gambledItemFrameIndex)
 
-        _OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+        selfSnapshot:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
     end
 
     _hookApplied = true
+    
+    return self
 end
 
+function Class:StopListening()
+    _setfenv(1, self)
+
+    _active = false
+
+    return self
+end
+
+function Class:EventNewItemGamblingRoundStarted_Subscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventNewItemGamblingRoundStarted:Subscribe(handler, owner)
+    
+    return self
+end
+
+function Class:EventNewItemGamblingRoundStarted_Unsubscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventNewItemGamblingRoundStarted:Unsubscribe(handler, owner)
+
+    return self
+end
+
+-- private space
 function Class:_OnLootRollFrameUpdated(pfuiRoll, gambledItemFrameIndex)
+    _setfenv(1, self)
+    
     if not _active then
         return
     end
@@ -97,22 +127,4 @@ function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)
     _rollIdsEncounteredCache:Upsert(pfuiItemFrame.rollID)
 
     return true
-end
-
-function Class:StopListening()
-    _setfenv(1, self)
-
-    _active = false
-end
-
-function Class:EventNewItemGamblingRoundStarted_Subscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventNewItemGamblingRoundStarted:Subscribe(handler, owner)
-end
-
-function Class:EventNewItemGamblingRoundStarted_Unsubscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventNewItemGamblingRoundStarted:Unsubscribe(handler, owner)
 end

@@ -63,13 +63,11 @@ function Class:SetSettings(settings) -- todo   partial classes
     return self
 end
 
-
-
 function Class:Restart() -- todo   partial classes
     _setfenv(1, self)
 
-    Stop()
-    Start()
+    self:Stop()
+    self:Start()
 
     return self
 end
