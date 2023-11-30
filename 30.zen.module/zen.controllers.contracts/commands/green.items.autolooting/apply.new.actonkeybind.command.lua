@@ -25,7 +25,7 @@ _setfenv(1, {})
 
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingActOnKeybindChangedEventArgs")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewActOnKeybindCommand")
 
 function Class:New()
     _setfenv(1, self)

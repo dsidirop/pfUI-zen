@@ -20,8 +20,8 @@ _setfenv(1, {})
 local Event = _importer("System.Event")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
-local GreenItemsAutolootingModeChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingModeChangedEventArgs")
-local GreenItemsAutolootingActOnKeybindChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.EventArgs.GreenItemsAutolootingActOnKeybindChangedEventArgs")
+local GreenItemsAutolootingApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewModeCommand")
+local GreenItemsAutolootingApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewActOnKeybindCommand")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
 
@@ -175,7 +175,7 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
     if _isAdvertisementOfChangesEnabled then
         _eventGreenItemsAutolootingModeChanged:Raise(
                 self,
-                GreenItemsAutolootingModeChangedEventArgs:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
+                GreenItemsAutolootingApplyNewModeCommand:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
         )
     end
 end
@@ -189,7 +189,7 @@ function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea
     if _isAdvertisementOfChangesEnabled then
         _eventGreenItemsAutolootingActOnKeybindChanged:Raise(
                 self,
-                GreenItemsAutolootingActOnKeybindChangedEventArgs:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
+                GreenItemsAutolootingApplyNewActOnKeybindCommand:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
         )
     end
 end
