@@ -47,8 +47,10 @@ function Class:New(options)
 
     local instance = {
         _values = {},
-        _deadlines = {},
+        _deadlines = {}, -- todo  these three tables could be merged into one with a composite structure ala { value, deadline, mostRecentAccessTimestamp } 
         _mostRecentAccessTimestamps = {},
+
+        _timestampOfLastDeadlinesCleanup = -1,
 
         _maxSize = options.maxSize,
         _trimRatio = options.trimRatio,
@@ -61,18 +63,60 @@ function Class:New(options)
     return instance
 end
 
+function Class:Clear()
+    _setfenv(1, self)
+
+    _cache = {}
+    _deadlines = {}
+    _mostRecentAccessTimestamps = {}
+end
+
 function Class:Get(key)
     _setfenv(1, self)
 
     _assert(key ~= nil, "key cannot be nil")
 
     self:_Cleanup()
-    if _values[key] == nil then
+    if _cache[key] == nil then
         return nil
     end
 
     _mostRecentAccessTimestamps[key] = _time()
-    return _values[key]
+    return _cache[key]
+end
+
+function Class:GetKeys()
+    _setfenv(1, self)
+
+    local now = time()
+
+    self:_Cleanup()
+
+    local keys = {}
+    for key in _pairs(_cache) do
+        _tableInsert(keys, key)
+
+        _mostRecentAccessTimestamps[key] = now
+    end
+
+    return keys
+end
+
+function Class:GetValues()
+    _setfenv(1, self)
+
+    local now = time()
+
+    self:_Cleanup()
+
+    local values = {}
+    for _, value in _pairs(_cache) do
+        _tableInsert(values, value)
+
+        _mostRecentAccessTimestamps[key] = now
+    end
+
+    return values
 end
 
 -- insert or update if the key already exists
@@ -84,7 +128,7 @@ function Class:Upsert(key, valueOptional)
     valueOptional = valueOptional or true --00 
 
     local t = _time()
-    _values[key] = valueOptional
+    _cache[key] = valueOptional
     _deadlines[key] = t + _maxLifespanPerEntryInSeconds
     _mostRecentAccessTimestamps[key] = t
 
@@ -99,7 +143,7 @@ function Class:Remove(key)
 
     _assert(key ~= nil, "key cannot be nil")
 
-    _values[key] = nil
+    _cache[key] = nil
     _deadlines[key] = nil
     _mostRecentAccessTimestamps[key] = nil
 end
@@ -117,10 +161,13 @@ function Class:_Cleanup()
 
     if _maxLifespanPerEntryInSeconds ~= nil then
         -- remove expired entries
-        local t = _time()
-        for k, v in _pairs(_deadlines) do
-            if v < t then
-                self:Remove(k)
+        local now = _time()
+        if now - _timestampOfLastDeadlinesCleanup >= 1 then
+            _timestampOfLastDeadlinesCleanup = now
+            for key, deadline in _pairs(_deadlines) do
+                if now >= deadline then
+                    self:Remove(key)
+                end
             end
         end
     end
@@ -148,8 +195,8 @@ function Class:_Sort(t)
     _setfenv(1, self)
 
     local array = {}
-    for k, v in _pairs(t) do
-        _tableInsert(array, { key = k, access = v })
+    for key, value in _pairs(t) do
+        _tableInsert(array, { key = key, access = value })
     end
 
     _tableSort(array, function(a, b)
@@ -164,8 +211,8 @@ function Class:__tostring()
 
     local s = "{"
     local sep = ""
-    for k, _ in _pairs(_values) do
-        s = s .. sep .. k
+    for key in _pairs(_cache) do
+        s = s .. sep .. key
         sep = ","
     end
 
@@ -176,7 +223,7 @@ function Class:__len()
     _setfenv(1, self)
 
     local count = 0
-    for _ in _pairs(_values) do
+    for _ in _pairs(_cache) do
         count = count + 1
     end
 
