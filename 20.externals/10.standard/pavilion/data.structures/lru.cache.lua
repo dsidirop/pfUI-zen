@@ -66,7 +66,7 @@ function Class:Get(key)
 
     _assert(key ~= nil, "key cannot be nil")
 
-    _Cleanup()
+    self:_Cleanup()
     if _values[key] == nil then
         return nil
     end
@@ -88,7 +88,7 @@ function Class:Upsert(key, valueOptional)
     _deadlines[key] = t + _maxLifespanPerEntryInSeconds
     _mostRecentAccessTimestamps[key] = t
 
-    _Cleanup()
+    self:_Cleanup()
 
     -- 00  we allow values to be optional but we transform nil values to 'true' because if we
     --     leave it to nil it will cause the tables involved to remove the key altogether
@@ -104,6 +104,12 @@ function Class:Remove(key)
     _mostRecentAccessTimestamps[key] = nil
 end
 
+function Class:ToString()
+    _setfenv(1, self)
+
+    return self:__tostring()
+end
+
 -- private space
 
 function Class:_Cleanup()
@@ -114,30 +120,30 @@ function Class:_Cleanup()
         local t = _time()
         for k, v in _pairs(_deadlines) do
             if v < t then
-                Remove(k)
+                self:Remove(k)
             end
         end
     end
 
     if _maxSize ~= nil then
         -- remove least recently used entries
-        local currentLength = __len()
+        local currentLength = self:__len()
         if currentLength <= _maxSize then
             return
         end
 
-        local sortedArray = _Sort(_mostRecentAccessTimestamps)
+        local sortedArray = self:_Sort(_mostRecentAccessTimestamps)
 
         local desiredEventualSize = _maxSize * (1 - _trimRatio)
         local numberOfItemsToDelete = currentLength - desiredEventualSize
         for i = 1, numberOfItemsToDelete, 1
         do
-            Remove(sortedArray[i].key)
+            self:Remove(sortedArray[i].key)
         end
     end
-
 end
 
+-- private space
 function Class:_Sort(t)
     _setfenv(1, self)
 
