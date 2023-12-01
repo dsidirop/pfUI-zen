@@ -18,7 +18,7 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
-local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
+local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 local GreenItemsAutolootingApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewModeCommand")
@@ -138,7 +138,7 @@ function Class:DdlGreenItemsAutolootingMode_SelectionChanged_(sender, ea)
     _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreenItemsAutolootingMode.LetUserChoose)
 
     if _commandsEnabled then
-        ZenEngineCommandsService:New():Handle_GreenItemsAutolootingApplyNewModeCommand(
+        ZenEngineCommandHandlersService:New():Handle_GreenItemsAutolootingApplyNewModeCommand(
                 GreenItemsAutolootingApplyNewModeCommand:New()
                                                         :ChainSetOld(ea:GetOldValue())
                                                         :ChainSetNew(ea:GetNewValue())
@@ -153,7 +153,7 @@ function Class:DdlGreenItemsAutolootingActOnKeybind_SelectionChanged_(sender, ea
     _assert(_type(ea) == "table")
 
     if _commandsEnabled then
-        ZenEngineCommandsService:New():Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(
+        ZenEngineCommandHandlersService:New():Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(
                 GreenItemsAutolootingApplyNewActOnKeybindCommand:New()
                                                                 :ChainSetOld(ea:GetOldValue())
                                                                 :ChainSetNew(ea:GetNewValue())

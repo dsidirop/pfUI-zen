@@ -24,7 +24,7 @@ local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngin
 local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 
 function Class:New(userPreferencesUnitOfWork)
     _setfenv(1, self)

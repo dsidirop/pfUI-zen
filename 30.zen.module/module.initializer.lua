@@ -21,7 +21,7 @@ local function Main(_pfUI)
 
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
-        local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
+        local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
         local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
 
         local addon = {
@@ -110,7 +110,7 @@ local function Main(_pfUI)
                 end)
                 :Initialize() -- @formatter:on
         
-        ZenEngineCommandsService:New():EngineFreshStart()
+        ZenEngineCommandHandlersService:New():EngineFreshStart()
     end)
 end
 
