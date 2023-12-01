@@ -70,7 +70,7 @@ function Class:ChainSetMenuItems(menuItems)
     _assert(_type(menuItems) == "table")
 
     _menuItems = menuItems
-    _menuEntryValuesToIndexes, _menuIndexesToMenuValues = self:_ParseMenuItems(menuItems)
+    _menuEntryValuesToIndexes, _menuIndexesToMenuValues = self:ParseMenuItems_(menuItems)
     _assert(_menuEntryValuesToIndexes ~= nil, "menuItems contains duplicate values which is not allowed")
 
     return self
@@ -84,7 +84,7 @@ function Class:Initialize()
 
     _nativePfuiControl = PfuiGui.CreateConfig(
             function()
-                self:_OnSelectionChanged(
+                self:OnSelectionChanged_(
                         SelectionChangedEventArgs:New()
                                                  :ChainSetOld(_oldValue)
                                                  :ChainSetNew(_singlevalue[_valuekeyname])
@@ -139,7 +139,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
-    self:_OnSelectionChanged(-- 00
+    self:OnSelectionChanged_(-- 00
             SelectionChangedEventArgs:New()
                                      :ChainSetOld(originalValue)
                                      :ChainSetNew(newValue)
@@ -197,7 +197,7 @@ function Class:EventSelectionChanged_Unsubscribe(handler)
 end
 
 -- privates
-function Class:_OnSelectionChanged(ea)
+function Class:OnSelectionChanged_(ea)
     _setfenv(1, self)
 
     _assert(_type(ea) == "table", "event-args is not an object")
@@ -206,7 +206,7 @@ function Class:_OnSelectionChanged(ea)
     _eventSelectionChanged:Raise(self, ea)
 end
 
-function Class:_ParseMenuItems(menuItemsArray)
+function Class:ParseMenuItems_(menuItemsArray)
     _setfenv(1, self)
 
     _assert(_type(menuItemsArray) == "table")

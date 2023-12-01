@@ -19,7 +19,7 @@ local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Z
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]")
 
-function Class:_InitializeControls()
+function Class:InitializeControls_()
     _setfenv(1, self)
 
     -- todo   add a "reset to defaults" button
@@ -32,7 +32,7 @@ function Class:_InitializeControls()
     _ui.frmContainer = _ui.lblGrouplootSectionHeader:GetParent()
     _ui.frmContainer.objectCount = _ui.frmContainer.objectCount - 1 -- vital for lblGrouplootSectionHeader to be positioned properly
     _ui.frmContainer:SetScript("OnShow", function()
-        self:_OnShown()
+        self:OnShown_()
     end)
 
     _ui.ddlGreenItemsAutolooting_mode = PfuiDropdownX:New() --@formatter:off
@@ -43,7 +43,7 @@ function Class:_InitializeControls()
                                                             SGreenItemsAutolootingMode.JustPass .. ":" .. _t["Just '|cff888888Pass|r'"],
                                                             SGreenItemsAutolootingMode.LetUserChoose .. ":" .. _t["Let me handle it myself"],
                                                      })
-                                                     :EventSelectionChanged_Subscribe(_ddlGreenItemsAutolootingMode_selectionChanged, self)
+                                                     :EventSelectionChanged_Subscribe(DdlGreenItemsAutolootingMode_SelectionChanged_, self)
                                                      :Initialize() --@formatter:on
 
     _ui.ddlGreenItemsAutolooting_actOnKeybind = PfuiDropdownX:New() --@formatter:off
@@ -58,7 +58,7 @@ function Class:_InitializeControls()
                                                                     SGreenItemsAutolootingActOnKeybind.AltShift .. ":" .. _t["Alt + Shift"],
                                                                     SGreenItemsAutolootingActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
                                                              })
-                                                             :EventSelectionChanged_Subscribe(_ddlGreenItemsAutolootingActOnKeybind_selectionChanged, self)
+                                                             :EventSelectionChanged_Subscribe(DdlGreenItemsAutolootingActOnKeybind_selectionChanged_, self)
                                                              :Initialize() --@formatter:on
 
 end

@@ -68,7 +68,7 @@ function Class:Start()
     end
 
     _groupLootingListener:StartListening()
-                         :EventPendingLootItemGamblingDetected_Subscribe(_GroupLootingListener_PendingLootItemGamblingDetected, self)
+                         :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
     return self
 end
@@ -77,7 +77,7 @@ function Class:Stop()
     _setfenv(1, self)
 
     _groupLootingListener:StopListening()
-                         :EventPendingLootItemGamblingDetected_Unsubscribe(_GroupLootingListener_PendingLootItemGamblingDetected);
+                         :EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_);
 
     return self
 end
@@ -112,7 +112,7 @@ function Class:SwitchActOnKeybind(value)
 end
 
 
-function Class:_GroupLootingListener_PendingLootItemGamblingDetected(_, ea)
+function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _setfenv(1, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode()
@@ -136,7 +136,7 @@ function Class:_GroupLootingListener_PendingLootItemGamblingDetected(_, ea)
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
          _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
-                self:_TranslateModeSettingToWoWNativeGamblingResponseType(desiredLootGamblingBehaviour)
+                self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
     else
         -- todo   start the keybind interceptor here on demand if it is not already started
@@ -154,7 +154,7 @@ function Class:_GroupLootingListener_PendingLootItemGamblingDetected(_, ea)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 
-function Class:_TranslateModeSettingToWoWNativeGamblingResponseType(greeniesAutogamblingMode)
+function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)
     _setfenv(1, self)
 
     if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then

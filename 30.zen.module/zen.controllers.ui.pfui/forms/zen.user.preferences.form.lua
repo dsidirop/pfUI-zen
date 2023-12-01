@@ -109,10 +109,10 @@ function Class:Initialize()
             _t["Thirdparty"],
             _t["|cFF7FFFD4Zen|r"],
             function()
-                self:_InitializeControls() --                   order
-                self:_OnRequestingCurrentUserPreferences() --   order
+                self:InitializeControls_() --                   order
+                self:OnRequestingCurrentUserPreferences_() --   order
 
-                -- _ddlGreenItemsAutolootingMode_selectionChanged(self, response.PfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode()) --vital
+                -- DdlGreenItemsAutolootingMode_SelectionChanged_(self, response.PfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode()) --vital
             end
     )
 
@@ -121,13 +121,13 @@ function Class:Initialize()
 end
 
 -- privates
-function Class:_OnShown()
+function Class:OnShown_()
     _setfenv(1, self)
 
-    self:_OnRequestingCurrentUserPreferences()
+    self:OnRequestingCurrentUserPreferences_()
 end
 
-function Class:_OnRequestingCurrentUserPreferences()
+function Class:OnRequestingCurrentUserPreferences_()
     _setfenv(1, self)
 
     local response = _eventRequestingCurrentUserPreferences:Raise( -- @formatter:off todo    RequestingCurrentUserPreferencesEventArgs:New()
@@ -164,7 +164,7 @@ function Class:_OnRequestingCurrentUserPreferences()
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
+function Class:DdlGreenItemsAutolootingMode_SelectionChanged_(sender, ea)
     _setfenv(1, self)
 
     _assert(sender)
@@ -180,7 +180,7 @@ function Class:_ddlGreenItemsAutolootingMode_selectionChanged(sender, ea)
     end
 end
 
-function Class:_ddlGreenItemsAutolootingActOnKeybind_selectionChanged(sender, ea)
+function Class:DdlGreenItemsAutolootingActOnKeybind_selectionChanged_(sender, ea)
     _setfenv(1, self)
 
     _assert(sender)

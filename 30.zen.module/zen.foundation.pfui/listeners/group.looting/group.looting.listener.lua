@@ -67,7 +67,7 @@ function Class:EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
     _setfenv(1, self)
 
     for rollFrameIndex in _pairs(PfuiRoll.frames) do
-        self:_EvaluateItemRollFrameAndReportIfNew(PfuiRoll, rollFrameIndex)
+        self:EvaluateItemRollFrameAndReportIfNew_(PfuiRoll, rollFrameIndex)
     end
 
     return self
@@ -86,7 +86,7 @@ function Class:ApplyHookOnce_()
         -- todo   create a general purpose hooking function that can be used for all hooks
         updateLootRollSnapshot(pfuiRoll, gambledItemFrameIndex)
 
-        selfSnapshot:_EvaluateItemRollFrameAndReportIfNew(pfuiRoll, gambledItemFrameIndex)
+        selfSnapshot:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIndex)
     end
 
     _hookApplied = true
@@ -119,7 +119,7 @@ function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
 end
 
 -- private space
-function Class:_EvaluateItemRollFrameAndReportIfNew(pfuiRoll, gambledItemFrameIndex)
+function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIndex)
     _setfenv(1, self)
 
     if not _active then
@@ -130,14 +130,14 @@ function Class:_EvaluateItemRollFrameAndReportIfNew(pfuiRoll, gambledItemFrameIn
             and pfuiRoll.frames[gambledItemFrameIndex]
             or nil
 
-    if not self:_IsBrandNewItemGamblingUIFrame(pfuiGambledItemFrame) then
+    if not self:IsBrandNewItemGamblingUIFrame_(pfuiGambledItemFrame) then
         return
     end
 
     _eventPendingLootItemGamblingDetected:Raise(PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
 end
 
-function Class:_IsBrandNewItemGamblingUIFrame(pfuiItemFrame)
+function Class:IsBrandNewItemGamblingUIFrame_(pfuiItemFrame)
     _setfenv(1, self)
 
     -- @formatter:off
