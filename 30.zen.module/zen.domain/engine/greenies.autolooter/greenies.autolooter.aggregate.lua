@@ -87,6 +87,10 @@ function Class:SwitchMode(value)
     _setfenv(1, self)
     
     _assert(SGreenItemsAutolootingMode.Validate(value))
+    
+    if _settings:GetMode() == value then
+        return self -- nothing to do
+    end
 
     _settings:ChainSetMode(value) --00 slight hack
 
@@ -102,6 +106,10 @@ function Class:SwitchActOnKeybind(value)
     _setfenv(1, self)
 
     _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+
+    if _settings:GetActOnKeybind() == value then
+        return self -- nothing to do
+    end
 
     _settings:ChainSetActOnKeybind(value) --00 slight hack
     

@@ -19,7 +19,7 @@ local function Main(_pfUI)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
-        local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")        
+        local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
         local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
@@ -103,18 +103,12 @@ local function Main(_pfUI)
 
         EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
 
-        UserPreferencesForm
+        UserPreferencesForm -- @formatter:off
                 :New(_t, _pfuiGui)
-                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea) -- @formatter:off
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
                     ea.Response.UserPreferences = AddonSettingsQueryingService:New():GetAllUserPreferences()
                 end)
-                :EventGreenItemsAutolootingModeChanged_Subscribe(function(_, ea)
-                    ZenEngineCommandsService:New():GreeniesAutolooting_SwitchMode(ea:GetNew())
-                end)
-                :EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(function(_, ea)
-                    ZenEngineCommandsService:New():GreeniesAutolooting_SwitchActOnKeybind(ea:GetNew())
-                end) -- @formatter:on
-                :Initialize()
+                :Initialize() -- @formatter:on
         
         ZenEngineCommandsService:New():EngineFreshStart()
     end)

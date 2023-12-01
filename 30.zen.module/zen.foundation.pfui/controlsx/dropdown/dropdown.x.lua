@@ -202,7 +202,7 @@ function Class:OnSelectionChanged_(ea)
 
     _assert(_type(ea) == "table", "event-args is not an object")
 
-    _oldValue = ea:GetNew()
+    _oldValue = ea:GetNewValue()
     _eventSelectionChanged:Raise(self, ea)
 end
 

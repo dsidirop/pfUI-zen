@@ -58,7 +58,7 @@ function Class:InitializeControls_()
                                                                     SGreenItemsAutolootingActOnKeybind.AltShift .. ":" .. _t["Alt + Shift"],
                                                                     SGreenItemsAutolootingActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
                                                              })
-                                                             :EventSelectionChanged_Subscribe(DdlGreenItemsAutolootingActOnKeybind_selectionChanged_, self)
+                                                             :EventSelectionChanged_Subscribe(DdlGreenItemsAutolootingActOnKeybind_SelectionChanged_, self)
                                                              :Initialize() --@formatter:on
 
 end

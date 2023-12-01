@@ -39,13 +39,13 @@ function Class:New()
     return instance
 end
 
-function Class:GetOld()
+function Class:GetOldValue()
     _setfenv(1, self)
 
     return _old
 end
 
-function Class:GetNew()
+function Class:GetNewValue()
     _setfenv(1, self)
 
     return _new

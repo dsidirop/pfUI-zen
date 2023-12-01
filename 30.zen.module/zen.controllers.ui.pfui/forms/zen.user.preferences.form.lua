@@ -18,6 +18,7 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
+local ZenEngineCommandsService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandsService")
 local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
 local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 local GreenItemsAutolootingApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewModeCommand")
@@ -43,47 +44,13 @@ function Class:New(T, pfuiGui)
 
         _eventRequestingCurrentUserPreferences = Event:New(),
 
-        _isAdvertisementOfChangesEnabled = false,
-        _eventGreenItemsAutolootingModeChanged = Event:New(),
-        _eventGreenItemsAutolootingActOnKeybindChanged = Event:New(),
+        _commandsEnabled = false,
     }
 
     _setmetatable(instance, self)
     self.__index = self
 
     return instance
-end
-
-function Class:EventGreenItemsAutolootingModeChanged_Subscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventGreenItemsAutolootingModeChanged:Subscribe(handler, owner)
-
-    return self
-end
-
-function Class:EventGreenItemsAutolootingModeChanged_Unsubscribe(handler)
-    _setfenv(1, self)
-
-    _eventGreenItemsAutolootingModeChanged:Unsubscribe(handler)
-
-    return self
-end
-
-function Class:EventGreenItemsAutolootingActOnKeybindChanged_Subscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventGreenItemsAutolootingActOnKeybindChanged:Subscribe(handler, owner)
-
-    return self
-end
-
-function Class:EventGreenItemsAutolootingActOnKeybindChanged_Unsubscribe(handler)
-    _setfenv(1, self)
-
-    _eventGreenItemsAutolootingActOnKeybindChanged:Unsubscribe(handler)
-
-    return self
 end
 
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
@@ -111,8 +78,6 @@ function Class:Initialize()
             function()
                 self:InitializeControls_() --                   order
                 self:OnRequestingCurrentUserPreferences_() --   order
-
-                -- DdlGreenItemsAutolootingMode_SelectionChanged_(self, response.PfuiUserPreferencesAdapter:GreenItemsAutolooting_GetMode()) --vital
             end
     )
 
@@ -144,7 +109,7 @@ function Class:OnRequestingCurrentUserPreferences_()
         return nil
     end
 
-    _isAdvertisementOfChangesEnabled = false --00
+    _commandsEnabled = false --00
 
     if not _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_Mode()) then
         _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(SGreenItemsAutolootingMode.RollGreed)
@@ -154,7 +119,7 @@ function Class:OnRequestingCurrentUserPreferences_()
         _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(SGreenItemsAutolootingActOnKeybind.Automatic)
     end
 
-    _isAdvertisementOfChangesEnabled = true
+    _commandsEnabled = true
 
     return response
 
@@ -170,26 +135,28 @@ function Class:DdlGreenItemsAutolootingMode_SelectionChanged_(sender, ea)
     _assert(sender)
     _assert(_type(ea) == "table")
 
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNew() ~= SGreenItemsAutolootingMode.LetUserChoose)
+    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreenItemsAutolootingMode.LetUserChoose)
 
-    if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingModeChanged:Raise(
-                self,
-                GreenItemsAutolootingApplyNewModeCommand:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
+    if _commandsEnabled then
+        ZenEngineCommandsService:New():Handle_GreenItemsAutolootingApplyNewModeCommand(
+                GreenItemsAutolootingApplyNewModeCommand:New()
+                                                        :ChainSetOld(ea:GetOldValue())
+                                                        :ChainSetNew(ea:GetNewValue())
         )
     end
 end
 
-function Class:DdlGreenItemsAutolootingActOnKeybind_selectionChanged_(sender, ea)
+function Class:DdlGreenItemsAutolootingActOnKeybind_SelectionChanged_(sender, ea)
     _setfenv(1, self)
 
     _assert(sender)
     _assert(_type(ea) == "table")
 
-    if _isAdvertisementOfChangesEnabled then
-        _eventGreenItemsAutolootingActOnKeybindChanged:Raise(
-                self,
-                GreenItemsAutolootingApplyNewActOnKeybindCommand:New():ChainSetOld(ea:GetOld()):ChainSetNew(ea:GetNew())
+    if _commandsEnabled then
+        ZenEngineCommandsService:New():Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(
+                GreenItemsAutolootingApplyNewActOnKeybindCommand:New()
+                                                                :ChainSetOld(ea:GetOldValue())
+                                                                :ChainSetNew(ea:GetNewValue())
         )
     end
 end

@@ -57,13 +57,15 @@ function Class:EngineFreshStart()
     return self
 end
 
-function Class:GreeniesAutolooting_SwitchMode(value)
+function Class:Handle_GreenItemsAutolootingApplyNewModeCommand(command)
     _setfenv(1, self)
+    
+    _assert(_type(command) == "table", "command parameter is expected to be an object")
 
-    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(value) -- order
+    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(command:GetNewValue()) -- order
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository() -- order
-                              :GreeniesAutolooting_ChainUpdateMode(value)
+    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --                 order
+                              :GreeniesAutolooting_ChainUpdateMode(command:GetNewValue())
 
     if _userPreferencesUnitOfWork:SaveChanges() then
         -- todo   raise side-effect domain-events here
@@ -72,13 +74,15 @@ function Class:GreeniesAutolooting_SwitchMode(value)
     return self
 end
 
-function Class:GreeniesAutolooting_SwitchActOnKeybind(value)
+function Class:Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(command)
     _setfenv(1, self)
 
-    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(value) -- order
+    _assert(_type(command) == "table", "command parameter is expected to be an object")
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --         order
-                              :GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(command:GetNewValue()) -- order
+
+    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --                         order
+                              :GreeniesAutolooting_ChainUpdateActOnKeybind(command:GetNewValue())
 
     if _userPreferencesUnitOfWork:SaveChanges() then
         -- todo   raise side-effect domain-events here
