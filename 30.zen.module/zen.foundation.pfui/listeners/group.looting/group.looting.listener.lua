@@ -63,6 +63,31 @@ function Class:StartListening()
     return self
 end
 
+function Class:StopListening()
+    _setfenv(1, self)
+
+    _active = false
+
+    return self
+end
+
+function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
+
+    return self
+end
+
+function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
+
+    return self
+end
+
+-- private space
 function Class:EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
     _setfenv(1, self)
 
@@ -94,31 +119,6 @@ function Class:ApplyHookOnce_()
     return self
 end
 
-function Class:StopListening()
-    _setfenv(1, self)
-
-    _active = false
-
-    return self
-end
-
-function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
-
-    return self
-end
-
-function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
-
-    return self
-end
-
--- private space
 function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIndex)
     _setfenv(1, self)
 
