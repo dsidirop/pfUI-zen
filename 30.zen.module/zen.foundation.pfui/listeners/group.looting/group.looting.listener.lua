@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local Event = _importer("System.Event")
+local Event = _importer("Pavilion.System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
 local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")

@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _pairs, _print, _debugstack, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _pairs, _print, _importer, _debugstack, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -7,16 +7,19 @@
     local _type = _assert(_g.type)
     local _pairs = _assert(_g.pairs)
     local _print = _assert(_g.print)
+    local _importer = _assert(_g.pvl_namespacer_get)
     local _debugstack = _assert(_g.debugstack)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _setmetatable = _assert(_g.setmetatable)
     
-    return _assert, _setfenv, _type, _pairs, _print, _debugstack, _namespacer, _setmetatable
+    return _assert, _setfenv, _type, _pairs, _print, _importer, _debugstack, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("System.Event")
+local TableHelpers = _importer("Pavilion.Helpers.Tables")
+
+local Class = _namespacer("Pavilion.System.Event")
 
 function Class:New()
     _setfenv(1, self)
@@ -35,8 +38,9 @@ end
 local NoOwner = {}
 function Class:Subscribe(handler, owner)
     _setfenv(1, self)
+
     _assert(_type(handler) == "function")
-    -- _assert(owner ~= nil) -- dont  specifying the owner is optional
+    _assert(owner == nil or _type(owner) == "table")
 
     _handlers[handler] = owner or NoOwner -- we prevent double-subscriptions by using the handler itself as the key
     
@@ -46,7 +50,7 @@ end
 function Class:SubscribeOnce(handler, owner)
     _setfenv(1, self)
     _assert(_type(handler) == "function")
-    -- _assert(owner ~= nil) -- dont  specifying the owner is optional
+    _assert(owner == nil or _type(owner) == "table")
 
     self:Subscribe(handler, owner)
     self:SubscribeOnceImpl_(handler, owner)
@@ -54,9 +58,17 @@ function Class:SubscribeOnce(handler, owner)
     return self
 end
 
+function Class:HasSubscribers()
+    _setfenv(1, self)
+    
+    return not TableHelpers.IsEmpty(_handlers) 
+end
+
 function Class:SubscribeOnceImpl_(handler, owner)
     _setfenv(1, self)
+
     _assert(_type(handler) == "function")
+    _assert(owner == nil or _type(owner) == "table")
 
     _handlersJustOnce[handler] = owner or NoOwner
 
@@ -65,6 +77,7 @@ end
 
 function Class:Unsubscribe(handler)
     _setfenv(1, self)
+
     _assert(_type(handler) == "function", _debugstack())
 
     _handlers[handler] = nil
