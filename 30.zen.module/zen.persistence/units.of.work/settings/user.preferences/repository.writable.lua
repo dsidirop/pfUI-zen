@@ -25,7 +25,7 @@ local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Z
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
-function Class:New(dbcontext)  
+function Class:New(dbcontext)
     _setfenv(1, self)
 
     _assert(_type(dbcontext) == "table")
