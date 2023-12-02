@@ -21,7 +21,7 @@ end)()
 _setfenv(1, {})
 
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
-local UserPreferencesRepositoryUpdatable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryUpdatable")
+local UserPreferencesRepositoryWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
@@ -32,19 +32,19 @@ function Class:NewWithDBContext(dbcontext)
     
     return self:New(
             UserPreferencesRepositoryQueryable:New(dbcontext),
-            UserPreferencesRepositoryUpdatable:New(dbcontext)
+            UserPreferencesRepositoryWriteable:New(dbcontext)
     )
 end
 
-function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryUpdatable)
+function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryWriteable)
     _setfenv(1, self)
 
     _assert(_type(userPreferencesRepositoryQueryable) == "table")
-    _assert(_type(userPreferencesRepositoryUpdatable) == "table")
+    _assert(_type(userPreferencesRepositoryWriteable) == "table")
 
     local instance = {
         _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable,
-        _userPreferencesRepositoryUpdatable = userPreferencesRepositoryUpdatable,
+        _userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable,
     }
 
     _setmetatable(instance, self)
@@ -63,14 +63,14 @@ end
 function Class:HasChanges()
     _setfenv(1, self)
 
-    return _userPreferencesRepositoryUpdatable:HasChanges()
+    return _userPreferencesRepositoryWriteable:HasChanges()
 end
 
 -- @return self
 function Class:GreeniesAutolooting_ChainUpdateMode(value)
     _setfenv(1, self)
     
-    _userPreferencesRepositoryUpdatable:GreeniesAutolooting_ChainUpdateMode(value)
+    _userPreferencesRepositoryWriteable:GreeniesAutolooting_ChainUpdateMode(value)
     
     return self
 end
@@ -79,7 +79,7 @@ end
 function Class:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    _userPreferencesRepositoryUpdatable:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+    _userPreferencesRepositoryWriteable:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
 
     return self
 end
