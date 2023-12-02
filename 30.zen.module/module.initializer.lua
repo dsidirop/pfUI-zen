@@ -1,31 +1,24 @@
--- todo   tweak pfui so that it wont autocommit the settings when the user tweaks the ui-controls    we want to be able to do that ourselves using standard patterns: commands + unit-of-work + repositories!
--- todo   introduce commands, command-handlers and command-results
--- todo   add reset-to-defaults button
--- todo   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
-
 -- inspired by pfUI-eliteOverlay.lua
 local function Main(_pfUI)
     _pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         setfenv(1, {}) -- we deliberately disable any and all implicit access to global variables inside this function    
 
-        local _g = _pfUI:GetEnvironment()        
+        local _g = _pfUI:GetEnvironment()
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
+        local _print = _g.assert(_g.print)
+        local _setfenv = _g.assert(_g.setfenv)
         local _pfuiGui = _g.assert(_g.pfUI.gui)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
-        
-        local _rollOnLoot = _g.assert(_g.RollOnLoot) -- wow api   todo  put this in a custom class called Zen.LootHelpers or something        
-        local _getItemQualityColor = _g.assert(_g.GetItemQualityColor)
-        local _getLootRollItemLink = _g.assert(_g.GetLootRollItemLink)
-        local _getLootRollItemInfo = _g.assert(_g.GetLootRollItemInfo)
 
-        local _enumerable = _g.assert(_g.Enumerable) -- addon specific
-        
-        local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.UserPreferencesForm")
-        local PfuiUserPreferencesAdapter = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Settings.PfuiUserPreferencesAdapter")
+        local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
+        local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
+        local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
+        local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
+        local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
 
         local addon = {
             ownName = "Zen",
@@ -38,7 +31,7 @@ local function Main(_pfUI)
             fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
         }
 
-        local addonPath = _enumerable -- @formatter:off   detect current addon path
+        local addonPath = Enumerable -- @formatter:off   detect current addon path
                             .FromList({ "", "-dev", "-master", "-tbc", "-wotlk" })
                             :Select(function (postfix)
                                 local name, _, _, enabled = _getAddOnInfo(addon.folderName .. postfix)
@@ -58,7 +51,7 @@ local function Main(_pfUI)
             return
         end
 
-        local _addonPfuiRawPreferencesSchemaV1 = {
+        local addonPfuiRawPreferencesSchemaV1 = {
             -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
             addonPreferencesKeyname = "zen.config.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
@@ -66,27 +59,11 @@ local function Main(_pfUI)
                 mode = {
                     keyname = "greenies_autolooting.v1.mode",
                     default = "roll_greed",
-                    options = {
-                        "roll_need:" .. _t["Roll '|cFFFF4500Need|r'"],
-                        "roll_greed:" .. _t["Roll '|cFFFFD700Greed|r'"],
-                        "just_pass:" .. _t["Just '|cff888888Pass|r'"],
-                        "let_user_choose:" .. _t["Let me handle it myself"],
-                    },
                 },
 
                 act_on_keybind = {
                     keyname = "greenies_autolooting.v1.keybind",
                     default = "automatic",
-                    options = {
-                        "automatic:" .. _t["|cff888888(Automatic)|r"],
-                        "alt:" .. _t["Alt"],
-                        "ctrl:" .. _t["Ctrl"],
-                        "shift:" .. _t["Shift"],
-                        "ctrl_alt:" .. _t["Ctrl + Alt"],
-                        "ctrl_shift:" .. _t["Ctrl + Shift"],
-                        "alt_shift:" .. _t["Alt + Shift"],
-                        "ctrl_alt_shift:" .. _t["Ctrl + Alt + Shift"],
-                    },
                 },
             }
         }
@@ -105,7 +82,6 @@ local function Main(_pfUI)
         --    return
         --end
 
-
         function EnsureAddonDefaultPreferencesAreRegistered(specs)
             local isFirstTimeLoading = _c[specs.addonPreferencesKeyname] == nil -- keep this first
 
@@ -119,65 +95,18 @@ local function Main(_pfUI)
             return _c[specs.addonPreferencesKeyname]
 
             -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
-        end        
+        end
+
+        EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
+
+        UserPreferencesForm -- @formatter:off
+                :New(_t, _pfuiGui)
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
+                    ea.Response.UserPreferences = UserPreferencesServiceQueryable:New():GetAllUserPreferences()
+                end)
+                :Initialize() -- @formatter:on
         
-        local _addonPfuiRawPreferences = EnsureAddonDefaultPreferencesAreRegistered(_addonPfuiRawPreferencesSchemaV1)
-
-        local _pfuiPreferencesAdapter = PfuiUserPreferencesAdapter:New(_addonPfuiRawPreferences, _addonPfuiRawPreferencesSchemaV1)
-
-        local _settingsForm = UserPreferencesForm:New(
-                _t,
-                _pfuiGui,
-                _addonPfuiRawPreferences,
-                _addonPfuiRawPreferencesSchemaV1
-        )
-
-        _settingsForm:Initialize()
-
-        local QUALITY_GREEN = 2
-        local _, _, _, greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
-
-        local _base_pfuiRoll_UpdateLootRoll = _pfUI.roll.UpdateLootRoll
-        function _pfUI.roll:UpdateLootRoll(i)
-            -- override pfUI's UpdateLootRoll
-            _base_pfuiRoll_UpdateLootRoll(i)
-
-            local rollMode = TranslateAutogamblingModeSettingToLuaRollMode(_pfuiPreferencesAdapter:GreenItemsAutolooting_GetMode())
-            if not rollMode then
-                return -- let the user choose
-            end
-
-            local frame = _pfUI.roll.frames[i]
-            if not frame or not frame.rollID or not frame:IsShown() then
-                -- shouldnt happen but just in case
-                return
-            end
-
-            local _, _, _, quality = _getLootRollItemInfo(frame.rollID) -- todo   this could be optimized if we convince pfui to store the loot properties in the frame
-            if quality == QUALITY_GREEN and frame:IsVisible() then -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-                -- todo   get keybind activation into account here
-                _rollOnLoot(frame.rollID, rollMode) -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
-
-                DEFAULT_CHAT_FRAME:AddMessage(addon.fullNameColored .. " " .. greeniesQualityHex .. rollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
-            end
-        end
-
-        function TranslateAutogamblingModeSettingToLuaRollMode(greeniesAutogamblingMode)
-            if greeniesAutogamblingMode == "just_pass" then
-                return "PASS"
-            end
-
-            if greeniesAutogamblingMode == "roll_need" then
-                return "NEED"
-            end
-
-            if greeniesAutogamblingMode == "roll_greed" then
-                return "GREED"
-            end
-
-            return nil -- let_user_choose
-        end
-
+        ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
     end)
 end
 
