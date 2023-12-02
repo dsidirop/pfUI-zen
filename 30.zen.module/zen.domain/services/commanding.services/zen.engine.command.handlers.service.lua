@@ -40,15 +40,17 @@ function Class:New(userPreferencesUnitOfWork)
     return instance
 end
 
-function Class:EngineFreshStart()
+function Class:Handle_RestartEngineCommand(_)
     _setfenv(1, self)
-
+    
     local userPreferencesDto = _userPreferencesUnitOfWork:GetUserPreferencesRepository()
                                                          :GetAllUserPreferences()
 
     local zenEngineSettings = ZenEngineSettings:New() -- todo  automapper
-    zenEngineSettings:GetGreeniesAutolooterAggregateSettings():ChainSetMode(userPreferencesDto:GetGreeniesAutolooting_Mode())
-    zenEngineSettings:GetGreeniesAutolooterAggregateSettings():ChainSetActOnKeybind(userPreferencesDto:GetGreeniesAutolooting_ActOnKeybind())
+
+    zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
+                     :ChainSetMode(userPreferencesDto:GetGreeniesAutolooting_Mode())
+                     :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesAutolooting_ActOnKeybind())
 
     _zenEngineSingleton:Stop()
                        :SetSettings(zenEngineSettings)
@@ -61,7 +63,7 @@ function Class:Handle_GreenItemsAutolootingApplyNewModeCommand(command)
     _setfenv(1, self)
     
     _assert(_type(command) == "table", "command parameter is expected to be an object")
-
+    
     _zenEngineSingleton:GreeniesAutolooting_SwitchMode(command:GetNewValue()) -- order
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository() --                 order

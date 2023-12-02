@@ -41,6 +41,11 @@ function Class:New(greeniesAutolooterAggregate)
 end
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place
 
+function Class:IsRunning() -- todo   partial classes
+    _setfenv(1, self)
+
+    return _isRunning
+end
 
 -- settings is expected to be Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings
 function Class:SetSettings(settings) -- todo   partial classes
@@ -79,8 +84,8 @@ function Class:Start()
         return self -- nothing to do
     end
 
-    _isRunning = true
     _greeniesAutolooterAggregate:Start()
+    _isRunning = true
 
     return self
 end
@@ -88,12 +93,15 @@ end
 function Class:Stop()
     _setfenv(1, self)
 
-    _isRunning = false
+    if not _isRunning then
+        return self -- nothing to do
+    end
+
     _greeniesAutolooterAggregate:Stop()
+    _isRunning = false
 
     return self
 end
-
 
 function Class:GreeniesAutolooting_SwitchMode(value) -- todo   partial classes
     _setfenv(1, self)

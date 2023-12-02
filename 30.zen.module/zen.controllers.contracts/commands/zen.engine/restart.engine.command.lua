@@ -20,52 +20,16 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewActOnKeybindCommand")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
 
 function Class:New()
     _setfenv(1, self)
 
     local instance = {
-        _old = nil,
-        _new = nil,
     }
 
     _setmetatable(instance, self)
     self.__index = self
 
     return instance
-end
-
-function Class:GetOldValue()
-    _setfenv(1, self)
-
-    return _old
-end
-
-function Class:GetNewValue()
-    _setfenv(1, self)
-
-    return _new
-end
-
-function Class:ChainSetOld(old)
-    _setfenv(1, self)
-
-    _assert(old == nil or SGreenItemsAutolootingActOnKeybind.Validate(old))
-
-    _old = old
-
-    return self
-end
-
-function Class:ChainSetNew(new)
-    _setfenv(1, self)
-
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(new))
-
-    _new = new
-
-    return self
 end

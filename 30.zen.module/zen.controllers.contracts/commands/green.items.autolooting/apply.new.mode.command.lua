@@ -1,7 +1,4 @@
-﻿-- the main reason we introduce this class is to be able to set the selected option by nickname  on top of that
--- the original pfui dropdown control has a counter-intuitive api surface that is not fluent enough for day to day use 
-
-local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)

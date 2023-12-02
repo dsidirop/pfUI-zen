@@ -29,11 +29,12 @@ local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Z
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
 function Class:New(groupLootingListener, groupLootingHelper)
-    -- _setfenv(1, self)
+    _setfenv(1, self)
 
     local instance = {
         _settings = nil,
 
+        _isRunning = false,
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
@@ -42,6 +43,12 @@ function Class:New(groupLootingListener, groupLootingHelper)
     self.__index = self
 
     return instance
+end
+
+function Class:IsRunning()
+    _setfenv(1, self)
+
+    return _isRunning
 end
 
 -- settings is expected to be AggregateSettings
@@ -63,6 +70,10 @@ function Class:Start()
 
     _assert(_settings, "attempt to run without any settings being loaded")
 
+    if _isRunning then
+        return self -- nothing to do
+    end
+
     if _settings:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
         return self -- nothing to do
     end
@@ -70,34 +81,50 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
+    --todo  start keybind listener
+
+    _isRunning = true
+
     return self
 end
 
 function Class:Stop()
     _setfenv(1, self)
 
+    if not _isRunning then
+        return self -- nothing to do
+    end
+
     _groupLootingListener:StopListening()
                          :EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_);
+
+    --todo  stop keybind listener
+
+    _isRunning = false
 
     return self
 end
 
-
 function Class:SwitchMode(value)
     _setfenv(1, self)
-    
+
     _assert(SGreenItemsAutolootingMode.Validate(value))
-    
+
     if _settings:GetMode() == value then
         return self -- nothing to do
     end
 
     _settings:ChainSetMode(value) --00 slight hack
 
-    self:Restart() --vital
-    
+    if value == SGreenItemsAutolootingMode.LetUserChoose then
+        self:Stop() -- special case
+        return self
+    end
+
+    self:Start()
+
     return self
-    
+
     --00 this is a bit of a hack   normally we should deep clone the settings and then change the mode
     --   on the clone and perform validation there   but for such a simple case it would be an overkill
 end
@@ -112,13 +139,17 @@ function Class:SwitchActOnKeybind(value)
     end
 
     _settings:ChainSetActOnKeybind(value) --00 slight hack
-    
+
+    -- _keybindIntercept:Start() --10 dont
+
     return self
 
-    --00 this is a bit of a hack   normally we should deep clone the settings and then change the mode
-    --   on the clone and perform validation there   but for such a simple case it would be an overkill
+    --00  this is a bit of a hack   normally we should deep clone the settings and then change the mode
+    --    on the clone and perform validation there   but for such a simple case it would be an overkill
+    --
+    --10  the keybind interceptor should never be getting launched here   it should be getting launched on
+    --    demand if and only if loot gambling is detected
 end
-
 
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _setfenv(1, self)
@@ -142,7 +173,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     end
 
     if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
-         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
+        _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
