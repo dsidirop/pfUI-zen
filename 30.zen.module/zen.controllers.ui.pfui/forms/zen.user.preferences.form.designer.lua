@@ -45,7 +45,7 @@ function Class:InitializeControls_()
     _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind = PfuiDropdownX:New() --@formatter:off
                                                              :ChainSetCaption(_t["Upon Pressing"])
                                                              :ChainSetMenuItems({
-                                                                    SGreeniesGrouplootingAutomationActOnKeybind.Automatic .. ":" .. _t["|cff888888(Simply Autoloot)|r"],
+                                                                    SGreeniesGrouplootingAutomationActOnKeybind.Automatic .. ":" .. _t["|cff888888(No Need to Press Anything)|r"],
                                                                     SGreeniesGrouplootingAutomationActOnKeybind.Alt .. ":" .. _t["Alt"],
                                                                     SGreeniesGrouplootingAutomationActOnKeybind.Ctrl .. ":" .. _t["Ctrl"],
                                                                     SGreeniesGrouplootingAutomationActOnKeybind.Shift .. ":" .. _t["Shift"],

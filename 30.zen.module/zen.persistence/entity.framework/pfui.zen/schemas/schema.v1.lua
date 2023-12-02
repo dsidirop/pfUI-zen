@@ -41,12 +41,12 @@ SchemaV1.Settings = {
     UserPreferences = {
         GreeniesAutolooting = {
             Mode = {
-                Keyname = "user_preferences.greenies_autolooting.mode",
+                Keyname = "user_preferences.greenies_grouplooting_automation.mode",
                 Default = SGreeniesGrouplootingAutomationMode.RollGreed,
             },
 
             ActOnKeybind = {
-                Keyname = "user_preferences.greenies_autolooting.act_on_keybind",
+                Keyname = "user_preferences.greenies_grouplooting_automation.act_on_keybind",
                 Default = SGreeniesGrouplootingAutomationActOnKeybind.Automatic,
             },
         },
