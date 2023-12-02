@@ -22,7 +22,7 @@ _setfenv(1, {})
 
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.QueryingServices.AddonSettingsQueryingService")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.QueryingServices.AddonSettingsQueryingService")
 
 function Class:New(userPreferencesRepositoryQueryable)
     _setfenv(1, self)
