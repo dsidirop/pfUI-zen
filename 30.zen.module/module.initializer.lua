@@ -22,7 +22,7 @@ local function Main(_pfUI)
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
-        local AddonSettingsQueryingService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.QueryingServices.AddonSettingsQueryingService")
+        local AddonSettingsServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.ServiceQueryable")
         local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 
         local addon = {
@@ -107,7 +107,7 @@ local function Main(_pfUI)
         UserPreferencesForm -- @formatter:off
                 :New(_t, _pfuiGui)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
-                    ea.Response.UserPreferences = AddonSettingsQueryingService:New():GetAllUserPreferences()
+                    ea.Response.UserPreferences = AddonSettingsServiceQueryable:New():GetAllUserPreferences()
                 end)
                 :Initialize() -- @formatter:on
         
