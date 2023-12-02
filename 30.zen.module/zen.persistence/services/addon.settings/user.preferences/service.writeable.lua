@@ -22,6 +22,8 @@ _setfenv(1, {})
 
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
+local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
 
@@ -51,7 +53,6 @@ function Class:GreeniesAutolooting_UpdateMode(value)
     return _userPreferencesUnitOfWork:SaveChanges()
 end
 
--- @return self
 function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
     _setfenv(1, self)
 

@@ -22,16 +22,16 @@ _setfenv(1, {})
 
 local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
-local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
+local UserPreferencesService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 
-function Class:New(userPreferencesUnitOfWork)
+function Class:New(userPreferencesService)
     _setfenv(1, self)
 
     local instance = {
         _zenEngineSingleton = ZenEngine.I, --todo   refactor this later on so that this gets injected through DI        
-        _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(),
+        _userPreferencesService = userPreferencesService or UserPreferencesService:NewWithDBContext(),
     }
 
     _setmetatable(instance, self)
@@ -42,9 +42,8 @@ end
 
 function Class:Handle_RestartEngineCommand(_)
     _setfenv(1, self)
-    
-    local userPreferencesDto = _userPreferencesUnitOfWork:GetUserPreferencesRepository()
-                                                         :GetAllUserPreferences()
+
+    local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
 
     local zenEngineSettings = ZenEngineSettings:New() -- todo  automapper
 
@@ -61,15 +60,13 @@ end
 
 function Class:Handle_GreenItemsAutolootingApplyNewModeCommand(command)
     _setfenv(1, self)
-    
+
     _assert(_type(command) == "table", "command parameter is expected to be an object")
-    
-    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(command:GetNewValue()) -- order
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --                 order
-                              :GreeniesAutolooting_ChainUpdateMode(command:GetNewValue())
+    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(command:GetNewValue()) --                     order
 
-    if _userPreferencesUnitOfWork:SaveChanges() then
+    local success = _userPreferencesService:GreeniesAutolooting_UpdateMode(command:GetNewValue()) -- order
+    if success then
         -- todo   raise side-effect domain-events here
     end
 
@@ -81,12 +78,10 @@ function Class:Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(command)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
 
-    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(command:GetNewValue()) -- order
+    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(command:GetNewValue()) --                      order
 
-    _userPreferencesUnitOfWork:GetUserPreferencesRepository() --                         order
-                              :GreeniesAutolooting_ChainUpdateActOnKeybind(command:GetNewValue())
-
-    if _userPreferencesUnitOfWork:SaveChanges() then
+    local success = _userPreferencesService:GreeniesAutolooting_UpdateActOnKeybind(command:GetNewValue()) --  order
+    if success then
         -- todo   raise side-effect domain-events here
     end
 
