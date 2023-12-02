@@ -20,8 +20,8 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateSettings")
 
@@ -54,7 +54,7 @@ end
 function Class:ChainSetMode(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
     
     _mode = value
 
@@ -64,7 +64,7 @@ end
 function Class:ChainSetActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
     _actOnKeybind = value
 

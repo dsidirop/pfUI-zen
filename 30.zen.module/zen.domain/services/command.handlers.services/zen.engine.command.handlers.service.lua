@@ -58,7 +58,7 @@ function Class:Handle_RestartEngineCommand(_)
     return self
 end
 
-function Class:Handle_GreenItemsAutolootingApplyNewModeCommand(command)
+function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
     _setfenv(1, self)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
@@ -73,7 +73,7 @@ function Class:Handle_GreenItemsAutolootingApplyNewModeCommand(command)
     return self
 end
 
-function Class:Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(command)
+function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(command)
     _setfenv(1, self)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")

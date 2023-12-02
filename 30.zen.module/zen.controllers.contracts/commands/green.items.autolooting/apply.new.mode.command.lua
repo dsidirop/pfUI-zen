@@ -20,9 +20,9 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewModeCommand")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
 
 function Class:New()
     _setfenv(1, self)
@@ -53,7 +53,7 @@ end
 function Class:ChainSetOld(old)
     _setfenv(1, self)
 
-    _assert(old == nil or SGreenItemsAutolootingMode.Validate(old))
+    _assert(old == nil or SGreeniesGrouplootingAutomationMode.Validate(old))
 
     _old = old
 
@@ -63,7 +63,7 @@ end
 function Class:ChainSetNew(new)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(new))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(new))
 
     _new = new
 

@@ -18,11 +18,11 @@ end)()
 _setfenv(1, {})
 
 local Event = _importer("System.Event")
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
-local GreenItemsAutolootingApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewModeCommand")
-local GreenItemsAutolootingApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreenItemsAutolooting.ApplyNewActOnKeybindCommand")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
+local GreeniesGrouplootingAutomationApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
+local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
 
@@ -38,8 +38,8 @@ function Class:New(T, pfuiGui)
         _ui = {
             frmContainer = nil,
             lblGrouplootSectionHeader = nil,
-            ddlGreenItemsAutolooting_mode = nil,
-            ddlGreenItemsAutolooting_actOnKeybind = nil,
+            ddlGreeniesGrouplootingAutomation_mode = nil,
+            ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
         },
 
         _eventRequestingCurrentUserPreferences = Event:New(),
@@ -111,12 +111,12 @@ function Class:OnRequestingCurrentUserPreferences_()
 
     _commandsEnabled = false --00
 
-    if not _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_Mode()) then
-        _ui.ddlGreenItemsAutolooting_mode:TrySetSelectedOptionByValue(SGreenItemsAutolootingMode.RollGreed)
+    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_Mode()) then
+        _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_ActOnKeybind()) then
-        _ui.ddlGreenItemsAutolooting_actOnKeybind:TrySetSelectedOptionByValue(SGreenItemsAutolootingActOnKeybind.Automatic)
+    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_ActOnKeybind()) then
+        _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 
     _commandsEnabled = true
@@ -129,32 +129,32 @@ function Class:OnRequestingCurrentUserPreferences_()
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Class:DdlGreenItemsAutolootingMode_SelectionChanged_(sender, ea)
+function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, ea)
     _setfenv(1, self)
 
     _assert(sender)
     _assert(_type(ea) == "table")
 
-    _ui.ddlGreenItemsAutolooting_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreenItemsAutolootingMode.LetUserChoose)
+    _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
 
     if _commandsEnabled then
-        ZenEngineCommandHandlersService:New():Handle_GreenItemsAutolootingApplyNewModeCommand(
-                GreenItemsAutolootingApplyNewModeCommand:New()
+        ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
+                GreeniesGrouplootingAutomationApplyNewModeCommand:New()
                                                         :ChainSetOld(ea:GetOldValue())
                                                         :ChainSetNew(ea:GetNewValue())
         )
     end
 end
 
-function Class:DdlGreenItemsAutolootingActOnKeybind_SelectionChanged_(sender, ea)
+function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(sender, ea)
     _setfenv(1, self)
 
     _assert(sender)
     _assert(_type(ea) == "table")
 
     if _commandsEnabled then
-        ZenEngineCommandHandlersService:New():Handle_GreenItemsAutolootingApplyNewActOnKeybindCommand(
-                GreenItemsAutolootingApplyNewActOnKeybindCommand:New()
+        ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
+                GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand:New()
                                                                 :ChainSetOld(ea:GetOldValue())
                                                                 :ChainSetNew(ea:GetNewValue())
         )

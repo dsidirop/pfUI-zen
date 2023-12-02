@@ -23,8 +23,8 @@ _setfenv(1, {})
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
 
@@ -74,7 +74,7 @@ function Class:Start()
         return self -- nothing to do
     end
 
-    if _settings:GetMode() == SGreenItemsAutolootingMode.LetUserChoose then
+    if _settings:GetMode() == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         return self -- nothing to do
     end
 
@@ -108,7 +108,7 @@ end
 function Class:SwitchMode(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
     if _settings:GetMode() == value then
         return self -- nothing to do
@@ -116,7 +116,7 @@ function Class:SwitchMode(value)
 
     _settings:ChainSetMode(value) --00 slight hack
 
-    if value == SGreenItemsAutolootingMode.LetUserChoose then
+    if value == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         self:Stop() -- special case
         return self
     end
@@ -132,7 +132,7 @@ end
 function Class:SwitchActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
     if _settings:GetActOnKeybind() == value then
         return self -- nothing to do
@@ -155,7 +155,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _setfenv(1, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode()
-    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreenItemsAutolootingMode.LetUserChoose then
+    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         return -- let the user choose
     end
 
@@ -164,15 +164,15 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreenItemsAutolootingMode.RollNeed and not rolledItemInfo:IsNeedable() then
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not rolledItemInfo:IsNeedable() then
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreenItemsAutolootingMode.RollGreed and not rolledItemInfo:IsGreedable() then
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not rolledItemInfo:IsGreedable() then
         return
     end
 
-    if _stage:GetActOnKeybind() == SGreenItemsAutolootingActOnKeybind.Automatic then
+    if _stage:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
@@ -196,17 +196,17 @@ end
 function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)
     _setfenv(1, self)
 
-    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.JustPass then
+    if greeniesAutogamblingMode == SGreeniesGrouplootingAutomationMode.JustPass then
         return EWowGamblingResponseType.Pass
     end
 
-    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollNeed then
+    if greeniesAutogamblingMode == SGreeniesGrouplootingAutomationMode.RollNeed then
         return EWowGamblingResponseType.Need
     end
 
-    if greeniesAutogamblingMode == SGreenItemsAutolootingMode.RollGreed then
+    if greeniesAutogamblingMode == SGreeniesGrouplootingAutomationMode.RollGreed then
         return EWowGamblingResponseType.Greed
     end
 
-    return nil -- SGreenItemsAutolootingMode.LetUserChoose
+    return nil -- SGreeniesGrouplootingAutomationMode.LetUserChoose
 end
