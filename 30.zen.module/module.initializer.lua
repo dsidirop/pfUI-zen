@@ -1,20 +1,15 @@
--- todo   save our settings outside pfui config   we are completely independent of pfui in that regard
--- todo   adapt and adopt middleclass to implement inheritance and mixins https://github.com/kikito/middleclass/blob/master/middleclass.lua
--- todo   add reset-to-defaults button
--- todo   add artwork at the top of readme.md and inside the configuration page of the addon as a faint watermark
-
 -- inspired by pfUI-eliteOverlay.lua
 local function Main(_pfUI)
     _pfUI:RegisterModule("Zen", "vanilla:tbc", function()
         setfenv(1, {}) -- we deliberately disable any and all implicit access to global variables inside this function    
 
-        local _g = _pfUI:GetEnvironment()        
+        local _g = _pfUI:GetEnvironment()
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
         local _print = _g.assert(_g.print)
-        local _pfuiGui = _g.assert(_g.pfUI.gui)
         local _setfenv = _g.assert(_g.setfenv)
+        local _pfuiGui = _g.assert(_g.pfUI.gui)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
@@ -22,8 +17,8 @@ local function Main(_pfUI)
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
-        local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
         local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
+        local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
 
         local addon = {
             ownName = "Zen",
