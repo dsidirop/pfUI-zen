@@ -22,10 +22,6 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 function Class:InitializeControls_()
     _setfenv(1, self)
 
-    -- todo   add a "reset to defaults" button
-    -- todo   add polyfils for lua 5.2+ in regard to setfenv()/getfenv per  https://stackoverflow.com/a/14554565/863651
-    -- todo   introduce fluent builders for constructing families of ui elements like the ones below
-
     _ui.lblGrouplootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
     _ui.lblGrouplootSectionHeader:SetHeight(20)
 
