@@ -39,7 +39,7 @@ SchemaV1.Settings = {
     },
     
     UserPreferences = {
-        GreeniesAutolooting = {
+        GreeniesGrouplootingAutomation = {
             Mode = {
                 Keyname = "user_preferences.greenies_grouplooting_automation.mode",
                 Default = SGreeniesGrouplootingAutomationMode.RollGreed,

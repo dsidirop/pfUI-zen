@@ -42,24 +42,24 @@ function Class:New(userPreferencesUnitOfWork)
     return instance
 end
 
-function Class:GreeniesAutolooting_UpdateMode(value)
+function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
     _setfenv(1, self)
 
     _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
-                              :GreeniesAutolooting_ChainUpdateMode(value)
+                              :GreeniesGrouplootingAutomation_ChainUpdateMode(value)
 
     return _userPreferencesUnitOfWork:SaveChanges()
 end
 
-function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
     _setfenv(1, self)
 
     _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
-                              :GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+                              :GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
 
     return _userPreferencesUnitOfWork:SaveChanges()
 end

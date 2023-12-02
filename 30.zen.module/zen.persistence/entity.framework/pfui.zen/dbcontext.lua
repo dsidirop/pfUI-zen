@@ -42,9 +42,9 @@ function Class:New()
             },
             
             UserPreferences = {
-                GreeniesAutolooting = {
-                    Mode         = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Default),
-                    ActOnKeybind = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Default),
+                GreeniesGrouplootingAutomation = {
+                    Mode         = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode.Keyname]         or Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode.Default),
+                    ActOnKeybind = (rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind.Keyname] or Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind.Default),
                 },
             },
         },
@@ -63,8 +63,8 @@ function Class:SaveChanges()
     local rawAddonSettings = {}
 
     -- @formatter:off
-    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.Mode.Keyname]         = Settings.UserPreferences.GreeniesAutolooting.Mode
-    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind.Keyname] = Settings.UserPreferences.GreeniesAutolooting.ActOnKeybind
+    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode.Keyname]         = Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode
+    rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind.Keyname] = Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind
     -- @formatter:on
     
     PfuiConfiguration[Schema.RootKeyname] = rawAddonSettings

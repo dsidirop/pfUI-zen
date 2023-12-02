@@ -48,8 +48,8 @@ function Class:Handle_RestartEngineCommand(_)
     local zenEngineSettings = ZenEngineSettings:New() -- todo  automapper
 
     zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
-                     :ChainSetMode(userPreferencesDto:GetGreeniesAutolooting_Mode())
-                     :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesAutolooting_ActOnKeybind())
+                     :ChainSetMode(userPreferencesDto:GetGreeniesGrouplootingAutomation_Mode())
+                     :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesGrouplootingAutomation_ActOnKeybind())
 
     _zenEngineSingleton:Stop()
                        :SetSettings(zenEngineSettings)
@@ -63,9 +63,9 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
 
-    _zenEngineSingleton:GreeniesAutolooting_SwitchMode(command:GetNewValue()) --                     order
+    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) --                     order
 
-    local success = _userPreferencesService:GreeniesAutolooting_UpdateMode(command:GetNewValue()) -- order
+    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order
     if success then
         -- todo   raise side-effect domain-events here
     end
@@ -78,9 +78,9 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
 
-    _zenEngineSingleton:GreeniesAutolooting_SwitchActOnKeybind(command:GetNewValue()) --                      order
+    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
 
-    local success = _userPreferencesService:GreeniesAutolooting_UpdateActOnKeybind(command:GetNewValue()) --  order
+    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateActOnKeybind(command:GetNewValue()) --  order
     if success then
         -- todo   raise side-effect domain-events here
     end

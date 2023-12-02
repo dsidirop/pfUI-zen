@@ -111,11 +111,11 @@ function Class:OnRequestingCurrentUserPreferences_()
 
     _commandsEnabled = false --00
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_Mode()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesGrouplootingAutomation_Mode()) then
         _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesAutolooting_ActOnKeybind()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesGrouplootingAutomation_ActOnKeybind()) then
         _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 

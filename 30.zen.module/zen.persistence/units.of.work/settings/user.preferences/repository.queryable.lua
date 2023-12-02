@@ -48,6 +48,6 @@ function Class:GetAllUserPreferences()
 
     return UserPreferencesDto
             :New()
-            :ChainSetGreeniesAutolooting_Mode(_userPreferencesEntity.GreeniesAutolooting.Mode)
-            :ChainSetGreeniesAutolooting_ActOnKeybind(_userPreferencesEntity.GreeniesAutolooting.ActOnKeybind)
+            :ChainSetGreeniesGrouplootingAutomation_Mode(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode)
+            :ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind)
 end
