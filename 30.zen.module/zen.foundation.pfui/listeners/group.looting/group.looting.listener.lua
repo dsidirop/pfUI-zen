@@ -56,7 +56,7 @@ function Class:StartListening()
     end
 
     self:ApplyHookOnce_()
-        :EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+        :EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
 
     _active = true
 
@@ -88,7 +88,7 @@ function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
 end
 
 -- private space
-function Class:EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
     _setfenv(1, self)
 
     for rollFrameIndex in _pairs(PfuiRoll.frames) do

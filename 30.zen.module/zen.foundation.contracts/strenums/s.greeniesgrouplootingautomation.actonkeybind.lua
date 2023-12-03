@@ -23,13 +23,13 @@ _setfenv(1, {})
 local SGreeniesGrouplootingAutomationActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 SGreeniesGrouplootingAutomationActOnKeybind.Automatic = "automatic"
-SGreeniesGrouplootingAutomationActOnKeybind.Alt = "alt"
-SGreeniesGrouplootingAutomationActOnKeybind.Ctrl = "ctrl"
-SGreeniesGrouplootingAutomationActOnKeybind.Shift = "shift"
-SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt = "ctrl_alt"
-SGreeniesGrouplootingAutomationActOnKeybind.AltShift = "alt_shift"
-SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift = "ctrl_shift"
-SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift = "ctrl_alt_shift"
+SGreeniesGrouplootingAutomationActOnKeybind.Alt = "Alt"
+SGreeniesGrouplootingAutomationActOnKeybind.Ctrl = "Ctrl"
+SGreeniesGrouplootingAutomationActOnKeybind.Shift = "Shift"
+SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt = "Ctrl+Alt"
+SGreeniesGrouplootingAutomationActOnKeybind.AltShift = "Alt+Shift"
+SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift = "Ctrl+Shift"
+SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift = "Ctrl+Alt+Shift"
 
 function SGreeniesGrouplootingAutomationActOnKeybind.Validate(value)
     if _type(value) ~= "string" then

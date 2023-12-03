@@ -21,21 +21,27 @@ end)()
 _setfenv(1, {})
 
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
-local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
-local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
+local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
+local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.Keystrokes.KeystrokesListener")
+local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
-function Class:New(groupLootingListener, groupLootingHelper)
+function Class:New(groupLootingListener, keystrokesListener, groupLootingHelper)
     _setfenv(1, self)
 
     local instance = {
         _settings = nil,
 
         _isRunning = false,
+        _pendingLootGamblingRequests = {},
+
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
+
+        _keystrokesListener = keystrokesListener or KeystrokesListener:New(), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
 
@@ -81,7 +87,7 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
-    --todo  start keybind listener
+    -- _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) -- dont start the keybind listener here 
 
     _isRunning = true
 
@@ -95,10 +101,9 @@ function Class:Stop()
         return self -- nothing to do
     end
 
-    _groupLootingListener:StopListening()
-                         :EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_);
+    _groupLootingListener:StopListening():EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_);
 
-    --todo  stop keybind listener
+    _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_)
 
     _isRunning = false
 
@@ -151,6 +156,8 @@ function Class:SwitchActOnKeybind(value)
     --    demand if and only if loot gambling is detected
 end
 
+-- private space
+
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _setfenv(1, self)
 
@@ -177,13 +184,13 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
-    else
-        -- todo   start the keybind interceptor here on demand if it is not already started
+        return
     end
 
+    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                order
+    _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) -- order
+
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-    --
-    -- todo   if we actually have a keybind we should put the lootid in an observable sink that merges with the keybinding events
     --
     -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
     --
@@ -191,6 +198,31 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     --
     -- local _, _, _, _greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
+end
+
+function Class:KeystrokesListener_KeyDown_(_, ea)
+    _setfenv(1, self)
+
+    local desiredLootGamblingBehaviour = _settings:GetMode() --00  
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
+        _pendingLootGamblingRequests = {}
+        _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_)
+        return
+    end
+
+    if ea:ToString() == _settings:GetActOnKeybind() or _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
+        _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_) -- vital    
+
+        local requests = _pendingLootGamblingRequests --order
+        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --order
+        
+        _pendingLootGamblingRequests = {} --order        
+        for _, gamblingId in _pairs(requests) do --order
+            _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
+        end
+    end
+    
+    --00 we need to always keep in mind that the user might change the settings while item-gambling is in progress
 end
 
 function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)

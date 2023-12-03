@@ -36,6 +36,8 @@ function Class:New(key, hasModifierControl, hasModifierAlt, hasModifierShift)
         _hasModifierAlt = hasModifierAlt,
         _hasModifierShift = hasModifierShift,
         _hasModifierControl = hasModifierControl,
+        
+        _stringified = nil,
     }
 
     _setmetatable(instance, self)
@@ -66,4 +68,43 @@ function Class:HasModifierControl()
     _setfenv(1, self)
 
     return _hasModifierControl
+end
+
+function Class:ToString()
+    return self:__tostring()
+end
+
+function Class:__tostring()
+    _setfenv(1, self)
+    
+    if _stringified then
+        return _stringified
+    end
+    
+    local result = ""
+
+    if _hasModifierControl then
+        result = "Ctrl"
+    end
+    
+    if _hasModifierAlt then
+        result = result == ""
+                and "Alt"
+                or (result .. "+Alt")
+    end
+    
+    if _hasModifierShift then
+        result = result == ""
+                and "Shift"
+                or (result .. "+Shift")
+    end
+    
+    if _key then
+        result = result == ""
+                and _key
+                or (result .. "+" .. _key)
+    end
+
+    _stringified = result
+    return result
 end
