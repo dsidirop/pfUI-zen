@@ -21,27 +21,39 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.KeystrokesListener.EventArgs.KeyEventArgs")
+local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
 
-function Class:New(key, hasModifierControl, hasModifierAlt, hasModifierShift)
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
+
+function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, eventType)
     _setfenv(1, self)
 
-    _assert(_type(key) == "string" and _stringLength(key) == 1)
+    _assert(key == nil or _type(key) == "string" and _stringLength(key) <= 1)
     _assert(_type(hasModifierAlt) == "boolean")
     _assert(_type(hasModifierShift) == "boolean")
     _assert(_type(hasModifierControl) == "boolean")
+    _assert(EKeyEventType.Validate(eventType))
 
     local instance = {
-        _key = key,
+        _key = key or "",
+        _eventType = eventType, 
         _hasModifierAlt = hasModifierAlt,
         _hasModifierShift = hasModifierShift,
         _hasModifierControl = hasModifierControl,
+        
+        _stringified = nil,
     }
 
     _setmetatable(instance, self)
     self.__index = self
 
     return instance
+end
+
+function Class:GetType()
+    _setfenv(1, self)
+
+    return _eventType
 end
 
 function Class:GetKey()
@@ -66,4 +78,43 @@ function Class:HasModifierControl()
     _setfenv(1, self)
 
     return _hasModifierControl
+end
+
+function Class:ToString()
+    return self:__tostring()
+end
+
+function Class:__tostring()
+    _setfenv(1, self)
+    
+    if _stringified then
+        return _stringified
+    end
+    
+    local result = ""
+
+    if _hasModifierControl then
+        result = "Ctrl"
+    end
+    
+    if _hasModifierAlt then
+        result = result == ""
+                and "Alt"
+                or (result .. "+Alt")
+    end
+    
+    if _hasModifierShift then
+        result = result == ""
+                and "Shift"
+                or (result .. "+Shift")
+    end
+    
+    if _key then
+        result = result == ""
+                and _key
+                or (result .. "+" .. _key)
+    end
+
+    _stringified = result
+    return result
 end

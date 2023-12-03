@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -20,13 +20,11 @@ end)()
 
 _setfenv(1, {})
 
--- local KeyEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.KeyEventArgs")
-
 local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
 local ManagedElement = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element")
-local SWoWElementType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.SWoWElementType") 
+local SWoWElementType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType") 
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Builder")
 
@@ -38,11 +36,14 @@ function Class:New(other)
     other = other or {}
 
     local instance = {
-        _type = other._type,
+        _elementType = other._elementType or SWoWElementType.Frame,
+        
         _name = other._name,
-        _parentElement = other._parentElement,
+        _frameStrata = other._frameStrata,
+        _desiredParentElement = other._desiredParentElement,
         _propagateKeyboardInput = other._propagateKeyboardInput,
-        _useGlobalWowFrameAsParent = other._useGlobalWowFrameAsParent,
+        _keystrokeListenerEnabled = other._keystrokeListenerEnabled,
+        _useWowUIRootFrameAsParent = other._useWowUIRootFrameAsParent,
         _namedXmlFramesToInheritFrom = other._namedXmlFramesToInheritFrom,
     }
 
@@ -55,30 +56,32 @@ end
 function Class:Build()
     _setfenv(1, self)
 
-    _assert(SWoWElementType.Validate(_elementType), "element type should be one of SWoWElementType")
-    _assert(_name == nil or _type(_name) == "boolean", "name must be nil or a string")
-    _assert(_type(_propagateKeyboardInput) == "boolean", "propagateKeyboardInput must be a boolean")
-    _assert(_type(_useGlobalWowFrameAsParent) == "boolean", "useGlobalWowFrameAsParent must be a boolean")
-    _assert(_parentElement == nil or _type(_parentElement) == "table", "parentElement must be nil or a table")
-    _assert(_namedXmlFramesToInheritFrom == nil or _type(_namedXmlFramesToInheritFrom) == "string", "namedXmlFramesToInheritFrom must be nil or a comma-separated string")
-
-    _elementType = _elementType or SWoWElementType.Frame
-
-    _parentElement = _useGlobalWowFrameAsParent
+    local eventualParentElement = _useWowUIRootFrameAsParent
             and WoWUIParent
-            or _parentElement
+            or _desiredParentElement
 
     local newElement = WoWCreateFrame(
-            SWoWElementType.Frame,
+            _elementType,
             _name, -- if the name is set to something then wowapi will autocreate a global variable _g[_name] = frame  ouch
-            _parentElement,
+            eventualParentElement,
             _namedXmlFramesToInheritFrom
     )
 
-    _assert(_type(newElement) == "table", "failed to create new element")
+    local managedElement = ManagedElement:New(newElement)
 
-    return ManagedElement:New()
-                         :ChainSetPropagateKeyboardInput(_propagateKeyboardInput)
+    if _frameStrata ~= nil then
+        managedElement:ChainSetFrameStrata(_frameStrata)
+    end
+
+    if _propagateKeyboardInput ~= nil then
+        managedElement:ChainSetPropagateKeyboardInput(_propagateKeyboardInput)
+    end
+
+    if _keystrokeListenerEnabled ~= nil then
+        managedElement:ChainSetKeystrokeListenerEnabled(_keystrokeListenerEnabled)
+    end
+
+    return managedElement
 end
 
 function Class:WithTypeFrame()
@@ -90,10 +93,32 @@ end
 function Class:WithType(frameType)
     _setfenv(1, self)
 
-    _assert(SWoWElementType.Validate(frameType), "frameType should be SWoWElementType")
+    _assert(SWoWElementType.Validate(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
     
     local clone = Class:New(self)
-    clone._type = frameType
+    clone._elementType = frameType
+
+    return clone
+end
+
+function Class:WithFrameStrata(value)
+    _setfenv(1, self)
+
+    _assert(_type(value) == "string", "frame-strata must be a string")
+
+    local clone = Class:New(self)
+    clone._frameStrata = value
+
+    return clone
+end
+
+function Class:WithKeystrokeListenerEnabled(onOrOff)
+    _setfenv(1, self)
+
+    _assert(_type(onOrOff) == "boolean", "value must be a boolean")
+
+    local clone = Class:New(self)
+    clone._keystrokeListenerEnabled = onOrOff
 
     return clone
 end
@@ -115,7 +140,7 @@ function Class:WithParentElement(parentElement)
     _assert(parentElement == nil or _type(parentElement) == "table", "parentElement must be nil or a table")
     
     local clone = Class:New(self)
-    clone._parentElement = parentElement
+    clone._desiredParentElement = parentElement
 
     return clone
 end
@@ -131,13 +156,13 @@ function Class:WithPropagateKeyboardInput(propagateKeyboardInput)
     return clone
 end
 
-function Class:WithUseGlobalWowFrameAsParent(useGlobalWowFrameAsParent)
+function Class:WithUseWowUIRootFrameAsParent(useWowUIRootFrameAsParent)
     _setfenv(1, self)
 
-    _assert(_type(useGlobalWowFrameAsParent) == "boolean", "useGlobalWowFrameAsParent must be a boolean")
+    _assert(_type(useWowUIRootFrameAsParent) == "boolean", "useWowUIRootFrameAsParent must be a boolean")
     
     local clone = Class:New(self)
-    clone._useGlobalWowFrameAsParent = useGlobalWowFrameAsParent
+    clone._useWowUIRootFrameAsParent = useWowUIRootFrameAsParent
 
     return clone
 end

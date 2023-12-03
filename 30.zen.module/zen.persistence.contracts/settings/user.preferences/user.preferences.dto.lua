@@ -66,7 +66,7 @@ end
 function Class:ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
 
     _greeniesGrouplootingAutomation.actOnKeybind = value
 

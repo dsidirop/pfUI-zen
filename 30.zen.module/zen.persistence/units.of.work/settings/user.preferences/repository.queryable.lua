@@ -20,7 +20,10 @@ end)()
 
 _setfenv(1, {})
 
-local DBContext =_importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
+
+local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
@@ -32,13 +35,13 @@ function Class:New(dbcontextReadonly)
 
     dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
 
-    local instance = {        
+    local instance = {
         _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
     }
 
     _setmetatable(instance, self)
     self.__index = self
-    
+
     return instance
 end
 
@@ -46,8 +49,18 @@ end
 function Class:GetAllUserPreferences()
     _setfenv(1, self)
 
-    return UserPreferencesDto
+    local mode = SGreeniesGrouplootingAutomationMode.Validate(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
+            and _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode
+            or SGreeniesGrouplootingAutomationMode.Greed
+
+    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.Validate(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
+            and _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind
+            or SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
+
+    return UserPreferencesDto -- todo   automapper (with precondition-validators!)
             :New()
-            :ChainSetGreeniesGrouplootingAutomation_Mode(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode)
-            :ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind)
+            :ChainSetGreeniesGrouplootingAutomation_Mode(mode)
+            :ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
+
+    --00 todo   whenever we detect a corruption in the database we auto-sanitive it but on top of that we should also update error-metrics and log it too
 end

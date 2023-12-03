@@ -20,21 +20,22 @@ end)()
 
 _setfenv(1, {})
 
-local SWoWElementType = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.SWoWElementType")
+local SWoWElementType = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType")
 
 --@formatter:off
-SWoWElementType.Model                    = "Model"                    
-SWoWElementType.Slider                   = "Slider"                   
-SWoWElementType.Button                   = "Button"                   
-SWoWElementType.Minimap                  = "Minimap"                  
-SWoWElementType.EditBox                  = "EditBox"                  
-SWoWElementType.Cooldown                 = "Cooldown"                 
-SWoWElementType.StatusBar                = "StatusBar"                
-SWoWElementType.SimpleHTML               = "SimpleHTML"               
-SWoWElementType.ColorSelect              = "ColorSelect"              
-SWoWElementType.GameTooltip              = "GameTooltip"              
-SWoWElementType.ScrollFrame              = "ScrollFrame"              
-SWoWElementType.MessageFrame             = "MessageFrame"             
+SWoWElementType.Model                    = "Model"
+SWoWElementType.Frame                    = "Frame"
+SWoWElementType.Slider                   = "Slider"
+SWoWElementType.Button                   = "Button"
+SWoWElementType.Minimap                  = "Minimap"
+SWoWElementType.EditBox                  = "EditBox"
+SWoWElementType.Cooldown                 = "Cooldown"
+SWoWElementType.StatusBar                = "StatusBar"
+SWoWElementType.SimpleHTML               = "SimpleHTML"
+SWoWElementType.ColorSelect              = "ColorSelect"
+SWoWElementType.GameTooltip              = "GameTooltip"
+SWoWElementType.ScrollFrame              = "ScrollFrame"
+SWoWElementType.MessageFrame             = "MessageFrame"
 SWoWElementType.ScrollingMessageFrame    = "ScrollingMessageFrame"
 --@formatter:on
 
@@ -44,6 +45,7 @@ function SWoWElementType.Validate(value)
     end
 
     return value == SWoWElementType.Model
+            or value == SWoWElementType.Frame
             or value == SWoWElementType.Slider
             or value == SWoWElementType.Button
             or value == SWoWElementType.Minimap

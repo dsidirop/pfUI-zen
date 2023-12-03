@@ -7,14 +7,18 @@ local function Main(_pfUI)
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
+        local _error = _g.assert(_g.error)
         local _print = _g.assert(_g.print)
+        local _format = _g.assert(_g.string.format)
         local _setfenv = _g.assert(_g.setfenv)
         local _pfuiGui = _g.assert(_g.pfUI.gui)
+        local _tostring = _g.assert(_g.tostring)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
+        local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Listeners.Keystrokes.KeystrokesListener")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
         local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
@@ -42,12 +46,12 @@ local function Main(_pfUI)
                             :FirstOrDefault() -- @formatter:on
 
         if (not addonPath) then
-            error(string.format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
+            _error(_format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
             return
         end
 
         if (not _pfuiGui.CreateGUIEntry) then
-            error(string.format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
+            _error(_format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
             return
         end
 
@@ -60,6 +64,13 @@ local function Main(_pfUI)
 
         ZenEngineCommandHandlersService:New()
                                        :Handle_RestartEngineCommand(StartZenEngineCommand:New())
+
+        KeystrokesListener.I:EventKeyDown_Subscribe(function(_, ea)
+            _print("** ea:GetKey()=" .. ea:GetKey())
+            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
+            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
+            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
+        end)
     end)
 end
 

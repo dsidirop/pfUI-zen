@@ -98,6 +98,9 @@ end
 function Class:Fire(sender, eventArgs)
     _setfenv(1, self)
 
+    _assert(sender)
+    _assert(eventArgs)
+
     self:Raise(sender, eventArgs)
 
     return self -- 00
@@ -108,6 +111,8 @@ end
 
 function Class:Raise(sender, eventArgs)
     _setfenv(1, self)
+
+    _assert(sender)
     _assert(eventArgs)
 
     for k, v in _pairs(_handlers) do
