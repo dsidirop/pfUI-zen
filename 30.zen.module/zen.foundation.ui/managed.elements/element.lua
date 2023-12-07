@@ -39,7 +39,7 @@ function Class:New(nativeElement)
         _nativeElement = nativeElement,
 
         _eventKeyDown = Event:New(),
-        _isNativeKeyDownListenerActive = false,
+        _eventOnEvent = Event:New(),
     }
 
     _setmetatable(instance, self)
@@ -82,13 +82,35 @@ function Class:ChainSetKeystrokeListenerEnabled(onOrOff)
     return self
 end
 
+function Class:EventOnEvent_Subscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventOnEvent:Subscribe(handler, owner)
+
+    self:EnsureNativeOnEventListenerIsRegistered_()
+
+    return self
+end
+
+function Class:EventOnEvent_Unsubscribe(handler)
+    _setfenv(1, self)
+
+    _eventOnEvent:Unsubscribe(handler)
+
+    if not _eventOnEvent:HasSubscribers() then
+        self:EnsureNativeOnEventListenerIsUnregistered_()
+    end
+
+    return self
+end
+
 -- note that this event requires  :ChainSetFrameStrata("DIALOG"):ChainSetKeystrokeListenerEnabled(true) to be called as well
 function Class:EventKeyDown_Subscribe(handler, owner)
     _setfenv(1, self)
     
     _eventKeyDown:Subscribe(handler, owner)
     
-    self:EnsureNativeKeyDownListenerIsRegistered_()
+    self:EnsureNativeOnKeyDownListenerIsRegistered_()
 
     return self
 end
@@ -99,7 +121,7 @@ function Class:EventKeyDown_Unsubscribe(handler)
     _eventKeyDown:Unsubscribe(handler)
     
     if not _eventKeyDown:HasSubscribers() then
-        self:EnsureNativeKeyDownListenerIsUnregistered_()
+        self:EnsureNativeOnKeyDownListenerIsUnregistered_()
     end
 
     return self
@@ -107,15 +129,15 @@ end
 
 -- private space
 
-function Class:EnsureNativeKeyDownListenerIsRegistered_()
+function Class:EnsureNativeOnKeyDownListenerIsRegistered_()
     _setfenv(1, self)
     
-    if _isNativeKeyDownListenerActive then
+    if _nativeElement:GetScript("OnKeyDown") then
         return self
     end
 
     _nativeElement:SetScript("OnKeyDown", function(_, key)
-        _eventKeyDown:Fire(self, KeyEventArgs:New(
+        _eventKeyDown:Raise(self, KeyEventArgs:New(
                 key, -- key is always 'nil' for some reason on all wow1.12 clients  go figure
                 IsAltKeyDown(),
                 IsShiftKeyDown(),
@@ -124,21 +146,35 @@ function Class:EnsureNativeKeyDownListenerIsRegistered_()
         ))
     end)
 
-    _isNativeKeyDownListenerActive = true
+    return self
+end
+
+function Class:EnsureNativeOnKeyDownListenerIsUnregistered_()
+    _setfenv(1, self)
+
+    _nativeElement:SetScript("OnKeyDown", nil)
+    
+    return self
+end
+
+function Class:EnsureNativeOnEventListenerIsRegistered_()
+    _setfenv(1, self)
+
+    if _nativeElement:GetScript("OnEvent") then
+        return self
+    end
+
+    _nativeElement:SetScript("OnEvent", function(_, ea)
+        _eventOnEvent:Raise(self, ea)
+    end)
 
     return self
 end
 
-function Class:EnsureNativeKeyDownListenerIsUnregistered_()
+function Class:EnsureNativeOnEventListenerIsUnregistered_()
     _setfenv(1, self)
-    
-    if not _isNativeKeyDownListenerActive then
-        return self
-    end       
 
-    _nativeElement:SetScript("OnKeyDown", nil)
+    _nativeElement:SetScript("OnEvent", nil)
 
-    _isNativeKeyDownListenerActive = false
-    
     return self
 end

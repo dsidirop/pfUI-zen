@@ -62,15 +62,14 @@ local function Main(_pfUI)
                 end)
                 :Initialize() -- @formatter:on
 
-        ZenEngineCommandHandlersService:New()
-                                       :Handle_RestartEngineCommand(StartZenEngineCommand:New())
+        ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
 
-        KeystrokesListener.I:EventKeyDown_Subscribe(function(_, ea)
-            _print("** ea:GetKey()=" .. ea:GetKey())
-            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
-            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
-            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
-        end)
+        --KeystrokesListener.I:EventKeyDown_Subscribe(function(_, ea)
+        --    _print("** ea:GetKey()=" .. ea:GetKey())
+        --    _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
+        --    _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
+        --    _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
+        --end)
     end)
 end
 
