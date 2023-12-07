@@ -25,7 +25,7 @@ local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
-local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Listeners.Keystrokes.KeystrokesListener")
+local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.Keystrokes.KeystrokesListener")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
@@ -37,14 +37,12 @@ function Class:New(groupLootingListener, keystrokesListener, groupLootingHelper)
         _settings = nil,
 
         _isRunning = false,
-        
-        -- todo   refactor this to have it rely on lrucache
         _pendingLootGamblingRequests = {},
 
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
 
-        _keystrokesListener = keystrokesListener or KeystrokesListener.I, --todo             refactor this later on so that this gets injected through DI
-        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener.I, --todo   refactor this later on so that this gets injected through DI
+        _keystrokesListener = keystrokesListener or KeystrokesListener:New(), --todo   refactor this later on so that this gets injected through DI
+        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
 
     _setmetatable(instance, self)
@@ -163,26 +161,34 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _setfenv(1, self)
 
-    if not self:IsSomethingWeShouldGambleOn_(ea:GetGamblingId()) then
+    local desiredLootGamblingBehaviour = _settings:GetMode()
+    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
+        return -- let the user choose
+    end
+
+    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId())
+    if not rolledItemInfo:IsGreenQuality() then
         return
     end
 
-    self:QueueGamble_(ea:GetGamblingId())
-end
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not rolledItemInfo:IsNeedable() then
+        return
+    end
 
-function Class:QueueGamble_(gamblingId)
-    _setfenv(1, self)
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not rolledItemInfo:IsGreedable() then
+        return
+    end
 
     if _stage:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
-                gamblingId,
+                ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
         return
     end
 
-    _tableInsert(_pendingLootGamblingRequests, gamblingId) --                         order
-    _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) --  order
+    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                order
+    _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) -- order
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
@@ -192,30 +198,6 @@ function Class:QueueGamble_(gamblingId)
     --
     -- local _, _, _, _greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
-end
-
-function Class:IsSomethingWeShouldGambleOn_(gamblingId)
-    _setfenv(1, self)
-
-    local desiredLootGamblingBehaviour = _settings:GetMode()
-    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
-        return false -- let the user choose
-    end
-
-    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(gamblingId)
-    if not rolledItemInfo:IsGreenQuality() then
-        return false
-    end
-
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not rolledItemInfo:IsNeedable() then
-        return false
-    end
-
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not rolledItemInfo:IsGreedable() then
-        return false
-    end
-
-    return true
 end
 
 function Class:KeystrokesListener_KeyDown_(_, ea)
