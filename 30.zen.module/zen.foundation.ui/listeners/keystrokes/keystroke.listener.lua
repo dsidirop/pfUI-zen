@@ -24,24 +24,6 @@ local ManagedElementBuilder = _importer("Pavilion.Warcraft.Addons.Zen.Foundation
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Listeners.Keystrokes.KeystrokesListener")
 
---local frame = CreateFrame("Frame")
---frame:Show()
---
---local _interval = 0.1
---function frame.onUpdate()
---    this.sinceLast = (this.sinceLast or 0) + arg1
---    while (this.sinceLast > _interval) do
---        this.sinceLast = this.sinceLast - _interval
---
---        print2("** 5secs passed **")
---        print2("** IsAltKeyDown()=" .. tostring(IsAltKeyDown() == 1))
---        print2("** IsShiftKeyDown()=" .. tostring(IsShiftKeyDown() == 1))
---        print2("** IsControlKeyDown()=" .. tostring(IsControlKeyDown() == 1))
---    end
---end
---
---frame:SetScript("OnUpdate", frame.onUpdate)
-
 function Class:New(managedElementBuilder)
     _setfenv(1, self)
     
