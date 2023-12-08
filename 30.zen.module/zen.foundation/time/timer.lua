@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+﻿local _g, _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -15,7 +15,7 @@
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
+    return _g, _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -30,10 +30,16 @@ function Class:New(interval)
     
     _assert(_type(interval) == "number" and interval > 0, "interval must be a positive number")
 
-    local instance = {
-        _interval = interval,
+    local element = WoWCreateFrame("Frame") -- 00
+    element:Hide() -- 10
 
-        _element = nil,
+    local instance = {
+        _g = _g, -- 20
+
+        _interval = interval,
+        _wantedActive = false,
+
+        _element = element,
         _eventElapsed = Event:New(),
         _elapsedTimeSinceLastFiring = 0,
     }
@@ -42,16 +48,39 @@ function Class:New(interval)
     self.__index = self
 
     return instance
+    
+    -- 00  dont even bother using strenums here
+    -- 10  we need to hide the frame because its important to ensure that the timer is not running when we create it
+    -- 20  this is vital in order for us to have access to _g.arg1 inside the onupdate handler
+end
+
+function Class:GetInterval()
+    _setfenv(1, self)
+
+    return _interval
+end
+
+function Class:ChainSetInterval(newInterval)
+    _setfenv(1, self)
+
+    _assert(_type(newInterval) == "number" and newInterval > 0, "interval must be a positive number")
+
+    _interval = newInterval
+
+    return self
+end
+
+function Class:IsRunning()
+    _setfenv(1, self)
+
+    return _element:IsVisible()
 end
 
 function Class:Start()
     _setfenv(1, self)
-    
-    if _eventElapsed:HasSubscribers() then
-        self:StartImpl_()
-    end    
-    
-    _active = true
+
+    _wantedActive = true
+    self:OnSettingsChanged_()
 
     return self
 end
@@ -59,8 +88,8 @@ end
 function Class:Stop()
     _setfenv(1, self)
 
-    self:StopImpl_()
-    _active = false
+    _wantedActive = false
+    self:OnSettingsChanged_()
     
     return self
 end
@@ -68,10 +97,8 @@ end
 function Class:EventElapsed_Subscribe(handler, owner)
     _setfenv(1, self)
 
-    _eventElapsed:Subscribe(handler, owner)
-    if _isActive then -- autorestart after someone resubscribes
-        self:StartImpl_() 
-    end
+    _eventElapsed:Subscribe(handler, owner) --   order
+    self:OnSettingsChanged_() --                 order
 
     return self
 end
@@ -79,15 +106,29 @@ end
 function Class:EventElapsed_Unsubscribe(handler)
     _setfenv(1, self)
 
-    _eventElapsed:Unsubscribe(handler)
-    if not _eventElapsed:HasSubscribers() then
-        self:StopImpl_() -- if there is noone listening then we pause for the sake of respecting performance 
-    end
+    _eventElapsed:Unsubscribe(handler)  --   order
+    self:OnSettingsChanged_() --             order
 
     return self
 end
 
 -- private space
+
+function Class:OnSettingsChanged_()
+    _setfenv(1, self)
+
+    if _wantedActive and _eventElapsed:HasSubscribers() then
+        self:StartImpl_()
+        return self
+    end
+
+    do
+        -- wantedActive==false  or  wantedActive==true but noone is listening   so we need to halt the timer
+        self:StopImpl_()
+    end
+
+    return self
+end
 
 function Class:StartImpl_()
     _setfenv(1, self)
@@ -99,13 +140,10 @@ function Class:StartImpl_()
     return self
 end
 
-
 function Class:StopImpl_()
     _setfenv(1, self)
 
-    -- _element = nil --dont  there is no point in doing this
-
-    _element:Hide()
+    _element:Hide()    
     _elapsedTimeSinceLastFiring = 0
 
     return self
@@ -114,20 +152,28 @@ end
 function Class:EnsureInitializedOnlyOnce_()
     _setfenv(1, self)
 
-    if _element then
+    if _element:GetScript("OnUpdate") then
         return
     end
 
-    _element = WoWCreateFrame("Frame") -- dont even bother using strenums here
     _element:SetScript("OnUpdate", function()
-        _elapsedTimeSinceLastFiring = _elapsedTimeSinceLastFiring + arg1 -- 00
-
-        while (_elapsedTimeSinceLastFiring > _interval) do
+        _elapsedTimeSinceLastFiring = _elapsedTimeSinceLastFiring + _g.arg1 -- 00
+        if _elapsedTimeSinceLastFiring < _interval then
+            return
+        end
+        
+        -- _elapsedTimeSinceLastFiring >= _interval   its important to trim down the excess
+        -- time as much as it is necessary to ensure it goes beneath the interval threshold
+        repeat
             _elapsedTimeSinceLastFiring = _elapsedTimeSinceLastFiring - _interval
+        until _elapsedTimeSinceLastFiring < _interval
 
-            _eventElapsed:Raise({})
+        _eventElapsed:Raise(self, {})
+        if not _eventElapsed:HasSubscribers() then
+            self:OnSettingsChanged_()
         end
     end)
     
     -- 00  arg1 is the elapsed time since the previous callback invocation   there is no other way to get this value
+    --     other than grabbing it from the global environment like we do here   very strange but true
 end

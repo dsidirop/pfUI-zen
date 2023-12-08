@@ -134,7 +134,7 @@ function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIn
         return
     end
 
-    _eventPendingLootItemGamblingDetected:Raise(PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
+    _eventPendingLootItemGamblingDetected:Raise(self, PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
 end
 
 function Class:IsBrandNewItemGamblingUIFrame_(pfuiItemFrame)

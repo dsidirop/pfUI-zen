@@ -18,8 +18,8 @@ local function Main(_pfUI)
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
-        local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Listeners.Keystrokes.KeystrokesListener")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
+        local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
         local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
         local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
         local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
@@ -64,12 +64,16 @@ local function Main(_pfUI)
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
 
-        --KeystrokesListener.I:EventKeyDown_Subscribe(function(_, ea)
-        --    _print("** ea:GetKey()=" .. ea:GetKey())
-        --    _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
-        --    _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
-        --    _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
-        --end)
+        ModifierKeysListener.I
+                            :ChainSetPollingInterval(0.05)
+                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
+            _print("** ea:GetKey()=" .. ea:ToString())
+            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
+            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
+            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
+        end)
+
+        ModifierKeysListener.I:Start()
     end)
 end
 

@@ -25,12 +25,12 @@ local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
-local KeystrokesListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.Keystrokes.KeystrokesListener")
+local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
-function Class:New(groupLootingListener, keystrokesListener, groupLootingHelper)
+function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
     _setfenv(1, self)
 
     local instance = {
@@ -41,7 +41,7 @@ function Class:New(groupLootingListener, keystrokesListener, groupLootingHelper)
 
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
 
-        _keystrokesListener = keystrokesListener or KeystrokesListener:New(), --todo   refactor this later on so that this gets injected through DI
+        _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
 
@@ -87,7 +87,7 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
-    -- _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) -- dont start the keybind listener here 
+    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
 
     _isRunning = true
 
@@ -101,9 +101,9 @@ function Class:Stop()
         return self -- nothing to do
     end
 
-    _groupLootingListener:StopListening():EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_);
+    _groupLootingListener:StopListening():EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_)
 
-    _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_)
+    _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
 
     _isRunning = false
 
@@ -166,7 +166,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return -- let the user choose
     end
 
-    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId())
+    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
     if not rolledItemInfo:IsGreenQuality() then
         return
     end
@@ -187,8 +187,8 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                order
-    _keystrokesListener:EventKeyDown_Subscribe(KeystrokesListener_KeyDown_, self) -- order
+    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                        order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- order
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
@@ -200,29 +200,29 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 
-function Class:KeystrokesListener_KeyDown_(_, ea)
+function Class:modifierKeysListener_ModifierKeysStatesChanged_(_, ea)
     _setfenv(1, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode() --00  
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         _pendingLootGamblingRequests = {}
-        _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_)
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
         return
     end
 
-    if ea:ToString() == _settings:GetActOnKeybind() or _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        _keystrokesListener:EventKeyDown_Unsubscribe(KeystrokesListener_KeyDown_) -- vital    
+    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_) -- vital    
 
         local requests = _pendingLootGamblingRequests --order
         local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --order
-        
-        _pendingLootGamblingRequests = {} --order        
-        for _, gamblingId in _pairs(requests) do --order
+
+        _pendingLootGamblingRequests = {} --        order        
+        for _, gamblingId in _pairs(requests) do -- order
             _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
     end
     
-    --00 we need to always keep in mind that the user might change the settings while item-gambling is in progress
+    --00  we need to always keep in mind that the user might change the settings while item-gambling is in progress
 end
 
 function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)
