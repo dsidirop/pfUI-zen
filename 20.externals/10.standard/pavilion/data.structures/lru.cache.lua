@@ -27,7 +27,7 @@ _setfenv(1, {})
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
---@options.maxSize default 10 items - if set to nil there is no upper limit
+--@options.maxSize default 100 items - if set to nil there is no upper limit
 --@options.trimRatio default 0.25 of maximum size - cannot be nil
 --@options.maxLifespanPerEntryInSeconds default 5 minutes - if set to nil entries never expire
 function Class:New(options)
@@ -46,10 +46,7 @@ function Class:New(options)
     _assert(_type(options.maxLifespanPerEntryInSeconds) == nil or _type(options.maxLifespanPerEntryInSeconds) == "number" and options.maxLifespanPerEntryInSeconds > 0, "maxLifespanPerEntryInSeconds must either be nil or a positive number")
 
     local instance = {
-        _values = {},
-        _deadlines = {}, -- todo  these three tables could be merged into one with a composite structure ala { value, deadline, mostRecentAccessTimestamp } 
-        _mostRecentAccessTimestamps = {},
-
+        _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
 
         _maxSize = options.maxSize,
@@ -66,9 +63,7 @@ end
 function Class:Clear()
     _setfenv(1, self)
 
-    _cache = {}
-    _deadlines = {}
-    _mostRecentAccessTimestamps = {}
+    _entries = {}
 end
 
 function Class:Get(key)
@@ -77,12 +72,14 @@ function Class:Get(key)
     _assert(key ~= nil, "key cannot be nil")
 
     self:Cleanup_()
-    if _cache[key] == nil then
+    
+    local entry = _entries[key]
+    if entry == nil then
         return nil
     end
 
-    _mostRecentAccessTimestamps[key] = _time()
-    return _cache[key]
+    entry.Timestamp = _time()
+    return entry.Value
 end
 
 function Class:GetKeys()
@@ -93,10 +90,10 @@ function Class:GetKeys()
     self:Cleanup_()
 
     local keys = {}
-    for key in _pairs(_cache) do
+    for key in _pairs(_entries) do
         _tableInsert(keys, key)
 
-        _mostRecentAccessTimestamps[key] = now
+        _entries[key].Timestamp = now
     end
 
     return keys
@@ -110,10 +107,10 @@ function Class:GetValues()
     self:Cleanup_()
 
     local values = {}
-    for _, value in _pairs(_cache) do
-        _tableInsert(values, value)
+    for _, v in _pairs(_entries) do
+        _tableInsert(values, v.Value)
 
-        _mostRecentAccessTimestamps[key] = now
+        _entries[key].Timestamp = now
     end
 
     return values
@@ -128,11 +125,15 @@ function Class:Upsert(key, valueOptional)
     valueOptional = valueOptional or true --00 
 
     local t = _time()
-    _cache[key] = valueOptional
-    _deadlines[key] = t + _maxLifespanPerEntryInSeconds
-    _mostRecentAccessTimestamps[key] = t
+    _entries[key] = {
+        Value = valueOptional,
+        Dealine = t + _maxLifespanPerEntryInSeconds,
+        Timestamp = t,
+    }
 
     self:Cleanup_()
+    
+    return self
 
     -- 00  we allow values to be optional but we transform nil values to 'true' because if we
     --     leave it to nil it will cause the tables involved to remove the key altogether
@@ -143,9 +144,7 @@ function Class:Remove(key)
 
     _assert(key ~= nil, "key cannot be nil")
 
-    _cache[key] = nil
-    _deadlines[key] = nil
-    _mostRecentAccessTimestamps[key] = nil
+    _entries[key] = nil
 end
 
 function Class:ToString()
@@ -164,8 +163,8 @@ function Class:Cleanup_()
         local now = _time()
         if now - _timestampOfLastDeadlinesCleanup >= 1 then
             _timestampOfLastDeadlinesCleanup = now
-            for key, deadline in _pairs(_deadlines) do
-                if now >= deadline then
+            for key, value in _pairs(_entries) do
+                if now >= _entries.Deadline then
                     self:Remove(key)
                 end
             end
@@ -179,24 +178,23 @@ function Class:Cleanup_()
             return
         end
 
-        local sortedArray = self:Sort_(_mostRecentAccessTimestamps)
+        local sortedArrayOldestToNewest = self:Sort_(_entries)
 
         local desiredEventualSize = _maxSize * (1 - _trimRatio)
         local numberOfItemsToDelete = currentLength - desiredEventualSize
         for i = 1, numberOfItemsToDelete, 1
         do
-            self:Remove(sortedArray[i].key)
+            self:Remove(sortedArrayOldestToNewest[i].key)
         end
     end
 end
 
--- private space
 function Class:Sort_(t)
     _setfenv(1, self)
 
     local array = {}
     for key, value in _pairs(t) do
-        _tableInsert(array, { key = key, access = value })
+        _tableInsert(array, { key = key, access = value.Timestamp })
     end
 
     _tableSort(array, function(a, b)
