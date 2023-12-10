@@ -34,9 +34,9 @@ function Class:New()
         _active = false,
         _hookApplied = false,
         _rollIdsEncounteredCache = LRUCache:New {
-            maxSize = 10,
-            trimRatio = 0.25,
-            maxLifespanPerEntryInSeconds = 5 * 60,
+            MaxSize = 10,
+            TrimRatio = 0.25,
+            MaxLifespanPerEntryInSeconds = 5 * 60,
         },
 
         _eventPendingLootItemGamblingDetected = Event:New(),

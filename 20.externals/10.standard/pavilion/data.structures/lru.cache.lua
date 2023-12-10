@@ -2,7 +2,7 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
+local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _mathfloor, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -13,46 +13,52 @@ local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _table
 
     local _time = _assert(_g.os.time)
     local _gsub = _assert(_g.string.gsub)
+    local _pairs = _assert(_g.pairs)
     local _format = _assert(_g.string.format)
+    local _tostring = _assert(_g.tostring)
     local _strmatch = _assert(_g.string.match)
+    local _mathfloor = _assert(_g.math.floor)
     local _tableSort = _assert(_g.table.sort)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _tableInsert = _assert(_g.table.insert)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
+    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _mathfloor, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
 end)()
 
 _setfenv(1, {})
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
---@options.maxSize default 100 items - if set to nil there is no upper limit
---@options.trimRatio default 0.25 of maximum size - cannot be nil
---@options.maxLifespanPerEntryInSeconds default 5 minutes - if set to nil entries never expire
+Class.DefaultOptions = {
+    MaxSize = 100,
+    TrimRatio = 0.25,
+    MaxLifespanPerEntryInSeconds = 5 * 60,
+}
+
+--@options.MaxSize                        must be either nil (default value of 100 items) or zero (limitless) or a positive integer number
+--@options.TrimRatio                      must be either nil (default value of 0.25) or between 0 and 1 
+--@options.MaxLifespanPerEntryInSeconds   must be either nil (default value of 300secs) or 0 (no expiration) or a positive integer number of seconds
 function Class:New(options)
     _setfenv(1, self)
 
     _assert(options == nil or _type(options) == "table", "options must be a table or nil")
 
-    options = options or {
-        maxSize = 100,
-        trimRatio = 0.25,
-        maxLifespanPerEntryInSeconds = 5 * 60,
-    }
+    options = options or Class.DefaultOptions --@formatter:off
 
-    _assert(_type(options.maxSize) == nil or _type(options.maxSize) == "number" and options.maxSize > 0, "maxSize must either be nil or a positive number")
-    _assert(_type(options.trimRatio) == "number" and (options.trimRatio >= 0 and options.trimRatio <= 1), "trimRatio must between 0 and 1")
-    _assert(_type(options.maxLifespanPerEntryInSeconds) == nil or _type(options.maxLifespanPerEntryInSeconds) == "number" and options.maxLifespanPerEntryInSeconds > 0, "maxLifespanPerEntryInSeconds must either be nil or a positive number")
+    _assert(options.MaxSize                      == nil or _type(options.MaxSize)                      == "number" and options.MaxSize >= 0                      and _mathfloor(options.MaxSize) == options.MaxSize, "MaxSize must either be nil or a positive integer (given value=" .. _tostring(options.MaxSize) .. ")")
+    _assert(options.TrimRatio                    == nil or _type(options.TrimRatio)                    == "number" and options.TrimRatio >= 0                    and options.TrimRatio <= 1, "TrimRatio must either be nil or between 0 and 1 (given value=" .. _tostring(options.TrimRatio) .. ")")
+    _assert(options.MaxLifespanPerEntryInSeconds == nil or _type(options.MaxLifespanPerEntryInSeconds) == "number" and options.MaxLifespanPerEntryInSeconds >= 0 and _mathfloor(options.MaxLifespanPerEntryInSeconds) == options.MaxLifespanPerEntryInSeconds, "MaxLifespanPerEntryInSeconds must either be nil or zero or a positive integer (given value=" .. _tostring(options.MaxLifespanPerEntryInSeconds) .. ")")
 
     local instance = {
+        _count = 0,
         _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
 
-        _maxSize = options.maxSize,
-        _trimRatio = options.trimRatio,
-        _maxLifespanPerEntryInSeconds = options.maxLifespanPerEntryInSeconds,
-    }
+        _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions.MaxSize                       or options.MaxSize,
+        _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions.TrimRatio                     or options.TrimRatio,
+        _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
+    } --@formatter:on
 
     _setmetatable(instance, self)
     self.__index = self
@@ -63,6 +69,7 @@ end
 function Class:Clear()
     _setfenv(1, self)
 
+    _count = 0
     _entries = {}
 end
 
@@ -85,7 +92,7 @@ end
 function Class:GetKeys()
     _setfenv(1, self)
 
-    local now = time()
+    local now = _time()
 
     self:Cleanup_()
 
@@ -102,7 +109,7 @@ end
 function Class:GetValues()
     _setfenv(1, self)
 
-    local now = time()
+    local now = _time()
 
     self:Cleanup_()
 
@@ -125,9 +132,12 @@ function Class:Upsert(key, valueOptional)
     valueOptional = valueOptional or true --00 
 
     local t = _time()
-    _entries[key] = {
+
+    _count = _count + (_entries[key] == nil and 1 or 0) -- order
+    
+    _entries[key] = { -- order
         Value = valueOptional,
-        Dealine = t + _maxLifespanPerEntryInSeconds,
+        Deadline = t + _maxLifespanPerEntryInSeconds,
         Timestamp = t,
     }
 
@@ -144,7 +154,15 @@ function Class:Remove(key)
 
     _assert(key ~= nil, "key cannot be nil")
 
-    _entries[key] = nil
+    _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
+
+    _entries[key] = nil -- order
+end
+
+function Class:Count()
+    _setfenv(1, self)
+
+    return self:__len()
 end
 
 function Class:ToString()
@@ -158,27 +176,25 @@ end
 function Class:Cleanup_()
     _setfenv(1, self)
 
-    if _maxLifespanPerEntryInSeconds ~= nil then
+    if _maxLifespanPerEntryInSeconds > 0 then
         -- remove expired entries
         local now = _time()
         if now - _timestampOfLastDeadlinesCleanup >= 1 then
             _timestampOfLastDeadlinesCleanup = now
             for key, value in _pairs(_entries) do
-                if now >= _entries.Deadline then
+                if now >= value.Deadline then
                     self:Remove(key)
                 end
             end
         end
     end
 
-    if _maxSize ~= nil then
-        -- remove least recently used entries
-        local currentLength = self:__len()
-        if currentLength <= _maxSize then
+    if _maxSize > 0 then
+        if _count <= _maxSize then
             return
         end
 
-        local sortedArrayOldestToNewest = self:Sort_(_entries)
+        local sortedArrayOldestToNewest = self:Sort_(_entries) -- remove the least recently used entries
 
         local desiredEventualSize = _maxSize * (1 - _trimRatio)
         local numberOfItemsToDelete = currentLength - desiredEventualSize
@@ -207,24 +223,19 @@ end
 function Class:__tostring()
     _setfenv(1, self)
 
-    local s = "{"
+    local s = "{ "
     local sep = ""
-    for key in _pairs(_cache) do
-        s = s .. sep .. key
-        sep = ","
+    for key, value in _pairs(_entries) do
+        s = s .. sep .. _format("%q=%q", _tostring(key), _tostring(value.Value))
+        sep = ", "
     end
 
-    return s .. "}"
+    return s .. " }"
 end
 
 function Class:__len()
     _setfenv(1, self)
 
-    local count = 0
-    for _ in _pairs(_cache) do
-        count = count + 1
-    end
-
-    return count
+    return _count
 end
 
