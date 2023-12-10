@@ -72,7 +72,7 @@ end
 function Class:Start()
     _setfenv(1, self)
 
-    _wantedActive = true --            order
+    _wantedActive = true --       order
     self:OnSettingsChanged_() --  order
 
     return self
@@ -81,7 +81,7 @@ end
 function Class:Stop()
     _setfenv(1, self)
 
-    _wantedActive = false --            order
+    _wantedActive = false --       order
     self:OnSettingsChanged_() --   order
 
     return self
