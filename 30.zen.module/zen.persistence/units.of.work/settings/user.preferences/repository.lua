@@ -67,19 +67,19 @@ function Class:HasChanges()
 end
 
 -- @return self
-function Class:GreeniesAutolooting_ChainUpdateMode(value)
+function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     _setfenv(1, self)
     
-    _userPreferencesRepositoryWriteable:GreeniesAutolooting_ChainUpdateMode(value)
+    _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     
     return self
 end
 
 -- @return self
-function Class:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    _userPreferencesRepositoryWriteable:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+    _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
 
     return self
 end

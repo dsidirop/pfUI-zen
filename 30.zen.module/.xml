@@ -2,6 +2,7 @@
     <!-- ordering is important here -->
     <Include file="zen.foundation.contracts\.xml"/>
     <Include file="zen.foundation\.xml"/>
+    <Include file="zen.foundation.ui\.xml"/>
     <Include file="zen.foundation.pfui\.xml"/>
 
     <Include file="zen.persistence.contracts\.xml"/>

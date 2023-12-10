@@ -22,8 +22,8 @@ _setfenv(1, {})
 
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
 
@@ -42,24 +42,24 @@ function Class:New(userPreferencesUnitOfWork)
     return instance
 end
 
-function Class:GreeniesAutolooting_UpdateMode(value)
+function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
-                              :GreeniesAutolooting_ChainUpdateMode(value)
+                              :GreeniesGrouplootingAutomation_ChainUpdateMode(value)
 
     return _userPreferencesUnitOfWork:SaveChanges()
 end
 
-function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
-                              :GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+                              :GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
 
     return _userPreferencesUnitOfWork:SaveChanges()
 end

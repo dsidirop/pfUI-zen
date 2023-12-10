@@ -20,8 +20,8 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto")
 
@@ -29,7 +29,7 @@ function Class:New()
     _setfenv(1, self)
 
     local instance = {
-        _greeniesAutolooting = {
+        _greeniesGrouplootingAutomation = {
             mode = nil,
             actOnKeybind = nil,
         }
@@ -41,34 +41,34 @@ function Class:New()
     return instance
 end
 
-function Class:GetGreeniesAutolooting_Mode()
+function Class:GetGreeniesGrouplootingAutomation_Mode()
     _setfenv(1, self)
 
-    return _greeniesAutolooting.mode
+    return _greeniesGrouplootingAutomation.mode
 end
 
-function Class:GetGreeniesAutolooting_ActOnKeybind()
+function Class:GetGreeniesGrouplootingAutomation_ActOnKeybind()
     _setfenv(1, self)
 
-    return _greeniesAutolooting.actOnKeybind
+    return _greeniesGrouplootingAutomation.actOnKeybind
 end
 
-function Class:ChainSetGreeniesAutolooting_Mode(value)
+function Class:ChainSetGreeniesGrouplootingAutomation_Mode(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
-    _greeniesAutolooting.mode = value
+    _greeniesGrouplootingAutomation.mode = value
 
     return self
 end
 
-function Class:ChainSetGreeniesAutolooting_ActOnKeybind(value)
+function Class:ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
 
-    _greeniesAutolooting.actOnKeybind = value
+    _greeniesGrouplootingAutomation.actOnKeybind = value
 
     return self
 end

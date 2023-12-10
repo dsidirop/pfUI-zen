@@ -20,8 +20,8 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local SchemaV1 = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
 
@@ -39,15 +39,15 @@ SchemaV1.Settings = {
     },
     
     UserPreferences = {
-        GreeniesAutolooting = {
+        GreeniesGrouplootingAutomation = {
             Mode = {
-                Keyname = "user_preferences.greenies_autolooting.mode",
-                Default = SGreenItemsAutolootingMode.RollGreed,
+                Keyname = "user_preferences.greenies_grouplooting_automation.mode",
+                Default = SGreeniesGrouplootingAutomationMode.RollGreed,
             },
 
             ActOnKeybind = {
-                Keyname = "user_preferences.greenies_autolooting.act_on_keybind",
-                Default = SGreenItemsAutolootingActOnKeybind.Automatic,
+                Keyname = "user_preferences.greenies_grouplooting_automation.act_on_keybind",
+                Default = SGreeniesGrouplootingAutomationActOnKeybind.Automatic,
             },
         },
     },

@@ -7,15 +7,19 @@ local function Main(_pfUI)
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
+        local _error = _g.assert(_g.error)
         local _print = _g.assert(_g.print)
+        local _format = _g.assert(_g.string.format)
         local _setfenv = _g.assert(_g.setfenv)
         local _pfuiGui = _g.assert(_g.pfUI.gui)
+        local _tostring = _g.assert(_g.tostring)
         local _importer = _g.assert(_g.pvl_namespacer_get)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
+        local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
         local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
         local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
         local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
@@ -42,62 +46,14 @@ local function Main(_pfUI)
                             :FirstOrDefault() -- @formatter:on
 
         if (not addonPath) then
-            error(string.format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
+            _error(_format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
             return
         end
 
         if (not _pfuiGui.CreateGUIEntry) then
-            error(string.format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
+            _error(_format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
             return
         end
-
-        local addonPfuiRawPreferencesSchemaV1 = {
-            -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
-            addonPreferencesKeyname = "zen.config.v1", -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
-
-            greenies_autolooting = {
-                mode = {
-                    keyname = "greenies_autolooting.v1.mode",
-                    default = "roll_greed",
-                },
-
-                act_on_keybind = {
-                    keyname = "greenies_autolooting.v1.keybind",
-                    default = "automatic",
-                },
-            }
-        }
-
-        --if true then
-        --    _c.ZenV1 = nil
-        --    _c.Zen_v1 = nil
-        --
-        --    _c["zen.v1"] = nil
-        --    _c["zen.config.v1"] = nil
-        --    _c["zen.settings.v1"] = nil
-        --
-        --    _c.Zen = nil  -- this resets the entire settings tree for this addon
-        --    _c.Zen2 = nil
-        --    _c.Zen3 = nil
-        --    return
-        --end
-
-        function EnsureAddonDefaultPreferencesAreRegistered(specs)
-            local isFirstTimeLoading = _c[specs.addonPreferencesKeyname] == nil -- keep this first
-
-            _pfUI:UpdateConfig(specs.addonPreferencesKeyname, nil, specs.greenies_autolooting.mode.keyname, specs.greenies_autolooting.mode.default) -- 00
-            _pfUI:UpdateConfig(specs.addonPreferencesKeyname, nil, specs.greenies_autolooting.act_on_keybind.keyname, specs.greenies_autolooting.act_on_keybind.default)
-
-            if isFirstTimeLoading then
-                -- todo   search for settings from previous versions and run the upgraders on them to get to the latest version
-            end
-
-            return _c[specs.addonPreferencesKeyname]
-
-            -- 00  set default values for the first time we load the addon    this also creates _c[_addonPreferencesKeyname]={} if it doesnt already exist
-        end
-
-        EnsureAddonDefaultPreferencesAreRegistered(addonPfuiRawPreferencesSchemaV1)
 
         UserPreferencesForm -- @formatter:off
                 :New(_t, _pfuiGui)
@@ -105,8 +61,19 @@ local function Main(_pfUI)
                     ea.Response.UserPreferences = UserPreferencesServiceQueryable:New():GetAllUserPreferences()
                 end)
                 :Initialize() -- @formatter:on
-        
+
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
+
+        ModifierKeysListener.I
+                            :ChainSetPollingInterval(0.05)
+                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
+            _print("** ea:GetKey()=" .. ea:ToString())
+            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
+            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
+            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
+        end)
+
+        ModifierKeysListener.I:Start()
     end)
 end
 
