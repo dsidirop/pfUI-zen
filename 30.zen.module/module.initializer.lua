@@ -45,12 +45,12 @@ local function Main(_pfUI)
                             :Select(function (x) return x.path end)
                             :FirstOrDefault() -- @formatter:on
 
-        if (not addonPath) then
+        if not addonPath then
             _error(_format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
             return
         end
 
-        if (not _pfuiGui.CreateGUIEntry) then
+        if not _pfuiGui.CreateGUIEntry then
             _error(_format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
             return
         end
@@ -63,17 +63,6 @@ local function Main(_pfUI)
                 :Initialize() -- @formatter:on
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
-
-        ModifierKeysListener.I
-                            :ChainSetPollingInterval(0.05)
-                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
-            _print("** ea:GetKey()=" .. ea:ToString())
-            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
-            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
-            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
-        end)
-
-        ModifierKeysListener.I:Start()
     end)
 end
 
