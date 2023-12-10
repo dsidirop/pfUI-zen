@@ -64,14 +64,14 @@ function Class:GetAllUserPreferences()
     return _serviceQueryable:GetAllUserPreferences()
 end
 
-function Class:GreeniesAutolooting_UpdateMode(value)
+function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
     _setfenv(1, self)
 
-    return _serviceWriteable:GreeniesAutolooting_UpdateMode(value)
+    return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateMode(value)
 end
 
-function Class:GreeniesAutolooting_UpdateActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    return _serviceWriteable:GreeniesAutolooting_UpdateActOnKeybind(value)
+    return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
 end

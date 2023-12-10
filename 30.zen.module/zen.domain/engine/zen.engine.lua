@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.Aggregate")
+local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 
@@ -103,7 +103,7 @@ function Class:Stop()
     return self
 end
 
-function Class:GreeniesAutolooting_SwitchMode(value) -- todo   partial classes
+function Class:GreeniesGrouplootingAutomation_SwitchMode(value) -- todo   partial classes
     _setfenv(1, self)
 
     _greeniesAutolooterAggregate:SwitchMode(value)
@@ -111,7 +111,7 @@ function Class:GreeniesAutolooting_SwitchMode(value) -- todo   partial classes
     return self
 end
 
-function Class:GreeniesAutolooting_SwitchActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_SwitchActOnKeybind(value)
     _setfenv(1, self)
 
     _greeniesAutolooterAggregate:SwitchActOnKeybind(value)

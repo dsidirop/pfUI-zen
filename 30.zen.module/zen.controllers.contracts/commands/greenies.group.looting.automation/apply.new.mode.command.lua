@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -20,17 +20,16 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesAutolooter.AggregateSettings")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
 
 function Class:New()
     _setfenv(1, self)
 
     local instance = {
-        _mode = nil,
-        _actOnKeybind = nil,
+        _old = nil,
+        _new = nil,
     }
 
     _setmetatable(instance, self)
@@ -39,34 +38,34 @@ function Class:New()
     return instance
 end
 
-function Class:GetMode()
+function Class:GetOldValue()
     _setfenv(1, self)
 
-    return self._mode
+    return _old
 end
 
-function Class:GetActOnKeybind()
+function Class:GetNewValue()
     _setfenv(1, self)
 
-    return self._actOnKeybind
+    return _new
 end
 
-function Class:ChainSetMode(value)
+function Class:ChainSetOld(old)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingMode.Validate(value))
-    
-    _mode = value
+    _assert(old == nil or SGreeniesGrouplootingAutomationMode.Validate(old))
+
+    _old = old
 
     return self
 end
 
-function Class:ChainSetActOnKeybind(value)
+function Class:ChainSetNew(new)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(new))
 
-    _actOnKeybind = value
+    _new = new
 
     return self
 end

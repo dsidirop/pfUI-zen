@@ -20,8 +20,8 @@ end)()
 
 _setfenv(1, {})
 
-local SGreenItemsAutolootingMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingMode")
-local SGreenItemsAutolootingActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreenItemsAutolootingActOnKeybind")
+local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
@@ -49,33 +49,33 @@ function Class:HasChanges()
 end
 
 -- @return self
-function Class:GreeniesAutolooting_ChainUpdateMode(value)
+function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     _setfenv(1, self)
     
-    _assert(SGreenItemsAutolootingMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
     
-    if _userPreferencesEntity.GreeniesAutolooting.Mode == value then
+    if _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode == value then
         return self
     end
 
     _hasChanges = true
-    _userPreferencesEntity.GreeniesAutolooting.Mode = value
+    _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode = value
 
     return self
 end
 
 -- @return self
-function Class:GreeniesAutolooting_ChainUpdateActOnKeybind(value)
+function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
     _setfenv(1, self)
 
-    _assert(SGreenItemsAutolootingActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
-    if _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind == value then
+    if _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind == value then
         return self
     end
 
     _hasChanges = true
-    _userPreferencesEntity.GreeniesAutolooting.ActOnKeybind = value
+    _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind = value
 
     return self
 end

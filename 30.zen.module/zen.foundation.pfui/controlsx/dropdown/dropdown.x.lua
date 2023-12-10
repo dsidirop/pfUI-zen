@@ -23,7 +23,7 @@ end)()
 
 _setfenv(1, {})
 
-local Event = _importer("System.Event")
+local Event = _importer("Pavilion.System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringsHelpers = _importer("Pavilion.Helpers.Strings")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")

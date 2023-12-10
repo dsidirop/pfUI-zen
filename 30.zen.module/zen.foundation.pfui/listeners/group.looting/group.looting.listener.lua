@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local Event = _importer("System.Event")
+local Event = _importer("Pavilion.System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
 local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
@@ -56,14 +56,39 @@ function Class:StartListening()
     end
 
     self:ApplyHookOnce_()
-        :EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+        :EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
 
     _active = true
 
     return self
 end
 
-function Class:EvaluatePossibleItemRollFramesThatAreCurrentlyDisplayed_()
+function Class:StopListening()
+    _setfenv(1, self)
+
+    _active = false
+
+    return self
+end
+
+function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
+
+    return self
+end
+
+function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
+    _setfenv(1, self)
+
+    _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
+
+    return self
+end
+
+-- private space
+function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
     _setfenv(1, self)
 
     for rollFrameIndex in _pairs(PfuiRoll.frames) do
@@ -94,31 +119,6 @@ function Class:ApplyHookOnce_()
     return self
 end
 
-function Class:StopListening()
-    _setfenv(1, self)
-
-    _active = false
-
-    return self
-end
-
-function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
-
-    return self
-end
-
-function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
-    _setfenv(1, self)
-
-    _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
-
-    return self
-end
-
--- private space
 function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIndex)
     _setfenv(1, self)
 
@@ -134,7 +134,7 @@ function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIn
         return
     end
 
-    _eventPendingLootItemGamblingDetected:Raise(PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
+    _eventPendingLootItemGamblingDetected:Raise(self, PendingLootItemGamblingDetectedEventArgs:New(pfuiGambledItemFrame.rollID))
 end
 
 function Class:IsBrandNewItemGamblingUIFrame_(pfuiItemFrame)
@@ -153,3 +153,5 @@ function Class:IsBrandNewItemGamblingUIFrame_(pfuiItemFrame)
 
     return true
 end
+
+Class.I = Class:New() -- todo   remove this once di comes to town
