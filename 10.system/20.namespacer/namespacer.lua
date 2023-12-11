@@ -109,7 +109,7 @@ do
     function Namespacer:Add(namespace_path)
         _setfenv(1, self)
 
-        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
+        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud\n" .. _g.debugstack() .. "\n")
 
         namespace_path = _strtrim(namespace_path)
 

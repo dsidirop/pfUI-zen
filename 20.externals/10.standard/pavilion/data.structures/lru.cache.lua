@@ -2,30 +2,26 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _namespacer, _setmetatable = (function()
+local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
     local _type = _assert(_g.type)
-    local _error = _assert(_g.error)
-
-    local _time = _assert(_g.os.time)
-    local _gsub = _assert(_g.string.gsub)
     local _pairs = _assert(_g.pairs)
     local _format = _assert(_g.string.format)
     local _tostring = _assert(_g.tostring)
-    local _strmatch = _assert(_g.string.match)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _namespacer, _setmetatable
+    return _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
 
+local Time = _importer("System.Time")
 local Math = _importer("System.Math")
 local Table = _importer("System.Table")
 
@@ -87,14 +83,14 @@ function Class:Get(key)
         return nil
     end
 
-    entry.Timestamp = _time()
+    entry.Timestamp = Time.Now()
     return entry.Value
 end
 
 function Class:GetKeys()
     _setfenv(1, self)
 
-    local now = _time()
+    local now = Time.Now()
 
     self:Cleanup()
 
@@ -111,7 +107,7 @@ end
 function Class:GetValues()
     _setfenv(1, self)
 
-    local now = _time()
+    local now = Time.Now()
 
     self:Cleanup()
 
@@ -133,7 +129,7 @@ function Class:Upsert(key, valueOptional)
 
     valueOptional = valueOptional or true --00 
 
-    local t = _time()
+    local t = Time.Now()
 
     _count = _count + (_entries[key] == nil and 1 or 0) -- order
     
@@ -191,7 +187,7 @@ function Class:RemoveExpiredEntries_()
         return
     end
 
-    local now = _time()
+    local now = Time.Now()
     if now - _timestampOfLastDeadlinesCleanup < 1 then
         return
     end
