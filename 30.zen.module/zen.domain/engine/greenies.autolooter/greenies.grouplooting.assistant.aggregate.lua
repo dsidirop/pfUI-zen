@@ -88,7 +88,7 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
-    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
+    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
 
     _isRunning = true
 
@@ -104,7 +104,7 @@ function Class:Stop()
 
     _groupLootingListener:StopListening():EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_)
 
-    _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
+    _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_)
 
     _isRunning = false
 
@@ -189,7 +189,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     end
 
     Table.insert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                           order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) --    order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
@@ -201,18 +201,18 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 
-function Class:modifierKeysListener_ModifierKeysStatesChanged_(_, ea)
+function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
     _setfenv(1, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode() --00  
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         _pendingLootGamblingRequests = {}
-        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_)
         return
     end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
-        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_) -- vital    
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital    
 
         local requests = _pendingLootGamblingRequests --                                                                                   order
         local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
