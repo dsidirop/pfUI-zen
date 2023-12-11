@@ -110,31 +110,27 @@ Class.I = Class:New() -- singleton   todo  remove this once di becomes available
 
 -- private space
 
-function SpawnModifierKeysStatusesChangedEventArgsCache_()
-    local cache = {}
-
-    --@formatter:off
-    function add(alt, shift, control)
-        cache[alt]                 = cache[alt]                 or {}
-        cache[alt][shift]          = cache[alt][shift]          or {}
-        cache[alt][shift][control] = cache[alt][shift][control] or ModifierKeysStatusesChangedEventArgs:New(alt, shift, control)
+Class.ModifierKeysStatusesChangedEventArgsCache_ = (function() --@formatter:off
+    local function add(cache_, alt_, shift_, control_)
+        cache_[alt_]                   = cache_[alt_]                   or {}
+        cache_[alt_][shift_]           = cache_[alt_][shift_]           or {}
+        cache_[alt_][shift_][control_] = cache_[alt_][shift_][control_] or ModifierKeysStatusesChangedEventArgs:New(alt_, shift_, control_)
     end
+    
+    local cache = {}
+    add( cache, false , false , false )
+    add( cache, true  , false , false )
+    add( cache, false , true  , false )
+    add( cache, false , false , true  )
+    add( cache, true  , true  , false )
+    add( cache, true  , false , true  )
+    add( cache, false , true  , true  )
+    add( cache, true  , true  , true  )
 
-    add( false , false , false )
-    add( true  , false , false )
-    add( false , true  , false )
-    add( false , false , true  )
-    add( true  , true  , false )
-    add( true  , false , true  )
-    add( false , true  , true  )
-    add( true  , true  , true  )
-    --@formatter:on
+    return cache --@formatter:on
+end)()
 
-    return cache
-end
-
-local _ModifierKeysStatusesChangedEventArgsCache = SpawnModifierKeysStatusesChangedEventArgsCache_()
-local _EmptyModifierKeysStatusesChangedEventArgs = _ModifierKeysStatusesChangedEventArgsCache[false][false][false]
+Class.EmptyModifierKeysStatusesChangedEventArgs_ = Class.ModifierKeysStatusesChangedEventArgsCache_[false][false][false]
 
 function Class:OnSettingsChanged_()
     _setfenv(1, self)
@@ -156,7 +152,7 @@ function Class:OnSettingsChanged_()
     do
         -- wantedActive==false  or  wantedActive==true but noone is listening   so we need to halt the timer
         _timer:Stop()
-        _lastEventArgsEmitted = _EmptyModifierKeysStatusesChangedEventArgs
+        _lastEventArgsEmitted = Class.EmptyModifierKeysStatusesChangedEventArgs_
     end
 
     return self
@@ -176,7 +172,7 @@ function Class:Timer_Elapsed_(_, _)
         return
     end
 
-    _lastEventArgsEmitted = _ModifierKeysStatusesChangedEventArgsCache[isAltKeyDown][isShiftKeyDown][isControlKeyDown]
+    _lastEventArgsEmitted = Class.ModifierKeysStatusesChangedEventArgsCache_[isAltKeyDown][isShiftKeyDown][isControlKeyDown]
     _eventModifierKeysStatesChanged:Raise(self, _lastEventArgsEmitted)
 
     if not _eventModifierKeysStatesChanged:HasSubscribers() then
