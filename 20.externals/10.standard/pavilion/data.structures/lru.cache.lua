@@ -2,7 +2,7 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer, _setmetatable = (function()
+local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -14,9 +14,8 @@ local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespac
     local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer, _setmetatable
+    return _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -24,6 +23,7 @@ _setfenv(1, {})
 local Time = _importer("System.Time")
 local Math = _importer("System.Math")
 local Table = _importer("System.Table")
+local Classify = _importer("System.Classify")
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
@@ -47,7 +47,7 @@ function Class:New(options)
     _assert(options.TrimRatio                    == nil or _type(options.TrimRatio)                    == "number" and options.TrimRatio >= 0                    and options.TrimRatio <= 1, "TrimRatio must either be nil or between 0 and 1 (given value=" .. _tostring(options.TrimRatio) .. ")")
     _assert(options.MaxLifespanPerEntryInSeconds == nil or _type(options.MaxLifespanPerEntryInSeconds) == "number" and options.MaxLifespanPerEntryInSeconds >= 0 and Math.floor(options.MaxLifespanPerEntryInSeconds) == options.MaxLifespanPerEntryInSeconds, "MaxLifespanPerEntryInSeconds must either be nil or zero or a positive integer (given value=" .. _tostring(options.MaxLifespanPerEntryInSeconds) .. ")")
 
-    local instance = {
+    return Classify(self, {
         _count = 0,
         _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
@@ -55,12 +55,7 @@ function Class:New(options)
         _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions.MaxSize                       or options.MaxSize,
         _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions.TrimRatio                     or options.TrimRatio,
         _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
-    } --@formatter:on
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    }) --@formatter:on
 end
 
 function Class:Clear()

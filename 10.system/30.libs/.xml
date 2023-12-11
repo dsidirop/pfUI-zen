@@ -2,4 +2,5 @@
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>
     <Include file="table\.xml"/>
+    <Include file="classify\.xml"/>
 </Ui>
