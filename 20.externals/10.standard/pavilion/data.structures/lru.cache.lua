@@ -116,10 +116,10 @@ function Class:GetValues()
     self:Cleanup()
 
     local values = {}
-    for _, v in _pairs(_entries) do
+    for k, v in _pairs(_entries) do
         Table.insert(values, v.Value)
 
-        _entries[key].Timestamp = now
+        _entries[k].Timestamp = now
     end
 
     return values
