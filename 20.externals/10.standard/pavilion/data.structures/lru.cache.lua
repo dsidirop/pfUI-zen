@@ -2,7 +2,7 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _mathfloor, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
+local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -17,16 +17,18 @@ local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatc
     local _format = _assert(_g.string.format)
     local _tostring = _assert(_g.tostring)
     local _strmatch = _assert(_g.string.match)
-    local _mathfloor = _assert(_g.math.floor)
+    local _importer = _assert(_g.pvl_namespacer_get)
     local _tableSort = _assert(_g.table.sort)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _tableInsert = _assert(_g.table.insert)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _mathfloor, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
+    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
 end)()
 
 _setfenv(1, {})
+
+local Math = _importer("System.Math")
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
@@ -46,9 +48,9 @@ function Class:New(options)
 
     options = options or Class.DefaultOptions --@formatter:off
 
-    _assert(options.MaxSize                      == nil or _type(options.MaxSize)                      == "number" and options.MaxSize >= 0                      and _mathfloor(options.MaxSize) == options.MaxSize, "MaxSize must either be nil or a positive integer (given value=" .. _tostring(options.MaxSize) .. ")")
+    _assert(options.MaxSize                      == nil or _type(options.MaxSize)                      == "number" and options.MaxSize >= 0                      and Math.floor(options.MaxSize) == options.MaxSize, "MaxSize must either be nil or a positive integer (given value=" .. _tostring(options.MaxSize) .. ")")
     _assert(options.TrimRatio                    == nil or _type(options.TrimRatio)                    == "number" and options.TrimRatio >= 0                    and options.TrimRatio <= 1, "TrimRatio must either be nil or between 0 and 1 (given value=" .. _tostring(options.TrimRatio) .. ")")
-    _assert(options.MaxLifespanPerEntryInSeconds == nil or _type(options.MaxLifespanPerEntryInSeconds) == "number" and options.MaxLifespanPerEntryInSeconds >= 0 and _mathfloor(options.MaxLifespanPerEntryInSeconds) == options.MaxLifespanPerEntryInSeconds, "MaxLifespanPerEntryInSeconds must either be nil or zero or a positive integer (given value=" .. _tostring(options.MaxLifespanPerEntryInSeconds) .. ")")
+    _assert(options.MaxLifespanPerEntryInSeconds == nil or _type(options.MaxLifespanPerEntryInSeconds) == "number" and options.MaxLifespanPerEntryInSeconds >= 0 and Math.floor(options.MaxLifespanPerEntryInSeconds) == options.MaxLifespanPerEntryInSeconds, "MaxLifespanPerEntryInSeconds must either be nil or zero or a positive integer (given value=" .. _tostring(options.MaxLifespanPerEntryInSeconds) .. ")")
 
     local instance = {
         _count = 0,

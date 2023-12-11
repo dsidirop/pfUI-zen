@@ -2,5 +2,5 @@
     <!-- ordering is important here -->
     <Include file="10.wowluapolyfills\.xml"/>
     <Include file="20.namespacer\.xml"/>
-    <Include file="30.event\.xml"/>
+    <Include file="30.libs\.xml"/>
 </Ui>
