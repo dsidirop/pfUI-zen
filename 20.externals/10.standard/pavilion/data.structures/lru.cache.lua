@@ -72,6 +72,7 @@ function Class:Clear()
 
     _count = 0
     _entries = {}
+    _timestampOfLastDeadlinesCleanup = -1
 end
 
 function Class:Get(key)
@@ -79,7 +80,7 @@ function Class:Get(key)
 
     _assert(key ~= nil, "key cannot be nil")
 
-    self:Cleanup_()
+    self:Cleanup()
     
     local entry = _entries[key]
     if entry == nil then
@@ -95,7 +96,7 @@ function Class:GetKeys()
 
     local now = _time()
 
-    self:Cleanup_()
+    self:Cleanup()
 
     local keys = {}
     for key in _pairs(_entries) do
@@ -112,7 +113,7 @@ function Class:GetValues()
 
     local now = _time()
 
-    self:Cleanup_()
+    self:Cleanup()
 
     local values = {}
     for _, v in _pairs(_entries) do
@@ -142,7 +143,7 @@ function Class:Upsert(key, valueOptional)
         Timestamp = t,
     }
 
-    self:Cleanup_()
+    self:Cleanup()
     
     return self
 
@@ -172,37 +173,55 @@ function Class:ToString()
     return self:__tostring()
 end
 
--- private space
-
-function Class:Cleanup_()
+function Class:Cleanup()
     _setfenv(1, self)
 
-    if _maxLifespanPerEntryInSeconds > 0 then
-        -- remove expired entries
-        local now = _time()
-        if now - _timestampOfLastDeadlinesCleanup >= 1 then
-            _timestampOfLastDeadlinesCleanup = now
-            for key, value in _pairs(_entries) do
-                if now >= value.Deadline then
-                    self:Remove(key)
-                end
-            end
-        end
+    self:RemoveExpiredEntries_()
+    self:RemoveSuperfluousEntries_()
+    
+    return self
+end
+
+-- private space
+
+function Class:RemoveExpiredEntries_()
+    _setfenv(1, self)
+
+    if _maxLifespanPerEntryInSeconds <= 0 then
+        return
     end
 
-    if _maxSize > 0 then
-        if _count <= _maxSize then
-            return
-        end
+    local now = _time()
+    if now - _timestampOfLastDeadlinesCleanup < 1 then
+        return
+    end
 
-        local sortedArrayOldestToNewest = self:Sort_(_entries) -- remove the least recently used entries
-
-        local desiredEventualSize = _maxSize * (1 - _trimRatio)
-        local numberOfItemsToDelete = currentLength - desiredEventualSize
-        for i = 1, numberOfItemsToDelete, 1
-        do
-            self:Remove(sortedArrayOldestToNewest[i].key)
+    _timestampOfLastDeadlinesCleanup = now
+    for key, value in _pairs(_entries) do
+        if now >= value.Deadline then
+            self:Remove(key)
         end
+    end
+end
+
+function Class:RemoveSuperfluousEntries_()
+    _setfenv(1, self)
+
+    if _maxSize <= 0 then
+        return
+    end
+
+    if _count <= _maxSize then
+        return
+    end
+
+    local sortedArrayOldestToNewest = self:Sort_(_entries) -- remove the least recently used entries
+
+    local desiredEventualSize = _maxSize * (1 - _trimRatio)
+    local numberOfItemsToDelete = currentLength - desiredEventualSize
+    for i = 1, numberOfItemsToDelete, 1
+    do
+        self:Remove(sortedArrayOldestToNewest[i].key)
     end
 end
 
