@@ -27,7 +27,7 @@ local Classify = _importer("System.Classify")
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
-Class.DefaultOptions = {
+Class.DefaultOptions_ = {
     MaxSize = 100,
     TrimRatio = 0.25,
     MaxLifespanPerEntryInSeconds = 5 * 60,
@@ -41,7 +41,7 @@ function Class:New(options)
 
     _assert(options == nil or _type(options) == "table", "options must be a table or nil")
 
-    options = options or Class.DefaultOptions --@formatter:off
+    options = options or Class.DefaultOptions_ --@formatter:off
 
     _assert(options.MaxSize                      == nil or _type(options.MaxSize)                      == "number" and options.MaxSize >= 0                      and Math.floor(options.MaxSize) == options.MaxSize, "MaxSize must either be nil or a positive integer (given value=" .. _tostring(options.MaxSize) .. ")")
     _assert(options.TrimRatio                    == nil or _type(options.TrimRatio)                    == "number" and options.TrimRatio >= 0                    and options.TrimRatio <= 1, "TrimRatio must either be nil or between 0 and 1 (given value=" .. _tostring(options.TrimRatio) .. ")")
@@ -52,9 +52,9 @@ function Class:New(options)
         _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
 
-        _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions.MaxSize                       or options.MaxSize,
-        _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions.TrimRatio                     or options.TrimRatio,
-        _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
+        _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions_.MaxSize                       or options.MaxSize,
+        _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions_.TrimRatio                     or options.TrimRatio,
+        _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions_.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
     }) --@formatter:on
 end
 
