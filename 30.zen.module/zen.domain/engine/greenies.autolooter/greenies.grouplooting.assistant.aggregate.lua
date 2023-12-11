@@ -20,11 +20,12 @@ end)()
 
 _setfenv(1, {})
 
+local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
+
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
-local Table = _importer("System.Table")
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
@@ -38,10 +39,12 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelpe
         _settings = nil,
 
         _isRunning = false,
-        _pendingLootGamblingRequests = {},
+        _pendingLootGamblingRequests = LRUCache:New{
+            MaxSize = 20,
+            MaxLifespanPerEntryInSeconds = 5 * 60,
+        },
 
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
-
         _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
     }
@@ -188,7 +191,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    Table.insert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                           order
+    _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
@@ -206,7 +209,7 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
 
     local desiredLootGamblingBehaviour = _settings:GetMode() --00  
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
-        _pendingLootGamblingRequests = {}
+        _pendingLootGamblingRequests:Clear()
         _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_)
         return
     end
@@ -214,10 +217,10 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
         _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital    
 
-        local requests = _pendingLootGamblingRequests --                                                                                   order
+        local requests = _pendingLootGamblingRequests:GetKeys() --                                                                         order
         local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
 
-        _pendingLootGamblingRequests = {} --        order        
+        _pendingLootGamblingRequests:Clear() --     order        
         for _, gamblingId in _pairs(requests) do -- order
             _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
