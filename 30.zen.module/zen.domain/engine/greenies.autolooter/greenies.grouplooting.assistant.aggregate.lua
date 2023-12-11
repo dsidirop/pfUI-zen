@@ -24,6 +24,7 @@ local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundat
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
+local Table = _importer("System.Table")
 local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
@@ -187,8 +188,8 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                        order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- order
+    Table.insert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                           order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) --    order
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
@@ -213,8 +214,8 @@ function Class:modifierKeysListener_ModifierKeysStatesChanged_(_, ea)
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
         _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_) -- vital    
 
-        local requests = _pendingLootGamblingRequests --order
-        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --order
+        local requests = _pendingLootGamblingRequests --                                                                                   order
+        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
 
         _pendingLootGamblingRequests = {} --        order        
         for _, gamblingId in _pairs(requests) do -- order

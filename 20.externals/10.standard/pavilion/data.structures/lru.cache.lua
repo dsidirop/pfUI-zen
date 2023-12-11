@@ -2,7 +2,7 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
+local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -18,17 +18,16 @@ local _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatc
     local _tostring = _assert(_g.tostring)
     local _strmatch = _assert(_g.string.match)
     local _importer = _assert(_g.pvl_namespacer_get)
-    local _tableSort = _assert(_g.table.sort)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _tableInsert = _assert(_g.table.insert)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
+    return _assert, _type, _error, _time, _gsub, _pairs, _format, _tostring, _strmatch, _importer, _setfenv, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
 
 local Math = _importer("System.Math")
+local Table = _importer("System.Table")
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
@@ -100,7 +99,7 @@ function Class:GetKeys()
 
     local keys = {}
     for key in _pairs(_entries) do
-        _tableInsert(keys, key)
+        Table.insert(keys, key)
 
         _entries[key].Timestamp = now
     end
@@ -117,7 +116,7 @@ function Class:GetValues()
 
     local values = {}
     for _, v in _pairs(_entries) do
-        _tableInsert(values, v.Value)
+        Table.insert(values, v.Value)
 
         _entries[key].Timestamp = now
     end
@@ -212,10 +211,10 @@ function Class:Sort_(t)
 
     local array = {}
     for key, value in _pairs(t) do
-        _tableInsert(array, { key = key, access = value.Timestamp })
+        Table.insert(array, { key = key, access = value.Timestamp })
     end
 
-    _tableSort(array, function(a, b)
+    Table.sort(array, function(a, b)
         return a.access < b.access
     end)
 
