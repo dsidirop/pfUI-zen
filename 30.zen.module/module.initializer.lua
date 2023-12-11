@@ -17,6 +17,7 @@ local function Main(_pfUI)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
+        local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
@@ -45,12 +46,12 @@ local function Main(_pfUI)
                             :Select(function (x) return x.path end)
                             :FirstOrDefault() -- @formatter:on
 
-        if not addonPath then
+        if (not addonPath) then
             _error(_format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
             return
         end
 
-        if not _pfuiGui.CreateGUIEntry then
+        if (not _pfuiGui.CreateGUIEntry) then
             _error(_format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
             return
         end
@@ -63,6 +64,20 @@ local function Main(_pfUI)
                 :Initialize() -- @formatter:on
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
+
+        local cache = LRUCache:New({ MaxSize = 0, MaxLifespanPerEntryInSeconds = 0 })
+
+        ModifierKeysListener.I --@formatter:off
+                            :ChainSetPollingInterval(0.05)
+                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
+                                _print("** ea:GetKey()=" .. ea:ToString())
+
+                                cache:Upsert(ea:ToString())
+            
+                                _print("** cache:Count()    = " .. cache:Count())
+                                _print("** cache:ToString() = " .. cache:ToString())
+                            end)
+                            :Start() --@formatter:on
     end)
 end
 
