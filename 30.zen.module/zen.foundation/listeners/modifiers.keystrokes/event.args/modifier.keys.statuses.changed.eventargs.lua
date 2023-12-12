@@ -21,12 +21,14 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs")
 
 function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(hasModifierAlt) == "boolean")
     _assert(_type(hasModifierShift) == "boolean")
@@ -41,19 +43,19 @@ function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
 end
 
 function Class:HasModifierAlt()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _hasModifierAlt
 end
 
 function Class:HasModifierShift()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _hasModifierShift
 end
 
 function Class:HasModifierControl()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _hasModifierControl
 end
@@ -63,7 +65,7 @@ function Class:ToString()
 end
 
 function Class:__tostring()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     if _stringified then
         return _stringified

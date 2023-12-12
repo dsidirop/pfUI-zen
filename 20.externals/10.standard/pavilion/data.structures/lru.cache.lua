@@ -23,6 +23,8 @@ _setfenv(1, {})
 local Time = _importer("System.Time")
 local Math = _importer("System.Math")
 local Table = _importer("System.Table")
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local TablesHelper = _importer("Pavilion.Helpers.Tables")
@@ -39,7 +41,7 @@ Class.DefaultOptions_ = {
 --@options.TrimRatio                      must be either nil (default value of 0.25) or between 0 and 1 
 --@options.MaxLifespanPerEntryInSeconds   must be either nil (default value of 300secs) or 0 (no expiration) or a positive integer number of seconds
 function Class:New(options)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(options == nil or _type(options) == "table", "options must be a table or nil")
 
@@ -61,7 +63,7 @@ function Class:New(options)
 end
 
 function Class:Clear()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _count = 0
     _entries = {}
@@ -69,7 +71,7 @@ function Class:Clear()
 end
 
 function Class:Get(key)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(key ~= nil, "key cannot be nil")
 
@@ -85,7 +87,7 @@ function Class:Get(key)
 end
 
 function Class:GetKeys()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local now = Time.Now()
 
@@ -102,7 +104,7 @@ function Class:GetKeys()
 end
 
 function Class:GetValues()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local now = Time.Now()
 
@@ -120,7 +122,7 @@ end
 
 -- insert or update if the key already exists
 function Class:Upsert(key, valueOptional)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(key ~= nil, "key cannot be nil")
 
@@ -145,7 +147,7 @@ function Class:Upsert(key, valueOptional)
 end
 
 function Class:Remove(key)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(key ~= nil, "key cannot be nil")
 
@@ -155,19 +157,19 @@ function Class:Remove(key)
 end
 
 function Class:Count()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return self:__len()
 end
 
 function Class:ToString()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return self:__tostring()
 end
 
 function Class:Cleanup()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:RemoveExpiredEntries_()
     self:RemoveSuperfluousEntries_()
@@ -178,7 +180,7 @@ end
 -- private space
 
 function Class:RemoveExpiredEntries_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _maxLifespanPerEntryInSeconds <= 0 then
         return
@@ -198,7 +200,7 @@ function Class:RemoveExpiredEntries_()
 end
 
 function Class:RemoveSuperfluousEntries_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _maxSize <= 0 then
         return
@@ -219,7 +221,7 @@ function Class:RemoveSuperfluousEntries_()
 end
 
 function Class:Sort_(t)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local array = {}
     for key, value in TablesHelper.GetKeyValuePairs(t) do
@@ -234,7 +236,7 @@ function Class:Sort_(t)
 end
 
 function Class:__tostring()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local s = "{ "
     local sep = ""
@@ -247,7 +249,7 @@ function Class:__tostring()
 end
 
 function Class:__len()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _count
 end

@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
@@ -33,7 +35,7 @@ local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Mana
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element")
 
 function Class:New(nativeElement)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(_type(nativeElement) == "table", "nativeElement must be a table")
 
@@ -46,7 +48,7 @@ function Class:New(nativeElement)
 end
 
 function Class:ChainSetPropagateKeyboardInput(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(_type(value) == "boolean", "value must be a boolean")
 
@@ -60,7 +62,7 @@ function Class:ChainSetPropagateKeyboardInput(value)
 end
 
 function Class:ChainSetFrameStrata(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(_type(value) == "string", "value must be a boolean")
 
@@ -70,7 +72,7 @@ function Class:ChainSetFrameStrata(value)
 end
 
 function Class:ChainSetKeystrokeListenerEnabled(onOrOff)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     -- _assert(...) -- nah  dont
 
@@ -80,7 +82,7 @@ function Class:ChainSetKeystrokeListenerEnabled(onOrOff)
 end
 
 function Class:EventOnEvent_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventOnEvent:Subscribe(handler, owner)
 
@@ -90,7 +92,7 @@ function Class:EventOnEvent_Subscribe(handler, owner)
 end
 
 function Class:EventOnEvent_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventOnEvent:Unsubscribe(handler)
 
@@ -103,7 +105,7 @@ end
 
 -- note that this event requires  :ChainSetFrameStrata("DIALOG"):ChainSetKeystrokeListenerEnabled(true) to be called as well
 function Class:EventKeyDown_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _eventKeyDown:Subscribe(handler, owner)
     
@@ -113,7 +115,7 @@ function Class:EventKeyDown_Subscribe(handler, owner)
 end
 
 function Class:EventKeyDown_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventKeyDown:Unsubscribe(handler)
     
@@ -127,7 +129,7 @@ end
 -- private space
 
 function Class:EnsureNativeOnKeyDownListenerIsRegistered_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     if _nativeElement:GetScript("OnKeyDown") then
         return self
@@ -147,7 +149,7 @@ function Class:EnsureNativeOnKeyDownListenerIsRegistered_()
 end
 
 function Class:EnsureNativeOnKeyDownListenerIsUnregistered_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _nativeElement:SetScript("OnKeyDown", nil)
     
@@ -155,7 +157,7 @@ function Class:EnsureNativeOnKeyDownListenerIsUnregistered_()
 end
 
 function Class:EnsureNativeOnEventListenerIsRegistered_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _nativeElement:GetScript("OnEvent") then
         return self
@@ -169,7 +171,7 @@ function Class:EnsureNativeOnEventListenerIsRegistered_()
 end
 
 function Class:EnsureNativeOnEventListenerIsUnregistered_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _nativeElement:SetScript("OnEvent", nil)
 

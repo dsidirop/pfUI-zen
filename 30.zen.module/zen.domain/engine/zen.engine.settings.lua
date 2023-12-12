@@ -20,13 +20,15 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 local GreeniesAutolooterAggregateSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.AggregateSettings")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _greeniesAutolooterAggregateSettings = GreeniesAutolooterAggregateSettings:New(),
@@ -34,7 +36,7 @@ function Class:New()
 end
 
 function Class:GetGreeniesAutolooterAggregateSettings()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     return _greeniesAutolooterAggregateSettings
 end

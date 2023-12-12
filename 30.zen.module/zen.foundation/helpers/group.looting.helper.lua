@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local RollOnLoot = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
@@ -30,7 +32,7 @@ local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundat
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self)
 end
@@ -38,7 +40,7 @@ end
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
 -- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo
 function Class:GetGambledItemInfo(rollId)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local
     texture,
@@ -74,7 +76,7 @@ function Class:GetGambledItemInfo(rollId)
 end
 
 function Class:SubmitResponseToItemGamblingRequest(rollID, wowRollMode)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(EWowGamblingResponseType.Validate(wowRollMode))
 

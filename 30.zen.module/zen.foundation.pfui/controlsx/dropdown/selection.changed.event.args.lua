@@ -23,12 +23,14 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _old = nil,
@@ -37,19 +39,19 @@ function Class:New()
 end
 
 function Class:GetOldValue()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _old
 end
 
 function Class:GetNewValue()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _new
 end
 
 function Class:ChainSetOld(old)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(old == nil or _type(old) == "string")
 
@@ -59,7 +61,7 @@ function Class:ChainSetOld(old)
 end
 
 function Class:ChainSetNew(new)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(new) == "string")
 

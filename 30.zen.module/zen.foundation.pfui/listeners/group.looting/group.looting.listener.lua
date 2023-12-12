@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
@@ -32,7 +34,7 @@ local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Ad
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _active = false,
@@ -48,7 +50,7 @@ function Class:New()
 end
 
 function Class:StartListening()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _active then
         return self
@@ -63,7 +65,7 @@ function Class:StartListening()
 end
 
 function Class:StopListening()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _active = false
 
@@ -71,7 +73,7 @@ function Class:StopListening()
 end
 
 function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventPendingLootItemGamblingDetected:Subscribe(handler, owner)
 
@@ -79,7 +81,7 @@ function Class:EventPendingLootItemGamblingDetected_Subscribe(handler, owner)
 end
 
 function Class:EventPendingLootItemGamblingDetected_Unsubscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventPendingLootItemGamblingDetected:Unsubscribe(handler, owner)
 
@@ -88,7 +90,7 @@ end
 
 -- private space
 function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     for rollFrameIndex in TablesHelper.GetKeyValuePairs(PfuiRoll.frames) do
         self:EvaluateItemRollFrameAndReportIfNew_(PfuiRoll, rollFrameIndex)
@@ -98,7 +100,7 @@ function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
 end
 
 function Class:ApplyHookOnce_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _hookApplied then
         return self
@@ -119,7 +121,7 @@ function Class:ApplyHookOnce_()
 end
 
 function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIndex)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if not _active then
         return
@@ -137,7 +139,7 @@ function Class:EvaluateItemRollFrameAndReportIfNew_(pfuiRoll, gambledItemFrameIn
 end
 
 function Class:IsBrandNewItemGamblingUIFrame_(pfuiItemFrame)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     -- @formatter:off
     if    pfuiItemFrame == nil

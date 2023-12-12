@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
@@ -31,7 +33,7 @@ local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Z
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service")
 
 function Class:NewWithDBContext(dbcontext)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(dbcontext == nil or _type(dbcontext) == "table")
 
@@ -44,7 +46,7 @@ function Class:NewWithDBContext(dbcontext)
 end
 
 function Class:New(serviceQueryable, serviceWriteable)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(serviceQueryable) == "table")
     _assert(_type(serviceWriteable) == "table")
@@ -56,19 +58,19 @@ function Class:New(serviceQueryable, serviceWriteable)
 end
 
 function Class:GetAllUserPreferences()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _serviceQueryable:GetAllUserPreferences()
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateMode(value)
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
 end

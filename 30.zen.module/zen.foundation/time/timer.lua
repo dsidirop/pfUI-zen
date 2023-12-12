@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
@@ -28,7 +30,7 @@ local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Cre
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer")
 
 function Class:New(interval)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(_type(interval) == "number" and interval > 0, "interval must be a positive number")
 
@@ -52,13 +54,13 @@ function Class:New(interval)
 end
 
 function Class:GetInterval()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _interval
 end
 
 function Class:ChainSetInterval(newInterval)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(newInterval) == "number" and newInterval > 0, "interval must be a positive number")
 
@@ -68,13 +70,13 @@ function Class:ChainSetInterval(newInterval)
 end
 
 function Class:IsRunning()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _element:IsVisible()
 end
 
 function Class:Start()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _wantedActive = true
     self:OnSettingsChanged_()
@@ -83,7 +85,7 @@ function Class:Start()
 end
 
 function Class:Stop()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _wantedActive = false
     self:OnSettingsChanged_()
@@ -92,7 +94,7 @@ function Class:Stop()
 end
 
 function Class:EventElapsed_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventElapsed:Subscribe(handler, owner) --   order
     self:OnSettingsChanged_() --                 order
@@ -101,7 +103,7 @@ function Class:EventElapsed_Subscribe(handler, owner)
 end
 
 function Class:EventElapsed_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventElapsed:Unsubscribe(handler)  --   order
     self:OnSettingsChanged_() --             order
@@ -112,7 +114,7 @@ end
 -- private space
 
 function Class:OnSettingsChanged_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _wantedActive and _eventElapsed:HasSubscribers() then
         self:StartImpl_()
@@ -128,7 +130,7 @@ function Class:OnSettingsChanged_()
 end
 
 function Class:StartImpl_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:EnsureInitializedOnlyOnce_()
 
@@ -138,7 +140,7 @@ function Class:StartImpl_()
 end
 
 function Class:StopImpl_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _element:Hide()    
     _elapsedTimeSinceLastFiring = 0
@@ -147,7 +149,7 @@ function Class:StopImpl_()
 end
 
 function Class:EnsureInitializedOnlyOnce_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _element:GetScript("OnUpdate") then
         return

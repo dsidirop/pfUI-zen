@@ -20,36 +20,35 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 
 function Class:New(greeniesAutolooterAggregate)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _settings = nil,
-        
+
         _isRunning = false,
         _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(), -- todo  use di
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place
 
 function Class:IsRunning() -- todo   partial classes
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _isRunning
 end
 
 -- settings is expected to be Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings
 function Class:SetSettings(settings) -- todo   partial classes
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(settings) == "table", "settings parameter is expected to be an object")
     
@@ -69,7 +68,7 @@ function Class:SetSettings(settings) -- todo   partial classes
 end
 
 function Class:Restart() -- todo   partial classes
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:Stop()
     self:Start()
@@ -78,7 +77,7 @@ function Class:Restart() -- todo   partial classes
 end
 
 function Class:Start()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     if _isRunning then
         return self -- nothing to do
@@ -91,7 +90,7 @@ function Class:Start()
 end
 
 function Class:Stop()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if not _isRunning then
         return self -- nothing to do
@@ -104,7 +103,7 @@ function Class:Stop()
 end
 
 function Class:GreeniesGrouplootingAutomation_SwitchMode(value) -- todo   partial classes
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _greeniesAutolooterAggregate:SwitchMode(value)
 
@@ -112,7 +111,7 @@ function Class:GreeniesGrouplootingAutomation_SwitchMode(value) -- todo   partia
 end
 
 function Class:GreeniesGrouplootingAutomation_SwitchActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _greeniesAutolooterAggregate:SwitchActOnKeybind(value)
 

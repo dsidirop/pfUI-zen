@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
@@ -33,7 +35,7 @@ local ModifierKeysStatusesChangedEventArgs = _importer("Pavilion.Warcraft.Addons
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
 
 function Class:New(timer)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _timer = timer or Timer:New(0.1), -- todo di this as a singleton when di comes to town
@@ -47,7 +49,7 @@ function Class:New(timer)
 end
 
 function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(mustEmitOnFreshStart) == "boolean", "expected a boolean")
 
@@ -57,7 +59,7 @@ function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
 end
 
 function Class:ChainSetPollingInterval(interval)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(interval) == "number" and interval > 0, "interval must be a positive number")
 
@@ -67,7 +69,7 @@ function Class:ChainSetPollingInterval(interval)
 end
 
 function Class:Start()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _wantedActive = true --       order
     self:OnSettingsChanged_() --  order
@@ -76,7 +78,7 @@ function Class:Start()
 end
 
 function Class:Stop()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _wantedActive = false --       order
     self:OnSettingsChanged_() --   order
@@ -85,7 +87,7 @@ function Class:Stop()
 end
 
 function Class:EventModifierKeysStatesChanged_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventModifierKeysStatesChanged:Subscribe(handler, owner) --  order
     self:OnSettingsChanged_() --                                  order
@@ -94,7 +96,7 @@ function Class:EventModifierKeysStatesChanged_Subscribe(handler, owner)
 end
 
 function Class:EventModifierKeysStatesChanged_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventModifierKeysStatesChanged:Unsubscribe(handler) --     order
     self:OnSettingsChanged_() --                                order
@@ -130,7 +132,7 @@ end)()
 Class.EmptyModifierKeysStatusesChangedEventArgs_ = Class.ModifierKeysStatusesChangedEventArgsCache_[false][false][false]
 
 function Class:OnSettingsChanged_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if _wantedActive and _eventModifierKeysStatesChanged:HasSubscribers() then
         if _timer:IsRunning() then
@@ -156,7 +158,7 @@ function Class:OnSettingsChanged_()
 end
 
 function Class:Timer_Elapsed_(_, _)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     --@formatter:off
     local isAltKeyDown     = IsAltKeyDown()

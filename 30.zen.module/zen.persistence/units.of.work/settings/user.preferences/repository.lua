@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
@@ -28,7 +30,7 @@ local UserPreferencesRepositoryWriteable = _importer("Pavilion.Warcraft.Addons.Z
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
 function Class:NewWithDBContext(dbcontext)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(dbcontext) == "table")
     
@@ -39,7 +41,7 @@ function Class:NewWithDBContext(dbcontext)
 end
 
 function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryWriteable)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(userPreferencesRepositoryQueryable) == "table")
     _assert(_type(userPreferencesRepositoryWriteable) == "table")
@@ -52,20 +54,20 @@ end
 
 -- @return UserPreferencesDto
 function Class:GetAllUserPreferences()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _userPreferencesRepositoryQueryable:GetAllUserPreferences()
 end
 
 function Class:HasChanges()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _userPreferencesRepositoryWriteable:HasChanges()
 end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     
@@ -74,7 +76,7 @@ end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
 

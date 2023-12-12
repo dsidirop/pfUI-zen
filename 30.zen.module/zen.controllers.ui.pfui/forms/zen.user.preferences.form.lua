@@ -17,6 +17,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
@@ -31,7 +33,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
 function Class:New(T, pfuiGui)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _t = _assert(T),
@@ -51,7 +53,7 @@ function Class:New(T, pfuiGui)
 end
 
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventRequestingCurrentUserPreferences:Subscribe(handler, owner)
 
@@ -59,7 +61,7 @@ function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
 end
 
 function Class:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventRequestingCurrentUserPreferences:Unsubscribe(handler)
 
@@ -67,7 +69,7 @@ function Class:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
 end
 
 function Class:Initialize()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _pfuiGui.CreateGUIEntry(-- 00
             _t["Thirdparty"],
@@ -84,13 +86,13 @@ end
 
 -- privates
 function Class:OnShown_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:OnRequestingCurrentUserPreferences_()
 end
 
 function Class:OnRequestingCurrentUserPreferences_()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local response = _eventRequestingCurrentUserPreferences:Raise( -- @formatter:off todo    RequestingCurrentUserPreferencesEventArgs:New()
             self,
@@ -127,7 +129,7 @@ function Class:OnRequestingCurrentUserPreferences_()
 end
 
 function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(sender)
     _assert(_type(ea) == "table")
@@ -144,7 +146,7 @@ function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, e
 end
 
 function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(sender, ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(sender)
     _assert(_type(ea) == "table")

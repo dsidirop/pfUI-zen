@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -31,7 +33,7 @@ local UserPreferencesDto = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.C
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 
 function Class:New(dbcontextReadonly)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(dbcontextReadonly == nil or _type(dbcontextReadonly) == "table")
 
@@ -44,7 +46,7 @@ end
 
 -- @return UserPreferencesDto
 function Class:GetAllUserPreferences()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local mode = SGreeniesGrouplootingAutomationMode.Validate(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
             and _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode

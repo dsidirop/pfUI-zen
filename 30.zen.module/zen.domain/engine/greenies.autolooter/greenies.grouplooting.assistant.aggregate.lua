@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
@@ -36,7 +38,7 @@ local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Li
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _settings = nil,
@@ -54,27 +56,27 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelpe
 end
 
 function Class:IsRunning()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _isRunning
 end
 
 -- settings is expected to be AggregateSettings
 function Class:SetSettings(settings)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _settings = settings
 end
 
 function Class:Restart()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:Stop()
     self:Start()
 end
 
 function Class:Start()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_settings, "attempt to run without any settings being loaded")
 
@@ -97,7 +99,7 @@ function Class:Start()
 end
 
 function Class:Stop()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if not _isRunning then
         return self -- nothing to do
@@ -113,7 +115,7 @@ function Class:Stop()
 end
 
 function Class:SwitchMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
@@ -137,7 +139,7 @@ function Class:SwitchMode(value)
 end
 
 function Class:SwitchActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 
@@ -161,7 +163,7 @@ end
 -- private space
 
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
@@ -203,7 +205,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
 end
 
 function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode() --00  
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
@@ -228,7 +230,7 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
 end
 
 function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if greeniesAutogamblingMode == SGreeniesGrouplootingAutomationMode.JustPass then
         return EWowGamblingResponseType.Pass

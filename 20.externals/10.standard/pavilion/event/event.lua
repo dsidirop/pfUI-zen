@@ -17,6 +17,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local TablesHelper = _importer("Pavilion.Helpers.Tables")
@@ -24,7 +26,7 @@ local TablesHelper = _importer("Pavilion.Helpers.Tables")
 local Class = _namespacer("Pavilion.System.Event")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _handlers = {},
@@ -34,7 +36,7 @@ end
 
 local NoOwner = {}
 function Class:Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(handler) == "function")
     _assert(owner == nil or _type(owner) == "table")
@@ -45,7 +47,7 @@ function Class:Subscribe(handler, owner)
 end
 
 function Class:SubscribeOnce(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     _assert(_type(handler) == "function")
     _assert(owner == nil or _type(owner) == "table")
 
@@ -56,13 +58,13 @@ function Class:SubscribeOnce(handler, owner)
 end
 
 function Class:HasSubscribers()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     return TablesHelper.AnyOrNil(_handlers) 
 end
 
 function Class:SubscribeOnceImpl_(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(handler) == "function")
     _assert(owner == nil or _type(owner) == "table")
@@ -73,7 +75,7 @@ function Class:SubscribeOnceImpl_(handler, owner)
 end
 
 function Class:Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(handler) == "function", _debugstack())
 
@@ -84,7 +86,7 @@ function Class:Unsubscribe(handler)
 end
 
 function Class:Clear()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _handlers = {}
     _handlersJustOnce = {}
@@ -93,7 +95,7 @@ function Class:Clear()
 end
 
 function Class:Fire(sender, eventArgs)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(sender)
     _assert(eventArgs)
@@ -107,7 +109,7 @@ function Class:Fire(sender, eventArgs)
 end
 
 function Class:Raise(sender, eventArgs)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(sender)
     _assert(eventArgs)

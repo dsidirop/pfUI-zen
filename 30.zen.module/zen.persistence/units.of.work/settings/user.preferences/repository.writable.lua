@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -28,7 +30,7 @@ local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
 function Class:New(dbcontext)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(dbcontext) == "table")
 
@@ -40,14 +42,14 @@ function Class:New(dbcontext)
 end
 
 function Class:HasChanges()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _hasChanges
 end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
     
@@ -63,7 +65,7 @@ end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 

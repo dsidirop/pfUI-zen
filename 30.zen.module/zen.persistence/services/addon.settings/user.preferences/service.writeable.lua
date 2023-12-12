@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
@@ -30,7 +32,7 @@ local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
 
 function Class:New(userPreferencesUnitOfWork)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(userPreferencesUnitOfWork == nil or _type(userPreferencesUnitOfWork) == "table")
 
@@ -40,7 +42,7 @@ function Class:New(userPreferencesUnitOfWork)
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
 
@@ -51,7 +53,7 @@ function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
 

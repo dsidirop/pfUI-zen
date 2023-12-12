@@ -23,6 +23,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
@@ -36,7 +38,7 @@ local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfu
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _nativePfuiControl = nil,
@@ -55,7 +57,7 @@ function Class:New()
 end
 
 function Class:ChainSetCaption(caption)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(caption) == "string")
 
@@ -65,7 +67,7 @@ function Class:ChainSetCaption(caption)
 end
 
 function Class:ChainSetMenuItems(menuItems)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(menuItems) == "table")
 
@@ -77,7 +79,7 @@ function Class:ChainSetMenuItems(menuItems)
 end
 
 function Class:Initialize()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(_caption) == "string")
     _assert(_type(_menuItems) == "table")
@@ -101,7 +103,7 @@ function Class:Initialize()
 end
 
 function Class:TrySetSelectedOptionByValue(optionValue)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(optionValue) == "string")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
@@ -118,7 +120,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
 end
 
 function Class:TrySetSelectedOptionByIndex(index)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
@@ -139,8 +141,8 @@ function Class:TrySetSelectedOptionByIndex(index)
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
-    self:OnSelectionChanged_( -- 00
-            SelectionChangedEventArgs:New()
+    self:OnSelectionChanged_(
+            SelectionChangedEventArgs:New() -- 00
                                      :ChainSetOld(originalValue)
                                      :ChainSetNew(newValue)
     )
@@ -151,7 +153,7 @@ function Class:TrySetSelectedOptionByIndex(index)
 end
 
 function Class:SetVisibility(showNotHide)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if showNotHide then
         self:Show()
@@ -163,7 +165,8 @@ function Class:SetVisibility(showNotHide)
 end
 
 function Class:Show()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
+
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
     _nativePfuiControl:Show()
@@ -172,7 +175,7 @@ function Class:Show()
 end
 
 function Class:Hide()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
     _nativePfuiControl:Hide()
@@ -181,7 +184,7 @@ function Class:Hide()
 end
 
 function Class:EventSelectionChanged_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventSelectionChanged:Subscribe(handler, owner)
 
@@ -189,7 +192,7 @@ function Class:EventSelectionChanged_Subscribe(handler, owner)
 end
 
 function Class:EventSelectionChanged_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventSelectionChanged:Unsubscribe(handler)
 
@@ -198,7 +201,7 @@ end
 
 -- privates
 function Class:OnSelectionChanged_(ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(ea) == "table", "event-args is not an object")
 
@@ -207,7 +210,7 @@ function Class:OnSelectionChanged_(ea)
 end
 
 function Class:ParseMenuItems_(menuItemsArray)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(menuItemsArray) == "table")
 

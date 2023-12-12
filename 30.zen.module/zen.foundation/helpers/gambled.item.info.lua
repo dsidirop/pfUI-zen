@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 
@@ -41,7 +43,7 @@ function Class:New(
         deSkillRequired,
         canTransmog
 )
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return Classify(self, {
         _rollId = rollId,
@@ -63,37 +65,37 @@ function Class:New(
 end
 
 function Class:IsHealthy()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _name ~= nil
 end
 
 function Class:GetGamblingId()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _rollId
 end
 
 function Class:GetName()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _name
 end
 
 function Class:IsNeedable()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _canNeed
 end
 
 function Class:IsGreedable()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     return _canGreed
 end
 
 function Class:IsGreenQuality()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _quality == EWowItemQuality.Green
 end
