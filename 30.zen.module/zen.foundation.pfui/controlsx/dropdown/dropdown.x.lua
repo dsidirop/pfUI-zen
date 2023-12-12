@@ -26,8 +26,9 @@ _setfenv(1, {})
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
-local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringsHelpers = _importer("Pavilion.Helpers.Strings")
+
+local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
@@ -40,8 +41,8 @@ function Class:New()
 
         _caption = nil,
         _menuItems = {},
-        _menuIndexesToMenuValues = {},
         _menuEntryValuesToIndexes = {},
+        _menuIndexesToMenuValuesArray = {},
 
         _oldValue = nil,
         _singlevalue = {},
@@ -67,7 +68,7 @@ function Class:ChainSetMenuItems(menuItems)
     _assert(_type(menuItems) == "table")
 
     _menuItems = menuItems
-    _menuEntryValuesToIndexes, _menuIndexesToMenuValues = self:ParseMenuItems_(menuItems)
+    _menuEntryValuesToIndexes, _menuIndexesToMenuValuesArray = self:ParseMenuItems_(menuItems)
     _assert(_menuEntryValuesToIndexes ~= nil, "menuItems contains duplicate values which is not allowed")
 
     return self
@@ -120,7 +121,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > _getn(_menuIndexesToMenuValues) then
+    if index > _getn(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end
@@ -129,14 +130,14 @@ function Class:TrySetSelectedOptionByIndex(index)
         return true -- already selected   nothing to do
     end
 
-    local newValue = _menuIndexesToMenuValues[index] --   order
-    local originalValue = _singlevalue[_valuekeyname] --  order
+    local newValue = _menuIndexesToMenuValuesArray[index] --   order
+    local originalValue = _singlevalue[_valuekeyname] --       order
 
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
-    self:OnSelectionChanged_(-- 00
+    self:OnSelectionChanged_( -- 00
             SelectionChangedEventArgs:New()
                                      :ChainSetOld(originalValue)
                                      :ChainSetNew(newValue)
