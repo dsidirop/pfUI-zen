@@ -24,6 +24,8 @@ local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
+local TablesHelper = _importer("Pavilion.Helpers.Tables")
+
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
 local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
 
@@ -88,7 +90,7 @@ end
 function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
     _setfenv(1, self)
 
-    for rollFrameIndex in _pairs(PfuiRoll.frames) do
+    for rollFrameIndex in TablesHelper.GetKeyValuePairs(PfuiRoll.frames) do
         self:EvaluateItemRollFrameAndReportIfNew_(PfuiRoll, rollFrameIndex)
     end
 

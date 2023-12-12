@@ -25,6 +25,8 @@ local Math = _importer("System.Math")
 local Table = _importer("System.Table")
 local Classify = _importer("System.Classify")
 
+local TablesHelper = _importer("Pavilion.Helpers.Tables")
+
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
 Class.DefaultOptions_ = {
@@ -90,7 +92,7 @@ function Class:GetKeys()
     self:Cleanup()
 
     local keys = {}
-    for key in _pairs(_entries) do
+    for key in TablesHelper.GetKeyValuePairs(_entries) do
         Table.insert(keys, key)
 
         _entries[key].Timestamp = now
@@ -107,7 +109,7 @@ function Class:GetValues()
     self:Cleanup()
 
     local values = {}
-    for k, v in _pairs(_entries) do
+    for k, v in TablesHelper.GetKeyValuePairs(_entries) do
         Table.insert(values, v.Value)
 
         _entries[k].Timestamp = now
@@ -188,7 +190,7 @@ function Class:RemoveExpiredEntries_()
     end
 
     _timestampOfLastDeadlinesCleanup = now
-    for key, value in _pairs(_entries) do
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
         if now >= value.Deadline then
             self:Remove(key)
         end
@@ -220,7 +222,7 @@ function Class:Sort_(t)
     _setfenv(1, self)
 
     local array = {}
-    for key, value in _pairs(t) do
+    for key, value in TablesHelper.GetKeyValuePairs(t) do
         Table.insert(array, { key = key, access = value.Timestamp })
     end
 
@@ -236,7 +238,7 @@ function Class:__tostring()
 
     local s = "{ "
     local sep = ""
-    for key, value in _pairs(_entries) do
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
         s = s .. sep .. _format("%q=%q", _tostring(key), _tostring(value.Value))
         sep = ", "
     end

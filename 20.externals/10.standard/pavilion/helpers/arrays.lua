@@ -23,7 +23,7 @@ _setfenv(1, {})
 
 local Class = _namespacer("Pavilion.Helpers.Arrays")
 
-function Class.ArrayLength(array)
+function Class.Count(array)
     _assert(_type(tableObject) == 'table')
 
     return _getn(array)

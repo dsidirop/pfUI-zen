@@ -36,7 +36,7 @@ function Class.Clone(tableObject, seen)
     local res = _setmetatable({}, _getmetatable(tableObject))
 
     s[tableObject] = res
-    for k, v in _pairs(tableObject) do
+    for k, v in TablesHelper.GetKeyValuePairs(tableObject) do
         res[Class.Clone(k, s)] = Class.Clone(v, s)
     end
 
@@ -51,4 +51,10 @@ function Class.IsEmptyOrNil(tableObject)
     _assert(tableObject == nil or _type(tableObject) == 'table')
     
     return tableObject == nil or _next(tableObject) == nil
+end
+
+function Class.GetKeyValuePairs(tableObject)
+    _assert(_type(tableObject) == 'table')
+
+    return _pairs(tableObject)
 end

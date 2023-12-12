@@ -26,8 +26,8 @@ _setfenv(1, {})
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
-
-local ArraysHelpers = _namespacer("Pavilion.Helpers.Arrays")
+local TablesHelper = _importer("Pavilion.Helpers.Tables")
+local ArraysHelper = _importer("Pavilion.Helpers.Arrays")
 local StringsHelpers = _importer("Pavilion.Helpers.Strings")
 
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
@@ -123,7 +123,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > ArraysHelpers.ArrayLength(_menuIndexesToMenuValuesArray) then
+    if index > ArraysHelper.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end
@@ -213,7 +213,7 @@ function Class:ParseMenuItems_(menuItemsArray)
 
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
-    for i, k in _pairs(menuItemsArray) do
+    for i, k in TablesHelper.GetKeyValuePairs(menuItemsArray) do
         local value, _ = _unpack(StringsHelpers.Split(k, ":"))
 
         value = value or ""

@@ -18,7 +18,8 @@ end)()
 _setfenv(1, {})
 
 local Classify = _importer("System.Classify")
-local TableHelpers = _importer("Pavilion.Helpers.Tables")
+
+local TablesHelper = _importer("Pavilion.Helpers.Tables")
 
 local Class = _namespacer("Pavilion.System.Event")
 
@@ -57,7 +58,7 @@ end
 function Class:HasSubscribers()
     _setfenv(1, self)
     
-    return TableHelpers.AnyOrNil(_handlers) 
+    return TablesHelper.AnyOrNil(_handlers) 
 end
 
 function Class:SubscribeOnceImpl_(handler, owner)
@@ -111,7 +112,7 @@ function Class:Raise(sender, eventArgs)
     _assert(sender)
     _assert(eventArgs)
 
-    for k, v in _pairs(_handlers) do
+    for k, v in TablesHelper.GetKeyValuePairs(_handlers) do
         if v and v ~= NoOwner then -- v is the owning class-instance of the handler
             k(v, sender, eventArgs)
         else
@@ -119,7 +120,7 @@ function Class:Raise(sender, eventArgs)
         end
     end
 
-    for _, v in _pairs(_handlersJustOnce) do
+    for _, v in TablesHelper.GetKeyValuePairs(_handlersJustOnce) do
         _handlers[v] = nil -- rip off the handler
     end
 

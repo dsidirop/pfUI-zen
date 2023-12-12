@@ -21,7 +21,9 @@ end)()
 _setfenv(1, {})
 
 local Classify = _importer("System.Classify")
+
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
+local TablesHelper = _importer("Pavilion.Helpers.Tables")
 
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -217,7 +219,7 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
 
         _pendingLootGamblingRequests:Clear() --     order        
-        for _, gamblingId in _pairs(requests) do -- order
+        for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do -- order
             _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
     end
