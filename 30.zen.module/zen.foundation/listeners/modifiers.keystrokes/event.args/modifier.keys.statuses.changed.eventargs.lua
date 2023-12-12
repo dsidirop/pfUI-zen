@@ -21,6 +21,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs")
 
 function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
@@ -29,18 +31,13 @@ function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
     _assert(_type(hasModifierAlt) == "boolean")
     _assert(_type(hasModifierShift) == "boolean")
     _assert(_type(hasModifierControl) == "boolean")
-
-    local instance = {
+    
+    return Classify(self, {
         _stringified = nil,
         _hasModifierAlt = hasModifierAlt,
         _hasModifierShift = hasModifierShift,
         _hasModifierControl = hasModifierControl,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:HasModifierAlt()

@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
@@ -35,7 +37,7 @@ function Class:New(other)
 
     other = other or {}
 
-    local instance = {
+    return Classify(self, {
         _elementType = other._elementType or SWoWElementType.Frame,
         
         _name = other._name,
@@ -45,12 +47,7 @@ function Class:New(other)
         _keystrokeListenerEnabled = other._keystrokeListenerEnabled,
         _useWowUIRootFrameAsParent = other._useWowUIRootFrameAsParent,
         _namedXmlFramesToInheritFrom = other._namedXmlFramesToInheritFrom,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:Build()

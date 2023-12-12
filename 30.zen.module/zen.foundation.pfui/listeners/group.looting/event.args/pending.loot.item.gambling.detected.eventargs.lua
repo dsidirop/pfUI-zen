@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
 
 function Class:New(rollId)
@@ -27,14 +29,9 @@ function Class:New(rollId)
     
     _assert(_type(rollId) == "number" and rollId >= 0, "rollId must be a positive number")
 
-    local instance = {
+    return Classify(self, {
         _rollId = rollId,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetGamblingId()

@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Event = _importer("Pavilion.System.Event")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
@@ -33,7 +35,7 @@ function Class:New(interval)
     local element = WoWCreateFrame("Frame") -- 00
     element:Hide() -- 10
 
-    local instance = {
+    return Classify(self, {
         _g = _g, -- 20
 
         _interval = interval,
@@ -42,12 +44,7 @@ function Class:New(interval)
         _element = element,
         _eventElapsed = Event:New(),
         _elapsedTimeSinceLastFiring = 0,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
     
     -- 00  dont even bother using strenums here
     -- 10  we need to hide the frame because its important to ensure that the timer is not running when we create it

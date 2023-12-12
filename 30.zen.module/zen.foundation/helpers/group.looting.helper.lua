@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local RollOnLoot = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
@@ -30,13 +32,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.Group
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    return Classify(self)
 end
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo

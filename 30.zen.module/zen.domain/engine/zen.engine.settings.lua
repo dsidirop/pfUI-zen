@@ -20,6 +20,7 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local GreeniesAutolooterAggregateSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.AggregateSettings")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
@@ -27,14 +28,9 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineS
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _greeniesAutolooterAggregateSettings = GreeniesAutolooterAggregateSettings:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetGreeniesAutolooterAggregateSettings()

@@ -17,6 +17,7 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local TableHelpers = _importer("Pavilion.Helpers.Tables")
 
 local Class = _namespacer("Pavilion.System.Event")
@@ -24,15 +25,10 @@ local Class = _namespacer("Pavilion.System.Event")
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _handlers = {},
         _handlersJustOnce = {}
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 local NoOwner = {}

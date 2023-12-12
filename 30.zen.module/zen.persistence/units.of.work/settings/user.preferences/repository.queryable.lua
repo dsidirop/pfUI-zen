@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
@@ -35,14 +37,9 @@ function Class:New(dbcontextReadonly)
 
     dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
 
-    local instance = {
+    return Classify(self, {
         _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 -- @return UserPreferencesDto

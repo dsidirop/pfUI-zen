@@ -20,16 +20,12 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
 
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    return Classify(self)
 end

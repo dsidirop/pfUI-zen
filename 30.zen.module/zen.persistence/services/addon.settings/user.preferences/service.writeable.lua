@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -32,14 +34,9 @@ function Class:New(userPreferencesUnitOfWork)
 
     _assert(userPreferencesUnitOfWork == nil or _type(userPreferencesUnitOfWork) == "table")
 
-    local instance = {
+    return Classify(self, {
         _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(PfuiZenDbContext:New()), --todo   refactor this later on so that this gets injected through DI
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateMode(value)

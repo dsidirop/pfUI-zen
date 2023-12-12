@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
@@ -30,16 +32,11 @@ function Class:New(dbcontext)
 
     _assert(_type(dbcontext) == "table")
 
-    local instance = {
+    return Classify(self, {
         _hasChanges = false,
-        
-        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
-    }
 
-    _setmetatable(instance, self)
-    self.__index = self
-    
-    return instance
+        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
+    })    
 end
 
 function Class:HasChanges()

@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
 local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
 local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
@@ -35,17 +37,12 @@ function Class:New(nativeElement)
     
     _assert(_type(nativeElement) == "table", "nativeElement must be a table")
 
-    local instance = {
+    return Classify(self, {
         _nativeElement = nativeElement,
 
         _eventKeyDown = Event:New(),
         _eventOnEvent = Event:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:ChainSetPropagateKeyboardInput(value)

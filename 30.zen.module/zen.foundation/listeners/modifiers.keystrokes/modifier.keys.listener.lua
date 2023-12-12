@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
 local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
 local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
@@ -33,20 +35,15 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.Mod
 function Class:New(timer)
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _timer = timer or Timer:New(0.1), -- todo di this as a singleton when di comes to town
 
         _wantedActive = false,
         _mustEmitOnFreshStart = false,
-        
+
         _lastEventArgs = nil,
         _eventModifierKeysStatesChanged = Event:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)

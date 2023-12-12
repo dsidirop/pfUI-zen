@@ -20,6 +20,7 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo")
@@ -42,7 +43,7 @@ function Class:New(
 )
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _rollId = rollId,
 
         _name = name,
@@ -58,12 +59,7 @@ function Class:New(
         _canDisenchant = canDisenchant,
         _deSkillRequired = deSkillRequired,
         _reasonDisenchant = reasonDisenchant,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:IsHealthy()

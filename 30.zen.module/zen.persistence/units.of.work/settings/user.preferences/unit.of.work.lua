@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
 
@@ -34,17 +36,12 @@ function Class:New(dbcontext, userPreferencesRepository)
 
     dbcontext = dbcontext or PfuiZenDbContext:New()
     userPreferencesRepository = userPreferencesRepository or UserPreferencesRepository:NewWithDBContext(dbcontext)
-    
-    local instance = {
+
+    return Classify(self, {
         _dbcontext = dbcontext,
 
         _userPreferencesRepository = userPreferencesRepository,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetUserPreferencesRepository()

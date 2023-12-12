@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 local UserPreferencesRepositoryWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
@@ -42,15 +44,10 @@ function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepository
     _assert(_type(userPreferencesRepositoryQueryable) == "table")
     _assert(_type(userPreferencesRepositoryWriteable) == "table")
 
-    local instance = {
+    return Classify(self, {
         _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable,
         _userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-    
-    return instance
+    })
 end
 
 -- @return UserPreferencesDto

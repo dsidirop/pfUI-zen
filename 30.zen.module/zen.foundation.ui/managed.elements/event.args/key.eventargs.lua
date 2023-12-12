@@ -21,6 +21,7 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
@@ -34,20 +35,15 @@ function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, ev
     _assert(_type(hasModifierControl) == "boolean")
     _assert(EKeyEventType.Validate(eventType))
 
-    local instance = {
+    return Classify(self, {
         _key = key or "",
-        _eventType = eventType, 
+        _eventType = eventType,
         _hasModifierAlt = hasModifierAlt,
         _hasModifierShift = hasModifierShift,
         _hasModifierControl = hasModifierControl,
-        
+
         _stringified = nil,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetType()

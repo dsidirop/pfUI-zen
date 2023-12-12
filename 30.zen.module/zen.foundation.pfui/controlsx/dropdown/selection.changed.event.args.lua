@@ -23,20 +23,17 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _old = nil,
         _new = nil,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetOldValue()

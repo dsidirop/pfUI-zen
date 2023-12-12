@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local ServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
 local ServiceWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
@@ -47,15 +49,10 @@ function Class:New(serviceQueryable, serviceWriteable)
     _assert(_type(serviceQueryable) == "table")
     _assert(_type(serviceWriteable) == "table")
 
-    local instance = {
+    return Classify(self, {
         _serviceQueryable = serviceQueryable,
         _serviceWriteable = serviceWriteable,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetAllUserPreferences()

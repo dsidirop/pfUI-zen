@@ -20,6 +20,7 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
@@ -35,7 +36,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGr
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _settings = nil,
 
         _isRunning = false,
@@ -47,12 +48,7 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelpe
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
         _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:IsRunning()

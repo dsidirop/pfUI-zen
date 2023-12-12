@@ -23,6 +23,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Event = _importer("Pavilion.System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local StringsHelpers = _importer("Pavilion.Helpers.Strings")
@@ -33,7 +35,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdo
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _nativePfuiControl = nil,
 
         _caption = nil,
@@ -46,12 +48,7 @@ function Class:New()
         _valuekeyname = "dummy_keyname_for_value",
 
         _eventSelectionChanged = Event:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:ChainSetCaption(caption)

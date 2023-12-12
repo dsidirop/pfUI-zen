@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Event = _importer("Pavilion.System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
@@ -30,7 +32,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLoot
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _active = false,
         _hookApplied = false,
         _rollIdsEncounteredCache = LRUCache:New {
@@ -40,12 +42,7 @@ function Class:New()
         },
 
         _eventPendingLootItemGamblingDetected = Event:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:StartListening()

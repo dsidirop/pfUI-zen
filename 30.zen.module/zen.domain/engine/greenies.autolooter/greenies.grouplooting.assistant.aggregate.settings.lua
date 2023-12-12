@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
@@ -28,15 +30,10 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGr
 function Class:New()
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _mode = nil,
         _actOnKeybind = nil,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetMode()

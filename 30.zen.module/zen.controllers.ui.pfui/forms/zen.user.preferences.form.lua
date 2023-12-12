@@ -17,6 +17,8 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
+
 local Event = _importer("Pavilion.System.Event")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
@@ -31,7 +33,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 function Class:New(T, pfuiGui)
     _setfenv(1, self)
 
-    local instance = {
+    return Classify(self, {
         _t = _assert(T),
         _pfuiGui = _assert(pfuiGui),
 
@@ -45,12 +47,7 @@ function Class:New(T, pfuiGui)
         _eventRequestingCurrentUserPreferences = Event:New(),
 
         _commandsEnabled = false,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)

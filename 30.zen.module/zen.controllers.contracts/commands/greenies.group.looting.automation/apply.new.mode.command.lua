@@ -20,22 +20,18 @@ end)()
 
 _setfenv(1, {})
 
+local Classify = _importer("System.Classify")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
 
 function Class:New()
     _setfenv(1, self)
-
-    local instance = {
+    
+    return Classify(self, {
         _old = nil,
         _new = nil,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetOldValue()
