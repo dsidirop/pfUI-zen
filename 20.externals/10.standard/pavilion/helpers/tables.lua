@@ -58,3 +58,9 @@ function Class.GetKeyValuePairs(tableObject)
 
     return _pairs(tableObject)
 end
+
+function Class.Unpack(tableObject)
+    _assert(_type(tableObject) == 'table')
+
+    return _unpack(tableObject)
+end

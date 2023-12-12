@@ -214,7 +214,7 @@ function Class:ParseMenuItems_(menuItemsArray)
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
     for i, k in TablesHelper.GetKeyValuePairs(menuItemsArray) do
-        local value, _ = _unpack(StringsHelpers.Split(k, ":"))
+        local value, _ = TablesHelper.Unpack(StringsHelpers.Split(k, ":"))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then
