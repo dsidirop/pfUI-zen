@@ -26,6 +26,8 @@ _setfenv(1, {})
 local Classify = _importer("System.Classify")
 
 local Event = _importer("Pavilion.System.Event")
+
+local ArraysHelpers = _namespacer("Pavilion.Helpers.Arrays")
 local StringsHelpers = _importer("Pavilion.Helpers.Strings")
 
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
@@ -121,7 +123,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > _getn(_menuIndexesToMenuValuesArray) then
+    if index > ArraysHelpers.ArrayLength(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end

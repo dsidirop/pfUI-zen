@@ -57,7 +57,7 @@ end
 function Class:HasSubscribers()
     _setfenv(1, self)
     
-    return not TableHelpers.IsEmpty(_handlers) 
+    return TableHelpers.AnyOrNil(_handlers) 
 end
 
 function Class:SubscribeOnceImpl_(handler, owner)

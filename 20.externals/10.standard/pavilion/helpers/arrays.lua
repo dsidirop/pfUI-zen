@@ -21,34 +21,10 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("Pavilion.Helpers.Tables")
+local Class = _namespacer("Pavilion.Helpers.Arrays")
 
-function Class.Clone(tableObject, seen)
-    if _type(tableObject) ~= 'table' then
-        return tableObject
-    end
+function Class.ArrayLength(array)
+    _assert(_type(tableObject) == 'table')
 
-    if seen and seen[tableObject] then
-        return seen[tableObject]
-    end
-
-    local s = seen or {}
-    local res = _setmetatable({}, _getmetatable(tableObject))
-
-    s[tableObject] = res
-    for k, v in _pairs(tableObject) do
-        res[Class.Clone(k, s)] = Class.Clone(v, s)
-    end
-
-    return res
-end
-
-function Class.AnyOrNil(tableObject)
-    return not Class.IsEmptyOrNil(tableObject)
-end
-
-function Class.IsEmptyOrNil(tableObject)
-    _assert(tableObject == nil or _type(tableObject) == 'table')
-    
-    return tableObject == nil or _next(tableObject) == nil
+    return _getn(array)
 end
