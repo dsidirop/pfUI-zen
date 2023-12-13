@@ -65,19 +65,19 @@ local function Main(_pfUI)
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
 
-        local cache = LRUCache:New({ MaxSize = 0, MaxLifespanPerEntryInSeconds = 0 })
-
-        ModifierKeysListener.I --@formatter:off
-                            :ChainSetPollingInterval(0.05)
-                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
-                                _print("** ea:GetKey()=" .. ea:ToString())
-
-                                cache:Upsert(ea:ToString())
-            
-                                _print("** cache:Count()    = " .. cache:Count())
-                                _print("** cache:ToString() = " .. cache:ToString())
-                            end)
-                            :Start() --@formatter:on
+        --local cache = LRUCache:New({ MaxSize = 0, MaxLifespanPerEntryInSeconds = 0 })
+        --
+        --ModifierKeysListener.I --@formatter:off
+        --                    :ChainSetPollingInterval(0.05)
+        --                    :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
+        --                        _print("** ea:GetKey()=" .. ea:ToString())
+        --
+        --                        cache:Upsert(ea:ToString())
+        --    
+        --                        _print("** cache:Count()    = " .. cache:Count())
+        --                        _print("** cache:ToString() = " .. cache:ToString())
+        --                    end)
+        --                    :Start() --@formatter:on
     end)
 end
 
