@@ -43,7 +43,7 @@ EWowItemQuality.Orange      = EWowItemQuality.Legendary
 EWowItemQuality.Gold        = EWowItemQuality.Artifact
 -- @formatter:on
 
-function EWowItemQuality.Validate(value)
+function EWowItemQuality.IsValid(value)
     if _type(value) ~= "number" then
         return false
     end

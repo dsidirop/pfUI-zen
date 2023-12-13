@@ -39,7 +39,7 @@ SWoWElementType.MessageFrame             = "MessageFrame"
 SWoWElementType.ScrollingMessageFrame    = "ScrollingMessageFrame"
 --@formatter:on
 
-function SWoWElementType.Validate(value)
+function SWoWElementType.IsValid(value)
     if _type(value) ~= "string" then
         return false
     end

@@ -4,4 +4,6 @@
     <Include file="table\.xml"/>
     <Include file="scopify\.xml"/>
     <Include file="classify\.xml"/>
+    <Include file="debug\.xml"/>
+    <Include file="reflection\.xml"/>
 </Ui>

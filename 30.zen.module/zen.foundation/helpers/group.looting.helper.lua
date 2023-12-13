@@ -78,7 +78,7 @@ end
 function Class:SubmitResponseToItemGamblingRequest(rollID, wowRollMode)
     Scopify(EScopes.Function, self)
 
-    _assert(EWowGamblingResponseType.Validate(wowRollMode))
+    _assert(EWowGamblingResponseType.IsValid(wowRollMode))
 
     RollOnLoot(rollID, wowRollMode) --00
 

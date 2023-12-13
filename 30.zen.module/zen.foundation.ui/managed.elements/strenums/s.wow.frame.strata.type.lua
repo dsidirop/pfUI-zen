@@ -34,7 +34,7 @@ SWoWFrameStrataType.Fullscreen       = "FULLSCREEN"
 SWoWFrameStrataType.FullscreenDialog = "FULLSCREEN_DIALOG"
 --@formatter:on
 
-function SWoWFrameStrataType.Validate(value)
+function SWoWFrameStrataType.IsValid(value)
     if _type(value) ~= "string" then
         return false
     end

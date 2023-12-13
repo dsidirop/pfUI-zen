@@ -28,7 +28,7 @@ EKeyEventType.KeyUp    = 2
 EKeyEventType.KeyPress = 3
 --@formatter:on
 
-function EKeyEventType.Validate(value)
+function EKeyEventType.IsValid(value)
     if _type(value) ~= "number" then
         return false
     end

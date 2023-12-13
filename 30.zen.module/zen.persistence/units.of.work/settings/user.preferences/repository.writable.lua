@@ -51,7 +51,7 @@ end
 function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     Scopify(EScopes.Function, self)
     
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
     
     if _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode == value then
         return self
@@ -67,7 +67,7 @@ end
 function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
 
     if _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind == value then
         return self

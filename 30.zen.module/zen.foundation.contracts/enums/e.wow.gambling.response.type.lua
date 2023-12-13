@@ -28,7 +28,7 @@ EWowGamblingResponseType.Need = 1
 EWowGamblingResponseType.Greed = 2
 -- EWowGamblingResponseType.Disenchant = 3   --not supported in vanilla   introduced in wotlk patch 3.3 fall of the lich king
 
-function EWowGamblingResponseType.Validate(value)
+function EWowGamblingResponseType.IsValid(value)
     if _type(value) ~= "number" then
         return false
     end

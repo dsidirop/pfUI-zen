@@ -117,7 +117,7 @@ end
 function Class:SwitchMode(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
 
     if _settings:GetMode() == value then
         return self -- nothing to do
@@ -141,7 +141,7 @@ end
 function Class:SwitchActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
 
     if _settings:GetActOnKeybind() == value then
         return self -- nothing to do

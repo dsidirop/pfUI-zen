@@ -51,7 +51,7 @@ end
 function Class:ChainSetOld(old)
     Scopify(EScopes.Function, self)
 
-    _assert(old == nil or SGreeniesGrouplootingAutomationMode.Validate(old))
+    _assert(old == nil or SGreeniesGrouplootingAutomationMode.IsValid(old))
 
     _old = old
 
@@ -61,7 +61,7 @@ end
 function Class:ChainSetNew(new)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(new))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(new))
 
     _new = new
 

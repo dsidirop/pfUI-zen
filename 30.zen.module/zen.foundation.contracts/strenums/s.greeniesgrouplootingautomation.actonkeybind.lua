@@ -31,7 +31,7 @@ SGreeniesGrouplootingAutomationActOnKeybind.AltShift = "Alt+Shift"
 SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift = "Ctrl+Shift"
 SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift = "Ctrl+Alt+Shift"
 
-function SGreeniesGrouplootingAutomationActOnKeybind.Validate(value)
+function SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value)
     if _type(value) ~= "string" then
         return false
     end

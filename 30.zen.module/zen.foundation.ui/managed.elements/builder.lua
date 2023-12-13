@@ -92,7 +92,7 @@ end
 function Class:WithType(frameType)
     Scopify(EScopes.Function, self)
 
-    _assert(SWoWElementType.Validate(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
+    _assert(SWoWElementType.IsValid(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
     
     local clone = Class:New(self)
     clone._elementType = frameType

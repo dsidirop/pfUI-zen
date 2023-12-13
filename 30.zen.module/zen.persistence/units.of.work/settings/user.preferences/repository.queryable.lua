@@ -24,6 +24,7 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
+local Check = _importer("Pavilion.Guard.Check")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
@@ -35,7 +36,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.Use
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    _assert(dbcontextReadonly == nil or _type(dbcontextReadonly) == "table")
+    Check.IsOptionallyTable(dbcontextReadonly)
 
     dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
 
@@ -48,11 +49,11 @@ end
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local mode = SGreeniesGrouplootingAutomationMode.Validate(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
+    local mode = SGreeniesGrouplootingAutomationMode.IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
             and _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode
             or SGreeniesGrouplootingAutomationMode.Greed
 
-    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.Validate(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
+    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
             and _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind
             or SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
 

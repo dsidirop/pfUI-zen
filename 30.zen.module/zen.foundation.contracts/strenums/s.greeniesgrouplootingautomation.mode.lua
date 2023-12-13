@@ -27,7 +27,7 @@ SGreeniesGrouplootingAutomationMode.RollNeed = "roll_need"
 SGreeniesGrouplootingAutomationMode.RollGreed = "roll_greed"
 SGreeniesGrouplootingAutomationMode.LetUserChoose = "let_user_choose"
 
-function SGreeniesGrouplootingAutomationMode.Validate(value)
+function SGreeniesGrouplootingAutomationMode.IsValid(value)
     if _type(value) ~= "string" then
         return false
     end

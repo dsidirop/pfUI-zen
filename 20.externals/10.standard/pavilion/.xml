@@ -3,4 +3,5 @@
     <Include file="helpers\.xml"/>
     <Include file="event\.xml"/>
     <Include file="data.structures\.xml"/>
+    <Include file="guard\.xml"/>
 </Ui>
