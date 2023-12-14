@@ -24,3 +24,19 @@ end
 function Reflection.IsTableOrNil(value)
     return value == nil or _type(value) == "table"
 end
+
+function Reflection.IsNumber(value)
+    return _type(value) == "number"
+end
+
+function Reflection.IsNumberOrNil(value)
+    return value == nil or _type(value) == "number"
+end
+
+function Reflection.IsString(value)
+    return _type(value) == "string"
+end
+
+function Reflection.IsStringOrNil(value)
+    return value == nil or _type(value) == "string"
+end

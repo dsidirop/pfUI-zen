@@ -20,6 +20,8 @@ end)()
 
 _setfenv(1, {})
 
+local Reflection = _importer("System.Reflection")
+
 local EKeyEventType = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
 
 --@formatter:off
@@ -29,10 +31,10 @@ EKeyEventType.KeyPress = 3
 --@formatter:on
 
 function EKeyEventType.IsValid(value)
-    if _type(value) ~= "number" then
+    if not Reflection.IsInteger(value) then
         return false
     end
-
+    
     return value == EKeyEventType.KeyUp
             or value == EKeyEventType.KeyDown
             or value == EKeyEventType.KeyPress

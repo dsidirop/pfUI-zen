@@ -24,6 +24,7 @@ do
         Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")
     end
 
+    -- TABLES
     function Guard.Check.IsTable(value)
         Debug.Assert(Reflection.IsTable(value), "value must be a table\n" .. Debug.Stacktrace() .. "\n")
     end
@@ -32,11 +33,49 @@ do
         Debug.Assert(Reflection.IsTableOrNil(value), "value must be a table or nil\n" .. Debug.Stacktrace() .. "\n")
     end
 
+    -- ENUMS
+    function Guard.Check.IsOptionallyEnumValue(enumType, value)
+        Debug.Assert(value == nil or enumType.IsValid(value), "value must be a valid enum value or nil\n" .. Debug.Stacktrace() .. "\n")
+    end
+    
     function Guard.Check.IsEnumValue(enumType, value)
         Debug.Assert(enumType.IsValid(value), "value must be a valid enum value\n" .. Debug.Stacktrace() .. "\n")
     end
+    
+    -- INTEGERS
+    function Guard.Check.IsOptionallyPositiveIntegerOrZero(value)
+        Debug.Assert(value == nil or Reflection.IsPositiveIntegerOrZero(value), "value must be nil or zero or a positive integer\n" .. Debug.Stacktrace() .. "\n")
+    end
 
-    function Guard.Check.IsOptionallyEnumValue(enumType, value)
-        Debug.Assert(value == nil or enumType.IsValid(value), "value must be a valid enum value or nil\n" .. Debug.Stacktrace() .. "\n")
+    function Guard.Check.IsPositiveIntegerOrZero(value)
+        Debug.Assert(Reflection.IsInteger(value) and value >= 0, "value must a positive integer or zero\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsInteger(value)
+        Debug.Assert(Reflection.IsNumber(value) and _mathfloor(value) == value, "value must an integer\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsRatioNumber(value)
+        Debug.Assert(Reflection.IsNumber(value) and value >= 0 and value <= 1, "value must a number between 0 and 1\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsOptionallyRatioNumber(value)
+        Debug.Assert(value == nil or (Reflection.IsNumber(value) and value >= 0 and value <= 1), "value must be either nil or a ratio between 0 and 1\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsNumber(value)
+        Debug.Assert(Reflection.IsNumber(value), "value must a number\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsNumberOrNil(value)
+        Debug.Assert(Reflection.IsNumberOrNil(value), "value must a number or nil\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsString(value)
+        Debug.Assert(Reflection.IsString(value), "value must a string\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsStringOrNil(value)
+        Debug.Assert(Reflection.IsStringOrNil(value), "value must a string or nil\n" .. Debug.Stacktrace() .. "\n")
     end
 end
