@@ -134,7 +134,7 @@ end
 function PredicateParser:SortingFunction(data, predicate, ...)
     local sortingCache = {}
     local func = PredicateParser():GetPredicateFunction(predicate, unpack(arg))
-    for _, val in ipairs(data) do
+    for _, val in _ipairs(data) do
         sortingCache[val] = func(val, unpack(arg))
     end
     table.sort(data, function(a, b)

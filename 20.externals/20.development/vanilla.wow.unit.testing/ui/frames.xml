@@ -1,0 +1,188 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/  ../../../../Ui.xsd">
+	<Frame name="VWoWUnitPanelTemplate" inherits="BasicFrameTemplateWithInset" parent="UIParent" enableMouse="true" movable="true" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag('LeftButton')
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+
+			<OnShow>
+				self:GetScript('OnMouseDown')(self)
+			</OnShow>
+			<OnMouseDown>
+				self:SetFrameLevel(self:GetFrameLevel() + 5)
+			</OnMouseDown>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VWoWUnitLogTemplate" inherits="VWoWUnitPanelTemplate" virtual="true">
+		<Size x="200" y="150"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Content" inherits="GameFontDisableSmallLeft" nonspacewrap="true">
+					<Size x="174" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="13" y="-30"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Button name="VWoWUnitButtonTemplate" virtual="true">
+		<Size x="238" y="20"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Background" file="Interface\PaperDollInfoFrame\UI-Character-ReputationBar">
+					<Size x="0" y="21"/>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Name" inherits="GameFontHighlightSmall" justifyH="LEFT">
+					<Size x="135" y="10"/>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="CollapseButton">
+				<Size x="13" y="13"/>
+				<Anchors>
+					<Anchor point="LEFT" x="3" y="0"/>
+				</Anchors>
+				<HitRectInsets>
+					<AbsInset left="1" right="-4" top="-2" bottom="-2"/>
+				</HitRectInsets>
+				<Scripts>
+					<OnClick>
+						VWoWUnit:OnClick(self:GetParent().entry)
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-MinusButton-UP">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" x="3" y="0"/>
+					</Anchors>
+				</NormalTexture>
+				<HighlightTexture name="$parentHighlight" file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" x="3" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+			</Button>
+			<StatusBar parentKey="Bar" drawLayer="BACKGROUND" minValue="0" maxValue="1" defaultValue="1">
+				<Size x="99" y="13"/>
+				<Anchors>
+					<Anchor point="RIGHT" x="0" y="0"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Left" file="Interface\PaperDollInfoFrame\UI-Character-ReputationBar">
+							<Size x="60" y="21"/>
+							<Anchors>
+								<Anchor point="LEFT" x="0" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="Right" file="Interface\PaperDollInfoFrame\UI-Character-ReputationBar">
+							<Size x="39" y="21"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Left" relativePoint="RIGHT" x="0" y="0"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture parentKey="Highlight2" file="Interface\PaperDollInfoFrame\UI-Character-ReputationBar-Highlight" alphaMode="ADD" hidden="true">
+							<Size x="17" y="28"/>
+							<Anchors>
+								<Anchor point="RIGHT">
+									<Offset x="4" y="0"/>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.06640625" top="0.4375" bottom="0.875"/>
+						</Texture>
+						<Texture parentKey="Highlight1" file="Interface\PaperDollInfoFrame\UI-Character-ReputationBar-Highlight" alphaMode="ADD" hidden="true">
+							<Size x="0" y="28"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.Highlight2" relativePoint="LEFT"/>
+							</Anchors>
+							<TexCoords left="0" right="1" top="0" bottom="0.4375"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<BarTexture file="Interface\PaperDollInfoFrame\UI-Character-Skills-Bar"/>
+				<BarColor r=".25" g=".25" b=".75"/>
+			</StatusBar>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				VWoWUnit:OnLoad()
+			</OnLoad>
+			<OnClick>
+				VWoWUnit:OnClick(self.entry)
+			</OnClick>
+			<OnEnter>
+				VWoWUnit:OnEnter()
+			</OnEnter>
+			<OnLeave>
+				VWoWUnit:OnLeave()
+			</OnLeave>
+		</Scripts>
+	</Button>
+
+	<Frame name="VWoWUnit" parent="UIParent" inherits="VWoWUnitPanelTemplate" enableMouse="true" movable="true" hidden="true">
+		<Size x="266" y="400"/>
+		<Anchors>
+			<Anchor point="RIGHT" x="-20" y="0"/>
+		</Anchors>
+		<Frames>
+			<ScrollFrame parentKey='Scroll' name="$parentScroll" inherits="HybridScrollFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="10" y="-27"/>
+					<Anchor point="BOTTOMRIGHT" x="-25" y="7"/>
+				</Anchors>
+				<Frames>
+					<Slider parentKey='Bar' name="$parentBar" inherits="HybridScrollBarTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-1" y="-12"/>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="-1" y="11"/>
+						</Anchors>
+					</Slider>
+				</Frames>
+			</ScrollFrame>
+		</Frames>
+	</Frame>
+
+	<Button name="VWoWUnitToggle" parent="UIParent" hidden="false" clampedToScreen="false">
+		<Size x="30" y="90"/>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" x="8" y="150"/>
+		</Anchors>
+
+		<Scripts>
+			<OnClick>
+				VWoWUnit:SetShown(not VWoWUnit:IsShown())
+			</OnClick>
+		</Scripts>
+
+		<NormalFont style="GameFontHighlightHuge"/>
+		<ButtonText justifyH='LEFT'>
+			<Anchors>
+				<Anchor point="LEFT" x="4" y="0"/>
+			</Anchors>
+		</ButtonText>
+	</Button>
+</Ui>

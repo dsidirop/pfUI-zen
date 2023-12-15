@@ -23,6 +23,14 @@ _setfenv(1, {})
 
 local Class = _namespacer("Pavilion.Helpers.Tables")
 
+function Class.Clear(tableObject)
+    _assert(_type(tableObject) == 'table')
+
+    for k, v in _pairs(tableObject) do
+        tableObject[k] = nil
+    end
+end
+
 function Class.Clone(tableObject, seen)
     if _type(tableObject) ~= 'table' then
         return tableObject
