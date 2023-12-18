@@ -81,4 +81,14 @@ do
     function Guard.Check.IsStringOrNil(value)
         Debug.Assert(Reflection.IsStringOrNil(value), "value must a string or nil\n" .. Debug.Stacktrace() .. "\n")
     end
+
+    -- FUNCTIONS
+    function Guard.Check.IsFunction(value)
+        Debug.Assert(Reflection.IsFunction(value), "value must a function\n" .. Debug.Stacktrace() .. "\n")
+    end
+
+    function Guard.Check.IsOptionallyFunction(value)
+        Debug.Assert(value == nil or Reflection.IsFunction(value), "value must nil or a function\n" .. Debug.Stacktrace() .. "\n")
+    end
+
 end

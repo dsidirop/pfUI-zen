@@ -18,32 +18,39 @@
     return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
 end)()
 
-_setfenv(1, {})
+_setfenv(1, {}) -- @formatter:off
 
--- @formatter:off
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
+local Guard               = _importer("Pavilion.Guard")
 local RollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
 local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo")
-local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
--- @formatter:on
+local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType") -- @formatter:on
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 
-function Class:New()
+function Class:New(rollOnLoot, getLootRollItemInfo)
     Scopify(EScopes.Function, self)
 
-    return Classify(self)
+    Guard.Check.IsOptionallyFunction(rollOnLoot)
+    Guard.Check.IsOptionallyFunction(getLootRollItemInfo)
+
+    return Classify(self, {
+        RollOnLoot_ = rollOnLoot or RollOnLoot, -- for unit testing
+        GetLootRollItemInfo_ = getLootRollItemInfo or GetLootRollItemInfo, -- for unit testing
+    })
 end
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
 -- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo
 function Class:GetGambledItemInfo(rollId)
     Scopify(EScopes.Function, self)
+
+    Guard.Check.IsPositiveIntegerOrZero(rollId)
 
     local
     texture,
@@ -57,8 +64,8 @@ function Class:GetGambledItemInfo(rollId)
     reasonNeed,
     reasonGreed,
     reasonDisenchant,
-    deSkillRequired,
-    canTransmog = GetLootRollItemInfo(rollId)
+    enchantingSkillLevelRequiredToDisenchantedThisItem,
+    canTransmog = self.GetLootRollItemInfo_(rollId)
 
     return GambledItemInfo:New(
             rollId,
@@ -73,18 +80,19 @@ function Class:GetGambledItemInfo(rollId)
             reasonNeed,
             reasonGreed,
             reasonDisenchant,
-            deSkillRequired,
+            enchantingSkillLevelRequiredToDisenchantedThisItem,
             canTransmog
     )
 end
 
-function Class:SubmitResponseToItemGamblingRequest(rollID, wowRollMode)
+function Class:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)
     Scopify(EScopes.Function, self)
 
-    _assert(EWowGamblingResponseType.IsValid(wowRollMode))
+    Guard.Check.IsEnumValue(EWowGamblingResponseType, wowRollMode)
+    Guard.Check.IsPositiveIntegerOrZero(rollId)
 
-    RollOnLoot(rollID, wowRollMode) --00
+    self.RollOnLoot_(rollId, wowRollMode) --00
 
-    -- 00 the rollid number increases with every roll you have in a party - till how high it counts is currently unknown
-    --    blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
+    -- 00 https://wowpedia.fandom.com/wiki/API_RollOnLoot   the rollid number increases with every roll you have in a party till how high it counts
+    --    is currently unknown   blizzard uses 0 to pass 1 to need an item 2 to greed an item and 3 to disenchant an item in later expansions
 end
