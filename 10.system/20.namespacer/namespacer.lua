@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _, _gsub, _strmatch, _setfenv, _setmetatable = (function()
+﻿local _g, _assert, _type, _, _gsub, _print, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -8,10 +8,14 @@
     local _error = _assert(_g.error)
 
     local _gsub = _assert(_g.string.gsub)
-    local _strmatch = _assert(_g.string.match)
+    local _print = _assert(_g.print)
+    local _unpack = _assert(_g.unpack)
+    local _strsub = _assert(_g.string.sub)
+    local _strfind = _assert(_g.string.find)
+    local _tostring = _assert(_g.tostring)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _g, _assert, _type, _error, _gsub, _strmatch, _setfenv, _setmetatable
+    return _g, _assert, _type, _error, _gsub, _print, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -25,6 +29,79 @@ local EIntention = {
     ForClassPartial = "class-partial", --      for designer partial files   we must ensure that those are always loaded after their respective core classes
     ForExternalSymbol = "external-symbol", --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
 }
+
+local function _strmatch(input, patternString, ...)
+    _assert(patternString ~= nil)
+
+    if patternString == "" then
+        -- todo  test out these corner cases
+        return nil
+    end
+
+    local startIndex, endIndex,
+    match01,
+    match02,
+    match03,
+    match04,
+    match05,
+    match06,
+    match07,
+    match08,
+    match09,
+    match10,
+    match11,
+    match12,
+    match13,
+    match14,
+    match15,
+    match16,
+    match17,
+    match18,
+    match19,
+    match20,
+    match21,
+    match22,
+    match23,
+    match24,
+    match25 = _strfind(input, patternString, _unpack(arg))
+
+    if startIndex == nil then
+        -- no match
+        return nil
+    end
+
+    if match01 == nil then
+        -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+        return _strsub(input, startIndex, endIndex)
+    end
+
+    return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
+    match01,
+    match02,
+    match03,
+    match04,
+    match05,
+    match06,
+    match07,
+    match08,
+    match09,
+    match10,
+    match11,
+    match12,
+    match13,
+    match14,
+    match15,
+    match16,
+    match17,
+    match18,
+    match19,
+    match20,
+    match21,
+    match22,
+    match23,
+    match24,
+    match25
+end
 
 local function _strtrim(input)
     return _strmatch(input, '^%s*(.*%S)') or ''
@@ -116,6 +193,11 @@ do
         local intention = _strmatch(namespace_path, PatternToDetectPartialKeywordPostfix)
                 and EIntention.ForClassPartial
                 or EIntention.ForClass
+        
+        if namespace_path == "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]" then
+            _print("** intention partial? => " .. _tostring(intention == EIntention.ForClassPartial))
+        end
+        
         if intention == EIntention.ForClassPartial then
             namespace_path = _gsub(namespace_path, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
         end

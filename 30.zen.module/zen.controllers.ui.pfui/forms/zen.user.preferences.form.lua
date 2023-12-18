@@ -15,18 +15,20 @@
     return _assert, _setfenv, _type, _error, _print, _importer, _namespacer, _setmetatable
 end)()
 
-_setfenv(1, {})
+_setfenv(1, {}) -- @formatter:off
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
+local Scopify  = _importer("System.Scopify")
+local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Event = _importer("Pavilion.System.Event")
-local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
-local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
-local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
-local GreeniesGrouplootingAutomationApplyNewModeCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
-local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand")
+local Event                                             = _importer("Pavilion.System.Event")
+local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
+
+local SGreeniesGrouplootingAutomationMode               = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
+local SGreeniesGrouplootingAutomationActOnKeybind       = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
+
+local GreeniesGrouplootingAutomationApplyNewModeCommand         = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
+local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand") -- @formatter:on
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
 

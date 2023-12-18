@@ -83,8 +83,8 @@ end
 
 Main(assert(pfUI))
 
-if VWoWUnit then
-    print("Running VWoWUnit tests...")
-
-    VWoWUnit.I:RunAllTestGroups()
-end
+--if VWoWUnit then
+--    print("Running VWoWUnit tests...")
+--
+--    VWoWUnit.I:RunAllTestGroups()
+--end
