@@ -20,14 +20,17 @@ end)()
 
 _setfenv(1, {})
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
+-- @formatter:off
+local Scopify  = _importer("System.Scopify")
+local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local RollOnLoot = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
+local RollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
+local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo")
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
+-- @formatter:on
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
 
