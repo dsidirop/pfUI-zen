@@ -4,7 +4,7 @@
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _time = _assert(_g.os.time)
+    local _time = _assert(_g.time)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
     return _time, _setfenv, _namespacer
