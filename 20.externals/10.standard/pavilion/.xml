@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
     <!-- ordering is important here -->
+    <Include file="guard\.xml"/>
     <Include file="helpers\.xml"/>
     <Include file="event\.xml"/>
     <Include file="data.structures\.xml"/>
-    <Include file="guard\.xml"/>
 </Ui>

@@ -30,7 +30,7 @@ local Classify = _importer("System.Classify")
 local Event = _importer("Pavilion.System.Event")
 local TablesHelper = _importer("Pavilion.Helpers.Tables")
 local ArraysHelper = _importer("Pavilion.Helpers.Arrays")
-local StringsHelpers = _importer("Pavilion.Helpers.Strings")
+local StringsHelper = _importer("Pavilion.Helpers.Strings")
 
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
@@ -217,7 +217,7 @@ function Class:ParseMenuItems_(menuItemsArray)
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
     for i, k in TablesHelper.GetKeyValuePairs(menuItemsArray) do
-        local value, _ = TablesHelper.Unpack(StringsHelpers.Split(k, ":"))
+        local value, _ = TablesHelper.Unpack(StringsHelper.Split(k, ":"))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then

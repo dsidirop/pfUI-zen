@@ -193,11 +193,6 @@ do
         local intention = _strmatch(namespace_path, PatternToDetectPartialKeywordPostfix)
                 and EIntention.ForClassPartial
                 or EIntention.ForClass
-        
-        if namespace_path == "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]" then
-            _print("** intention partial? => " .. _tostring(intention == EIntention.ForClassPartial))
-        end
-        
         if intention == EIntention.ForClassPartial then
             namespace_path = _gsub(namespace_path, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
         end

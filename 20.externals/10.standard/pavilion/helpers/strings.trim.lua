@@ -11,4 +11,10 @@ end)()
 
 _setfenv(1, {})
 
-_namespacer("Pavilion.Helpers.Strings")
+local StringsHelper = _namespacer("Pavilion.Helpers.Strings [Partial]")
+
+function StringsHelper.Trim(input)
+    return StringsHelper.Match(input, '^()%s*$')
+            and ''
+            or StringsHelper.Match(input, '^%s*(.*%S)')
+end

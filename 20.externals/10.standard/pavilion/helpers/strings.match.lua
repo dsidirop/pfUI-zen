@@ -1,21 +1,27 @@
-if string.match then
-    -- todo   need to find a better way to test whether string:match() exists as a method (not as a function)
-    return -- already loaded
-end
+local _unpack, _strsub, _strfind, _setfenv, _importer, _namespacer = (function()
+    local _g = assert(_G or getfenv(0))
+    local _assert = assert
+    local _setfenv = _assert(_g.setfenv)
+    _setfenv(1, {})
 
-local _stringSub = assert(string.sub)
-local _stringFind = assert(string.find)
-local _getmetatable = assert(getmetatable)
-local _setmetatable = assert(setmetatable)
+    local _unpack = _assert(_g.unpack)
+    local _strsub = _assert(_g.string.sub)
+    local _strfind = _assert(_g.string.find)
+    local _importer = _assert(_g.pvl_namespacer_get)
+    local _namespacer = _assert(_g.pvl_namespacer_add)
 
-local _stringMetatable = _getmetatable(string)
-if not _stringMetatable then
-    _stringMetatable = { __index = {} } -- standard-lua returns a metatable but wow-lua returns nil
-    _setmetatable(string, _stringMetatable)
-end
+    return _unpack, _strsub, _strfind, _setfenv, _importer, _namespacer
+end)()
 
-function _stringMetatable:match(patternString, ...)
-    assert(patternString ~= nil)
+_setfenv(1, {})
+
+local Guard = _importer("Pavilion.Guard")
+
+local StringsHelper = _namespacer("Pavilion.Helpers.Strings [Partial]")
+
+function StringsHelper.Match(input, patternString, ...)
+    Guard.Check.IsString(input)
+    Guard.Check.IsString(patternString)
 
     if patternString == "" then
         -- todo  test out these corner cases
@@ -47,7 +53,7 @@ function _stringMetatable:match(patternString, ...)
     match22,
     match23,
     match24,
-    match25 = _stringFind(self, patternString, unpack(arg))
+    match25 = _strfind(input, patternString, _unpack(arg))
 
     if startIndex == nil then
         -- no match
@@ -56,7 +62,7 @@ function _stringMetatable:match(patternString, ...)
 
     if match01 == nil then
         -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
-        return _stringSub(self, startIndex, endIndex)
+        return _strsub(input, startIndex, endIndex)
     end
 
     return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
@@ -86,5 +92,3 @@ function _stringMetatable:match(patternString, ...)
     match24,
     match25
 end
-
-_stringMetatable.__index.match = _stringMetatable.match
