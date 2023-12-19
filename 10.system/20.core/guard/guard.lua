@@ -20,7 +20,7 @@ local Guard = _namespacer("System.Guard")
 do
     Guard.Check = _namespacer("System.Guard.Check")
 
-    function Guard.Check.NotNil(value)
+    function Guard.Check.IsNotNil(value)
         Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")
         
         return Guard.Check

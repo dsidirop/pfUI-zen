@@ -2,29 +2,28 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _format, _tostring, _importer, _setfenv, _namespacer = (function()
+local _importer, _setfenv, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _format = _assert(_g.string.format)
-    local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
 
-    return _format, _tostring, _importer, _setfenv, _namespacer
+    return _importer, _setfenv, _namespacer
 end)()
 
-_setfenv(1, {})                                         --@formatter:off
+_setfenv(1, {})                                           --@formatter:off
 
-local Time         = _importer("System.Time")
-local Guard        = _importer("System.Guard")
-local Table        = _importer("System.Table")
-local Scopify      = _importer("System.Scopify")
-local EScopes      = _importer("System.EScopes")
-local Classify     = _importer("System.Classify")
-local TablesHelper = _importer("System.Helpers.Tables") --@formatter:on
+local Time          = _importer("System.Time")
+local Guard         = _importer("System.Guard")
+local Table         = _importer("System.Table")
+local Scopify       = _importer("System.Scopify")
+local EScopes       = _importer("System.EScopes")
+local Classify      = _importer("System.Classify")
+local TablesHelper  = _importer("System.Helpers.Tables")
+local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
@@ -45,7 +44,7 @@ function Class:New(options)
                 or  options
 
     Guard.Check.IsTable(options)
-               .IsOptionallyRatio(options.TrimRatio)
+               .IsOptionallyRatioNumber(options.TrimRatio)
                .IsOptionallyPositiveInteger(options.MaxSize)
                .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
 
@@ -93,7 +92,7 @@ function Class:GetKeys()
 
     local keys = {}
     for key in TablesHelper.GetKeyValuePairs(_entries) do
-        Table.insert(keys, key)
+        Table.Insert(keys, key)
 
         _entries[key].Timestamp = now
     end
@@ -110,7 +109,7 @@ function Class:GetValues()
 
     local values = {}
     for k, v in TablesHelper.GetKeyValuePairs(_entries) do
-        Table.insert(values, v.Value)
+        Table.Insert(values, v.Value)
 
         _entries[k].Timestamp = now
     end
@@ -124,7 +123,9 @@ function Class:Upsert(key, valueOptional)
 
     Guard.Check.IsNotNil(key)
 
-    valueOptional = valueOptional or true --00 
+    valueOptional = valueOptional == nil --00
+            and true
+            or valueOptional 
 
     local t = Time.Now()
 
@@ -223,10 +224,10 @@ function Class:Sort_(t)
 
     local array = {}
     for key, value in TablesHelper.GetKeyValuePairs(t) do
-        Table.insert(array, { key = key, access = value.Timestamp })
+        Table.Insert(array, { key = key, access = value.Timestamp })
     end
 
-    Table.sort(array, function(a, b)
+    Table.Sort(array, function(a, b)
         return a.access < b.access
     end)
 
@@ -239,7 +240,7 @@ function Class:__tostring()
     local s = "{ "
     local sep = ""
     for key, value in TablesHelper.GetKeyValuePairs(_entries) do
-        s = s .. sep .. _format("%q=%q", _tostring(key), _tostring(value.Value))
+        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
         sep = ", "
     end
 
@@ -251,4 +252,3 @@ function Class:__len()
 
     return _count
 end
-

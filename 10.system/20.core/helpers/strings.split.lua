@@ -30,7 +30,7 @@ function StringsHelper.Split(input, delimiter)
             input,
             pattern,
             function(c)
-                Table.insert(fields, c)
+                Table.Insert(fields, c)
             end
     )
 
