@@ -55,13 +55,21 @@ do
     function Guard.Check.IsInteger(value)
         Debug.Assert(Reflection.IsNumber(value) and _mathfloor(value) == value, "value must an integer\n" .. Debug.Stacktrace() .. "\n")
     end
+
+    function Guard.Check.IsPositiveInteger(value)
+        Debug.Assert(Reflection.IsInteger(value) and value > 0, "value must a positive integer\n" .. Debug.Stacktrace() .. "\n")
+    end
     
     function Guard.Check.IsPositiveIntegerOrZero(value)
         Debug.Assert(Reflection.IsInteger(value) and value >= 0, "value must a positive integer or zero\n" .. Debug.Stacktrace() .. "\n")
     end
 
+    function Guard.Check.IsOptionallyPositiveInteger(value)
+        Debug.Assert(value == nil or Reflection.IsInteger(value) and value > 0, "value must be nil or a positive integer\n" .. Debug.Stacktrace() .. "\n")
+    end
+
     function Guard.Check.IsOptionallyPositiveIntegerOrZero(value)
-        Debug.Assert(value == nil or Reflection.IsPositiveIntegerOrZero(value), "value must be nil or zero or a positive integer\n" .. Debug.Stacktrace() .. "\n")
+        Debug.Assert(value == nil or Reflection.IsInteger(value) and value >= 0, "value must be nil or zero or a positive integer\n" .. Debug.Stacktrace() .. "\n")
     end
 
     -- RATIOS

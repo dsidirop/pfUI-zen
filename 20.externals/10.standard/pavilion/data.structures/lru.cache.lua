@@ -18,16 +18,15 @@ local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespac
     return _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer
 end)()
 
-_setfenv(1, {})
+_setfenv(1, {})                                         --@formatter:off
 
-local Time = _importer("System.Time")
-local Math = _importer("System.Math")
-local Table = _importer("System.Table")
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
-
-local TablesHelper = _importer("System.Helpers.Tables")
+local Time         = _importer("System.Time")
+local Guard        = _importer("System.Guard")
+local Table        = _importer("System.Table")
+local Scopify      = _importer("System.Scopify")
+local EScopes      = _importer("System.EScopes")
+local Classify     = _importer("System.Classify")
+local TablesHelper = _importer("System.Helpers.Tables") --@formatter:on
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
@@ -43,13 +42,14 @@ Class.DefaultOptions_ = {
 function Class:New(options)
     Scopify(EScopes.Function, self)
 
-    _assert(options == nil or _type(options) == "table", "options must be a table or nil")
+    options = options == nil --@formatter:off
+                and Class.DefaultOptions_
+                or  options
 
-    options = options or Class.DefaultOptions_ --@formatter:off
-
-    _assert(options.MaxSize                      == nil or _type(options.MaxSize)                      == "number" and options.MaxSize >= 0                      and Math.floor(options.MaxSize) == options.MaxSize, "MaxSize must either be nil or a positive integer (given value=" .. _tostring(options.MaxSize) .. ")")
-    _assert(options.TrimRatio                    == nil or _type(options.TrimRatio)                    == "number" and options.TrimRatio >= 0                    and options.TrimRatio <= 1, "TrimRatio must either be nil or between 0 and 1 (given value=" .. _tostring(options.TrimRatio) .. ")")
-    _assert(options.MaxLifespanPerEntryInSeconds == nil or _type(options.MaxLifespanPerEntryInSeconds) == "number" and options.MaxLifespanPerEntryInSeconds >= 0 and Math.floor(options.MaxLifespanPerEntryInSeconds) == options.MaxLifespanPerEntryInSeconds, "MaxLifespanPerEntryInSeconds must either be nil or zero or a positive integer (given value=" .. _tostring(options.MaxLifespanPerEntryInSeconds) .. ")")
+    Guard.Check.IsTable(options)
+    Guard.Check.IsOptionallyRatio(options.TrimRatio)
+    Guard.Check.IsOptionallyPositiveInteger(options.MaxSize)
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
 
     return Classify(self, {
         _count = 0,
@@ -72,8 +72,8 @@ end
 
 function Class:Get(key)
     Scopify(EScopes.Function, self)
-
-    _assert(key ~= nil, "key cannot be nil")
+    
+    Guard.Check.IsNotNil(key)    
 
     self:Cleanup()
     
@@ -124,7 +124,7 @@ end
 function Class:Upsert(key, valueOptional)
     Scopify(EScopes.Function, self)
 
-    _assert(key ~= nil, "key cannot be nil")
+    Guard.Check.IsNotNil(key)
 
     valueOptional = valueOptional or true --00 
 
@@ -149,7 +149,7 @@ end
 function Class:Remove(key)
     Scopify(EScopes.Function, self)
 
-    _assert(key ~= nil, "key cannot be nil")
+    Guard.Check.IsNotNil(key)
 
     _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
 
