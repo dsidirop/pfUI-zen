@@ -14,7 +14,7 @@ end)()
 
 _setfenv(1, {})
 
-local Math = _import("System.Math")
+local Math = _importer("System.Math")
 
 local Reflection = _namespacer("System.Reflection")
 
