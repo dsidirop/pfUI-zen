@@ -24,7 +24,7 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Event = _importer("Pavilion.System.Event")
+local Event = _importer("System.Event")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer")

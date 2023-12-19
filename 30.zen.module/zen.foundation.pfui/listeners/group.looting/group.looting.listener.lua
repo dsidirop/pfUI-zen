@@ -24,9 +24,9 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Event = _importer("Pavilion.System.Event")
+local Event = _importer("System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
-local TablesHelper = _importer("Pavilion.Helpers.Tables")
+local TablesHelper = _importer("System.Helpers.Tables")
 
 local PfuiRoll = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll")
 local PendingLootItemGamblingDetectedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")

@@ -28,7 +28,7 @@ local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAlt
 local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
 local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
 
-local Event = _importer("Pavilion.System.Event")
+local Event = _importer("System.Event")
 local Timer = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer")
 local ModifierKeysStatusesChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs")
 

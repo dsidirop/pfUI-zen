@@ -15,10 +15,10 @@ _setfenv(1, {})
 local Debug = _importer("System.Debug")
 local Reflection = _importer("System.Reflection")
 
-local Guard = _namespacer("Pavilion.Guard")
+local Guard = _namespacer("System.Guard")
 
 do
-    Guard.Check = _namespacer("Pavilion.Guard.Check")
+    Guard.Check = _namespacer("System.Guard.Check")
 
     function Guard.Check.NotNil(value)
         Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")

@@ -24,7 +24,7 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Check = _importer("Pavilion.Guard.Check")
+local Check = _importer("System.Guard.Check")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 

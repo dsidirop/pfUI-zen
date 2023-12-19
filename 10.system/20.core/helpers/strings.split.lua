@@ -16,7 +16,7 @@ _setfenv(1, {})
 
 local Table = _importer("System.Table")
 
-local StringsHelper = _namespacer("Pavilion.Helpers.Strings [Partial]")
+local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Split(input, delimiter)
     if not input then

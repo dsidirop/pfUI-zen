@@ -21,9 +21,9 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local TablesHelper = _importer("Pavilion.Helpers.Tables")
+local TablesHelper = _importer("System.Helpers.Tables")
 
-local Class = _namespacer("Pavilion.System.Event")
+local Class = _namespacer("System.Event")
 
 function Class:New()
     Scopify(EScopes.Function, self)

@@ -21,7 +21,7 @@ local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Event                                             = _importer("Pavilion.System.Event")
+local Event                                             = _importer("System.Event")
 local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 
 local SGreeniesGrouplootingAutomationMode               = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")

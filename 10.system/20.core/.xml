@@ -9,4 +9,8 @@
     <Include file="classify\.xml"/>
     <Include file="debug\.xml"/>
     <Include file="reflection\.xml"/>
+
+    <Include file="guard\.xml"/>
+    <Include file="helpers\.xml"/>
+    <Include file="event\.xml"/>
 </Ui>

@@ -24,7 +24,7 @@ local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Guard               = _importer("Pavilion.Guard")
+local Guard               = _importer("System.Guard")
 local RollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 

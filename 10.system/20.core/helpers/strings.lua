@@ -11,4 +11,4 @@ end)()
 
 _setfenv(1, {})
 
-_namespacer("Pavilion.Helpers.Strings")
+_namespacer("System.Helpers.Strings")

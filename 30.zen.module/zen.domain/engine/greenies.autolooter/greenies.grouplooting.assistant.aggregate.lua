@@ -25,7 +25,7 @@ local EScopes = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
-local TablesHelper = _importer("Pavilion.Helpers.Tables")
+local TablesHelper = _importer("System.Helpers.Tables")
 
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")

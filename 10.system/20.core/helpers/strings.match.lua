@@ -15,9 +15,9 @@ end)()
 
 _setfenv(1, {})
 
-local Guard = _importer("Pavilion.Guard")
+local Guard = _importer("System.Guard")
 
-local StringsHelper = _namespacer("Pavilion.Helpers.Strings [Partial]")
+local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Match(input, patternString, ...)
     Guard.Check.IsString(input)
