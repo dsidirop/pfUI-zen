@@ -2,20 +2,18 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer = (function()
+local _format, _tostring, _importer, _setfenv, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _type = _assert(_g.type)
-    local _pairs = _assert(_g.pairs)
     local _format = _assert(_g.string.format)
     local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
 
-    return _assert, _type, _pairs, _format, _tostring, _importer, _setfenv, _namespacer
+    return _format, _tostring, _importer, _setfenv, _namespacer
 end)()
 
 _setfenv(1, {})                                         --@formatter:off
@@ -47,9 +45,9 @@ function Class:New(options)
                 or  options
 
     Guard.Check.IsTable(options)
-    Guard.Check.IsOptionallyRatio(options.TrimRatio)
-    Guard.Check.IsOptionallyPositiveInteger(options.MaxSize)
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
+               .IsOptionallyRatio(options.TrimRatio)
+               .IsOptionallyPositiveInteger(options.MaxSize)
+               .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
 
     return Classify(self, {
         _count = 0,

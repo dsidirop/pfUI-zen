@@ -22,81 +22,117 @@ do
 
     function Guard.Check.NotNil(value)
         Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")
+        
+        return Guard.Check
     end
 
     -- TABLES
     function Guard.Check.IsTable(value)
         Debug.Assert(Reflection.IsTable(value), "value must be a table\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsOptionallyTable(value)
         Debug.Assert(Reflection.IsTableOrNil(value), "value must be a table or nil\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     -- ENUMS
     function Guard.Check.IsOptionallyEnumValue(enumType, value)
         Debug.Assert(value == nil or enumType.IsValid(value), "value must be a valid enum value or nil\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
     
     function Guard.Check.IsEnumValue(enumType, value)
         Debug.Assert(enumType.IsValid(value), "value must be a valid enum value\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     -- NUMBERS
     function Guard.Check.IsNumber(value)
         Debug.Assert(Reflection.IsNumber(value), "value must a number\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsNumberOrNil(value)
         Debug.Assert(Reflection.IsNumberOrNil(value), "value must a number or nil\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
     
     -- INTEGERS
     function Guard.Check.IsInteger(value)
         Debug.Assert(Reflection.IsNumber(value) and _mathfloor(value) == value, "value must an integer\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsPositiveInteger(value)
         Debug.Assert(Reflection.IsInteger(value) and value > 0, "value must a positive integer\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
     
     function Guard.Check.IsPositiveIntegerOrZero(value)
         Debug.Assert(Reflection.IsInteger(value) and value >= 0, "value must a positive integer or zero\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsOptionallyPositiveInteger(value)
         Debug.Assert(value == nil or Reflection.IsInteger(value) and value > 0, "value must be nil or a positive integer\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsOptionallyPositiveIntegerOrZero(value)
         Debug.Assert(value == nil or Reflection.IsInteger(value) and value >= 0, "value must be nil or zero or a positive integer\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     -- RATIOS
     function Guard.Check.IsRatioNumber(value)
         Debug.Assert(Reflection.IsNumber(value) and value >= 0 and value <= 1, "value must a number between 0 and 1\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsOptionallyRatioNumber(value)
         Debug.Assert(value == nil or (Reflection.IsNumber(value) and value >= 0 and value <= 1), "value must be either nil or a ratio between 0 and 1\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     -- STRINGS
     function Guard.Check.IsString(value)
         Debug.Assert(Reflection.IsString(value), "value must a string\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsStringOrNil(value)
         Debug.Assert(Reflection.IsStringOrNil(value), "value must a string or nil\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     -- FUNCTIONS
     function Guard.Check.IsFunction(value)
         Debug.Assert(Reflection.IsFunction(value), "value must a function\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
     function Guard.Check.IsOptionallyFunction(value)
         Debug.Assert(value == nil or Reflection.IsFunction(value), "value must nil or a function\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
     end
 
 end
