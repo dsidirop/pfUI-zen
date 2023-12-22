@@ -90,7 +90,7 @@ end
 
 function Class:IsGreedable()
     Scopify(EScopes.Function, self)
-    
+
     return _canGreed
 end
 
@@ -98,4 +98,62 @@ function Class:IsGreenQuality()
     Scopify(EScopes.Function, self)
 
     return _quality == EWowItemQuality.Green
+end
+
+function Class:IsBlueQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality == EWowItemQuality.Blue
+end
+
+function Class:IsPurpleQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality == EWowItemQuality.Purple
+end
+
+function Class:IsOrangeQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality == EWowItemQuality.Orange
+end
+
+function Class:IsLegendaryQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality == EWowItemQuality.Legendary
+end
+
+function Class:IsArtifactQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality == EWowItemQuality.Artifact
+end
+
+function Class:IsBindOnPickUp()
+    Scopify(EScopes.Function, self)
+
+    return _bindOnPickUp
+end
+
+function Class:__tostring()
+    Scopify(EScopes.Function, self)
+
+    return StringsHelper.Format(
+            "{ rollId = %q, texture = %q, name = %q, count = %q, quality = %q, bindOnPickUp = %q, canNeed = %q, canGreed = %q, canDisenchant = %q, reasonNeed = %q, reasonGreed = %q, reasonDisenchant = %q, deSkillRequired = %q, canTransmog = %q }",
+            rollId,
+            texture,
+            name,
+            count,
+            quality,
+            bindOnPickUp,
+            canNeed,
+            canGreed,
+            canDisenchant,
+            reasonNeed,
+            reasonGreed,
+            reasonDisenchant,
+            deSkillRequired,
+            canTransmog
+    )
 end

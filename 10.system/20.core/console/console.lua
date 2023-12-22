@@ -35,8 +35,15 @@ function Writer:New(nativeWriteCallback)
     })
 end
 
-function Writer:Format(format, ...)
+function Writer:WriteFormatted(format, ...)
     Scopify(EScopes.Function, self)
+    
+    Guard.Check.IsString(format)
+    
+    if TablesHelper.IsEmptyOrNil(arg) then
+        _nativeWriteCallback(format)
+        return
+    end
     
     _nativeWriteCallback(StringsHelper.Format(format, TablesHelper.Unpack(arg)))
 end
@@ -58,6 +65,6 @@ function Writer:WriteLine(message)
 end
 
 -- @formatter:off
-Console.Out   = Writer:New(function() DefaultChatFrame:AddMessage(StringsHelper.Format("[|cffcccc33INFO] |cffffff55%s",  msg)) end)
-Console.Error = Writer:New(function() DefaultChatFrame:AddMessage(StringsHelper.Format("[|cffcc3333ERROR] |cffff5555%s", msg)) end)
+Console.Out   = Writer:New(function() DefaultChatFrame:AddMessage(StringsHelper.Format("|cffffff55%s", msg)) end)
+Console.Error = Writer:New(function() DefaultChatFrame:AddMessage(StringsHelper.Format("|cffff5555%s", msg)) end)
 -- @formatter:on

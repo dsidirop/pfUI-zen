@@ -22,10 +22,11 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
+local Console = _importer("System.Console")
 local Classify = _importer("System.Classify")
+local TablesHelper = _importer("System.Helpers.Tables")
 
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
-local TablesHelper = _importer("System.Helpers.Tables")
 
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -165,25 +166,36 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
+    Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s", ea:GetGamblingId(), _settings:GetMode())
+
     local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
+        Console.Out:WriteFormatted("** GLL.PLIGD020")
         return -- let the user choose
     end
 
-    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
-    if not rolledItemInfo:IsGreenQuality() then
+    local gambledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
+    Console.Out:WriteFormatted("** GLL.PLIGD030 rolledItemInfo: ", gambledItemInfo)
+    if not gambledItemInfo:IsGreenQuality() then
+        Console.Out:WriteFormatted("** GLL.PLIGD040 it's not green ...")
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not rolledItemInfo:IsNeedable() then
+    Console.Out:WriteFormatted("** GLL.PLIGD050")
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not gambledItemInfo:IsNeedable() then
+        Console.Out:WriteFormatted("** GLL.PLIGD060 it's not needable ...")
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not rolledItemInfo:IsGreedable() then
+    Console.Out:WriteFormatted("** GLL.PLIGD070")
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
+        Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
         return
     end
 
+    Console.Out:WriteFormatted("** GLL.PLIGD090")
     if _stage:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
+        Console.Out:WriteFormatted("** GLL.PLIGD100 submitting response ...")
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
@@ -191,6 +203,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
+    Console.Out:WriteFormatted("** GLL.PLIGD110 waiting for keybind press ...")
     _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
 
