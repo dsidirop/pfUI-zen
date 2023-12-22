@@ -2,6 +2,7 @@
     <Include file="ui.parent\.xml"/>
     <Include file="create.frame\.xml"/>
     <Include file="roll.on.loot\.xml"/>
+    <Include file="default.chat.frame\.xml"/>
     <Include file="get.loot.roll.item.info.loot\.xml"/>
 
     <Include file="is.alt.key.down\.xml"/>
