@@ -47,6 +47,13 @@ function Class.Clone(tableObject, seen)
     return res
 end
 
+function Class.Append(array, value)
+    Guard.Check.IsTable(array)
+    Guard.Check.IsNotNil(value)
+
+    return _tableInsert(array, value)
+end
+
 function Class.AnyOrNil(tableObject)
     return not Class.IsEmptyOrNil(tableObject)
 end

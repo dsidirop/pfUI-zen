@@ -16,6 +16,7 @@ _setfenv(1, {})
 
 local Guard = _importer("System.Guard")
 local EScopes = _importer("System.EScopes")
+local TablesHelper = _importer("System.Helpers.Tables")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
@@ -27,6 +28,10 @@ function StringsHelper.Format(format, ...)
     Guard.Check.IsNonEmptyString(format)
 
     local argCount = ArraysHelper.Count(arg)
+    if argCount == 0 then
+        return format
+    end
+    
     if argCount == 1 then
         return _strformat(format, StringsHelper.ToString(arg[1]))
     end

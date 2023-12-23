@@ -15,39 +15,48 @@ end)()
 _setfenv(1, {})
 
 local Math = _importer("System.Math")
+local STypes = _importer("System.Reflection.STypes")
 
 local Reflection = _namespacer("System.Reflection")
 
 Reflection.Type = _type
 
 function Reflection.IsTable(value)
-    return _type(value) == "table"
+    return Reflection.Type(value) == STypes.Table
 end
 
-function Reflection.IsTableOrNil(value)
-    return value == nil or _type(value) == "table"
+function Reflection.IsOptionallyTable(value)
+    return value == nil or Reflection.Type(value) == STypes.Table
+end
+
+function Reflection.IsFunction(value)
+    return Reflection.Type(value) == STypes.Function
+end
+
+function Reflection.IsOptionallyFunction(value)
+    return value == nil or Reflection.Type(value) == STypes.Function
 end
 
 function Reflection.IsNumber(value)
-    return _type(value) == "number"
+    return Reflection.Type(value) == STypes.Number
 end
 
-function Reflection.IsNumberOrNil(value)
-    return value == nil or _type(value) == "number"
+function Reflection.IsOptionallyNumber(value)
+    return value == nil or Reflection.Type(value) == STypes.Number
 end
 
 function Reflection.IsInteger(value)
     return Reflection.IsNumber(value) and Math.floor(value) == value
 end
 
-function Reflection.IsIntegerOrNil(value)
+function Reflection.IsOptionallyInteger(value)
     return value == nil or Reflection.IsInteger(value)
 end
 
 function Reflection.IsString(value)
-    return _type(value) == "string"
+    return Reflection.Type(value) == STypes.String
 end
 
-function Reflection.IsStringOrNil(value)
-    return value == nil or _type(value) == "string"
+function Reflection.IsOptionallyString(value)
+    return value == nil or Reflection.Type(value) == STypes.String
 end

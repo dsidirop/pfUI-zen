@@ -2,6 +2,8 @@
     <!-- order  -->
     <Include file="namespacer\.xml"/>
 
+    <Include file="default.chat.frame\.xml"/>
+
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>
     <Include file="table\.xml"/>
@@ -13,4 +15,5 @@
     <Include file="guard\.xml"/>
     <Include file="helpers\.xml"/>
     <Include file="event\.xml"/>
+    <Include file="console\.xml"/>
 </Ui>

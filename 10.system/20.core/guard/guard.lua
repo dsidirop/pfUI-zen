@@ -1,13 +1,14 @@
-﻿local _setfenv, _importer, _namespacer = (function()
+﻿local _setfenv, _pairs, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
+    local _pairs = _assert(_g.pairs)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _importer, _namespacer
+    return _setfenv, _pairs, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -34,9 +35,19 @@ do
     end
 
     function Guard.Check.IsOptionallyTable(value)
-        Debug.Assert(Reflection.IsTableOrNil(value), "value must be a table or nil\n" .. Debug.Stacktrace() .. "\n")
+        Debug.Assert(Reflection.IsOptionallyTable(value), "value must be a table or nil\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
+    end
+
+    function Guard.Check.IsNonEmptyTable(value)
+        Debug.Assert(Reflection.IsTable(value), "value must be a table\n" .. Debug.Stacktrace() .. "\n")
+        
+        for _ in _pairs(value) do
+            return Guard.Check -- has at least one key
+        end
+        
+        Debug.Assert(false, "value is a table but it's an empty one\n" .. Debug.Stacktrace() .. "\n")
     end
 
     -- ENUMS
@@ -59,8 +70,8 @@ do
         return Guard.Check
     end
 
-    function Guard.Check.IsNumberOrNil(value)
-        Debug.Assert(Reflection.IsNumberOrNil(value), "value must a number or nil\n" .. Debug.Stacktrace() .. "\n")
+    function Guard.Check.IsOptionallyNumber(value)
+        Debug.Assert(Reflection.IsOptionallyNumber(value), "value must a number or nil\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
     end
@@ -116,7 +127,13 @@ do
         return Guard.Check
     end
 
-    function Guard.Check.IsStringOrNil(value)
+    function Guard.Check.IsNonEmptyString(value)
+        Debug.Assert(Reflection.IsString(value) and value ~= "", "value must a non-empty string\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
+    end
+
+    function Guard.Check.IsOptionallyString(value)
         Debug.Assert(Reflection.IsStringOrNil(value), "value must a string or nil\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
@@ -130,7 +147,7 @@ do
     end
 
     function Guard.Check.IsOptionallyFunction(value)
-        Debug.Assert(value == nil or Reflection.IsFunction(value), "value must nil or a function\n" .. Debug.Stacktrace() .. "\n")
+        Debug.Assert(Reflection.IsOptionallyFunction(value), "value must nil or a function\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
     end

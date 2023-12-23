@@ -2,4 +2,7 @@
     <!-- ordering is important here -->
     <Include file="10.wowluapolyfills\.xml"/>
     <Include file="20.core\.xml"/>
+
+    <!-- tests -->
+    <Include file="21.core.tests\.xml"/>
 </Ui>

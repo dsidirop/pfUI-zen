@@ -34,21 +34,36 @@ function TestsGroup:New(name)
     return instance
 end
 
+function TestsGroup:GetName()
+    _setfenv(1, self)
+    
+    return _name
+end
+
 function TestsGroup:Run()
     _setfenv(1, self)
 
+    local failedTests = {}
     for _, test in _pairs(_tests) do
-        test:Run()
+        local possibleErrorMessage = test:Run()
+        if possibleErrorMessage then
+            _tableInsert(failedTests, {
+                TestName = _name,
+                ErrorMessage = possibleErrorMessage
+            })
+        end
     end
+    
+    return failedTests
 end
 
-function TestsGroup:AddTest(name, func)
+function TestsGroup:AddTest(name, testFunction)
     _setfenv(1, self)
     
     _assert(_type(name) == "string" and name ~= "", "test name must be a non-empty string")
-    _assert(_type(func) == "function", "test function must be a function")
+    _assert(_type(testFunction) == "function", "test function must be a function")
 
-    _tableInsert(_tests, _VWoWUnit.Test:New(name, func))
+    _tableInsert(_tests, _VWoWUnit.Test:New(name, testFunction))
 end
 
 

@@ -25,13 +25,10 @@ _VWoWUnit.Test = Test
 
 --[[ API ]]--
 
-function Test:New(name, func)
+function Test:New(testname, testFunction)
 	local test = {
-		_name = name,
-		_func = func,
-
-		_errors = {},
-		_successCount = 0,
+		_testname = testname,
+		_testFunction = testFunction,
 	}
 
 	_setmetatable(test, self)
@@ -43,13 +40,15 @@ end
 function Test:Run()
 	_setfenv(1, self)
 	
-	local success, message = _pcall(_func)
-	if success == nil then
-		_tableInsert(_errors, 1, message)
-		return	
+	local success, errorMessage = _pcall(_testFunction)
+	if success == nil or success == false or errorMessage ~= nil then
+		_print("  " .. _testname .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		return errorMessage
 	end
 
-	_successCount = _successCount + 1
+	_print("  " .. _testname .. " |cff00ff00[PASSED]")
+	
+	return nil
 end
 
 
@@ -58,5 +57,5 @@ end
 function Test:__lt(other)
 	_setfenv(1, self)
 	
-	return _name < other._name
+	return _testname < other._testname
 end
