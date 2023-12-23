@@ -188,13 +188,13 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     end
 
     Console.Out:WriteFormatted("** GLL.PLIGD070")
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
-        Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
-        return
-    end
+    --if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
+    --    Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
+    --    return
+    --end
 
     Console.Out:WriteFormatted("** GLL.PLIGD090")
-    if _stage:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
+    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
         Console.Out:WriteFormatted("** GLL.PLIGD100 submitting response ...")
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
@@ -206,6 +206,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Console.Out:WriteFormatted("** GLL.PLIGD110 waiting for keybind press ...")
     _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
+    _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
