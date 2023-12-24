@@ -20,11 +20,12 @@ end)()
 
 _setfenv(1, {})
 
-local EWowItemQuality = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
+local Reflection = _importer("System.Reflection")
+local TablesHelper = _importer("System.Helpers.Tables")
 
--- @formatter:off
--- https://wowwiki-archive.fandom.com/wiki/API_ITEM_QUALITY_COLORS
-EWowItemQuality.Poor        = 0 --    grey
+local EWowItemQuality = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality") -- @formatter:off
+
+EWowItemQuality.Poor        = 0 --    grey      https://wowwiki-archive.fandom.com/wiki/API_ITEM_QUALITY_COLORS
 EWowItemQuality.Common      = 1 --    white
 EWowItemQuality.Uncommon    = 2 --    green
 EWowItemQuality.Rare        = 3 --    blue
@@ -40,11 +41,12 @@ EWowItemQuality.Green       = EWowItemQuality.Uncommon
 EWowItemQuality.Blue        = EWowItemQuality.Rare
 EWowItemQuality.Purple      = EWowItemQuality.Epic
 EWowItemQuality.Orange      = EWowItemQuality.Legendary
-EWowItemQuality.Gold        = EWowItemQuality.Artifact
--- @formatter:on
+EWowItemQuality.Gold        = EWowItemQuality.Artifact -- @formatter:on
+
+_setmetatable(EWowItemQuality, { __index = TablesHelper.RawGetValue })
 
 function EWowItemQuality.IsValid(value)
-    if _type(value) ~= "number" then
+    if not Reflection.IsNumber(value) then
         return false
     end
 

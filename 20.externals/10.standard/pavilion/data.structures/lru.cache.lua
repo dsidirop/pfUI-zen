@@ -100,7 +100,7 @@ function Class:GetKeys()
     return keys
 end
 
-function Class:GetValues()
+function Class:RawGetValues()
     Scopify(EScopes.Function, self)
 
     local now = Time.Now()

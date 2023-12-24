@@ -20,6 +20,9 @@ end)()
 
 _setfenv(1, {})
 
+local Reflection = _importer("System.Reflection")
+local TablesHelper = _importer("System.Helpers.Tables")
+
 local SGreeniesGrouplootingAutomationActOnKeybind = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 SGreeniesGrouplootingAutomationActOnKeybind.Automatic = "automatic"
@@ -31,8 +34,10 @@ SGreeniesGrouplootingAutomationActOnKeybind.AltShift = "Alt+Shift"
 SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift = "Ctrl+Shift"
 SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift = "Ctrl+Alt+Shift"
 
+_setmetatable(SGreeniesGrouplootingAutomationActOnKeybind, { __index = TablesHelper.RawGetValue })
+
 function SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value)
-    if _type(value) ~= "string" then
+    if not Reflection.IsString(value) then
         return false
     end
 
