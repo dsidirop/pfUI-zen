@@ -83,16 +83,36 @@ function Class:GetName()
     return _name
 end
 
+function Class:GetTexture()
+    Scopify(EScopes.Function, self)
+
+    return _texture
+end
+
+function Class:GetCount()
+    Scopify(EScopes.Function, self)
+
+    return _count == nil
+            and 1
+            or _count
+end
+
 function Class:IsNeedable()
     Scopify(EScopes.Function, self)
 
-    return _canNeed
+    return _canNeed == nil or _canNeed
 end
 
 function Class:IsGreedable()
     Scopify(EScopes.Function, self)
 
-    return _canGreed
+    return _canGreed == nil or _canGreed
+end
+
+function Class:GetQuality()
+    Scopify(EScopes.Function, self)
+
+    return _quality
 end
 
 function Class:IsGreenQuality()
@@ -141,15 +161,15 @@ function Class:__tostring()
     Scopify(EScopes.Function, self)
 
     return StringsHelper.Format(
-            "{ rollId = %q, texture = %q, name = %q, count = %q, quality = %q, bindOnPickUp = %q, canNeed = %q, canGreed = %q, canDisenchant = %q, reasonNeed = %q, reasonGreed = %q, reasonDisenchant = %q, deSkillRequired = %q, canTransmog = %q }",
-            rollId,
-            texture,
-            name,
-            count,
-            quality,
-            bindOnPickUp,
-            canNeed,
-            canGreed,
+            "{ name = %q, rollId = %q, texture = %q, count = %q, quality = %q, bindOnPickUp = %q, canNeed = %q, canGreed = %q, canDisenchant = %q, reasonNeed = %q, reasonGreed = %q, reasonDisenchant = %q, deSkillRequired = %q, canTransmog = %q }",
+            self:GetName(),
+            self:GetGamblingId(),
+            self:GetTexture(),
+            self:GetCount(),
+            self:GetQuality(),
+            self:IsBindOnPickUp(),
+            self:IsNeedable(),
+            self:IsGreedable(),
             canDisenchant,
             reasonNeed,
             reasonGreed,
