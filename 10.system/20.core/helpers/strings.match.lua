@@ -16,10 +16,14 @@ end)()
 _setfenv(1, {})
 
 local Guard = _importer("System.Guard")
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Match(input, patternString, ...)
+    Scopify(EScopes.Function, StringsHelper)
+    
     Guard.Check.IsString(input)
     Guard.Check.IsString(patternString)
 

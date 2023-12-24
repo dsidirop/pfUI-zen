@@ -15,10 +15,18 @@ end)()
 _setfenv(1, {})
 
 local Table = _importer("System.Table")
+local Guard = _importer("System.Guard")
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Split(input, delimiter)
+    Scopify(EScopes.Function, StringsHelper)
+    
+    Guard.Check.IsString(input)
+    Guard.Check.IsOptionallyString(delimiter)
+    
     if not input then
         return {}
     end

@@ -15,6 +15,7 @@ end)()
 _setfenv(1, {})
 
 local Guard = _importer("System.Guard")
+local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local TablesHelper = _importer("System.Helpers.Tables")
 local ArraysHelper = _importer("System.Helpers.Arrays")
@@ -22,7 +23,7 @@ local ArraysHelper = _importer("System.Helpers.Arrays")
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Format(format, ...)
-    _setfenv(EScopes.Function, StringsHelper)
+    Scopify(EScopes.Function, StringsHelper)
 
     Guard.Check.IsNonEmptyTable(arg)
     Guard.Check.IsNonEmptyString(format)

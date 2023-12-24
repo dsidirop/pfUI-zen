@@ -1,14 +1,15 @@
-﻿local _setfenv, _pairs, _importer, _namespacer = (function()
+﻿local _setfenv, _pairs, _strupper, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
     local _pairs = _assert(_g.pairs)
+    local _strupper = _assert(_g.string.upper)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _pairs, _importer, _namespacer
+    return _setfenv, _pairs, _strupper, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -119,6 +120,45 @@ do
 
         return Guard.Check
     end
+    
+    -- BOOLEANS
+    function Guard.Check.IsBooleanizable(value)
+        Debug.Assert(Guard.Check.IsBooleanizable_(value), "value must be booleanizable\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
+    end
+    
+    function Guard.Check.IsOptionallyBooleanizable(value)
+        Debug.Assert(value == nil or Guard.Check.IsBooleanizable_(value), "value must be nil or booleanizable\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
+    end
+
+    function Guard.Check.IsBooleanizable_(value)
+        return Reflection.IsBoolean(value)
+                or Reflection.IsInteger(value)
+                or Guard.Check.IsBooleanizableString_(value)
+    end
+
+    function Guard.Check.IsBooleanizableString_(value)
+        if not Reflection.IsString(value) then
+            return false
+        end
+
+        value = _strupper(value)
+
+        return     value == "1" --@formatter:off
+                or value == "Y"
+                or value == "T"
+                or value == "YES"
+                or value == "TRUE"
+
+                or value == "0"
+                or value == "F"
+                or value == "N"
+                or value == "NO"
+                or value == "FALSE" --@formatter:on
+    end
 
     -- STRINGS
     function Guard.Check.IsString(value)
@@ -135,6 +175,12 @@ do
 
     function Guard.Check.IsOptionallyString(value)
         Debug.Assert(Reflection.IsStringOrNil(value), "value must a string or nil\n" .. Debug.Stacktrace() .. "\n")
+
+        return Guard.Check
+    end
+
+    function Guard.Check.IsOptionallyNonEmptyString(value)
+        Debug.Assert(value == nil or (Reflection.IsString(value) and value ~= ""), "value must a non-empty string\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
     end

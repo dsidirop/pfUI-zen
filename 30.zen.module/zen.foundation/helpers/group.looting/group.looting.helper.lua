@@ -24,14 +24,14 @@ local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
 local Classify = _importer("System.Classify")
 
-local Guard               = _importer("System.Guard")
-local RollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
-local GetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
+local Guard                  = _importer("System.Guard")
+local WoWRollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
+local WoWGetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
-local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Loot.GambledItemInfo")
-local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType") -- @formatter:on
+local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.GambledItemInfo")
+local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper")
 
 function Class:New(rollOnLoot, getLootRollItemInfo)
     Scopify(EScopes.Function, self)
@@ -40,10 +40,10 @@ function Class:New(rollOnLoot, getLootRollItemInfo)
     Guard.Check.IsOptionallyFunction(getLootRollItemInfo)
 
     return Classify(self, {
-        RollOnLoot_ = rollOnLoot or RollOnLoot, -- for unit testing
-        GetLootRollItemInfo_ = getLootRollItemInfo or GetLootRollItemInfo, -- for unit testing
+        RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
+        GetLootRollItemInfo_ = getLootRollItemInfo or WoWGetLootRollItemInfo, -- to help unit testing
     })
-end
+end -- @formatter:on
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
 -- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo

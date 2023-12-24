@@ -9,4 +9,7 @@
     <Include file="strings.trim.lua"/>
     <Include file="strings.split.lua"/>
     <Include file="strings.match.lua"/>
+    <Include file="strings.touppercase.lua"/>
+
+    <Include file="booleans.lua"/>
 </Ui>
