@@ -12,7 +12,7 @@
     return _type, _setfenv, _importer, _namespacer
 end)()
 
-_setfenv(1, {})
+-- _setfenv(1, {})
 
 local Math = _importer("System.Math")
 local STypes = _importer("System.Reflection.STypes")
@@ -43,6 +43,14 @@ end
 
 function Reflection.IsOptionallyNumber(value)
     return value == nil or Reflection.Type(value) == STypes.Number
+end
+
+function Reflection.IsBoolean(value)
+    return Reflection.Type(value) == STypes.Boolean
+end
+
+function Reflection.IsOptionallyBoolean(value)
+    return value == nil or Reflection.Type(value) == STypes.Boolean
 end
 
 function Reflection.IsInteger(value)

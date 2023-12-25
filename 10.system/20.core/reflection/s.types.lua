@@ -22,6 +22,7 @@ STypes.Nil      = "nil"
 STypes.Table    = "table"
 STypes.Number   = "number"
 STypes.String   = "string"
+STypes.Boolean  = "boolean"
 STypes.Function = "function" --@formatter:on
 
 _setmetatable(STypes, {
@@ -45,5 +46,6 @@ function STypes.IsValid(value)
             or value == STypes.Table
             or value == STypes.Number
             or value == STypes.String
+            or value == STypes.Boolean
             or value == STypes.Function
 end

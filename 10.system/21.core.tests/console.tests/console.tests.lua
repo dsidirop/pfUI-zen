@@ -1,14 +1,13 @@
-﻿local _setfenv, _print, _importer, _VWoWUnit = (function()
+﻿local _setfenv, _importer, _VWoWUnit = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _print = _assert(_g.print)
     local _VWoWUnit = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
     
-    return _setfenv, _print, _importer, _VWoWUnit
+    return _setfenv, _importer, _VWoWUnit
 end)()
 
 _setfenv(1, {}) --                                           @formatter:off
@@ -16,12 +15,12 @@ _setfenv(1, {}) --                                           @formatter:off
 local Console      = _importer("System.Console")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
-local ConsoleTestsGroup = _VWoWUnit.I:GetOrCreateGroup {
+local TestsGroup = _VWoWUnit.I:GetOrCreateGroup {
     Name = "System.Console.Tests",
     Tags = { "system", "output" },
 } --                                                         @formatter:on
 
-ConsoleTestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)
@@ -35,7 +34,7 @@ ConsoleTestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpe
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
 end)
 
-ConsoleTestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)
@@ -49,7 +48,7 @@ ConsoleTestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.Should
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
 end)
 
-ConsoleTestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)

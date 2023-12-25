@@ -1,4 +1,4 @@
-local _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _tableInsert, _setmetatable = (function()
+local _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _tableInsert, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -13,10 +13,11 @@ local _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _to
 	local _format = _assert(_g.string.format)
 	local _tostring = _assert(_g.tostring)
 	local _tableGetn = _assert(_g.table.getn)
+	local _debugstack = _assert(_g.debugstack)
 	local _tableInsert = _assert(_g.table.insert)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _tableInsert, _setmetatable
+	return _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _tableInsert, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -117,7 +118,7 @@ function VWoWUnit.AreEqual(a, b)
 		return
 	end
 	
-	local message = _format("expected %q, got %q", _tostring(a), _tostring(b))
+	local message = _format("expected %q, got %q", _tostring(b), _tostring(a))
 	if path ~= nil and path ~= "" then
 		message = _format("tables differ at %q - %s", _strsub(path, 2), message)
 	end
@@ -156,8 +157,8 @@ end
 
 local ERROR_COLOR_CODE = "|cffff5555"
 function VWoWUnit.Raise_(message)
-	_error(ERROR_COLOR_CODE .. message, 3)
-	
+	_error(ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(), 3)
+
 	-- stupid hack for pfui to stop the test execution   pfui overrides the error function with a custom one that
 	-- doesnt invoke the base error function causing pcall to be oblivious to the exceptions that we are trying to throw
 	intentional_error_to_force_stop_environments_that_override_the_error_function_with_a_custom_one_that_doesnt_invoke_the_base_error_function()

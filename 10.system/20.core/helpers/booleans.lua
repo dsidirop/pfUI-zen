@@ -21,8 +21,8 @@ local Class = _namespacer("System.Helpers.Booleans")
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil
-            and Guard.Check.IsOptionallyBooleanizable(value)
-            or Guard.Check.IsBooleanizable(value)
+            and Guard.Check.IsBooleanizable(value)
+            or Guard.Check.IsOptionallyBooleanizable(value)
     
     if value == nil then
         return defaultValueWhenValueIsNil

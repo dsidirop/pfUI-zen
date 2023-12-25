@@ -23,7 +23,7 @@ local BooleansHelper  = _importer("System.Helpers.Booleans")
 
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality") --  @formater:off
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 
 function Class:New(options)
     Scopify(EScopes.Function, self)
@@ -33,10 +33,10 @@ function Class:New(options)
     Guard.Check.IsNonEmptyString(options.Name)
     Guard.Check.IsPositiveInteger(options.GamblingId)
     Guard.Check.IsPositiveInteger(options.ItemQuality) -- EWowItemQuality  but better not enforce checking for the enum type
+    Guard.Check.IsBooleanizable(options.IsBindOnPickUp)
 
     Guard.Check.IsOptionallyBooleanizable(options.IsNeedable) -- the following are all optionals
     Guard.Check.IsOptionallyBooleanizable(options.IsGreedable)
-    Guard.Check.IsOptionallyBooleanizable(options.IsBindOnPickUp)
     Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable)
     Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable)
 
@@ -52,10 +52,10 @@ function Class:New(options)
         _name            = options.Name,
         _gamblingId      = options.GamblingId,
         _itemQuality     = options.ItemQuality,
+        _isBindOnPickUp  = options.IsBindOnPickUp,
         
         _isNeedable                = BooleansHelper.Booleanize(options.IsNeedable,         true),
         _isGreedable               = BooleansHelper.Booleanize(options.IsGreedable,        true),
-        _isBindOnPickUp            = BooleansHelper.Booleanize(options.IsBindOnPickUp,     true),
         _isDisenchantable          = BooleansHelper.Booleanize(options.IsDisenchantable,   true),
         _isTransmogrifiable        = BooleansHelper.Booleanize(options.IsTransmogrifiable, true),
 
@@ -81,7 +81,7 @@ function Class:GetGamblingId()
     return _gamblingId
 end
 
-function Class:GetTexture()
+function Class:GetTextureFilepath()
     Scopify(EScopes.Function, self)
 
     return _textureFilepath
@@ -105,7 +105,19 @@ function Class:IsGreedable()
     return _isGreedable
 end
 
-function Class:GetQuality()
+function Class:IsDisenchantable()
+    Scopify(EScopes.Function, self)
+
+    return _isDisenchantable
+end
+
+function Class:IsTransmogrifiable()
+    Scopify(EScopes.Function, self)
+
+    return _isTransmogrifiable
+end
+
+function Class:GetItemQuality()
     Scopify(EScopes.Function, self)
 
     return _itemQuality
