@@ -1,15 +1,16 @@
-﻿local _setfenv, _pairs, _strupper, _importer, _namespacer = (function()
+﻿local _setfenv, _pairs, _strfind, _strupper, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
     local _pairs = _assert(_g.pairs)
+    local _strfind = _assert(_g.string.find)
     local _strupper = _assert(_g.string.upper)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _pairs, _strupper, _importer, _namespacer
+    return _setfenv, _pairs, _strfind, _strupper, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -167,8 +168,8 @@ do
         return Guard.Check
     end
 
-    function Guard.Check.IsNonEmptyString(value)
-        Debug.Assert(Reflection.IsString(value) and value ~= "", "value must a non-empty string\n" .. Debug.Stacktrace() .. "\n")
+    function Guard.Check.IsNonDudString(value)
+        Debug.Assert(Reflection.IsString(value) and not Guard.Check.IsDudString_(value), "value must a non-dud string\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
     end
@@ -179,10 +180,16 @@ do
         return Guard.Check
     end
 
-    function Guard.Check.IsOptionallyNonEmptyString(value)
-        Debug.Assert(value == nil or (Reflection.IsString(value) and value ~= ""), "value must a non-empty string\n" .. Debug.Stacktrace() .. "\n")
+    function Guard.Check.IsOptionallyNonDudString(value)
+        Debug.Assert(value == nil or (Reflection.IsString(value) and not Guard.Check.IsDudString_(value)), "value must nil or a non-dud string\n" .. Debug.Stacktrace() .. "\n")
 
         return Guard.Check
+    end
+
+    function Guard.Check.IsDudString_(value) -- we cant use the trim helper here so we had to replicate it
+        local startIndex = _strfind(value, "^()%s*$")
+        
+        return startIndex ~= nil
     end
 
     -- FUNCTIONS

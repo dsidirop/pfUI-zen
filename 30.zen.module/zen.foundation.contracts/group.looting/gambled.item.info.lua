@@ -30,7 +30,7 @@ function Class:New(options)
     
     Guard.Check.IsTable(options)
 
-    Guard.Check.IsNonEmptyString(options.Name)
+    Guard.Check.IsNonDudString(options.Name)
     Guard.Check.IsPositiveInteger(options.GamblingId)
     Guard.Check.IsPositiveInteger(options.ItemQuality) -- EWowItemQuality  but better not enforce checking for the enum type
     Guard.Check.IsBooleanizable(options.IsBindOnPickUp)
@@ -40,16 +40,16 @@ function Class:New(options)
     Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable)
     Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable)
 
-    Guard.Check.IsOptionallyNonEmptyString(options.TextureFilepath)
+    Guard.Check.IsOptionallyNonDudString(options.TextureFilepath)
     Guard.Check.IsOptionallyPositiveInteger(options.Count)
     Guard.Check.IsOptionallyPositiveIntegerOrZero(options.EnchantingLevelRequiredToDEItem)
 
     Guard.Check.IsOptionallyPositiveIntegerOrZero(options.NeedInelligibilityReasonType)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.GreedInelligibilityReasonType) --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.DisenchantInelligibilityReasonType) -- EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.GreedInelligibilityReasonType) --      EWowLootingInelligibilityReasonType
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.DisenchantInelligibilityReasonType) -- EWowLootingInelligibilityReasonType
     
     return Classify(self, { --@formatter:off
-        _name            = options.Name,
+        _name            = StringsHelper.Trim(options.Name),
         _gamblingId      = options.GamblingId,
         _itemQuality     = options.ItemQuality,
         _isBindOnPickUp  = options.IsBindOnPickUp,

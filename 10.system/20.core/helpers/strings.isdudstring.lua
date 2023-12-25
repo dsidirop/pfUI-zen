@@ -18,16 +18,16 @@ local EScopes = _importer("System.EScopes")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
-function StringsHelper.Trim(input)
+function StringsHelper.IsDudString(value)
     Scopify(EScopes.Function, StringsHelper)
-
-    Guard.Check.IsString(input)
     
-    if input == "" then
-        return input
+    Guard.Check.IsOptionallyString(value)
+    
+    if value == nil then
+        return true
     end
     
-    return StringsHelper.Match(input, "^()%s*$")
-            and ""
-            or StringsHelper.Match(input, "^%s*(.*%S)")
+    local startIndex = StringsHelper.Find(value, "^()%s*$")
+    
+    return startIndex ~= nil
 end

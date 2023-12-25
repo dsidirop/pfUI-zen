@@ -34,20 +34,6 @@ TestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMes
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
 end)
 
-TestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
-    -- ARRANGE
-    local allMessagesArray = {}
-    local consoleWriter = Console.Writer:New(function(message)
-        ArraysHelper.Append(allMessagesArray, message)
-    end)
-
-    -- ACT
-    consoleWriter:WriteFormatted("Hello")
-
-    -- ASSERT
-    _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
-end)
-
 TestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
@@ -60,4 +46,18 @@ TestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpecte
 
     -- ASSERT
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello\n" })
+end)
+
+TestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
+    -- ARRANGE
+    local allMessagesArray = {}
+    local consoleWriter = Console.Writer:New(function(message)
+        ArraysHelper.Append(allMessagesArray, message)
+    end)
+
+    -- ACT
+    consoleWriter:WriteFormatted("Hello")
+
+    -- ASSERT
+    _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
 end)

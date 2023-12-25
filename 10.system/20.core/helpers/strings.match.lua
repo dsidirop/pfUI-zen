@@ -58,6 +58,8 @@ function StringsHelper.Match(input, patternString, ...)
     match23,
     match24,
     match25 = _strfind(input, patternString, _unpack(arg))
+        
+    -- todo   refactor this mechanism to have it rely on    local results = {_strfind(input, patternString, _unpack(arg))}   instead of the above 
 
     if startIndex == nil then
         -- no match

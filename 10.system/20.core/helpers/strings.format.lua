@@ -26,7 +26,7 @@ function StringsHelper.Format(format, ...)
     Scopify(EScopes.Function, StringsHelper)
 
     Guard.Check.IsNonEmptyTable(arg)
-    Guard.Check.IsNonEmptyString(format)
+    Guard.Check.IsNonDudString(format)
 
     local argCount = ArraysHelper.Count(arg)
     if argCount == 0 then
