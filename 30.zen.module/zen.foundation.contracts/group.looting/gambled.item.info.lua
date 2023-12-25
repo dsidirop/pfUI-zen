@@ -59,9 +59,9 @@ function Class:New(options)
         _isDisenchantable          = BooleansHelper.Booleanize(options.IsDisenchantable,   true),
         _isTransmogrifiable        = BooleansHelper.Booleanize(options.IsTransmogrifiable, true),
 
-        _count                           = options.Count == nil and 1 or options.Count,
-        _textureFilepath                 = options.TextureFilepath == nil and "" or options.TextureFilepath,
-        _enchantingLevelRequiredToDEItem = options.EnchantingLevelRequiredToDEItem == nil and 0 or options.EnchantingLevelRequiredToDEItem,
+        _count                           = options.Count                           == nil and 1  or options.Count,
+        _textureFilepath                 = options.TextureFilepath                 == nil and "" or options.TextureFilepath,
+        _enchantingLevelRequiredToDEItem = options.EnchantingLevelRequiredToDEItem == nil and 0  or options.EnchantingLevelRequiredToDEItem,
         
         _needInelligibilityReasonType       = options.NeedInelligibilityReasonType       == nil and 0 or options.NeedInelligibilityReasonType, --        can be nil if isNeedable       is true
         _greedInelligibilityReasonType      = options.GreedInelligibilityReasonType      == nil and 0 or options.GreedInelligibilityReasonType, --       can be nil if isGreedable      is true

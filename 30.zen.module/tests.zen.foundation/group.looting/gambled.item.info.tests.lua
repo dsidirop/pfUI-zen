@@ -28,7 +28,7 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
                 ["GII.CTOR.GBVP.SCS.010"] = {
                     Name = "Foobar",
                     GamblingId = 123,
-                    ItemQuality = EWowItemQuality.Uncommon,
+                    ItemQuality = EWowItemQuality.Green,
                     IsBindOnPickUp = false,
 
                     IsNeedable = true,
@@ -46,9 +46,9 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
                 },
                 ["GII.CTOR.GBVP.SCS.020"] = {
                     Name = " Foobar ",
-                    GamblingId = 123,
-                    ItemQuality = EWowItemQuality.Uncommon,
-                    IsBindOnPickUp = false,
+                    GamblingId = 456,
+                    ItemQuality = EWowItemQuality.Blue,
+                    IsBindOnPickUp = true,
 
                     IsNeedable = true,
                     IsGreedable = true,
@@ -95,5 +95,15 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
             U.AreEqual(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
             U.AreEqual(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
             U.AreEqual(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
+
+            U.AreEqual(gambledItemInfo:IsGreyQuality(), options.ItemQuality == EWowItemQuality.Grey)
+            U.AreEqual(gambledItemInfo:IsWhiteQuality(), options.ItemQuality == EWowItemQuality.White)
+            U.AreEqual(gambledItemInfo:IsBlueQuality(), options.ItemQuality == EWowItemQuality.Blue)
+            U.AreEqual(gambledItemInfo:IsGreenQuality(), options.ItemQuality == EWowItemQuality.Green)
+            U.AreEqual(gambledItemInfo:IsPurpleQuality(), options.ItemQuality == EWowItemQuality.Purple)
+            U.AreEqual(gambledItemInfo:IsOrangeQuality(), options.ItemQuality == EWowItemQuality.Orange)
+            
+            U.AreEqual(gambledItemInfo:IsArtifactQuality(), options.ItemQuality == EWowItemQuality.Artifact)
+            U.AreEqual(gambledItemInfo:IsLegendaryQuality(), options.ItemQuality == EWowItemQuality.Legendary)
         end
 )
