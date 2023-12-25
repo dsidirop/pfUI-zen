@@ -1,4 +1,4 @@
-local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable, _VWoWUnit = (function()
+local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableSort, _tableInsert, _setmetatable, _VWoWUnit = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -10,12 +10,13 @@ local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _table
 	local _print = _assert(_g.print)
 	local _pcall = _assert(_g.pcall)	
 	local _tostring = _assert(_g.tostring)
+	local _tableSort = _assert(_g.table.sort)
 	local _tableInsert = _assert(_g.table.insert)
 	local _setmetatable = _assert(_g.setmetatable)
 
 	local _VWoWUnit = _assert(_g.VWoWUnit)
 
-	return _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable, _VWoWUnit
+	return _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableSort, _tableInsert, _setmetatable, _VWoWUnit
 end)()
 
 _setfenv(1, {})
@@ -78,7 +79,7 @@ function Test:Run()
 	_print("**** Running sub-test-cases of " .. _testName)
 	
 	local allErrorMessages = {}
-	for subtestName, datum in _pairs(testData) do -- if testData actually has data
+	for subtestName, datum in Test.GetTablePairsOrderedByKeys_(testData) do -- if testData actually has data
 		local possibleErrorMessage = self:RunImpl_("** " .. subtestName, datum)
 		if possibleErrorMessage then
 			_tableInsert(allErrorMessages, possibleErrorMessage)
@@ -87,6 +88,30 @@ function Test:Run()
 	
 	return allErrorMessages
 end
+
+-- https://stackoverflow.com/a/70096863/863651
+function Test.GetTablePairsOrderedByKeys_(tableObject, comparer)
+	_setfenv(1, Test)
+	
+	local allTableKeys = {}
+	for key in _pairs(tableObject) do
+		_tableInsert(allTableKeys, key)
+	end
+	_tableSort(allTableKeys, comparer)
+
+	local i = 0
+	local iteratorFunction = function()
+		i = i + 1
+		if allTableKeys[i] == nil then
+			return nil
+		end
+		
+		return allTableKeys[i], tableObject[allTableKeys[i]]
+	end
+
+	return iteratorFunction
+end
+
 
 function Test:RunImpl_(testName, data)
 	_setfenv(1, self)

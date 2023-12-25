@@ -88,7 +88,7 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicInvalidPara
 
                     TextureFilepath = "", -- <-- this should trigger an error because its not a valid texture filepath
                 },
-                ["GII.CTOR.GBIP.SPEO.100"] = {
+                ["GII.CTOR.GBIP.SPEO.110"] = {
                     Name = "Foobar",
                     GamblingId = 123,
                     ItemQuality = EWowItemQuality.Green,
@@ -103,12 +103,7 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicInvalidPara
             -- ...
 
             -- ACT
-            local gambledItemInfo = GambledItemInfo:New {
-                Name = options.Name,
-                GamblingId = options.GamblingId,
-                ItemQuality = options.ItemQuality,
-                IsBindOnPickUp = options.IsBindOnPickUp,
-            }
+            local gambledItemInfo = GambledItemInfo:New(options)
 
             -- ASSERT
         end
