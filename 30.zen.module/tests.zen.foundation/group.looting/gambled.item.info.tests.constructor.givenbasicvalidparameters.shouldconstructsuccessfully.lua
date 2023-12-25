@@ -11,18 +11,20 @@ end)()
 
 _setfenv(1, {}) --                                                                                                           @formatter:off
 
+local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
+local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType")
 
 local TestsGroup = U.I:GetOrCreateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
 
-TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParameter.ShouldConstructSuccessfully",
+TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParameters.ShouldConstructSuccessfully",
         function()
             return {
                 ["GII.CTOR.GBVP.SCS.010"] = {
@@ -40,9 +42,9 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
                     TextureFilepath = "",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = 0,
-                    GreedInelligibilityReasonType = 0,
-                    DisenchantInelligibilityReasonType = 0,
+                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
                 },
                 ["GII.CTOR.GBVP.SCS.020"] = {
                     Name = " Foobar ",
@@ -59,10 +61,29 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
                     TextureFilepath = "",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = 0,
-                    GreedInelligibilityReasonType = 0,
-                    DisenchantInelligibilityReasonType = 0,
-                }
+                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                },
+                ["GII.CTOR.GBVP.SCS.030"] = {
+                    Name = " Foobar ",
+                    GamblingId = 456,
+                    ItemQuality = 14,
+                    IsBindOnPickUp = true,
+
+                    IsNeedable = true,
+                    IsGreedable = true,
+                    IsDisenchantable = true,
+                    IsTransmogrifiable = true,
+
+                    Count = 1,
+                    TextureFilepath = "",
+                    EnchantingLevelRequiredToDEItem = 0,
+
+                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                },
             }
         end,
         function(options)
@@ -70,7 +91,7 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
             -- ...
 
             -- ACT
-            local gambledItemInfo = GambledItemInfo:New {
+            local gambledItemInfo = GambledItemInfo:New { -- we want to pass just the mandatory parameters to see if the rest are defaulted properly
                 Name = options.Name,
                 GamblingId = options.GamblingId,
                 ItemQuality = options.ItemQuality,

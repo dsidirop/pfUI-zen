@@ -19,6 +19,7 @@ local TablesHelper = _importer("System.Helpers.Tables")
 
 local EWoWLootingInelligibilityReasonType = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType") -- aka roll-mode
 
+EWoWLootingInelligibilityReasonType.None = 0 -- green
 EWoWLootingInelligibilityReasonType.InappropriateClass = 1
 EWoWLootingInelligibilityReasonType.CannotCarryMoreItemsOfThisKind = 2
 EWoWLootingInelligibilityReasonType.NotDisenchantableAndThusCantBeLootedByTheDisenchanter = 3
@@ -32,5 +33,5 @@ function EWoWLootingInelligibilityReasonType.IsValid(value)
         return false
     end
 
-    return value >= EWoWLootingInelligibilityReasonType.InappropriateClass and value <= EWoWLootingInelligibilityReasonType.NeedRollsDisabledForThisItem
+    return value >= EWoWLootingInelligibilityReasonType.None and value <= EWoWLootingInelligibilityReasonType.NeedRollsDisabledForThisItem
 end

@@ -28,26 +28,27 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Gro
 function Class:New(options)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsTable(options)
+    Guard.Check.IsTable(options) -- todo   Guard.Check.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
 
-    Guard.Check.IsNonDudString(options.Name)
-    Guard.Check.IsPositiveInteger(options.GamblingId)
-    Guard.Check.IsPositiveInteger(options.ItemQuality) -- EWowItemQuality  but better not enforce checking for the enum type
+    Guard.Check.IsNonDudStringOfMaxLength(options.Name, 512)
+    
     Guard.Check.IsBooleanizable(options.IsBindOnPickUp)
+    Guard.Check.IsPositiveInteger(options.GamblingId)
+    Guard.Check.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20) -- EWowItemQuality  but better not enforce checking for the enum type
 
     Guard.Check.IsOptionallyBooleanizable(options.IsNeedable) -- the following are all optionals
     Guard.Check.IsOptionallyBooleanizable(options.IsGreedable)
     Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable)
     Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable)
 
-    Guard.Check.IsOptionallyNonDudString(options.TextureFilepath)
-    Guard.Check.IsOptionallyPositiveInteger(options.Count)
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.EnchantingLevelRequiredToDEItem)
+    Guard.Check.IsOptionallyNonDudStringOfMaxLength(options.TextureFilepath, 1024)
+    Guard.Check.IsOptionallyPositiveIntegerOfMaxValue(options.Count, 2000)
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000)
 
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.NeedInelligibilityReasonType)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.GreedInelligibilityReasonType) --      EWowLootingInelligibilityReasonType
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.DisenchantInelligibilityReasonType) -- EWowLootingInelligibilityReasonType
-    
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20) --      EWowLootingInelligibilityReasonType
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20) -- EWowLootingInelligibilityReasonType
+
     return Classify(self, { --@formatter:off
         _name            = StringsHelper.Trim(options.Name),
         _gamblingId      = options.GamblingId,
