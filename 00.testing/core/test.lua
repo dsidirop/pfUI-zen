@@ -1,9 +1,10 @@
-local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _tableInsert, _setmetatable, _VWoWUnit = (function()
+local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable, _VWoWUnit = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	local _next = _assert(_g.next)
 	local _type = _assert(_g.type)
 	local _pairs = _assert(_g.pairs)
 	local _print = _assert(_g.print)
@@ -14,7 +15,7 @@ local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _tableInsert,
 
 	local _VWoWUnit = _assert(_g.VWoWUnit)
 
-	return _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _tableInsert, _setmetatable, _VWoWUnit
+	return _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable, _VWoWUnit
 end)()
 
 _setfenv(1, {})
@@ -25,10 +26,38 @@ _VWoWUnit.Test = Test
 
 --[[ API ]]--
 
-function Test:New(testname, testFunction)
+function Test:New(testName, testFunction)
+	_setfenv(1, self)
+
+	_assert(_type(testName) == "string" and testName ~= "", "test name must be a non-empty string")
+	_assert(_type(testFunction) == "function", "test function must be a function")
+
+	return self:NewWithDynamicDataGeneratorCallback(testName, testFunction, function()
+		return {}
+	end)
+end
+
+function Test:NewWithHardData(testName, testFunction, hardData)
+	_setfenv(1, self)
+
+	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+	_assert(_type(hardData) == "table", "hardData must be a table")
+	_assert(_type(testFunction) == "function", "test function must be a function")
+
+	return self:NewWithDynamicDataGeneratorCallback(testName, testFunction, function()
+		return hardData
+	end)
+end
+
+function Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback)
+	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+	_assert(_type(testFunction) == "function", "test function must be a function")
+	_assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
+
 	local test = {
-		_testname = testname,
+		_testName = testName,
 		_testFunction = testFunction,
+		_dynamicDataGeneratorCallback = dynamicDataGeneratorCallback,
 	}
 
 	_setmetatable(test, self)
@@ -39,23 +68,47 @@ end
 
 function Test:Run()
 	_setfenv(1, self)
+
+	local testData = self._dynamicDataGeneratorCallback()
+	if testData == nil or _next(testData) == nil then -- if testData is nil or empty
+		local possibleErrorMessage = self:RunImpl_(" " .. _testName, {})
+		return { possibleErrorMessage }
+	end
+
+	_print("**** Running sub-test-cases of " .. _testName)
 	
-	local success, errorMessage = _pcall(_testFunction)
+	local allErrorMessages = {}
+	for subtestName, datum in _pairs(testData) do -- if testData actually has data
+		local possibleErrorMessage = self:RunImpl_("** " .. subtestName, datum)
+		if possibleErrorMessage then
+			_tableInsert(allErrorMessages, possibleErrorMessage)
+		end
+	end
+	
+	return allErrorMessages
+end
+
+function Test:RunImpl_(testName, data)
+	_setfenv(1, self)
+
+	_assert(_type(data) == "table", "test data must be a table")
+	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+	
+	local success, errorMessage = _pcall(_testFunction, data)
 	if success == nil or success == false or errorMessage ~= nil then
-		_print("  " .. _testname .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		_print("****" .. testName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
 		return errorMessage
 	end
 
-	_print("  " .. _testname .. " |cff00ff00[PASSED]")
-	
+	_print("****" .. testName .. " |cff00ff00[PASSED]")
+
 	return nil
 end
-
 
 --[[ Operators ]]--
 
 function Test:__lt(other)
 	_setfenv(1, self)
 	
-	return _testname < other._testname
+	return _testName < other._testName
 end

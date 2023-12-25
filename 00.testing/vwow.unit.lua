@@ -44,8 +44,9 @@ function VWoWUnit:RunAllTestGroups()
 	_setfenv(1, self)
 
 	for _, group in _pairs(_testGroups) do
-		_print("** Running test-group '" .. group:GetName() .. "'")
+		_print("** Running test-group " .. group:GetName())
 		group:Run()
+		_print("")
 	end
 end
 

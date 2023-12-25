@@ -45,27 +45,48 @@ function TestsGroup:Run()
 
     local failedTests = {}
     for _, test in _pairs(_tests) do
-        local possibleErrorMessage = test:Run()
-        if possibleErrorMessage then
-            _tableInsert(failedTests, {
-                TestName = _name,
-                ErrorMessage = possibleErrorMessage
-            })
+        local possibleErrorMessages = test:Run()
+        if possibleErrorMessages then
+            for _, errorMessage in _pairs(possibleErrorMessages) do
+                _tableInsert(failedTests, {
+                    TestName = _name,
+                    ErrorMessage = errorMessage
+                })
+            end            
         end
     end
     
     return failedTests
 end
 
-function TestsGroup:AddTest(name, testFunction)
+function TestsGroup:AddTest(testName, testFunction)
     _setfenv(1, self)
     
-    _assert(_type(name) == "string" and name ~= "", "test name must be a non-empty string")
+    _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
     _assert(_type(testFunction) == "function", "test function must be a function")
 
-    _tableInsert(_tests, _VWoWUnit.Test:New(name, testFunction))
+    _tableInsert(_tests, _VWoWUnit.Test:New(testName, testFunction))
 end
 
+function TestsGroup:AddHardDataTest(testName, hardData, testFunction)
+    _setfenv(1, self)
+
+    _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+    _assert(_type(hardData) == "table", "hardData must be a table")
+    _assert(_type(testFunction) == "function", "test function must be a function")
+
+    _tableInsert(_tests, _VWoWUnit.Test:NewWithHardData(testName, testFunction, hardData))
+end
+
+function TestsGroup:AddDynamicDataTest(testName, dynamicDataGeneratorCallback, testFunction)
+    _setfenv(1, self)
+
+    _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+    _assert(_type(testFunction) == "function", "test function must be a function")
+    _assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
+    
+    _tableInsert(_tests, _VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback))
+end
 
 --[[ Operators ]]--
 
