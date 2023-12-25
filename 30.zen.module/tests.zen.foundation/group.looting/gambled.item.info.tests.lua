@@ -13,11 +13,11 @@ _setfenv(1, {}) --                                                              
 
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local VWoWUnit = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 
-local TestsGroup = VWoWUnit.I:GetOrCreateGroup {
+local TestsGroup = U.I:GetOrCreateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
@@ -78,22 +78,22 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParame
             }
 
             -- ASSERT
-            VWoWUnit.AreEqual(gambledItemInfo:GetName(), StringsHelper.Trim(options.Name))
-            VWoWUnit.AreEqual(gambledItemInfo:GetGamblingId(), options.GamblingId)
-            VWoWUnit.AreEqual(gambledItemInfo:GetItemQuality(), options.ItemQuality)
-            VWoWUnit.AreEqual(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)
+            U.AreEqual(gambledItemInfo:GetName(), StringsHelper.Trim(options.Name))
+            U.AreEqual(gambledItemInfo:GetGamblingId(), options.GamblingId)
+            U.AreEqual(gambledItemInfo:GetItemQuality(), options.ItemQuality)
+            U.AreEqual(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)
 
-            VWoWUnit.AreEqual(gambledItemInfo:IsNeedable(), options.IsNeedable)
-            VWoWUnit.AreEqual(gambledItemInfo:IsGreedable(), options.IsGreedable)
-            VWoWUnit.AreEqual(gambledItemInfo:IsDisenchantable(), options.IsDisenchantable)
-            VWoWUnit.AreEqual(gambledItemInfo:IsTransmogrifiable(), options.IsTransmogrifiable)
+            U.AreEqual(gambledItemInfo:IsNeedable(), options.IsNeedable)
+            U.AreEqual(gambledItemInfo:IsGreedable(), options.IsGreedable)
+            U.AreEqual(gambledItemInfo:IsDisenchantable(), options.IsDisenchantable)
+            U.AreEqual(gambledItemInfo:IsTransmogrifiable(), options.IsTransmogrifiable)
 
-            VWoWUnit.AreEqual(gambledItemInfo:GetCount(), options.Count)
-            VWoWUnit.AreEqual(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
-            VWoWUnit.AreEqual(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
+            U.AreEqual(gambledItemInfo:GetCount(), options.Count)
+            U.AreEqual(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
+            U.AreEqual(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
 
-            VWoWUnit.AreEqual(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
-            VWoWUnit.AreEqual(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
-            VWoWUnit.AreEqual(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
+            U.AreEqual(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
+            U.AreEqual(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
+            U.AreEqual(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
         end
 )
