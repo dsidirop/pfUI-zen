@@ -123,6 +123,18 @@ function Class:GetItemQuality()
     return _itemQuality
 end
 
+function Class:IsGreyQuality()
+    Scopify(EScopes.Function, self)
+
+    return _itemQuality == EWowItemQuality.Grey
+end
+
+function Class:IsWhiteQuality()
+    Scopify(EScopes.Function, self)
+
+    return _itemQuality == EWowItemQuality.White
+end
+
 function Class:IsGreenQuality()
     Scopify(EScopes.Function, self)
 
