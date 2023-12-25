@@ -178,12 +178,6 @@ function Class:GetNeedInelligibilityReasonType()
     Scopify(EScopes.Function, self)
     
     return _needInelligibilityReasonType
-
-    --LOOT_ROLL_INELIGIBLE_REASON1: "Your class may not roll need on this item."
-    --LOOT_ROLL_INELIGIBLE_REASON2: "You already have the maximum amount of this item."
-    --LOOT_ROLL_INELIGIBLE_REASON3: "This item may not be disenchanted."
-    --LOOT_ROLL_INELIGIBLE_REASON4: "You do not have an Enchanter of skill %d in your group."
-    --LOOT_ROLL_INELIGIBLE_REASON5: "Need rolls are disabled for this item."
 end
 
 -- @return EWowLootingInelligibilityReasonType
