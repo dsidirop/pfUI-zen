@@ -28,7 +28,7 @@ local Guard                  = _importer("System.Guard")
 local WoWRollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
 local WoWGetLootRollItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo")
 
-local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.GambledItemInfo")
+local GambledItemInfo          = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo")
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper")
@@ -47,42 +47,45 @@ end -- @formatter:on
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
 -- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo
-function Class:GetGambledItemInfo(rollId)
+function Class:GetGambledItemInfo(gamblingId)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsPositiveIntegerOrZero(rollId)
+    Guard.Check.IsPositiveIntegerOrZero(gamblingId)
 
     local
-    texture,
+    textureFilepath,
     name,
     count,
-    quality,
-    bindOnPickUp,
-    canNeed,
-    canGreed,
-    canDisenchant,
-    reasonNeed,
-    reasonGreed,
-    reasonDisenchant,
-    enchantingSkillLevelRequiredToDisenchantedThisItem,
-    canTransmog = self.GetLootRollItemInfo_(rollId)
+    itemQuality,
+    isBindOnPickUp,
+    isNeedable,
+    isGreedable,
+    isDisenchantable,
+    needInelligibilityReasonType,
+    greedInelligibilityReasonType,
+    disenchantInelligibilityReasonType,
+    enchantingLevelRequiredToDEItem,
+    isTransmogrifiable = self.GetLootRollItemInfo_(gamblingId)
 
-    return GambledItemInfo:New(
-            rollId,
-            texture,
-            name,
-            count,
-            quality,
-            bindOnPickUp,
-            canNeed,
-            canGreed,
-            canDisenchant,
-            reasonNeed,
-            reasonGreed,
-            reasonDisenchant,
-            enchantingSkillLevelRequiredToDisenchantedThisItem,
-            canTransmog
-    )
+    return GambledItemInfo:New {
+        Name = name,
+        GamblingId = gamblingId,
+        ItemQuality = itemQuality,
+        
+        IsNeedable = isNeedable,
+        IsGreedable = isGreedable,
+        IsBindOnPickUp = isBindOnPickUp,
+        IsDisenchantable = isDisenchantable,
+        IsTransmogrifiable = isTransmogrifiable,
+
+        Count = count,
+        TextureFilepath = textureFilepath,
+        EnchantingLevelRequiredToDEItem = enchantingLevelRequiredToDEItem,
+        
+        NeedInelligibilityReasonType = needInelligibilityReasonType,
+        GreedInelligibilityReasonType = greedInelligibilityReasonType,
+        DisenchantInelligibilityReasonType = disenchantInelligibilityReasonType,
+    }
 end
 
 function Class:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)

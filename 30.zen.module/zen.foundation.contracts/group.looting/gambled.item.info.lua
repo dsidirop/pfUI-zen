@@ -23,63 +23,49 @@ local BooleansHelper  = _importer("System.Helpers.Booleans")
 
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality") --  @formater:off
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.GambledItemInfo")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo")
 
-function Class:New(
-        rollId,
-        textureFilepath,
-        name,
-        count,
-        itemQuality,
-        isBindOnPickUp,
-        isNeedable,
-        isGreedable,
-        isDisenchantable,
-        needInelligibilityReasonType,
-        greedInelligibilityReasonType,
-        disenchantInelligibilityReasonType,
-        disechantingSkillRequired,
-        isTransmogrifiable
-)
+function Class:New(options)
     Scopify(EScopes.Function, self)
-
-    Guard.Check.IsPositiveInteger(rollId)
     
-    Guard.Check.IsNonEmptyString(name)
-    Guard.Check.IsPositiveInteger(itemQuality) -- EWowItemQuality  but better not enforce checking for the enum type
-    Guard.Check.IsOptionallyNonEmptyString(textureFilepath)
-    
-    Guard.Check.IsPositiveInteger(count)
-    Guard.Check.IsOptionallyBooleanizable(isNeedable)
-    Guard.Check.IsOptionallyBooleanizable(isGreedable)
-    Guard.Check.IsOptionallyBooleanizable(isBindOnPickUp)
-    Guard.Check.IsOptionallyBooleanizable(isDisenchantable)
-    Guard.Check.IsOptionallyBooleanizable(isTransmogrifiable)
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(disechantingSkillRequired)
+    Guard.Check.IsTable(options)
 
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(needInelligibilityReasonType)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(greedInelligibilityReasonType) --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(disenchantInelligibilityReasonType) -- EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsNonEmptyString(options.Name)
+    Guard.Check.IsPositiveInteger(options.GamblingId)
+    Guard.Check.IsPositiveInteger(options.ItemQuality) -- EWowItemQuality  but better not enforce checking for the enum type
+
+    Guard.Check.IsOptionallyBooleanizable(options.IsNeedable) -- the following are all optionals
+    Guard.Check.IsOptionallyBooleanizable(options.IsGreedable)
+    Guard.Check.IsOptionallyBooleanizable(options.IsBindOnPickUp)
+    Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable)
+    Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable)
+
+    Guard.Check.IsOptionallyNonEmptyString(options.TextureFilepath)
+    Guard.Check.IsOptionallyPositiveInteger(options.Count)
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.EnchantingLevelRequiredToDEItem)
+
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.NeedInelligibilityReasonType)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.GreedInelligibilityReasonType) --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(options.DisenchantInelligibilityReasonType) -- EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
     
     return Classify(self, { --@formatter:off
-        _rollId = rollId,
-
-        _name            = name,
-        _itemQuality     = itemQuality,
+        _name            = options.Name,
+        _gamblingId      = options.GamblingId,
+        _itemQuality     = options.ItemQuality,
         
-        _isNeedable                = BooleansHelper.Booleanize(isNeedable,         true),
-        _isGreedable               = BooleansHelper.Booleanize(isGreedable,        true),
-        _isBindOnPickUp            = BooleansHelper.Booleanize(isBindOnPickUp,     true),
-        _isDisenchantable          = BooleansHelper.Booleanize(isDisenchantable,   true),
-        _isTransmogrifiable        = BooleansHelper.Booleanize(isTransmogrifiable, true),
+        _isNeedable                = BooleansHelper.Booleanize(options.IsNeedable,         true),
+        _isGreedable               = BooleansHelper.Booleanize(options.IsGreedable,        true),
+        _isBindOnPickUp            = BooleansHelper.Booleanize(options.IsBindOnPickUp,     true),
+        _isDisenchantable          = BooleansHelper.Booleanize(options.IsDisenchantable,   true),
+        _isTransmogrifiable        = BooleansHelper.Booleanize(options.IsTransmogrifiable, true),
 
-        _count                     = count,
-        _textureFilepath           = textureFilepath,
-        _disechantingSkillRequired = disechantingSkillRequired == nil and 0 or disechantingSkillRequired,
+        _count                           = options.Count == nil and 1 or options.Count,
+        _textureFilepath                 = options.TextureFilepath == nil and "" or options.TextureFilepath,
+        _enchantingLevelRequiredToDEItem = options.EnchantingLevelRequiredToDEItem == nil and 0 or options.EnchantingLevelRequiredToDEItem,
         
-        _needInelligibilityReasonType       = needInelligibilityReasonType       == nil and 0 or needInelligibilityReasonType, --        can be nil if isNeedable       is true
-        _greedInelligibilityReasonType      = greedInelligibilityReasonType      == nil and 0 or greedInelligibilityReasonType, --       can be nil if isGreedable      is true
-        _disenchantInelligibilityReasonType = disenchantInelligibilityReasonType == nil and 0 or disenchantInelligibilityReasonType --   can be nil if isDisenchantable is true
+        _needInelligibilityReasonType       = options.NeedInelligibilityReasonType       == nil and 0 or options.NeedInelligibilityReasonType, --        can be nil if isNeedable       is true
+        _greedInelligibilityReasonType      = options.GreedInelligibilityReasonType      == nil and 0 or options.GreedInelligibilityReasonType, --       can be nil if isGreedable      is true
+        _disenchantInelligibilityReasonType = options.DisenchantInelligibilityReasonType == nil and 0 or options.DisenchantInelligibilityReasonType --   can be nil if isDisenchantable is true
     }) --@formatter:on
 end
 
@@ -92,7 +78,7 @@ end
 function Class:GetGamblingId()
     Scopify(EScopes.Function, self)
 
-    return _rollId
+    return _gamblingId
 end
 
 function Class:GetTexture()
@@ -167,10 +153,10 @@ function Class:IsBindOnPickUp()
     return _isBindOnPickUp
 end
 
-function Class:GetDisechantingSkillRequired()
+function Class:GetEnchantingLevelRequiredToDEItem()
     Scopify(EScopes.Function, self)
 
-    return _disechantingSkillRequired
+    return _enchantingLevelRequiredToDEItem
 end
 
 -- @return EWowLootingInelligibilityReasonType
@@ -212,7 +198,7 @@ function Class:__tostring()
 
             "  Count                              = %s,\n"     ..
             "  Texture                            = %q,\n"     ..
-            "  DisechantingSkillRequired          = %s,\n"     ..
+            "  EnchantingLevelRequiredToDEItem          = %s,\n"     ..
 
             "  NeedInelligibilityReasonType       = %s,\n"     ..
             "  GreedInelligibilityReasonType      = %s,\n"     ..
@@ -230,7 +216,7 @@ function Class:__tostring()
 
             self:GetCount(),
             self:GetTexture(),
-            self:GetDisechantingSkillRequired(),
+            self:GetEnchantingLevelRequiredToDEItem(),
 
             self:GetNeedInelligibilityReasonType(),
             self:GetGreedInelligibilityReasonType(),
