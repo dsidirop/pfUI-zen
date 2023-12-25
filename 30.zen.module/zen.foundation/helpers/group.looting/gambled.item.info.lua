@@ -202,7 +202,7 @@ function Class:__tostring()
             "{\n"                                              ..
             "  Name                               = %q,\n"     ..
             "  Quality                            = %q,\n"     ..
-            "  GamblingId                         = %d,\n"     ..
+            "  GamblingId                         = %s,\n"     ..
 
             "  IsNeedable                         = %s,\n"     ..
             "  IsGreedable                        = %s,\n"     ..
@@ -210,13 +210,13 @@ function Class:__tostring()
             "  IsDisenchantable                   = %s,\n"     ..
             "  IsTransmogrifiable                 = %s,\n"     ..
 
-            "  Count                              = %d,\n"     ..
+            "  Count                              = %s,\n"     ..
             "  Texture                            = %q,\n"     ..
-            "  DisechantingSkillRequired          = %d,\n"     ..
+            "  DisechantingSkillRequired          = %s,\n"     ..
 
-            "  NeedInelligibilityReasonType       = %d,\n"     ..
-            "  GreedInelligibilityReasonType      = %d,\n"     ..
-            "  DisenchantInelligibilityReasonType = %d\n"      ..
+            "  NeedInelligibilityReasonType       = %s,\n"     ..
+            "  GreedInelligibilityReasonType      = %s,\n"     ..
+            "  DisenchantInelligibilityReasonType = %s\n"      ..
             "}\n",
             self:GetName(),
             self:GetQuality(),
