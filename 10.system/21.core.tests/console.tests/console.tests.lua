@@ -15,7 +15,7 @@ _setfenv(1, {}) --                                           @formatter:off
 local Console      = _importer("System.Console")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
-local TestsGroup = _VWoWUnit.I:GetOrCreateGroup {
+local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup {
     Name = "System.Console.Tests",
     Tags = { "system", "output" },
 } --                                                         @formatter:on

@@ -30,24 +30,24 @@ function Class:New(options)
     
     Guard.Check.IsTable(options) -- todo   Guard.Check.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
 
-    Guard.Check.IsNonDudStringOfMaxLength(options.Name, 512)
+    Guard.Check.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
     
-    Guard.Check.IsBooleanizable(options.IsBindOnPickUp)
-    Guard.Check.IsPositiveInteger(options.GamblingId)
-    Guard.Check.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20) -- EWowItemQuality  but better not enforce checking for the enum type
+    Guard.Check.IsBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
+    Guard.Check.IsPositiveInteger(options.GamblingId, "options.GamblingId")
+    Guard.Check.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20, "options.ItemQuality") -- EWowItemQuality  but better not enforce checking for the enum type
 
-    Guard.Check.IsOptionallyBooleanizable(options.IsNeedable) -- the following are all optionals
-    Guard.Check.IsOptionallyBooleanizable(options.IsGreedable)
-    Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable)
-    Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable)
+    Guard.Check.IsOptionallyBooleanizable(options.IsNeedable, "options.IsNeedable") -- the following are all optionals
+    Guard.Check.IsOptionallyBooleanizable(options.IsGreedable, "options.IsGreedable")
+    Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable, "options.IsDisenchantable")
+    Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable, "options.IsTransmogrifiable")
 
-    Guard.Check.IsOptionallyNonDudStringOfMaxLength(options.TextureFilepath, 1024)
-    Guard.Check.IsOptionallyPositiveIntegerOfMaxValue(options.Count, 2000)
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000)
+    Guard.Check.IsOptionallyNonDudStringOfMaxLength(options.TextureFilepath, 1024, "options.TextureFilepath")
+    Guard.Check.IsOptionallyPositiveIntegerOfMaxValue(options.Count, 2000, "options.Count")
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000, "options.EnchantingLevelRequiredToDEItem")
 
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20)  --      EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20) --      EWowLootingInelligibilityReasonType
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20) -- EWowLootingInelligibilityReasonType
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20, "options.NeedInelligibilityReasonType")  --            EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20, "options.GreedInelligibilityReasonType") --           EWowLootingInelligibilityReasonType
+    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20, "options.DisenchantInelligibilityReasonType") -- EWowLootingInelligibilityReasonType
 
     return Classify(self, { --@formatter:off
         _name            = StringsHelper.Trim(options.Name),

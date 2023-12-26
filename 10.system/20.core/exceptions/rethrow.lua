@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _importer, _namespacer_bind, _tostring = (function()
+﻿local _assert, _setfenv, _namespacer_bind, _tostring = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,21 +6,14 @@
     _setfenv(1, {})
 
     local _tostring = _assert(_g.tostring)
-    local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
 
-    return _assert, _setfenv, _importer, _namespacer_bind, _tostring
+    return _assert, _setfenv, _namespacer_bind, _tostring
 end)()
 
 _setfenv(1, {})
 
-local Debug = _importer("System.Debug")
-
-_namespacer_bind("System.Exceptions.Throw", function(exception)
-    if exception.ChainSetStacktrace ~= nil then
-        exception:ChainSetStacktrace(Debug.Stacktrace(1))
-    end
-
+_namespacer_bind("System.Exceptions.Rethrow", function(exception)
     _assert(false, _tostring(exception)) -- 00
 
     -- 00  notice that we intentionally use assert() instead of error() here primarily because pfui and other libraries override the vanilla

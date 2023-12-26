@@ -1,4 +1,4 @@
-local _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _tableInsert, _setmetatable = (function()
+local _g, _assert, _type, _print, _pairs, _strlen, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -7,17 +7,15 @@ local _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _to
 	local _type = _assert(_g.type)
 	local _pairs = _assert(_g.pairs)
 	local _print = _assert(_g.print)
-	local _error = _assert(_g.error)
-	local _ipairs = _assert(_g.ipairs)
+	local _strlen = _assert(_g.string.len)
 	local _strsub = _assert(_g.string.sub)
 	local _format = _assert(_g.string.format)
 	local _tostring = _assert(_g.tostring)
 	local _tableGetn = _assert(_g.table.getn)
 	local _debugstack = _assert(_g.debugstack)
-	local _tableInsert = _assert(_g.table.insert)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g, _assert, _type, _print, _error, _pairs, _ipairs, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _tableInsert, _setmetatable
+	return _g, _assert, _type, _print, _pairs, _strlen, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -43,11 +41,18 @@ end
 function VWoWUnit:RunAllTestGroups()
 	_setfenv(1, self)
 
-	for _, group in _pairs(_testGroups) do
+	for _, group in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(_testGroups, function(a, b)
+		local lengthA = _strlen(a) -- 00
+		local lengthB = _strlen(b)
+
+		return lengthA < lengthB or (lengthA == lengthB and a < b)
+	end) do
 		_print("** Running test-group " .. group:GetName())
 		group:Run()
 		_print("")
 	end
+	
+	-- 00  we want to ensure that tests with short names like system.exceptions to be run before tests with long names like pavilion.xyz.foo.bar 
 end
 
 function VWoWUnit:RunTestGroup(testGroupName)
@@ -64,14 +69,14 @@ end
 function VWoWUnit:RunTestGroupsForTagGroup(tagName)
 	_setfenv(1, self)
 	
-	for _, group in _ipairs(_testTags[tagName]) do
+	for _, group in _pairs(_testTags[tagName]) do
 		group:Run()
 	end
 end
 
 --[[ Registry ]]--
 
-function VWoWUnit:GetOrCreateGroup(options)
+function VWoWUnit:CreateOrUpdateGroup(options)
 	_setfenv(1, self)
 	
 	_assert(_type(options) == "table")
@@ -80,13 +85,11 @@ function VWoWUnit:GetOrCreateGroup(options)
 
 	options.Tags = options.Tags or {}
 	
-	local preexistingGroup = self:GetGroup(options.Name)
-	if preexistingGroup then
-		return preexistingGroup
+	local group = self:GetGroup(options.Name)
+	if group == nil then
+		group = VWoWUnit.TestsGroup:New(options.Name)
+		_testGroups[options.Name] = group
 	end
-
-	local group = VWoWUnit.TestsGroup:New(options.Name)
-	_testGroups[options.Name] = group
 
 	local tagsCount = _tableGetn(options.Tags) 
 	for i = 1, tagsCount do
@@ -107,19 +110,19 @@ function VWoWUnit:AssociateWithTestTag(group, tag)
 
 	_testTags[tag] = _testTags[tag] or {}
 
-	_tableInsert(_testTags[tag], group)
+	_testTags[tag][group:GetName()] = group
 end
 
 
 --[[ Assertions ]]--
 
 function VWoWUnit.AreEqual(a, b)
-	local path, a, b = VWoWUnit.Difference_(a, b)
+	local path, aa, bb = VWoWUnit.Difference_(a, b)
 	if path == nil then
 		return
 	end
 	
-	local message = _format("expected %q, got %q", _tostring(b), _tostring(a))
+	local message = _format("expected %q, got %q", _tostring(bb), _tostring(aa))
 	if path ~= nil and path ~= "" then
 		message = _format("tables differ at %q - %s", _strsub(path, 2), message)
 	end
@@ -158,11 +161,9 @@ end
 
 local ERROR_COLOR_CODE = "|cffff5555"
 function VWoWUnit.Raise_(message)
-	_error(ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(), 3)
-
-	-- stupid hack for pfui to stop the test execution   pfui overrides the error function with a custom one that
-	-- doesnt invoke the base error function causing pcall to be oblivious to the exceptions that we are trying to throw
-	intentional_error_to_force_stop_environments_that_override_the_error_function_with_a_custom_one_that_doesnt_invoke_the_base_error_function()
+	-- its absolutely vital to use assert() instead of error() because error() is overriden in addons like pfui to only print without
+	-- actually raising an error as an exception which is not what we want to happen here   by using assert() we ensure that we get an exception
+	_assert(false, ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(3))
 end
 
 function VWoWUnit.IsTable_(value)
@@ -172,9 +173,9 @@ end
 function VWoWUnit.Difference_(a, b)
 	if VWoWUnit.IsTable_(a) and VWoWUnit.IsTable_(b) then
 		for key, value in _pairs(a) do
-			local path, a, b = VWoWUnit.Difference_(value, b[key])
+			local path, aa, bb = VWoWUnit.Difference_(value, b[key])
 			if path then
-				return "." .. key .. path, a, b
+				return "." .. key .. path, aa, bb
 			end
 		end
 

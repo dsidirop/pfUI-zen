@@ -70,6 +70,36 @@ function Reflection.IsOptionallyString(value)
     return value == nil or Reflection.Type(value) == STypes.String
 end
 
-function Reflection.GetNamespace(object)
-    return _namespacer_reflector(object)
+function Reflection.IsTableOrString(value)
+    return Reflection.Type(value) == STypes.Table or Reflection.Type(value) == STypes.String
 end
+
+function Reflection.IsOptionallyTableOrString(value)
+    return value == nil or Reflection.IsTableOrString(value)
+end
+
+function Reflection.IsInstanceOf(object, desiredType)
+    if object == nil then
+        return false
+    end
+
+    return Reflection.GetNamespaceOfInstance(object) == Reflection.GetNamespaceOfType(desiredType)
+end
+
+
+function Reflection.GetNamespaceOfInstance(object)
+    if object == nil then
+        return nil
+    end
+    
+    return Reflection.GetNamespaceOfType(object.__index)
+end
+
+function Reflection.GetNamespaceOfType(typeOfObject)
+    if typeOfObject == nil then
+        return nil
+    end
+    
+    return _namespacer_reflector(typeOfObject)
+end
+
