@@ -1,0 +1,22 @@
+﻿local _assert, _setfenv, _namespacer_bind, _tostring = (function()
+    local _g = assert(_G or getfenv(0))
+    local _assert = assert
+    local _setfenv = _assert(_g.setfenv)
+
+    _setfenv(1, {})
+
+    local _tostring = _assert(_g.tostring)
+    local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
+
+    return _assert, _setfenv, _namespacer_bind, _tostring
+end)()
+
+_setfenv(1, {})
+
+_namespacer_bind("System.Exceptions.Throw", function(exception)
+    _assert(false, _tostring(exception)) -- 00
+
+    -- 00  notice that we intentionally use assert() instead of error() here primarily because pfui and other libraries override the vanilla
+    --     error() function to make it not throw an exception-error opting to simply print a message to the chat frame  this ofcourse is bad
+    --     practice but we have to live with this shortcoming   so we use assert() instead which is typically not overriden
+end)

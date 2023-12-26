@@ -105,7 +105,7 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicInvalidPara
 
             -- ACT
             local success, errorMessage = _pcall(function()
-                return GambledItemInfo:New(options)
+                GambledItemInfo:New(options)
             end)
 
             -- ASSERT

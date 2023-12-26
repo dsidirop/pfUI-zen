@@ -14,10 +14,13 @@
     return _setfenv, _pairs, _strlen, _strfind, _strupper, _importer, _namespacer
 end)()
 
-_setfenv(1, {})
+_setfenv(1, {}) --                                                                        @formatter:off
 
-local Debug = _importer("System.Debug")
+local Debug      = _importer("System.Debug")
 local Reflection = _importer("System.Reflection")
+
+local Throw                = _importer("System.Exceptions.Throw")
+local ArgumentNilException = _importer("System.Exceptions.ArgumentNilException") --       @formatter:on
 
 local Guard = _namespacer("System.Guard")
 
@@ -25,9 +28,11 @@ do
     Guard.Check = _namespacer("System.Guard.Check")
 
     function Guard.Check.IsNotNil(value)
-        Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")
-        
-        return Guard.Check
+        -- Debug.Assert(value ~= nil, "value must not be nil\n" .. Debug.Stacktrace() .. "\n")
+       
+        return value ~= nil
+                and Guard.Check
+                or Throw(ArgumentNilException:New())
     end
 
     -- TABLES

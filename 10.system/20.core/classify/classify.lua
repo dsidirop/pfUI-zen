@@ -19,7 +19,10 @@ _namespacer_bind("System.Classify", function(selfie, instance)
     instance = instance or {}
     
     _setmetatable(instance, selfie)
-    selfie.__index = selfie
+    selfie.__index = selfie -- 00
 
     return instance
+    
+    -- 00  todo   strictly speaking __index should be set to a function that checks that non-constructor/non-static
+    --     todo   method calls are made on the instance and not the class-prototype
 end)
