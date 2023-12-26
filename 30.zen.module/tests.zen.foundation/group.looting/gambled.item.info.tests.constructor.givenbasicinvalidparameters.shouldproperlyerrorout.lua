@@ -1,12 +1,13 @@
-﻿local _setfenv, _importer = (function()
+﻿local _setfenv, _importer, _pcall = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
+    local _pcall = _assert(_g.pcall)
     local _importer = _assert(_g.pvl_namespacer_get)
 
-    return _setfenv, _importer
+    return _setfenv, _importer, _pcall
 end)()
 
 _setfenv(1, {}) --                                                                                                           @formatter:off
@@ -103,8 +104,12 @@ TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicInvalidPara
             -- ...
 
             -- ACT
-            local gambledItemInfo = GambledItemInfo:New(options)
+            local success, errorMessage = _pcall(function()
+                return GambledItemInfo:New(options)
+            end)
 
             -- ASSERT
+            U.IsFalse(success)
+            U.IsTrue(errorMessage ~= nil) -- todo   must check for specific error messages
         end
 )
