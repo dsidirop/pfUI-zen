@@ -16,4 +16,10 @@ _setfenv(1, {})
 local Debug = _namespacer("System.Debug")
 
 Debug.Assert = _assert
-Debug.Stacktrace = _debugstack
+
+function Debug.Stacktrace(optionalStackDepth)
+    optionalStackDepth = optionalStackDepth or 0
+
+    local stacktrace = _debugstack(2 + optionalStackDepth)
+    return stacktrace
+end

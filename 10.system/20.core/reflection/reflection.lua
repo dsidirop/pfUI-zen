@@ -1,4 +1,4 @@
-﻿local _type, _setfenv, _importer, _namespacer = (function()
+﻿local _type, _setfenv, _importer, _namespacer, _namespacer_reflector = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -8,11 +8,12 @@
     local _type = _assert(_g.type)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
+    local _namespacer_reflector = _assert(_g.pvl_namespacer_reflect)
 
-    return _type, _setfenv, _importer, _namespacer
+    return _type, _setfenv, _importer, _namespacer, _namespacer_reflector
 end)()
 
--- _setfenv(1, {})
+_setfenv(1, {})
 
 local Math = _importer("System.Math")
 local STypes = _importer("System.Reflection.STypes")
@@ -67,4 +68,8 @@ end
 
 function Reflection.IsOptionallyString(value)
     return value == nil or Reflection.Type(value) == STypes.String
+end
+
+function Reflection.GetNamespace(object)
+    return _namespacer_reflector(object)
 end

@@ -172,7 +172,8 @@ do
         _setfenv(1, self)
 
         local instance = {
-            _namespace_registry = {}
+            _namespaces_registry = {},
+            _reflection_registry = {},
         }
 
         _setmetatable(instance, self)
@@ -197,11 +198,12 @@ do
             namespace_path = _gsub(namespace_path, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
         end
 
-        local preExistingEntry = _namespace_registry[namespace_path]
+        local preExistingEntry = _namespaces_registry[namespace_path]
         if preExistingEntry == nil then
             local newEntry = Entry:New(intention, {})
 
-            _namespace_registry[namespace_path] = newEntry
+            _namespaces_registry[namespace_path] = newEntry
+            _reflection_registry[newEntry:GetSymbol()] = namespace_path
 
             return newEntry:GetSymbol()
         end
@@ -239,11 +241,12 @@ do
 
         namespace_path = _strtrim(namespace_path)
 
-        local possiblePreexistingEntry = _namespace_registry[namespace_path]
+        local possiblePreexistingEntry = _namespaces_registry[namespace_path]
         
         _assert(possiblePreexistingEntry == nil, "namespace '" .. namespace_path .. "' has already been assigned to another symbol.")
 
-        _namespace_registry[namespace_path] = Entry:New(EIntention.ForExternalSymbol, symbol)
+        _reflection_registry[symbol] = namespace_path
+        _namespaces_registry[namespace_path] = Entry:New(EIntention.ForExternalSymbol, symbol)
     end
 
     -- importer()
@@ -254,12 +257,21 @@ do
 
         namespace_path = _strtrim(namespace_path)
 
-        local entry = _namespace_registry[namespace_path]
+        local entry = _namespaces_registry[namespace_path]
 
         _assert(entry, "namespace '" .. namespace_path .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
         _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' holds a partially-registered class - did you forget to load the main class definition?\n" .. _g.debugstack() .. "\n")
 
         return _assert(entry:GetSymbol())
+    end
+
+    -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
+    function Namespacer:Reflect(object)
+        _setfenv(1, self)
+
+        _assert(object ~= nil, "object must not be nil")
+
+        return _reflection_registry[object]
     end
 end
 
@@ -279,4 +291,8 @@ do
     _g.pvl_namespacer_get = function(namespace_path)
         return Singleton:Get(namespace_path)
     end
-end 
+
+    _g.pvl_namespacer_reflect = function(object)
+        return Singleton:Reflect(object)
+    end
+end

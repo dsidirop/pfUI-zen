@@ -14,6 +14,8 @@ _setfenv(1, {}) --                                                              
 
 local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
 
+local Guard = _importer("System.Guard")
+
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 
