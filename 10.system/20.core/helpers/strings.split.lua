@@ -21,17 +21,18 @@ local EScopes = _importer("System.EScopes")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
-function StringsHelper.Split(input, delimiter)
+function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Scopify(EScopes.Function, StringsHelper)
     
-    Guard.Check.IsString(input)
-    Guard.Check.IsOptionallyString(delimiter)
+    Guard.Check.IsString(input, "input")
+    Guard.Check.IsOptionallyString(optionalDelimiter, "optionalDelimiter")
+    Guard.Check.IsOptionallyPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
     
     if not input then
         return {}
     end
 
-    local pattern = _format("([^%s]+)", delimiter or ",")
+    local pattern = _format("([^%s]+)", optionalDelimiter or ",")
 
     local fields = {}
     _gsub(
@@ -39,7 +40,8 @@ function StringsHelper.Split(input, delimiter)
             pattern,
             function(c)
                 Table.Insert(fields, c)
-            end
+            end,
+            optionalMaxChunksCount
     )
 
     return fields

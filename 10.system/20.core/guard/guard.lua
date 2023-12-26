@@ -19,9 +19,10 @@ _setfenv(1, {}) --                                                              
 
 local Reflection = _importer("System.Reflection")
 
-local Throw                        = _importer("System.Exceptions.Throw")
-local ArgumentNilException         = _importer("System.Exceptions.ArgumentNilException")
-local ArgumentOutOfRangeException  = _importer("System.Exceptions.ArgumentOutOfRangeException")
+local Throw                                  = _importer("System.Exceptions.Throw")
+local AlreadySetException                    = _importer("System.Exceptions.AlreadySetException")
+local ArgumentNilException                   = _importer("System.Exceptions.ArgumentNilException")
+local ArgumentOutOfRangeException            = _importer("System.Exceptions.ArgumentOutOfRangeException")
 local ArgumentIsOfInappropriateTypeException = _importer("System.Exceptions.ArgumentIsOfInappropriateTypeException") --     @formatter:on
 
 local Guard = _namespacer("System.Guard")
@@ -29,6 +30,12 @@ local Guard = _namespacer("System.Guard")
 do
     Guard.Check = _namespacer("System.Guard.Check")
 
+    function Guard.Check.IsUnset(value, optionalArgumentName)
+        return value == nil
+                and Guard.Check
+                or Throw(AlreadySetException:New(optionalArgumentName))
+    end
+    
     function Guard.Check.IsNotNil(value, optionalArgumentName)
         return value ~= nil
                 and Guard.Check
@@ -184,7 +191,7 @@ do
     function Guard.Check.IsBooleanizable(value, optionalArgumentName)
         return Guard.Check.IsBooleanizable_(value)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("booleanizable value", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New("booleanizable value (but got '" .. _tostring(value) .. "')", optionalArgumentName))
     end
     
     function Guard.Check.IsOptionallyBooleanizable(value, optionalArgumentName)
@@ -291,4 +298,17 @@ do
                 or Guard.Check.IsFunction(value, optionalArgumentName)
     end
 
+    -- NAMESPACES
+    function Guard.Check.IsNamespaceStringOrRegisteredType(value, optionalArgumentName)
+        return Reflection.IsString(value) or Reflection.GetNamespaceOfType(value) ~= nil
+                and Guard.Check
+                or Throw(ArgumentIsOfInappropriateTypeException:New("namespace string or registered type", optionalArgumentName))
+    end
+
+    -- ISA
+    function Guard.Check.IsInstanceOf(value, desiredType, optionalArgumentName)
+        return Reflection.IsInstanceOf(value, desiredType)
+                and Guard.Check
+                or Throw(ArgumentIsOfInappropriateTypeException:New("to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)"), optionalArgumentName))
+    end
 end

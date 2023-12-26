@@ -19,12 +19,12 @@ local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contr
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType")
 
-local TestsGroup = U.I:GetOrCreateGroup {
+local TestsGroup = U.I:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
 
-TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
+TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
         function()
             return {
                 ["GII.CTOR.GFVP.SCS.010"] = {

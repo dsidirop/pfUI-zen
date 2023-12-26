@@ -22,7 +22,7 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.ToUppercase(input)
     Scopify(EScopes.Function, StringsHelper)
 
-    Guard.Check.IsString(input)
+    Guard.Check.IsString(input, "input")
     
     return _strupper(input)
 end

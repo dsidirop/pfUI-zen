@@ -184,32 +184,32 @@ do
 
     -- namespacer()
     local PatternToDetectPartialKeywordPostfix = "%s*%[[Pp]artial%]%s*$"
-    function Namespacer:Add(namespace_path)
+    function Namespacer:Add(namespacePath)
         _setfenv(1, self)
 
-        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud\n" .. _g.debugstack() .. "\n")
+        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud\n" .. _g.debugstack() .. "\n")
 
-        namespace_path = _strtrim(namespace_path)
+        namespacePath = _strtrim(namespacePath)
 
-        local intention = _strmatch(namespace_path, PatternToDetectPartialKeywordPostfix)
+        local intention = _strmatch(namespacePath, PatternToDetectPartialKeywordPostfix)
                 and EIntention.ForClassPartial
                 or EIntention.ForClass
         if intention == EIntention.ForClassPartial then
-            namespace_path = _gsub(namespace_path, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
+            namespacePath = _gsub(namespacePath, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
         end
 
-        local preExistingEntry = _namespaces_registry[namespace_path]
+        local preExistingEntry = _namespaces_registry[namespacePath]
         if preExistingEntry == nil then
             local newEntry = Entry:New(intention, {})
 
-            _namespaces_registry[namespace_path] = newEntry
-            _reflection_registry[newEntry:GetSymbol()] = namespace_path
+            _namespaces_registry[namespacePath] = newEntry
+            _reflection_registry[newEntry:GetSymbol()] = namespacePath
 
             return newEntry:GetSymbol()
         end
         
         if intention == EIntention.ForClass then
-            _assert(preExistingEntry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with another class (are you trying to register the same symbol twice?)\n" .. _g.debugstack() .. "\n")
+            _assert(preExistingEntry:IsPartialClassEntry(), "namespace '" .. namespacePath .. "' has already been assigned to a symbol with intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with another class (are you trying to register the same symbol twice?)\n" .. _g.debugstack() .. "\n")
 
             preExistingEntry:UpgradeIntentionFromPartialToClass()
             
@@ -217,7 +217,7 @@ do
         end
 
         if intention == EIntention.ForClassPartial then
-            _assert(preExistingEntry:IsEitherFlavorOfClass(), "namespace '" .. namespace_path .. "' has already been assigned to a symbol with non-class intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with a partial class.\n" .. _g.debugstack() .. "\n")
+            _assert(preExistingEntry:IsEitherFlavorOfClass(), "namespace '" .. namespacePath .. "' has already been assigned to a symbol with non-class intention '" .. preExistingEntry:GetIntention() .. "' and cannot be associated with a partial class.\n" .. _g.debugstack() .. "\n")
             
             return preExistingEntry:GetSymbol()
         end
@@ -233,34 +233,37 @@ do
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
-    function Namespacer:Bind(namespace_path, symbol)
+    function Namespacer:Bind(namespacePath, symbol)
         _setfenv(1, self)
 
         _assert(symbol ~= nil, "symbol must not be nil")
-        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
+        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud")
 
-        namespace_path = _strtrim(namespace_path)
+        namespacePath = _strtrim(namespacePath)
 
-        local possiblePreexistingEntry = _namespaces_registry[namespace_path]
+        local possiblePreexistingEntry = _namespaces_registry[namespacePath]
         
-        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespace_path .. "' has already been assigned to another symbol.")
+        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.")
 
-        _reflection_registry[symbol] = namespace_path
-        _namespaces_registry[namespace_path] = Entry:New(EIntention.ForExternalSymbol, symbol)
+        _reflection_registry[symbol] = namespacePath
+        _namespaces_registry[namespacePath] = Entry:New(EIntention.ForExternalSymbol, symbol)
     end
 
     -- importer()
-    function Namespacer:Get(namespace_path)
+    function Namespacer:Get(namespacePath, suppressExceptionIfNotFound)
         _setfenv(1, self)
 
-        _assert(namespace_path ~= nil and _type(namespace_path) == "string" and _strtrim(namespace_path) ~= "", "namespace_path must not be dud")
+        _assert(namespacePath ~= nil and _type(namespacePath) == "string", "namespacePath must be a string") -- order
+        namespacePath = _strtrim(namespacePath) -- order
+        _assert(namespacePath ~= "", "namespacePath must not be dud") -- order        
 
-        namespace_path = _strtrim(namespace_path)
+        local entry = _namespaces_registry[namespacePath]
+        if entry == nil and suppressExceptionIfNotFound then
+            return nil
+        end
 
-        local entry = _namespaces_registry[namespace_path]
-
-        _assert(entry, "namespace '" .. namespace_path .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
-        _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespace_path .. "' holds a partially-registered class - did you forget to load the main class definition?\n" .. _g.debugstack() .. "\n")
+        _assert(entry, "namespace '" .. namespacePath .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
+        _assert(not entry:IsPartialClassEntry(), "namespace '" .. namespacePath .. "' holds a partially-registered class - did you forget to load the main class definition?\n" .. _g.debugstack() .. "\n")
 
         return _assert(entry:GetSymbol())
     end
@@ -278,18 +281,23 @@ end
 local Singleton = Namespacer:New()
 do  
     -- namespacer()   todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__some_guid_here__add
-    _g.pvl_namespacer_add = function(namespace_path)
-        return Singleton:Add(namespace_path)
+    _g.pvl_namespacer_add = function(namespacePath)
+        return Singleton:Add(namespacePath)
     end
 
     -- namespacer_binder()
-    _g.pvl_namespacer_bind = function(namespace_path, symbol)
-        return Singleton:Bind(namespace_path, symbol)
+    _g.pvl_namespacer_bind = function(namespacePath, symbol)
+        return Singleton:Bind(namespacePath, symbol)
     end
 
     -- importer()
-    _g.pvl_namespacer_get = function(namespace_path)
-        return Singleton:Get(namespace_path)
+    _g.pvl_namespacer_get = function(namespacePath)
+        return Singleton:Get(namespacePath)
+    end
+
+    -- importer()
+    _g.pvl_namespacer_tryget = function(namespacePath)
+        return Singleton:Get(namespacePath, true)
     end
 
     _g.pvl_namespacer_reflect = function(object)

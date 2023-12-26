@@ -16,17 +16,19 @@ local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
 local Classify           = _importer("System.Classify")
+local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --     @formatter:on
 
-local N = "System.Exceptions.ArgumentNilException"
-local Class = _namespacer(N)
+local Class = _namespacer("System.Exceptions.ArgumentNilException")
 
-function Class:New()
+function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
 
+    Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
+
     return Classify(self, {
-        _message = "Argument cannot be nil",
-        _stacktrace = Debug.Stacktrace(1),
+        _message = Class.FormulateMessage_(optionalArgumentName),
+        _stacktrace = "",
         
         _stringified = nil
     })
@@ -44,10 +46,28 @@ function Class:GetStacktrace()
     return _stacktrace
 end
 
-function Class:GetOwnNamespace()
+-- setters   used by the exception-deserialization-factory
+function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
 
-    return N
+    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
+
+    _message = message or "(exception message not available)"
+    _stringified = nil
+
+    return self
+end
+
+-- this is called by throw() right before actually throwing the exception 
+function Class:ChainSetStacktrace(stacktrace)
+    Scopify(EScopes.Function, self)
+
+    Debug.Assert(Reflection.IsOptionallyString(stacktrace), "stacktrace must be a string or nil")
+
+    _stacktrace = stacktrace or ""
+    _stringified = nil
+
+    return self
 end
 
 function Class:ToString()
@@ -57,6 +77,16 @@ function Class:ToString()
 end
 
 -- private space
+function Class.FormulateMessage_(optionalArgumentName)
+    Scopify(EScopes.Function, Class)
+
+    local message = optionalArgumentName == nil
+            and "Argument cannot be nil"
+            or "Argument '" .. optionalArgumentName .. "' cannot be nil"
+
+    return message
+end
+
 function Class:__tostring()
     Scopify(EScopes.Function, self)
 

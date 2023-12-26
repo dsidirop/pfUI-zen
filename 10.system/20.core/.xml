@@ -17,4 +17,6 @@
     <Include file="helpers\.xml"/>
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>
+
+    <Include file="try\.xml"/>
 </Ui>

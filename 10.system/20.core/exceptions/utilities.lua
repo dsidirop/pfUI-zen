@@ -14,15 +14,16 @@ end)()
 
 _setfenv(1, {}) --                                                            @formatter:off
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes") --                                @formatter:on
+local Scopify    = _importer("System.Scopify")
+local EScopes    = _importer("System.EScopes")
+local Reflection = _importer("System.Reflection") --                          @formatter:on
 
 local Class = _namespacer("System.Exceptions.Utilities")
 
 function Class.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Class)
 
-    return "[" .. exception:GetOwnNamespace() .. "] " .. exception:GetMessage()
+    return "[" .. Reflection.GetNamespaceOfInstance(exception) .. "] " .. exception:GetMessage()
             .. "\n\n--------------[ Stacktrace ]--------------\n"
             .. exception:GetStacktrace()
             .. "------------[ End Stacktrace ]------------\n "

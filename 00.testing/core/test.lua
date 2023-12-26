@@ -1,4 +1,4 @@
-local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableSort, _tableInsert, _setmetatable, _VWoWUnit = (function()
+local _g, _assert, _type, _print, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -6,28 +6,26 @@ local _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _table
 
 	local _next = _assert(_g.next)
 	local _type = _assert(_g.type)
-	local _pairs = _assert(_g.pairs)
 	local _print = _assert(_g.print)
 	local _pcall = _assert(_g.pcall)	
 	local _tostring = _assert(_g.tostring)
-	local _tableSort = _assert(_g.table.sort)
 	local _tableInsert = _assert(_g.table.insert)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	local _VWoWUnit = _assert(_g.VWoWUnit)
-
-	return _assert, _type, _print, _pairs, _pcall, _tostring, _setfenv, _next, _tableSort, _tableInsert, _setmetatable, _VWoWUnit
+	return _g, _assert, _type, _print, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable
 end)()
+
+local VWoWUnit = _g.VWoWUnit or {}
+_g.VWoWUnit = VWoWUnit
+_g = nil
 
 _setfenv(1, {})
 
-local Test = {}
-_VWoWUnit.Test = Test
-
+VWoWUnit.Test = {}
 
 --[[ API ]]--
 
-function Test:New(testName, testFunction)
+function VWoWUnit.Test:New(testName, testFunction)
 	_setfenv(1, self)
 
 	_assert(_type(testName) == "string" and testName ~= "", "test name must be a non-empty string")
@@ -38,7 +36,7 @@ function Test:New(testName, testFunction)
 	end)
 end
 
-function Test:NewWithHardData(testName, testFunction, hardData)
+function VWoWUnit.Test:NewWithHardData(testName, testFunction, hardData)
 	_setfenv(1, self)
 
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
@@ -50,7 +48,7 @@ function Test:NewWithHardData(testName, testFunction, hardData)
 	end)
 end
 
-function Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback)
+function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback)
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
 	_assert(_type(testFunction) == "function", "test function must be a function")
 	_assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
@@ -67,7 +65,7 @@ function Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynami
 	return test
 end
 
-function Test:Run()
+function VWoWUnit.Test:Run()
 	_setfenv(1, self)
 
 	local testData = self._dynamicDataGeneratorCallback()
@@ -79,7 +77,7 @@ function Test:Run()
 	_print("**** Running sub-test-cases of " .. _testName)
 	
 	local allErrorMessages = {}
-	for subtestName, datum in Test.GetTablePairsOrderedByKeys_(testData) do -- if testData actually has data
+	for subtestName, datum in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testData) do -- if testData actually has data
 		local possibleErrorMessage = self:RunImpl_("** " .. subtestName, datum)
 		if possibleErrorMessage then
 			_tableInsert(allErrorMessages, possibleErrorMessage)
@@ -89,36 +87,14 @@ function Test:Run()
 	return allErrorMessages
 end
 
--- https://stackoverflow.com/a/70096863/863651
-function Test.GetTablePairsOrderedByKeys_(tableObject, comparer)
-	_setfenv(1, Test)
-	
-	local allTableKeys = {}
-	for key in _pairs(tableObject) do
-		_tableInsert(allTableKeys, key)
-	end
-	_tableSort(allTableKeys, comparer)
-
-	local i = 0
-	local iteratorFunction = function()
-		i = i + 1
-		if allTableKeys[i] == nil then
-			return nil
-		end
-		
-		return allTableKeys[i], tableObject[allTableKeys[i]]
-	end
-
-	return iteratorFunction
-end
-
-
-function Test:RunImpl_(testName, data)
+function VWoWUnit.Test:RunImpl_(testName, data)
 	_setfenv(1, self)
 
 	_assert(_type(data) == "table", "test data must be a table")
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
-	
+
+	_print("****" .. testName .. " starting ... ")
+
 	local success, errorMessage = _pcall(_testFunction, data)
 	if success == nil or success == false or errorMessage ~= nil then
 		_print("****" .. testName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
@@ -132,7 +108,7 @@ end
 
 --[[ Operators ]]--
 
-function Test:__lt(other)
+function VWoWUnit.Test:__lt(other)
 	_setfenv(1, self)
 	
 	return _testName < other._testName

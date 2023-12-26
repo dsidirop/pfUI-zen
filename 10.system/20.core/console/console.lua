@@ -39,7 +39,7 @@ end
 function Console.Writer:WriteFormatted(format, ...)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsString(format)
+    Guard.Check.IsString(format, "format")
 
     if TablesHelper.IsEmptyOrNil(arg) then --optimization
         _nativeWriteCallback(format)
@@ -52,7 +52,7 @@ end
 function Console.Writer:Write(message)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsString(message)
+    Guard.Check.IsString(message, "message")
 
     _nativeWriteCallback(message)
 end
@@ -60,7 +60,7 @@ end
 function Console.Writer:WriteLine(message)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsString(message)
+    Guard.Check.IsString(message, "message")
 
     _nativeWriteCallback(message .. "\n")
 end

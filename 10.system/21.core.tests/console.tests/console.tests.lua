@@ -15,12 +15,12 @@ _setfenv(1, {}) --                                           @formatter:off
 local Console      = _importer("System.Console")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
-local TestsGroup = _VWoWUnit.I:GetOrCreateGroup {
+local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup {
     Name = "System.Console.Tests",
     Tags = { "system", "output" },
 } --                                                         @formatter:on
 
-TestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)
@@ -34,7 +34,7 @@ TestsGroup:AddTest("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMes
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
 end)
 
-TestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)
@@ -48,7 +48,7 @@ TestsGroup:AddTest("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpecte
     _VWoWUnit.AreEqual(allMessagesArray, { "Hello\n" })
 end)
 
-TestsGroup:AddTest("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local consoleWriter = Console.Writer:New(function(message)

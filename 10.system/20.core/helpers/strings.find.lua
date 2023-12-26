@@ -24,8 +24,8 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.Find(input, patternString, ...)
     Scopify(EScopes.Function, StringsHelper)
 
-    Guard.Check.IsString(input)
-    Guard.Check.IsString(patternString)
+    Guard.Check.IsString(input, "input")
+    Guard.Check.IsString(patternString, "patternString")
     
     return _strfind(input, patternString, _unpack(arg))
 end
