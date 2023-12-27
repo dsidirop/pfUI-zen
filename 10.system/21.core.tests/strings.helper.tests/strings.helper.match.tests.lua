@@ -16,7 +16,7 @@ local StringsHelper = _importer("System.Helpers.Strings")
 
 local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
-TestsGroup:AddHardDataTest("StringsHelper.Match.GivenValidInput.ShouldMatchExpectedResults",
+TestsGroup:AddTheory("StringsHelper.Match.GivenValidInput.ShouldMatchExpectedResults",
         {
             ["SH.M.GVI.SMER.0000"] = {
                 Input = "Hello World\nOnce\nAgain",

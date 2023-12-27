@@ -24,7 +24,7 @@ local TestsGroup = U.I:CreateOrUpdateGroup {
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
 
-TestsGroup:AddDynamicDataTest("GambledItemInfo.Constructor.GivenBasicValidParameters.ShouldConstructSuccessfully",
+TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParameters.ShouldConstructSuccessfully",
         function()
             return {
                 ["GII.CTOR.GBVP.SCS.010"] = {

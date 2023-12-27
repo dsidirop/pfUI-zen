@@ -41,12 +41,7 @@ end
 function VWoWUnit:RunAllTestGroups()
 	_setfenv(1, self)
 
-	for _, group in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(_testGroups, function(a, b)
-		local lengthA = _strlen(a) -- 00
-		local lengthB = _strlen(b)
-
-		return lengthA < lengthB or (lengthA == lengthB and a < b)
-	end) do
+	for _, group in VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
 		_print("** Running test-group " .. group:GetName())
 		group:Run()
 		_print("")
@@ -66,10 +61,10 @@ function VWoWUnit:RunTestGroup(testGroupName)
 	group:Run()
 end
 
-function VWoWUnit:RunTestGroupsForTagGroup(tagName)
+function VWoWUnit:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
-	
-	for _, group in _pairs(_testTags[tagName]) do
+
+	for _, group in VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
 end
@@ -190,6 +185,22 @@ function VWoWUnit.Difference_(a, b)
 	end
 
 	return nil
+end
+
+
+function VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(testGroups)
+	_setfenv(1, VWoWUnit)
+
+	if testGroups == nil then
+		return {}
+	end
+
+	return VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testGroups, function(a, b)
+		local lengthA = _strlen(a) -- 00
+		local lengthB = _strlen(b)
+
+		return lengthA < lengthB or (lengthA == lengthB and a < b)
+	end)
 end
 
 VWoWUnit.I = VWoWUnit:New()

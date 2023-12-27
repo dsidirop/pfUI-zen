@@ -191,7 +191,7 @@ do
     function Guard.Check.IsBooleanizable(value, optionalArgumentName)
         return Guard.Check.IsBooleanizable_(value)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("booleanizable value", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New("booleanizable value (but got '" .. _tostring(value) .. "')", optionalArgumentName))
     end
     
     function Guard.Check.IsOptionallyBooleanizable(value, optionalArgumentName)

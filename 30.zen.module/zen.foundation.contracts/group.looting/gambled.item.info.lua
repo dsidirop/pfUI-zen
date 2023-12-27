@@ -31,9 +31,9 @@ function Class:New(options)
     Guard.Check.IsTable(options) -- todo   Guard.Check.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
 
     Guard.Check.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
-    
+   
     Guard.Check.IsBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
-    Guard.Check.IsPositiveInteger(options.GamblingId, "options.GamblingId")
+    Guard.Check.IsPositiveIntegerOrZero(options.GamblingId, "options.GamblingId")
     Guard.Check.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20, "options.ItemQuality") -- EWowItemQuality  but better not enforce checking for the enum type
 
     Guard.Check.IsOptionallyBooleanizable(options.IsNeedable, "options.IsNeedable") -- the following are all optionals
@@ -230,7 +230,7 @@ function Class:__tostring()
             "  DisenchantInelligibilityReasonType = %s\n"      ..
             "}\n",
             self:GetName(),
-            self:GetQuality(),
+            self:GetItemQuality(),
             self:GetGamblingId(),
 
             self:IsNeedable(),
@@ -240,7 +240,7 @@ function Class:__tostring()
             self:IsTransmogrifiable(),
 
             self:GetCount(),
-            self:GetTexture(),
+            self:GetTextureFilepath(),
             self:GetEnchantingLevelRequiredToDEItem(),
 
             self:GetNeedInelligibilityReasonType(),

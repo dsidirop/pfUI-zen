@@ -59,7 +59,7 @@ function VWoWUnit.TestsGroup:Run()
     return failedTests
 end
 
-function VWoWUnit.TestsGroup:AddTest(testName, testFunction)
+function VWoWUnit.TestsGroup:AddFact(testName, testFunction)
     _setfenv(1, self)
     
     _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
@@ -68,7 +68,7 @@ function VWoWUnit.TestsGroup:AddTest(testName, testFunction)
     _tableInsert(_tests, VWoWUnit.Test:New(testName, testFunction))
 end
 
-function VWoWUnit.TestsGroup:AddHardDataTest(testName, hardData, testFunction)
+function VWoWUnit.TestsGroup:AddTheory(testName, hardData, testFunction)
     _setfenv(1, self)
 
     _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
@@ -78,7 +78,7 @@ function VWoWUnit.TestsGroup:AddHardDataTest(testName, hardData, testFunction)
     _tableInsert(_tests, VWoWUnit.Test:NewWithHardData(testName, testFunction, hardData))
 end
 
-function VWoWUnit.TestsGroup:AddDynamicDataTest(testName, dynamicDataGeneratorCallback, testFunction)
+function VWoWUnit.TestsGroup:AddDynamicTheory(testName, dynamicDataGeneratorCallback, testFunction)
     _setfenv(1, self)
 
     _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
