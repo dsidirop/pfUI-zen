@@ -20,59 +20,64 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Console = _importer("System.Console")
+local Classify = _importer("System.Classify")
+local TablesHelper = _importer("System.Helpers.Tables")
+
+local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
+
 local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
-local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLootingHelper")
+local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper")
 local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
 local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _settings = nil,
 
         _isRunning = false,
-        _pendingLootGamblingRequests = {},
+        _pendingLootGamblingRequests = LRUCache:New{
+            MaxSize = 20,
+            MaxLifespanPerEntryInSeconds = 5 * 60,
+        },
 
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
-
         _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:IsRunning()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _isRunning
 end
 
 -- settings is expected to be AggregateSettings
 function Class:SetSettings(settings)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _settings = settings
 end
 
 function Class:Restart()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     self:Stop()
     self:Start()
 end
 
 function Class:Start()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_settings, "attempt to run without any settings being loaded")
 
@@ -87,7 +92,7 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
-    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
+    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
 
     _isRunning = true
 
@@ -95,7 +100,7 @@ function Class:Start()
 end
 
 function Class:Stop()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if not _isRunning then
         return self -- nothing to do
@@ -103,7 +108,7 @@ function Class:Stop()
 
     _groupLootingListener:StopListening():EventPendingLootItemGamblingDetected_Unsubscribe(GroupLootingListener_PendingLootItemGamblingDetected_)
 
-    _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
+    _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_)
 
     _isRunning = false
 
@@ -111,9 +116,9 @@ function Class:Stop()
 end
 
 function Class:SwitchMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
 
     if _settings:GetMode() == value then
         return self -- nothing to do
@@ -135,9 +140,9 @@ function Class:SwitchMode(value)
 end
 
 function Class:SwitchActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
 
     if _settings:GetActOnKeybind() == value then
         return self -- nothing to do
@@ -159,27 +164,38 @@ end
 -- private space
 
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
+
+    Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s", ea:GetGamblingId(), _settings:GetMode())
 
     local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
+        Console.Out:WriteFormatted("** GLL.PLIGD020")
         return -- let the user choose
     end
 
-    local rolledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
-    if not rolledItemInfo:IsGreenQuality() then
+    local gambledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
+    Console.Out:WriteFormatted("** GLL.PLIGD030 rolledItemInfo: ", gambledItemInfo)
+    if not gambledItemInfo:IsGreenQuality() then
+        Console.Out:WriteFormatted("** GLL.PLIGD040 it's not green ...")
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not rolledItemInfo:IsNeedable() then
+    Console.Out:WriteFormatted("** GLL.PLIGD050")
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not gambledItemInfo:IsNeedable() then
+        Console.Out:WriteFormatted("** GLL.PLIGD060 it's not needable ...")
         return
     end
 
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not rolledItemInfo:IsGreedable() then
-        return
-    end
+    Console.Out:WriteFormatted("** GLL.PLIGD070")
+    --if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
+    --    Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
+    --    return
+    --end
 
-    if _stage:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
+    Console.Out:WriteFormatted("** GLL.PLIGD090")
+    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
+        Console.Out:WriteFormatted("** GLL.PLIGD100 submitting response ...")
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
@@ -187,8 +203,10 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    _tableInsert(_pendingLootGamblingRequests, ea:GetGamblingId()) --                                                        order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(modifierKeysListener_ModifierKeysStatesChanged_, self) -- order
+    Console.Out:WriteFormatted("** GLL.PLIGD110 waiting for keybind press ...")
+    _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
+    _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
     --
@@ -200,24 +218,24 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 
-function Class:modifierKeysListener_ModifierKeysStatesChanged_(_, ea)
-    _setfenv(1, self)
+function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
+    Scopify(EScopes.Function, self)
 
     local desiredLootGamblingBehaviour = _settings:GetMode() --00  
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
-        _pendingLootGamblingRequests = {}
-        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_)
+        _pendingLootGamblingRequests:Clear()
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_)
         return
     end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
-        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(modifierKeysListener_ModifierKeysStatesChanged_) -- vital    
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital    
 
-        local requests = _pendingLootGamblingRequests --order
-        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --order
+        local requests = _pendingLootGamblingRequests:GetKeys() --                                                                         order
+        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
 
-        _pendingLootGamblingRequests = {} --        order        
-        for _, gamblingId in _pairs(requests) do -- order
+        _pendingLootGamblingRequests:Clear() --     order        
+        for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do -- order
             _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
     end
@@ -226,7 +244,7 @@ function Class:modifierKeysListener_ModifierKeysStatesChanged_(_, ea)
 end
 
 function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAutogamblingMode)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if greeniesAutogamblingMode == SGreeniesGrouplootingAutomationMode.JustPass then
         return EWowGamblingResponseType.Pass

@@ -20,39 +20,38 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
 function Class:New(dbcontext)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(dbcontext) == "table")
 
-    local instance = {
+    return Classify(self, {
         _hasChanges = false,
-        
-        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
-    }
 
-    _setmetatable(instance, self)
-    self.__index = self
-    
-    return instance
+        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
+    })    
 end
 
 function Class:HasChanges()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _hasChanges
 end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
     
     if _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode == value then
         return self
@@ -66,9 +65,9 @@ end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
 
     if _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind == value then
         return self

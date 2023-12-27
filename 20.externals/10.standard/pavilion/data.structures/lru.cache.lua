@@ -2,118 +2,116 @@
 --
 -- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable = (function()
+local _importer, _setfenv, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _type = _assert(_g.type)
-    local _error = _assert(_g.error)
-
-    local _time = _assert(_g.os.time)
-    local _gsub = _assert(_g.string.gsub)
-    local _format = _assert(_g.string.format)
-    local _strmatch = _assert(_g.string.match)
-    local _tableSort = _assert(_g.table.sort)
+    local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _tableInsert = _assert(_g.table.insert)
-    local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _type, _error, _time, _gsub, _format, _strmatch, _setfenv, _tableSort, _namespacer, _tableInsert, _setmetatable
+    return _importer, _setfenv, _namespacer
 end)()
 
-_setfenv(1, {})
+_setfenv(1, {})                                           --@formatter:off
+
+local Time          = _importer("System.Time")
+local Guard         = _importer("System.Guard")
+local Table         = _importer("System.Table")
+local Scopify       = _importer("System.Scopify")
+local EScopes       = _importer("System.EScopes")
+local Classify      = _importer("System.Classify")
+local TablesHelper  = _importer("System.Helpers.Tables")
+local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
 
 local Class = _namespacer("Pavilion.DataStructures.LRUCache")
 
---@options.maxSize default 10 items - if set to nil there is no upper limit
---@options.trimRatio default 0.25 of maximum size - cannot be nil
---@options.maxLifespanPerEntryInSeconds default 5 minutes - if set to nil entries never expire
+Class.DefaultOptions_ = {
+    MaxSize = 100,
+    TrimRatio = 0.25,
+    MaxLifespanPerEntryInSeconds = 5 * 60,
+}
+
+--@options.MaxSize                        must be either nil (default value of 100 items) or zero (limitless) or a positive integer number
+--@options.TrimRatio                      must be either nil (default value of 0.25) or between 0 and 1 
+--@options.MaxLifespanPerEntryInSeconds   must be either nil (default value of 300secs) or 0 (no expiration) or a positive integer number of seconds
 function Class:New(options)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(options == nil or _type(options) == "table", "options must be a table or nil")
+    options = options == nil --@formatter:off
+                and Class.DefaultOptions_
+                or  options
 
-    options = options or {
-        maxSize = 100,
-        trimRatio = 0.25,
-        maxLifespanPerEntryInSeconds = 5 * 60,
-    }
+    Guard.Check.IsTable(options)
+               .IsOptionallyRatioNumber(options.TrimRatio)
+               .IsOptionallyPositiveInteger(options.MaxSize)
+               .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
 
-    _assert(_type(options.maxSize) == nil or _type(options.maxSize) == "number" and options.maxSize > 0, "maxSize must either be nil or a positive number")
-    _assert(_type(options.trimRatio) == "number" and (options.trimRatio >= 0 and options.trimRatio <= 1), "trimRatio must between 0 and 1")
-    _assert(_type(options.maxLifespanPerEntryInSeconds) == nil or _type(options.maxLifespanPerEntryInSeconds) == "number" and options.maxLifespanPerEntryInSeconds > 0, "maxLifespanPerEntryInSeconds must either be nil or a positive number")
-
-    local instance = {
-        _values = {},
-        _deadlines = {}, -- todo  these three tables could be merged into one with a composite structure ala { value, deadline, mostRecentAccessTimestamp } 
-        _mostRecentAccessTimestamps = {},
-
+    return Classify(self, {
+        _count = 0,
+        _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
 
-        _maxSize = options.maxSize,
-        _trimRatio = options.trimRatio,
-        _maxLifespanPerEntryInSeconds = options.maxLifespanPerEntryInSeconds,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+        _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions_.MaxSize                       or options.MaxSize,
+        _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions_.TrimRatio                     or options.TrimRatio,
+        _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions_.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
+    }) --@formatter:on
 end
 
 function Class:Clear()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _cache = {}
-    _deadlines = {}
-    _mostRecentAccessTimestamps = {}
+    _count = 0
+    _entries = {}
+    _timestampOfLastDeadlinesCleanup = -1
 end
 
 function Class:Get(key)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
+    
+    Guard.Check.IsNotNil(key)    
 
-    _assert(key ~= nil, "key cannot be nil")
-
-    self:Cleanup_()
-    if _cache[key] == nil then
+    self:Cleanup()
+    
+    local entry = _entries[key]
+    if entry == nil then
         return nil
     end
 
-    _mostRecentAccessTimestamps[key] = _time()
-    return _cache[key]
+    entry.Timestamp = Time.Now()
+    return entry.Value
 end
 
 function Class:GetKeys()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local now = time()
+    local now = Time.Now()
 
-    self:Cleanup_()
+    self:Cleanup()
 
     local keys = {}
-    for key in _pairs(_cache) do
-        _tableInsert(keys, key)
+    for key in TablesHelper.GetKeyValuePairs(_entries) do
+        Table.Insert(keys, key)
 
-        _mostRecentAccessTimestamps[key] = now
+        _entries[key].Timestamp = now
     end
 
     return keys
 end
 
-function Class:GetValues()
-    _setfenv(1, self)
+function Class:RawGetValues()
+    Scopify(EScopes.Function, self)
 
-    local now = time()
+    local now = Time.Now()
 
-    self:Cleanup_()
+    self:Cleanup()
 
     local values = {}
-    for _, value in _pairs(_cache) do
-        _tableInsert(values, value)
+    for k, v in TablesHelper.GetKeyValuePairs(_entries) do
+        Table.Insert(values, v.Value)
 
-        _mostRecentAccessTimestamps[key] = now
+        _entries[k].Timestamp = now
     end
 
     return values
@@ -121,85 +119,115 @@ end
 
 -- insert or update if the key already exists
 function Class:Upsert(key, valueOptional)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(key ~= nil, "key cannot be nil")
+    Guard.Check.IsNotNil(key)
 
-    valueOptional = valueOptional or true --00 
+    valueOptional = valueOptional == nil --00
+            and true
+            or valueOptional 
 
-    local t = _time()
-    _cache[key] = valueOptional
-    _deadlines[key] = t + _maxLifespanPerEntryInSeconds
-    _mostRecentAccessTimestamps[key] = t
+    local t = Time.Now()
 
-    self:Cleanup_()
+    _count = _count + (_entries[key] == nil and 1 or 0) -- order
+    
+    _entries[key] = { -- order
+        Value = valueOptional,
+        Deadline = t + _maxLifespanPerEntryInSeconds,
+        Timestamp = t,
+    }
+
+    self:Cleanup()
+    
+    return self
 
     -- 00  we allow values to be optional but we transform nil values to 'true' because if we
     --     leave it to nil it will cause the tables involved to remove the key altogether
 end
 
 function Class:Remove(key)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(key ~= nil, "key cannot be nil")
+    Guard.Check.IsNotNil(key)
 
-    _cache[key] = nil
-    _deadlines[key] = nil
-    _mostRecentAccessTimestamps[key] = nil
+    _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
+
+    _entries[key] = nil -- order
+end
+
+function Class:Count()
+    Scopify(EScopes.Function, self)
+
+    return self:__len()
 end
 
 function Class:ToString()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return self:__tostring()
 end
 
+function Class:Cleanup()
+    Scopify(EScopes.Function, self)
+
+    self:RemoveExpiredEntries_()
+    self:RemoveSuperfluousEntries_()
+    
+    return self
+end
+
 -- private space
 
-function Class:Cleanup_()
-    _setfenv(1, self)
+function Class:RemoveExpiredEntries_()
+    Scopify(EScopes.Function, self)
 
-    if _maxLifespanPerEntryInSeconds ~= nil then
-        -- remove expired entries
-        local now = _time()
-        if now - _timestampOfLastDeadlinesCleanup >= 1 then
-            _timestampOfLastDeadlinesCleanup = now
-            for key, deadline in _pairs(_deadlines) do
-                if now >= deadline then
-                    self:Remove(key)
-                end
-            end
-        end
+    if _maxLifespanPerEntryInSeconds <= 0 then
+        return
     end
 
-    if _maxSize ~= nil then
-        -- remove least recently used entries
-        local currentLength = self:__len()
-        if currentLength <= _maxSize then
-            return
-        end
+    local now = Time.Now()
+    if now - _timestampOfLastDeadlinesCleanup < 1 then
+        return
+    end
 
-        local sortedArray = self:Sort_(_mostRecentAccessTimestamps)
-
-        local desiredEventualSize = _maxSize * (1 - _trimRatio)
-        local numberOfItemsToDelete = currentLength - desiredEventualSize
-        for i = 1, numberOfItemsToDelete, 1
-        do
-            self:Remove(sortedArray[i].key)
+    _timestampOfLastDeadlinesCleanup = now
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+        if now >= value.Deadline then
+            self:Remove(key)
         end
     end
 end
 
--- private space
-function Class:Sort_(t)
-    _setfenv(1, self)
+function Class:RemoveSuperfluousEntries_()
+    Scopify(EScopes.Function, self)
 
-    local array = {}
-    for key, value in _pairs(t) do
-        _tableInsert(array, { key = key, access = value })
+    if _maxSize <= 0 then
+        return
     end
 
-    _tableSort(array, function(a, b)
+    if _count <= _maxSize then
+        return
+    end
+
+    local sortedArrayOldestToNewest = self:Sort_(_entries) -- remove the least recently used entries
+
+    local desiredEventualSize = _maxSize * (1 - _trimRatio)
+    local numberOfItemsToDelete = currentLength - desiredEventualSize
+    for i = 1, numberOfItemsToDelete, 1
+    do
+        self:Remove(sortedArrayOldestToNewest[i].key)
+    end
+end
+
+function Class:Sort_(t)
+    Scopify(EScopes.Function, self)
+
+    local array = {}
+    for key, value in TablesHelper.GetKeyValuePairs(t) do
+        Table.Insert(array, { key = key, access = value.Timestamp })
+    end
+
+    Table.Sort(array, function(a, b)
         return a.access < b.access
     end)
 
@@ -207,26 +235,20 @@ function Class:Sort_(t)
 end
 
 function Class:__tostring()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local s = "{"
+    local s = "{ "
     local sep = ""
-    for key in _pairs(_cache) do
-        s = s .. sep .. key
-        sep = ","
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
+        sep = ", "
     end
 
-    return s .. "}"
+    return s .. " }"
 end
 
 function Class:__len()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local count = 0
-    for _ in _pairs(_cache) do
-        count = count + 1
-    end
-
-    return count
+    return _count
 end
-

@@ -20,25 +20,23 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
 
 function Class:New(userPreferencesRepositoryQueryable)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable or UserPreferencesRepositoryQueryable:New(), --todo   refactor this later on so that this gets injected through DI
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetAllUserPreferences()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _userPreferencesRepositoryQueryable:GetAllUserPreferences()
 end

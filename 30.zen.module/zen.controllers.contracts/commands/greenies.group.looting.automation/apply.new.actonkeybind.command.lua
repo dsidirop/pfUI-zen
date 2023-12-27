@@ -20,40 +20,38 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _old = nil,
         _new = nil,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetOldValue()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _old
 end
 
 function Class:GetNewValue()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _new
 end
 
 function Class:ChainSetOld(old)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(old == nil or SGreeniesGrouplootingAutomationActOnKeybind.Validate(old))
+    _assert(old == nil or SGreeniesGrouplootingAutomationActOnKeybind.IsValid(old))
 
     _old = old
 
@@ -61,9 +59,9 @@ function Class:ChainSetOld(old)
 end
 
 function Class:ChainSetNew(new)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(new))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(new))
 
     _new = new
 

@@ -20,43 +20,42 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _greeniesGrouplootingAutomation = {
             mode = nil,
             actOnKeybind = nil,
         }
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GetGreeniesGrouplootingAutomation_Mode()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _greeniesGrouplootingAutomation.mode
 end
 
 function Class:GetGreeniesGrouplootingAutomation_ActOnKeybind()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return _greeniesGrouplootingAutomation.actOnKeybind
 end
 
 function Class:ChainSetGreeniesGrouplootingAutomation_Mode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
 
     _greeniesGrouplootingAutomation.mode = value
 
@@ -64,9 +63,9 @@ function Class:ChainSetGreeniesGrouplootingAutomation_Mode(value)
 end
 
 function Class:ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
 
     _greeniesGrouplootingAutomation.actOnKeybind = value
 

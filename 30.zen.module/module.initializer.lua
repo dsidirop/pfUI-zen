@@ -17,6 +17,7 @@ local function Main(_pfUI)
 
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
 
+        local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
         local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
         local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
         local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
@@ -64,16 +65,19 @@ local function Main(_pfUI)
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
 
-        ModifierKeysListener.I
-                            :ChainSetPollingInterval(0.05)
-                            :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
-            _print("** ea:GetKey()=" .. ea:ToString())
-            _print("** ea:HasModifierAlt()=" .. _tostring(ea:HasModifierAlt()))
-            _print("** ea:HasModifierShift()=" .. _tostring(ea:HasModifierShift()))
-            _print("** ea:HasModifierControl()=" .. _tostring(ea:HasModifierControl()))
-        end)
-
-        ModifierKeysListener.I:Start()
+        --local cache = LRUCache:New({ MaxSize = 0, MaxLifespanPerEntryInSeconds = 0 })
+        --
+        --ModifierKeysListener.I --@formatter:off
+        --                    :ChainSetPollingInterval(0.05)
+        --                    :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
+        --                        _print("** ea:GetKey()=" .. ea:ToString())
+        --
+        --                        cache:Upsert(ea:ToString())
+        --    
+        --                        _print("** cache:Count()    = " .. cache:Count())
+        --                        _print("** cache:ToString() = " .. cache:ToString())
+        --                    end)
+        --                    :Start() --@formatter:on
     end)
 end
 

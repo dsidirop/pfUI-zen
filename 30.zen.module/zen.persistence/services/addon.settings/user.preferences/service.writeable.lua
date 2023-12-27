@@ -20,6 +20,10 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -28,24 +32,19 @@ local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
 
 function Class:New(userPreferencesUnitOfWork)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(userPreferencesUnitOfWork == nil or _type(userPreferencesUnitOfWork) == "table")
 
-    local instance = {
+    return Classify(self, {
         _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(PfuiZenDbContext:New()), --todo   refactor this later on so that this gets injected through DI
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
                               :GreeniesGrouplootingAutomation_ChainUpdateMode(value)
@@ -54,9 +53,9 @@ function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
 end
 
 function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.Validate(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
                               :GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)

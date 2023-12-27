@@ -1,0 +1,12 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+    <!-- order  -->
+    <Include file="throw.lua"/>
+    <Include file="rethrow.lua"/>
+    <Include file="utilities.lua"/>
+
+    <Include file="exception.lua"/>
+    <Include file="already.set.exception.lua"/>
+    <Include file="argument.nil.exception.lua"/>
+    <Include file="argument.out.of.range.exception.lua"/>
+    <Include file="argument.is.of.inappropriate.type.exception.lua"/>
+</Ui>

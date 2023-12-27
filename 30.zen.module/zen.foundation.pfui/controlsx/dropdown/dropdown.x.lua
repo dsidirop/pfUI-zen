@@ -23,39 +23,41 @@ end)()
 
 _setfenv(1, {})
 
-local Event = _importer("Pavilion.System.Event")
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
+local Event = _importer("System.Event")
+local TablesHelper = _importer("System.Helpers.Tables")
+local ArraysHelper = _importer("System.Helpers.Arrays")
+local StringsHelper = _importer("System.Helpers.Strings")
+
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
-local StringsHelpers = _importer("Pavilion.Helpers.Strings")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
 
 function Class:New()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _nativePfuiControl = nil,
 
         _caption = nil,
         _menuItems = {},
-        _menuIndexesToMenuValues = {},
         _menuEntryValuesToIndexes = {},
+        _menuIndexesToMenuValuesArray = {},
 
         _oldValue = nil,
         _singlevalue = {},
         _valuekeyname = "dummy_keyname_for_value",
 
         _eventSelectionChanged = Event:New(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:ChainSetCaption(caption)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(caption) == "string")
 
@@ -65,19 +67,19 @@ function Class:ChainSetCaption(caption)
 end
 
 function Class:ChainSetMenuItems(menuItems)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(menuItems) == "table")
 
     _menuItems = menuItems
-    _menuEntryValuesToIndexes, _menuIndexesToMenuValues = self:ParseMenuItems_(menuItems)
+    _menuEntryValuesToIndexes, _menuIndexesToMenuValuesArray = self:ParseMenuItems_(menuItems)
     _assert(_menuEntryValuesToIndexes ~= nil, "menuItems contains duplicate values which is not allowed")
 
     return self
 end
 
 function Class:Initialize()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(_caption) == "string")
     _assert(_type(_menuItems) == "table")
@@ -101,7 +103,7 @@ function Class:Initialize()
 end
 
 function Class:TrySetSelectedOptionByValue(optionValue)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(optionValue) == "string")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
@@ -118,12 +120,12 @@ function Class:TrySetSelectedOptionByValue(optionValue)
 end
 
 function Class:TrySetSelectedOptionByIndex(index)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > _getn(_menuIndexesToMenuValues) then
+    if index > ArraysHelper.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end
@@ -132,15 +134,15 @@ function Class:TrySetSelectedOptionByIndex(index)
         return true -- already selected   nothing to do
     end
 
-    local newValue = _menuIndexesToMenuValues[index] --   order
-    local originalValue = _singlevalue[_valuekeyname] --  order
+    local newValue = _menuIndexesToMenuValuesArray[index] --   order
+    local originalValue = _singlevalue[_valuekeyname] --       order
 
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
     _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
-    self:OnSelectionChanged_(-- 00
-            SelectionChangedEventArgs:New()
+    self:OnSelectionChanged_(
+            SelectionChangedEventArgs:New() -- 00
                                      :ChainSetOld(originalValue)
                                      :ChainSetNew(newValue)
     )
@@ -151,7 +153,7 @@ function Class:TrySetSelectedOptionByIndex(index)
 end
 
 function Class:SetVisibility(showNotHide)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     if showNotHide then
         self:Show()
@@ -163,7 +165,8 @@ function Class:SetVisibility(showNotHide)
 end
 
 function Class:Show()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
+
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
     _nativePfuiControl:Show()
@@ -172,7 +175,7 @@ function Class:Show()
 end
 
 function Class:Hide()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
     _nativePfuiControl:Hide()
@@ -181,7 +184,7 @@ function Class:Hide()
 end
 
 function Class:EventSelectionChanged_Subscribe(handler, owner)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventSelectionChanged:Subscribe(handler, owner)
 
@@ -189,7 +192,7 @@ function Class:EventSelectionChanged_Subscribe(handler, owner)
 end
 
 function Class:EventSelectionChanged_Unsubscribe(handler)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _eventSelectionChanged:Unsubscribe(handler)
 
@@ -198,7 +201,7 @@ end
 
 -- privates
 function Class:OnSelectionChanged_(ea)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(ea) == "table", "event-args is not an object")
 
@@ -207,14 +210,14 @@ function Class:OnSelectionChanged_(ea)
 end
 
 function Class:ParseMenuItems_(menuItemsArray)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(menuItemsArray) == "table")
 
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
-    for i, k in _pairs(menuItemsArray) do
-        local value, _ = _unpack(StringsHelpers.Split(k, ":"))
+    for i, k in TablesHelper.GetKeyValuePairs(menuItemsArray) do
+        local value, _ = TablesHelper.Unpack(StringsHelper.Split(k, ":", 2))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then

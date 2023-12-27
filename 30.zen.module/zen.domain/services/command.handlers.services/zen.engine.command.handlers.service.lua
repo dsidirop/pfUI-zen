@@ -20,6 +20,10 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
 local UserPreferencesService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service")
@@ -27,21 +31,16 @@ local UserPreferencesService = _importer("Pavilion.Warcraft.Addons.Zen.Persisten
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
 
 function Class:New(userPreferencesService)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    local instance = {
+    return Classify(self, {
         _zenEngineSingleton = ZenEngine.I, --todo   refactor this later on so that this gets injected through DI        
         _userPreferencesService = userPreferencesService or UserPreferencesService:NewWithDBContext(),
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:Handle_RestartEngineCommand(_)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
 
@@ -59,7 +58,7 @@ function Class:Handle_RestartEngineCommand(_)
 end
 
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
 
@@ -74,7 +73,7 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
 end
 
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(command)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(command) == "table", "command parameter is expected to be an object")
 

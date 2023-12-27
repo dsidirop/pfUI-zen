@@ -1,0 +1,17 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+    <!-- order matters -->
+    <Include file="arrays.lua"/>
+    <Include file="tables.lua"/>
+    
+    <Include file="strings.lua"/>
+    <Include file="strings.find.lua"/>
+    <Include file="strings.isdudstring.lua"/>
+    <Include file="strings.tostring.lua"/>
+    <Include file="strings.format.lua"/>
+    <Include file="strings.trim.lua"/>
+    <Include file="strings.split.lua"/>
+    <Include file="strings.match.lua"/>
+    <Include file="strings.touppercase.lua"/>
+
+    <Include file="booleans.lua"/>
+</Ui>

@@ -5,7 +5,4 @@ if unpack then
     return -- already present in wow-lua
 end
 
-local _tableUnpack = assert(table.unpack) -- vanilla wow lua does have unpack at the global scope   but standard lua does not
-function unpack(arg)
-    return _tableUnpack(arg)
-end
+unpack = assert(table.unpack) -- vanilla wow lua does have unpack at the global scope   but standard lua does not and we have to polyfill it

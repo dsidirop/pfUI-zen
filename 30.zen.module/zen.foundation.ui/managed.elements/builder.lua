@@ -20,6 +20,10 @@ end)()
 
 _setfenv(1, {})
 
+local Scopify = _importer("System.Scopify")
+local EScopes = _importer("System.EScopes")
+local Classify = _importer("System.Classify")
+
 local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
@@ -29,13 +33,13 @@ local SWoWElementType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.Ma
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Builder")
 
 function Class:New(other)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
     
     _assert(other == nil or _type(other) == "table", "other must be nil or a table")
 
     other = other or {}
 
-    local instance = {
+    return Classify(self, {
         _elementType = other._elementType or SWoWElementType.Frame,
         
         _name = other._name,
@@ -45,16 +49,11 @@ function Class:New(other)
         _keystrokeListenerEnabled = other._keystrokeListenerEnabled,
         _useWowUIRootFrameAsParent = other._useWowUIRootFrameAsParent,
         _namedXmlFramesToInheritFrom = other._namedXmlFramesToInheritFrom,
-    }
-
-    _setmetatable(instance, self)
-    self.__index = self
-
-    return instance
+    })
 end
 
 function Class:Build()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     local eventualParentElement = _useWowUIRootFrameAsParent
             and WoWUIParent
@@ -85,15 +84,15 @@ function Class:Build()
 end
 
 function Class:WithTypeFrame()
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     return self:WithType(SWoWElementType.Frame)
 end
 
 function Class:WithType(frameType)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
-    _assert(SWoWElementType.Validate(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
+    _assert(SWoWElementType.IsValid(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
     
     local clone = Class:New(self)
     clone._elementType = frameType
@@ -102,7 +101,7 @@ function Class:WithType(frameType)
 end
 
 function Class:WithFrameStrata(value)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(value) == "string", "frame-strata must be a string")
 
@@ -113,7 +112,7 @@ function Class:WithFrameStrata(value)
 end
 
 function Class:WithKeystrokeListenerEnabled(onOrOff)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(onOrOff) == "boolean", "value must be a boolean")
 
@@ -124,7 +123,7 @@ function Class:WithKeystrokeListenerEnabled(onOrOff)
 end
 
 function Class:WithName(name)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(name == nil or _type(name) == "string", "name must nil or a string")
     
@@ -135,7 +134,7 @@ function Class:WithName(name)
 end
 
 function Class:WithParentElement(parentElement)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(parentElement == nil or _type(parentElement) == "table", "parentElement must be nil or a table")
     
@@ -146,7 +145,7 @@ function Class:WithParentElement(parentElement)
 end
 
 function Class:WithPropagateKeyboardInput(propagateKeyboardInput)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(propagateKeyboardInput) == "boolean", "propagateKeyboardInput must be a boolean")
     
@@ -157,7 +156,7 @@ function Class:WithPropagateKeyboardInput(propagateKeyboardInput)
 end
 
 function Class:WithUseWowUIRootFrameAsParent(useWowUIRootFrameAsParent)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(_type(useWowUIRootFrameAsParent) == "boolean", "useWowUIRootFrameAsParent must be a boolean")
     
@@ -169,7 +168,7 @@ end
 
 
 function Class:WithNamedXmlFramesToInheritFrom(namedXmlFramesToInheritFrom)
-    _setfenv(1, self)
+    Scopify(EScopes.Function, self)
 
     _assert(namedXmlFramesToInheritFrom == nil or _type(namedXmlFramesToInheritFrom) == "string", "namedXmlFramesToInheritFrom must be nil or a comma-separated string")
 
