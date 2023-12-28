@@ -1,13 +1,14 @@
-﻿local _setfenv, _importer, _namespacer = (function()
+﻿local _setfenv, _tostring, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
+    local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _importer, _namespacer
+    return _setfenv, _tostring, _importer, _namespacer
 end)()
 
 _setfenv(1, {}) --                                                         @formatter:off
@@ -82,7 +83,7 @@ function Class.FormulateMessage_(optionalArgumentName)
 
     local message = optionalArgumentName == nil
             and "Argument cannot be nil"
-            or "Argument '" .. optionalArgumentName .. "' cannot be nil"
+            or "Argument '" .. _tostring(optionalArgumentName) .. "' cannot be nil"
 
     return message
 end

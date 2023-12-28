@@ -1,15 +1,14 @@
-﻿local _setfenv, _type, _tostring, _importer, _namespacer = (function()
+﻿local _setfenv, _tostring, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _type = _assert(_g.type)
     local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _type, _tostring, _importer, _namespacer
+    return _setfenv, _tostring, _importer, _namespacer
 end)()
 
 _setfenv(1, {}) --                                                                 @formatter:off
@@ -85,7 +84,7 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local message = optionalArgumentName == nil
             and "Argument is of inappropriate type"
-            or "Argument '" .. optionalArgumentName .. "' is of inappropriate type"
+            or "Argument '" .. _tostring(optionalArgumentName) .. "' is of inappropriate type"
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
@@ -104,7 +103,7 @@ function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
         return nil
     end
 
-    if _type(optionalExpectationOrExpectedType) == "string" then
+    if Reflection.IsString(optionalExpectationOrExpectedType) then
         return optionalExpectationOrExpectedType
     end
 
