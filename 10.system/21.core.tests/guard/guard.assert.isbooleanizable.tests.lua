@@ -1,4 +1,4 @@
-﻿local _setfenv, _importer, U = (function()
+﻿local U, _setfenv, _importer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -7,7 +7,7 @@
     local U = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
 
-    return _setfenv, _importer, U
+    return U, _setfenv, _importer
 end)()
 
 _setfenv(1, {})

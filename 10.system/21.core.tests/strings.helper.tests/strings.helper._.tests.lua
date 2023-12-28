@@ -1,4 +1,4 @@
-﻿local _setfenv, U = (function()
+﻿local U, _setfenv = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,7 +6,7 @@
 
     local U = _assert(_g.VWoWUnit)
 
-    return _setfenv, U
+    return U, _setfenv
 end)()
 
 _setfenv(1, {})
