@@ -43,10 +43,10 @@ function Class:New(options)
                 and Class.DefaultOptions_
                 or  options
 
-    Guard.Assert.IsTable(options)
-               .IsOptionallyRatioNumber(options.TrimRatio)
-               .IsOptionallyPositiveInteger(options.MaxSize)
-               .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
+    Guard.Assert.IsTable(options, "options")
+                .IsOptionallyRatioNumber(options.TrimRatio, "options.TrimRatio")
+                .IsOptionallyPositiveInteger(options.MaxSize, "options.MaxSize")
+                .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
 
     return Classify(self, {
         _count = 0,

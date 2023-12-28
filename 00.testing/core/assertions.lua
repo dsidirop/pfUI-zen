@@ -22,13 +22,25 @@ _setfenv(1, {})
 VWoWUnit.Should = {}
 VWoWUnit.Should.Be = {}
 
+function VWoWUnit.Should.Throw(action)
+	_setfenv(1, VWoWUnit.Should)
+
+	local success, result = _pcall(action)
+
+	if success then
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
+	end
+
+	return result
+end
+
 function VWoWUnit.Should.NotThrow(action)
 	_setfenv(1, VWoWUnit.Should)
 	
 	local success, result = _pcall(action)
 
 	if not success then
-		VWoWUnit.Raise_(_format("[Should.NotThrow()] Was not expecting an exception but got this one:\n\n%s ", result))
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.NotThrow()] Was not expecting an exception to be thrown but got this one:\n\n%s ", result))
 	end
 	
 	return result
@@ -73,8 +85,22 @@ end
 local ERROR_COLOR_CODE = "|cffff5555"
 function VWoWUnit.Raise_(message)
 	_setfenv(1, VWoWUnit)
-	
+
+	VWoWUnit.RaiseRaw_(ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(3))
+end
+
+function VWoWUnit.RaiseWithoutStacktrace_(message)
+	_setfenv(1, VWoWUnit)
+
 	-- its absolutely vital to use assert() instead of error() because error() is overriden in addons like pfui to only print without
 	-- actually raising an error as an exception which is not what we want to happen here   by using assert() we ensure that we get an exception
-	_assert(false, ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(3))
+	VWoWUnit.RaiseRaw_(ERROR_COLOR_CODE .. message)
+end
+
+function VWoWUnit.RaiseRaw_(message)
+	_setfenv(1, VWoWUnit)
+
+	-- its absolutely vital to use assert() instead of error() because error() is overriden in addons like pfui to only print without
+	-- actually raising an error as an exception which is not what we want to happen here   by using assert() we ensure that we get an exception
+	_assert(false, message)
 end
