@@ -61,7 +61,7 @@ do
         end
         
         if _next(value) == nil then
-            Throw(ArgumentOutOfRangeException:New("non-empty table", optionalArgumentName))
+            Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "non-empty table"))
         end
 
         return Guard.Check
@@ -77,7 +77,7 @@ do
     function Guard.Check.IsEnumValue(enumType, value, optionalArgumentName)
         return enumType.IsValid(value)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New(enumType, optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, enumType))
     end
     
     function Guard.Check.IsOptionallyEnumValue(enumType, value, optionalArgumentName)
@@ -111,7 +111,7 @@ do
         
         return value > 0
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("positive integer", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer"))
     end
 
     function Guard.Check.IsPositiveIntegerOrZero(value, optionalArgumentName)
@@ -119,7 +119,7 @@ do
 
         return value >= 0
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("positive integer or zero", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero"))
     end
 
     function Guard.Check.IsPositiveIntegerOfMaxValue(value, maxValue, optionalArgumentName)
@@ -127,7 +127,7 @@ do
         
         return value > 0 and value <= maxValue
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("positive integer of max value " .. maxValue, optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer of max value " .. maxValue))
     end
 
     function Guard.Check.IsPositiveIntegerOrZeroOfMaxValue(value, maxValue, optionalArgumentName)
@@ -135,7 +135,7 @@ do
         
         return value >= 0 and value <= maxValue
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("positive integer or zero of max value " .. maxValue, optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero of max value " .. maxValue))
     end
 
     function Guard.Check.IsOptionallyPositiveInteger(value, optionalArgumentName)
@@ -176,7 +176,7 @@ do
 
         return value >= 0 and value <= 1
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("number between [0, 1]", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "number between [0, 1]"))
     end
 
     function Guard.Check.IsOptionallyRatioNumber(value, optionalArgumentName)
@@ -191,7 +191,7 @@ do
     function Guard.Check.IsBooleanizable(value, optionalArgumentName)
         return Guard.Check.IsBooleanizable_(value)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("booleanizable value (but got '" .. _tostring(value) .. "')", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "booleanizable value"))
     end
     
     function Guard.Check.IsOptionallyBooleanizable(value, optionalArgumentName)
@@ -240,7 +240,7 @@ do
 
         return not Guard.Check.IsDudString_(value)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("non-dud string", optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "non-dud string"))
     end
 
     function Guard.Check.IsNonDudStringOfMaxLength(value, maxLength, optionalArgumentName)
@@ -248,7 +248,7 @@ do
 
         return Guard.Check.IsStringOfMaxLength_(value, maxLength)
                 and Guard.Check
-                or Throw(ArgumentOutOfRangeException:New("string of max length " .. _tostring(maxLength), optionalArgumentName))
+                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "string of max length " .. _tostring(maxLength)))
     end
 
     function Guard.Check.IsOptionallyString(value, optionalArgumentName)

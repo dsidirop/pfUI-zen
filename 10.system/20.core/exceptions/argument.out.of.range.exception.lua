@@ -1,18 +1,17 @@
-﻿local _setfenv, _type, _tostring, _importer, _namespacer = (function()
+﻿local _setfenv, _tostring, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _type = _assert(_g.type)
     local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _type, _tostring, _importer, _namespacer
+    return _setfenv, _tostring, _importer, _namespacer
 end)()
 
-_setfenv(1, {}) --                                                                  @formatter:off
+_setfenv(1, {}) --                                                                 @formatter:off
 
 local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
@@ -23,14 +22,14 @@ local ExceptionUtilities = _importer("System.Exceptions.Utilities") --          
 
 local Class = _namespacer("System.Exceptions.ArgumentOutOfRangeException")
 
-function Class:New(optionalExpectationOrExpectedType, optionalArgumentName)
+function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
-    Debug.Assert(Reflection.IsOptionallyString(optionalExpectationOrExpectedType) or Reflection.IsOptionallyTable(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a string or table or nil")
+    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a string or table or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(optionalExpectationOrExpectedType, optionalArgumentName),
+        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -80,7 +79,7 @@ function Class:ToString()
 end
 
 -- private space
-function Class.FormulateMessage_(optionalExpectationOrExpectedType, optionalArgumentName)
+function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
@@ -89,7 +88,7 @@ function Class.FormulateMessage_(optionalExpectationOrExpectedType, optionalArgu
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. " - was expecting " .. _tostring(expectationString)
+        message = message .. "(expected " .. _tostring(expectationString) .. " - got " .. _tostring(value) .. ")"
     end
     
     return message
