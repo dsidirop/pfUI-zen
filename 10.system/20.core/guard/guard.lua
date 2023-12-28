@@ -46,7 +46,7 @@ do
     function Guard.Check.IsTable(value, optionalArgumentName)
         return Reflection.IsTable(value)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("table", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "table"))
     end
 
     function Guard.Check.IsOptionallyTable(value, optionalArgumentName)
@@ -57,7 +57,7 @@ do
 
     function Guard.Check.IsNonEmptyTable(value, optionalArgumentName)
         if not Reflection.IsTable(value) then
-            Throw(ArgumentIsOfInappropriateTypeException:New("table", optionalArgumentName))
+            Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "table"))
         end
         
         if _next(value) == nil then
@@ -90,7 +90,7 @@ do
     function Guard.Check.IsNumber(value, optionalArgumentName)
         return Reflection.IsNumber(value)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("number", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "number"))
     end
 
     function Guard.Check.IsOptionallyNumber(value, optionalArgumentName)
@@ -103,7 +103,7 @@ do
     function Guard.Check.IsInteger(value, optionalArgumentName)
         return Reflection.IsInteger(value)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("integer", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "integer"))
     end
 
     function Guard.Check.IsPositiveInteger(value, optionalArgumentName)
@@ -232,7 +232,7 @@ do
     function Guard.Check.IsString(value, optionalArgumentName)
         return Reflection.IsString(value)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("string", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "string"))
     end
 
     function Guard.Check.IsNonDudString(value, optionalArgumentName)
@@ -289,7 +289,7 @@ do
     function Guard.Check.IsFunction(value, optionalArgumentName)
         return Reflection.IsFunction(value)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("function", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "function"))
     end
 
     function Guard.Check.IsOptionallyFunction(value, optionalArgumentName)
@@ -302,13 +302,13 @@ do
     function Guard.Check.IsNamespaceStringOrRegisteredType(value, optionalArgumentName)
         return Reflection.IsString(value) or Reflection.GetNamespaceOfType(value) ~= nil
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("namespace string or registered type", optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "namespace string or registered type"))
     end
 
     -- ISA
     function Guard.Check.IsInstanceOf(value, desiredType, optionalArgumentName)
         return Reflection.IsInstanceOf(value, desiredType)
                 and Guard.Check
-                or Throw(ArgumentIsOfInappropriateTypeException:New("to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)"), optionalArgumentName))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(optionalArgumentName, "to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
 end

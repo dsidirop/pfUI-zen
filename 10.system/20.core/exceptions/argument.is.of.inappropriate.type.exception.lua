@@ -23,14 +23,14 @@ local ExceptionUtilities = _importer("System.Exceptions.Utilities") --          
 
 local Class = _namespacer("System.Exceptions.ArgumentIsOfInappropriateTypeException")
 
-function Class:New(optionalExpectationOrExpectedType, optionalArgumentName)
+function Class:New(optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
     Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a type (table) or a description (string) or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(optionalExpectationOrExpectedType, optionalArgumentName),
+        _message = Class.FormulateMessage_(optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -80,7 +80,7 @@ function Class:ToString()
 end
 
 -- private space
-function Class.FormulateMessage_(optionalExpectationOrExpectedType, optionalArgumentName)
+function Class.FormulateMessage_(optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
