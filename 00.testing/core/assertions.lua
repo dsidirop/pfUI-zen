@@ -28,7 +28,7 @@ function VWoWUnit.Should.NotThrow(action)
 	local success, result = _pcall(action)
 
 	if not success then
-		VWoWUnit.Raise_(_format("[] Was not expecting an exception but got this one:\n\n%s ", result))
+		VWoWUnit.Raise_(_format("[Should.NotThrow()] Was not expecting an exception but got this one:\n\n%s ", result))
 	end
 	
 	return result
@@ -42,7 +42,7 @@ function VWoWUnit.Should.Be.Equivalent(a, b)
 		return
 	end
 
-	local message = _format("expected %q, got %q", _tostring(bb), _tostring(aa))
+	local message = _format("[Should.Be.Equivalent()] Expected %q, got %q", _tostring(bb), _tostring(aa))
 	if path ~= nil and path ~= "" then
 		message = _format("tables differ at %q - %s", _strsub(path, 2), message)
 	end
@@ -50,24 +50,24 @@ function VWoWUnit.Should.Be.Equivalent(a, b)
 	VWoWUnit.Raise_(message)
 end
 
-function VWoWUnit.Should.Be.True(value)
+function VWoWUnit.Should.Be.Truthy(value)
 	_setfenv(1, VWoWUnit.Should)
 	
 	if value then
 		return
 	end
 
-	VWoWUnit.Raise_(_format("expected some value, got %q", _tostring(value)))
+	VWoWUnit.Raise_(_format("[Should.Be.Truthy()] Expected truthy value, got %q", _tostring(value)))
 end
 
-function VWoWUnit.Should.Be.False(value)
+function VWoWUnit.Should.Be.Falsy(value)
 	_setfenv(1, VWoWUnit.Should)
 	
 	if not value then
 		return
 	end
 
-	VWoWUnit.Raise_(_format("expected no value, got %q", _tostring(value)))
+	VWoWUnit.Raise_(_format("[Should.Be.Falsy()] Expected falsy value, got %q", _tostring(value)))
 end
 
 local ERROR_COLOR_CODE = "|cffff5555"
