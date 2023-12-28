@@ -23,14 +23,14 @@ local ExceptionUtilities = _importer("System.Exceptions.Utilities") --          
 
 local Class = _namespacer("System.Exceptions.ArgumentIsOfInappropriateTypeException")
 
-function Class:New(optionalArgumentName, optionalExpectationOrExpectedType)
+function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
     Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a type (table) or a description (string) or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -80,7 +80,7 @@ function Class:ToString()
 end
 
 -- private space
-function Class.FormulateMessage_(optionalArgumentName, optionalExpectationOrExpectedType)
+function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
@@ -89,7 +89,9 @@ function Class.FormulateMessage_(optionalArgumentName, optionalExpectationOrExpe
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. " - was expecting " .. _tostring(expectationString)
+        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.GetNamespaceOfInstanceOrRawType(value) .. "')"
+    else
+        message = message .. " (its type is '" .. Reflection.GetNamespaceOfInstanceOrRawType(value) .. "')"
     end
     
     return message

@@ -88,9 +88,11 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. "(expected " .. _tostring(expectationString) .. " - got " .. _tostring(value) .. ")"
+        message = message .. "(expected " .. _tostring(expectationString) .. " - got '" .. _tostring(value) .. "')"
+    else
+        message = message .. "(got '" .. _tostring(value) .. "')"
     end
-    
+
     return message
 end
 

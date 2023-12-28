@@ -86,6 +86,9 @@ function Reflection.IsInstanceOf(object, desiredType)
     return Reflection.GetNamespaceOfInstance(object) == Reflection.GetNamespaceOfType(desiredType)
 end
 
+function Reflection.GetNamespaceOfInstanceOrRawType(object)
+    return Reflection.GetNamespaceOfInstance(object) or Reflection.Type(object)    
+end
 
 function Reflection.GetNamespaceOfInstance(object)
     if object == nil then
