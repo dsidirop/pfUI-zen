@@ -16,33 +16,33 @@ local StringsHelper = _importer("System.Helpers.Strings")
 
 local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
-TestsGroup:AddTheory("StringsHelper.Split.GivenValidInput.ShouldMatchExpectedResults",
+TestsGroup:AddTheory("StringsHelper.Split.GivenGreenInput.ShouldMatchExpectedResults",
         {
-            ["SH.S.GVI.SMER.0000"] = {
+            ["SH.S.GGI.SMER.0000"] = {
                 Input = "Hello World Once Again",
                 Delimiter = nil, -- default delimiter is ","
                 MaxChunksCount = nil,
                 ExpectedChunks = { "Hello World Once Again" }
             },
-            ["SH.S.GVI.SMER.0005"] = {
+            ["SH.S.GGI.SMER.0005"] = {
                 Input = "Hello World,Once,Again",
                 Delimiter = nil, -- default delimiter is ","
                 MaxChunksCount = nil,
                 ExpectedChunks = { "Hello World", "Once", "Again" },
             },
-            ["SH.S.GVI.SMER.0008"] = {
+            ["SH.S.GGI.SMER.0008"] = {
                 Input = "Hello World,Once,Again",
                 Delimiter = nil, -- default delimiter is ","
                 MaxChunksCount = 2,
                 ExpectedChunks = { "Hello World", "Once" }
             },
-            ["SH.S.GVI.SMER.0010"] = {
+            ["SH.S.GGI.SMER.0010"] = {
                 Input = "Hello World\nOnce\nAgain",
                 Delimiter = "\n",
                 MaxChunksCount = nil,
                 ExpectedChunks = { "Hello World", "Once", "Again" },
             },
-            ["SH.S.GVI.SMER.0020"] = {
+            ["SH.S.GGI.SMER.0020"] = {
                 Input = "Hello World\nOnce\nAgain",
                 Delimiter = "\n",
                 MaxChunksCount = 2,

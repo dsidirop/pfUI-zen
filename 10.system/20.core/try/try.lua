@@ -33,8 +33,8 @@ end)
 function Class:New(action, exceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsFunction(action, "action")
-    Guard.Check.IsInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsFunction(action, "action")
+    Guard.Assert.IsInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
     return Classify(self, {
         _action = action,
@@ -47,14 +47,14 @@ end
 function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificExceptionHandler)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Check.IsNamespaceStringOrRegisteredType(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
+    Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
+    Guard.Assert.IsNamespaceStringOrRegisteredType(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
             or Reflection.GetNamespaceOfType(specificExceptionTypeOrExceptionNamespaceString)
 
-    Guard.Check.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
+    Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
     _allExceptionHandlers[exceptionNamespaceString] = specificExceptionHandler
 

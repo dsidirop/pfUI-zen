@@ -62,8 +62,8 @@ function Class.Clone(tableObject, seen)
 end
 
 function Class.Append(array, value)
-    Guard.Check.IsTable(array)
-    Guard.Check.IsNotNil(value)
+    Guard.Assert.IsTable(array)
+    Guard.Assert.IsNotNil(value)
 
     return _tableInsert(array, value)
 end

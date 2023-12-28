@@ -28,26 +28,26 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Gro
 function Class:New(options)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsTable(options) -- todo   Guard.Check.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
+    Guard.Assert.IsTable(options) -- todo   Guard.Assert.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
 
-    Guard.Check.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
+    Guard.Assert.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
    
-    Guard.Check.IsBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
-    Guard.Check.IsPositiveIntegerOrZero(options.GamblingId, "options.GamblingId")
-    Guard.Check.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20, "options.ItemQuality") -- EWowItemQuality  but better not enforce checking for the enum type
+    Guard.Assert.IsBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
+    Guard.Assert.IsPositiveIntegerOrZero(options.GamblingId, "options.GamblingId")
+    Guard.Assert.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20, "options.ItemQuality") -- EWowItemQuality  but better not enforce checking for the enum type
 
-    Guard.Check.IsOptionallyBooleanizable(options.IsNeedable, "options.IsNeedable") -- the following are all optionals
-    Guard.Check.IsOptionallyBooleanizable(options.IsGreedable, "options.IsGreedable")
-    Guard.Check.IsOptionallyBooleanizable(options.IsDisenchantable, "options.IsDisenchantable")
-    Guard.Check.IsOptionallyBooleanizable(options.IsTransmogrifiable, "options.IsTransmogrifiable")
+    Guard.Assert.IsOptionallyBooleanizable(options.IsNeedable, "options.IsNeedable") -- the following are all optionals
+    Guard.Assert.IsOptionallyBooleanizable(options.IsGreedable, "options.IsGreedable")
+    Guard.Assert.IsOptionallyBooleanizable(options.IsDisenchantable, "options.IsDisenchantable")
+    Guard.Assert.IsOptionallyBooleanizable(options.IsTransmogrifiable, "options.IsTransmogrifiable")
 
-    Guard.Check.IsOptionallyNonDudStringOfMaxLength(options.TextureFilepath, 1024, "options.TextureFilepath")
-    Guard.Check.IsOptionallyPositiveIntegerOfMaxValue(options.Count, 2000, "options.Count")
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000, "options.EnchantingLevelRequiredToDEItem")
+    Guard.Assert.IsOptionallyNonDudStringOfMaxLength(options.TextureFilepath, 1024, "options.TextureFilepath")
+    Guard.Assert.IsOptionallyPositiveIntegerOfMaxValue(options.Count, 2000, "options.Count")
+    Guard.Assert.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000, "options.EnchantingLevelRequiredToDEItem")
 
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20, "options.NeedInelligibilityReasonType")  --            EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20, "options.GreedInelligibilityReasonType") --           EWowLootingInelligibilityReasonType
-    Guard.Check.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20, "options.DisenchantInelligibilityReasonType") -- EWowLootingInelligibilityReasonType
+    Guard.Assert.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20, "options.NeedInelligibilityReasonType")  --            EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Assert.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20, "options.GreedInelligibilityReasonType") --           EWowLootingInelligibilityReasonType
+    Guard.Assert.IsOptionallyPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20, "options.DisenchantInelligibilityReasonType") -- EWowLootingInelligibilityReasonType
 
     return Classify(self, { --@formatter:off
         _name            = StringsHelper.Trim(options.Name),

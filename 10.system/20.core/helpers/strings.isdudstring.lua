@@ -21,7 +21,7 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.IsDudString(value)
     Scopify(EScopes.Function, StringsHelper)
     
-    Guard.Check.IsOptionallyString(value)
+    Guard.Assert.IsOptionallyString(value)
     
     if value == nil then
         return true

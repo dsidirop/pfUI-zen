@@ -16,19 +16,19 @@ local StringsHelper = _importer("System.Helpers.Strings")
 
 local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
-TestsGroup:AddTheory("StringsHelper.Match.GivenValidInput.ShouldMatchExpectedResults",
+TestsGroup:AddTheory("StringsHelper.Match.GivenGreenInput.ShouldMatchExpectedResults",
         {
-            ["SH.M.GVI.SMER.0000"] = {
+            ["SH.M.GGI.SMER.0000"] = {
                 Input = "Hello World\nOnce\nAgain",
                 Pattern = "([%w]+)%s([%w]+)%s([%w]+)%s([%w]+)",
                 ExpectedChunks = { "Hello", "World", "Once", "Again" },
             },
-            ["SH.M.GVI.SMER.0010"] = {
+            ["SH.M.GGI.SMER.0010"] = {
                 Input = "Hello World\n-------Once-------\nabc\n-------Again-------\n",
                 Pattern = "^[^\n]+\n([%s%S]+)",
                 ExpectedChunks = { "-------Once-------\nabc\n-------Again-------\n" },
             },
-            ["SH.M.GVI.SMER.0020"] = {
+            ["SH.M.GGI.SMER.0020"] = {
                 Input = "-------Once-------\nabc\n-------Again-------",
                 Pattern = "^[^\n]*----\n([%s%S]+\n)----[%s%S]*$",
                 ExpectedChunks = { "abc\n" },
