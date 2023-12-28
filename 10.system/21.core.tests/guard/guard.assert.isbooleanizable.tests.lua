@@ -60,7 +60,7 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThro
             :Run() --@formatter:on
 
             -- ASSERT
-            U.IsFalse(gotException, options.GuardShouldThrowException)
+            U.Should.Be.False(gotException, options.GuardShouldThrowException)
         end
 )
 
@@ -90,6 +90,6 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
             :Run() --@formatter:on
 
             -- ASSERT
-            U.Assert.IsTrue(gotException)
+            U.Should.Be.True(gotException)
         end
 )

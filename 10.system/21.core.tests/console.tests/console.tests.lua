@@ -31,7 +31,7 @@ TestsGroup:AddFact("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMes
     consoleWriter:Write("Hello")
 
     -- ASSERT
-    U.Assert.AreEqual(allMessagesArray, { "Hello" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)
 
 TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
@@ -45,7 +45,7 @@ TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpecte
     consoleWriter:WriteLine("Hello")
 
     -- ASSERT
-    U.Assert.AreEqual(allMessagesArray, { "Hello\n" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello\n" })
 end)
 
 TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
@@ -59,5 +59,5 @@ TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintEx
     consoleWriter:WriteFormatted("Hello")
 
     -- ASSERT
-    U.Assert.AreEqual(allMessagesArray, { "Hello" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)

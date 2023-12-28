@@ -53,7 +53,7 @@ function _Engine:RunTestGroup(testGroupName)
 	
 	local group = _testGroups[testGroupName]
 	if not group then
-		VWoWUnit.Assert.Raise_(_format("test group %q does not exist", testGroupName))
+		VWoWUnit.Raise_(_format("test group %q does not exist", testGroupName))
 	end
 
 	group:Run()

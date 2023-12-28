@@ -15,7 +15,9 @@ _setfenv(1, {})
 if _VWoWUnit then
 	_print("Running VWoWUnit tests...\n ")
 
-	-- VWoWUnit.I:RunAllTestGroups()
+	-- _VWoWUnit.TestsEngine:RunAllTestGroups()
 
-	_VWoWUnit.I:RunTestGroupsByTag("guard-check-booleanizables")
+	-- _VWoWUnit.TestsEngine:RunTestGroupsByTag("guard-check-booleanizables")
+
+	_VWoWUnit.TestsEngine:RunTestGroupsByTag("lru-cache")
 end

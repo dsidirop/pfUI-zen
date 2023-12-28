@@ -124,7 +124,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
             :Run() --@formatter:on
 
             -- ASSERT
-            U.Assert.IsTrue(gambledItemInfo == nil)
-            U.Assert.IsTrue(properExceptionThrown)
+            U.Should.Be.True(gambledItemInfo == nil)
+            U.Should.Be.True(properExceptionThrown)
         end
 )

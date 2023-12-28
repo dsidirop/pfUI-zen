@@ -41,6 +41,6 @@ TestsGroup:AddTheory("StringsHelper.Match.GivenGreenInput.ShouldMatchExpectedRes
             local chunks = { StringsHelper.Match(options.Input, options.Pattern) }
 
             -- ASSERT
-            U.Assert.AreEqual(chunks, options.ExpectedChunks)
+            U.Should.Be.Equivalent(chunks, options.ExpectedChunks)
         end
 )

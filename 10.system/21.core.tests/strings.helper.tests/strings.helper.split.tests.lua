@@ -56,6 +56,6 @@ TestsGroup:AddTheory("StringsHelper.Split.GivenGreenInput.ShouldMatchExpectedRes
             local chunks = StringsHelper.Split(options.Input, options.Delimiter, options.MaxChunksCount)
             
             -- ASSERT
-            U.Assert.AreEqual(chunks, options.ExpectedChunks)
+            U.Should.Be.Equivalent(chunks, options.ExpectedChunks)
         end
 )
