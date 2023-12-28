@@ -1,20 +1,20 @@
-﻿local _setfenv, _importer, _VWoWUnit = (function()
+﻿local _setfenv, _importer, U = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _VWoWUnit = _assert(_g.VWoWUnit)
+    local U = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
 
-    return _setfenv, _importer, _VWoWUnit
+    return _setfenv, _importer, U
 end)()
 
 _setfenv(1, {})
 
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
 TestsGroup:AddTheory("StringsHelper.Split.GivenGreenInput.ShouldMatchExpectedResults",
         {
@@ -56,6 +56,6 @@ TestsGroup:AddTheory("StringsHelper.Split.GivenGreenInput.ShouldMatchExpectedRes
             local chunks = StringsHelper.Split(options.Input, options.Delimiter, options.MaxChunksCount)
             
             -- ASSERT
-            _VWoWUnit.AreEqual(chunks, options.ExpectedChunks)
+            U.Assert.AreEqual(chunks, options.ExpectedChunks)
         end
 )

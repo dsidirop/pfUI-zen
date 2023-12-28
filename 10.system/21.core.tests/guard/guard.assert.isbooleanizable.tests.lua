@@ -1,13 +1,13 @@
-﻿local _setfenv, _importer, _VWoWUnit = (function()
+﻿local _setfenv, _importer, U = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _VWoWUnit = _assert(_g.VWoWUnit)
+    local U = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
 
-    return _setfenv, _importer, _VWoWUnit
+    return _setfenv, _importer, U
 end)()
 
 _setfenv(1, {})
@@ -16,7 +16,7 @@ local Try = _importer("System.Try")
 local Guard = _importer("System.Guard")
 local Exception = _importer("System.Exceptions.Exception")
 
-local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup {
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Guard.Assert.IsBooleanizable",
     Tags = { "guard", "guard-check", "guard-check-booleanizables" }
 }
@@ -60,7 +60,7 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThro
             :Run() --@formatter:on
 
             -- ASSERT
-            _VWoWUnit.IsFalse(gotException, options.GuardShouldThrowException)
+            U.IsFalse(gotException, options.GuardShouldThrowException)
         end
 )
 
@@ -90,6 +90,6 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
             :Run() --@formatter:on
 
             -- ASSERT
-            _VWoWUnit.IsTrue(gotException)
+            U.Assert.IsTrue(gotException)
         end
 )

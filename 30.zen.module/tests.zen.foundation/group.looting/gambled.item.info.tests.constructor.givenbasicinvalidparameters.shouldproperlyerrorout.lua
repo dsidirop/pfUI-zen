@@ -21,7 +21,7 @@ local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contr
 local ArgumentOutOfRangeException           = _importer("System.Exceptions.ArgumentOutOfRangeException")
 local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ArgumentIsOfInappropriateTypeException")
 
-local TestsGroup = U.I:CreateOrUpdateGroup {
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
@@ -124,7 +124,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
             :Run() --@formatter:on
 
             -- ASSERT
-            U.IsTrue(gambledItemInfo == nil)
-            U.IsTrue(properExceptionThrown)
+            U.Assert.IsTrue(gambledItemInfo == nil)
+            U.Assert.IsTrue(properExceptionThrown)
         end
 )

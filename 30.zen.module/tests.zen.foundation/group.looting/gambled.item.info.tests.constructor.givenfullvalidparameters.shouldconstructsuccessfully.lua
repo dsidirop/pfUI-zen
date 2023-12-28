@@ -19,7 +19,7 @@ local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contr
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType")
 
-local TestsGroup = U.I:CreateOrUpdateGroup {
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
@@ -75,32 +75,32 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenFullValidParameter
             local gambledItemInfo = GambledItemInfo:New(options)
 
             -- ASSERT
-            U.AreEqual(gambledItemInfo:GetName(), StringsHelper.Trim(options.Name))
-            U.AreEqual(gambledItemInfo:GetGamblingId(), options.GamblingId)
-            U.AreEqual(gambledItemInfo:GetItemQuality(), options.ItemQuality)
-            U.AreEqual(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)
+            U.Assert.AreEqual(gambledItemInfo:GetName(), StringsHelper.Trim(options.Name))
+            U.Assert.AreEqual(gambledItemInfo:GetGamblingId(), options.GamblingId)
+            U.Assert.AreEqual(gambledItemInfo:GetItemQuality(), options.ItemQuality)
+            U.Assert.AreEqual(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)
 
-            U.AreEqual(gambledItemInfo:IsNeedable(), options.IsNeedable)
-            U.AreEqual(gambledItemInfo:IsGreedable(), options.IsGreedable)
-            U.AreEqual(gambledItemInfo:IsDisenchantable(), options.IsDisenchantable)
-            U.AreEqual(gambledItemInfo:IsTransmogrifiable(), options.IsTransmogrifiable)
+            U.Assert.AreEqual(gambledItemInfo:IsNeedable(), options.IsNeedable)
+            U.Assert.AreEqual(gambledItemInfo:IsGreedable(), options.IsGreedable)
+            U.Assert.AreEqual(gambledItemInfo:IsDisenchantable(), options.IsDisenchantable)
+            U.Assert.AreEqual(gambledItemInfo:IsTransmogrifiable(), options.IsTransmogrifiable)
 
-            U.AreEqual(gambledItemInfo:GetCount(), options.Count)
-            U.AreEqual(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
-            U.AreEqual(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
+            U.Assert.AreEqual(gambledItemInfo:GetCount(), options.Count)
+            U.Assert.AreEqual(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
+            U.Assert.AreEqual(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
 
-            U.AreEqual(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
-            U.AreEqual(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
-            U.AreEqual(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
+            U.Assert.AreEqual(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
+            U.Assert.AreEqual(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
+            U.Assert.AreEqual(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
 
-            U.AreEqual(gambledItemInfo:IsGreyQuality(), options.ItemQuality == EWowItemQuality.Grey)
-            U.AreEqual(gambledItemInfo:IsWhiteQuality(), options.ItemQuality == EWowItemQuality.White)
-            U.AreEqual(gambledItemInfo:IsBlueQuality(), options.ItemQuality == EWowItemQuality.Blue)
-            U.AreEqual(gambledItemInfo:IsGreenQuality(), options.ItemQuality == EWowItemQuality.Green)
-            U.AreEqual(gambledItemInfo:IsPurpleQuality(), options.ItemQuality == EWowItemQuality.Purple)
-            U.AreEqual(gambledItemInfo:IsOrangeQuality(), options.ItemQuality == EWowItemQuality.Orange)
+            U.Assert.AreEqual(gambledItemInfo:IsGreyQuality(), options.ItemQuality == EWowItemQuality.Grey)
+            U.Assert.AreEqual(gambledItemInfo:IsWhiteQuality(), options.ItemQuality == EWowItemQuality.White)
+            U.Assert.AreEqual(gambledItemInfo:IsBlueQuality(), options.ItemQuality == EWowItemQuality.Blue)
+            U.Assert.AreEqual(gambledItemInfo:IsGreenQuality(), options.ItemQuality == EWowItemQuality.Green)
+            U.Assert.AreEqual(gambledItemInfo:IsPurpleQuality(), options.ItemQuality == EWowItemQuality.Purple)
+            U.Assert.AreEqual(gambledItemInfo:IsOrangeQuality(), options.ItemQuality == EWowItemQuality.Orange)
 
-            U.AreEqual(gambledItemInfo:IsArtifactQuality(), options.ItemQuality == EWowItemQuality.Artifact)
-            U.AreEqual(gambledItemInfo:IsLegendaryQuality(), options.ItemQuality == EWowItemQuality.Legendary)
+            U.Assert.AreEqual(gambledItemInfo:IsArtifactQuality(), options.ItemQuality == EWowItemQuality.Artifact)
+            U.Assert.AreEqual(gambledItemInfo:IsLegendaryQuality(), options.ItemQuality == EWowItemQuality.Legendary)
         end
 )
