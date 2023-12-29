@@ -20,7 +20,7 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("System.Helpers.Tables")
+local Class = _namespacer("System.Helpers.Tables [Partial]")
 
 function Class.Clear(tableObject)
     _assert(_type(tableObject) == 'table')

@@ -12,7 +12,7 @@ end)()
 
 _setfenv(1, {})
 
-local Class = _namespacer("System.Time")
+local Class = _namespacer("System.Time [Partial]")
 
 function Class.Now()
     return _time()

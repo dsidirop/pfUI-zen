@@ -25,7 +25,7 @@ local ValueCannotBeNilException           = _importer("System.Exceptions.ValueCa
 local ValueIsOutOfRangeException          = _importer("System.Exceptions.ValueIsOutOfRangeException")
 local ValueIsOfInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException") --     @formatter:on
 
-local Guard = _namespacer("System.Guard")
+local Guard = _namespacer("System.Guard [Partial]")
 
 do
     Guard.Assert = _namespacer("System.Guard.Assert")
@@ -299,26 +299,24 @@ do
     end
 
     -- NAMESPACES
-    function Guard.Assert.IsNamespaceStringOrRegisteredType(value, optionalArgumentName)
-        return Reflection.IsString(value) or Reflection.TryGetNamespaceOfType(value) ~= nil
+    function Guard.Assert.IsNamespaceStringOrRegisteredClassProto(value, optionalArgumentName)
+        return Reflection.IsString(value) or Reflection.TryGetNamespaceOfClassProto(value) ~= nil
                 and Guard.Assert
-                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered type"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered proto"))
     end
 
     -- ISA
-    function Guard.Assert.IsInstanceOf(value, desiredType, optionalArgumentName)
-        return Reflection.IsInstanceOf(value, desiredType)
+    function Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
+        return Reflection.IsInstanceOf(value, desiredClassProto)
                 and Guard.Assert
-                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfClassProto(desiredClassProto) or "(desired proto is unknown!)")))
     end
 
-    function Guard.Assert.IsOptionallyInstanceOf(value, desiredType, optionalArgumentName)
+    function Guard.Assert.IsOptionallyInstanceOf(value, desiredClassProto, optionalArgumentName)
         if value == nil then
             return Guard.Assert
         end
         
-        return Reflection.IsInstanceOf(value, desiredType)
-                and Guard.Assert
-                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+        return Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
     end
 end

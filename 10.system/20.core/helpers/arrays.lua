@@ -17,7 +17,7 @@ _setfenv(1, {})
 
 local Guard = _importer("System.Guard")
 
-local Class = _namespacer("System.Helpers.Arrays")
+local Class = _namespacer("System.Helpers.Arrays [Partial]")
 
 function Class.Count(array)
     Guard.Assert.IsTable(array)

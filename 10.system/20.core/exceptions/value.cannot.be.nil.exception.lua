@@ -20,7 +20,7 @@ local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --     @formatter:on
 
-local Class = _namespacer("System.Exceptions.ValueCannotBeNilException")
+local Class = _namespacer("System.Exceptions.ValueCannotBeNilException [Partial]")
 
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)

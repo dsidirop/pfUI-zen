@@ -23,7 +23,7 @@ local Classify = _importer("System.Classify")
 
 local TablesHelper = _importer("System.Helpers.Tables")
 
-local Class = _namespacer("System.Event")
+local Class = _namespacer("System.Event [Partial]")
 
 function Class:New()
     Scopify(EScopes.Function, self)

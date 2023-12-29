@@ -22,7 +22,7 @@ local TablesHelper        = _importer("System.Helpers.Tables")
 local StringsHelper       = _importer("System.Helpers.Strings")
 local WoWDefaultChatFrame = _importer("System.Externals.WoW.DefaultChatFrame") --     @formatter:on
 
-local Console = _namespacer("System.Console")
+local Console = _namespacer("System.Console [Partial]")
 
 Console.Writer = {}
 

@@ -17,7 +17,7 @@ local Guard = _importer("System.Guard")
 local Reflection = _importer("System.Reflection")
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local Class = _namespacer("System.Helpers.Booleans")
+local Class = _namespacer("System.Helpers.Booleans [Partial]")
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil

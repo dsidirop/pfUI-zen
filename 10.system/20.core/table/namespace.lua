@@ -10,7 +10,7 @@ local _tableRemove = assert(_table.remove)
 _g = nil
 _setfenv(1, {})
 
-local Table = _namespacer("System.Table")
+local Table = _namespacer("System.Table [Partial]")
 
 Table.Sort = _tableSort
 Table.Insert = _tableInsert

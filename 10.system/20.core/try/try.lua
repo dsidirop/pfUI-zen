@@ -1,4 +1,4 @@
-﻿local _setfenv, _pcall, _importer, _namespacer_bind = (function()
+﻿local _setfenv, _pcall, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,9 +6,9 @@
 
     local _pcall = _assert(_g.pcall)
     local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
+    local _namespacer = _assert(_g.pvl_namespacer_add)
 
-    return _setfenv, _pcall, _importer, _namespacer_bind
+    return _setfenv, _pcall, _importer, _namespacer
 end)()
 
 _setfenv(1, {}) --                                                                                         @formatter:off
@@ -23,23 +23,19 @@ local Rethrow                          = _importer("System.Exceptions.Rethrow")
 local Exception                        = _importer("System.Exceptions.Exception")
 local ExceptionsDeserializationFactory = _importer("System.Try.ExceptionsDeserializationFactory") --       @formatter:on
 
-local Class = {}
-local ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
+local Class = _namespacer("System.Try [Partial]")
 
-_namespacer_bind("System.Try", function(action)
-    return Class:New(action, ExceptionsDeserializationFactorySingleton)
-end)
-
+Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
 function Class:New(action, exceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
-    Guard.Assert.IsInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsOptionallyInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
     return Classify(self, {
         _action = action,
         _allExceptionHandlers = {},
-        _exceptionsDeserializationFactory = exceptionsDeserializationFactory,
+        _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,
     })
 end
 
@@ -48,11 +44,11 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Assert.IsNamespaceStringOrRegisteredType(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
+    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.TryGetNamespaceOfType(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceOfClassProto(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -82,7 +78,7 @@ function Class:Run()
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceOfType(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceOfClassProto(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 

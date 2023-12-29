@@ -13,7 +13,7 @@ end)()
 
 _setfenv(1, {})
 
-local Debug = _namespacer("System.Debug")
+local Debug = _namespacer("System.Debug [Partial]")
 
 Debug.Assert = _assert
 

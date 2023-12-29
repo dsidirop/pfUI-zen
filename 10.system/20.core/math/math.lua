@@ -1,10 +1,12 @@
 local _g = assert(_G or getfenv(0))
 local _setfenv = assert(_g.setfenv)
-local _namespacer_binder = assert(_g.pvl_namespacer_bind)
+local _namespacer = assert(_g.pvl_namespacer_add)
 
-local _math = assert(_g.math)
+local _mathFloor = assert((_g.math or {}).floor)
 
 _g = nil
 _setfenv(1, {})
 
-_namespacer_binder("System.Math", _math)
+local Math = _namespacer("System.Math [Partial]")
+
+Math.Floor = _mathFloor

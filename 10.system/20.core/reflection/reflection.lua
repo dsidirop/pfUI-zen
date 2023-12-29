@@ -4,14 +4,15 @@ local Math = using "System.Math"
 local STypes = using "System.Reflection.STypes"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+local ESymbolType = using "System.Namespacing.ESymbolType"
 
-local Reflection = using "[namespace]" "System.Reflection"
+local Reflection = using "[declare]" "System.Reflection [Partial]"
 
 Scopify(EScopes.Function, {})
 
 Reflection.GetRawType = using "System.GetRawType"
-Reflection.TryGetNamespaceOfType = using "System.Namespacing.TryGetNamespaceOfType"
-Reflection.TryFindTypeViaNamespace = using "System.Importing.TryFindTypeViaNamespace"
+Reflection.TryGetNamespaceOfClassProto = using "System.Namespacing.TryGetNamespaceOfClassProto"
+Reflection.TryGetSymbolProtoViaNamespace = using "System.Importing.TryGetSymbolProtoViaNamespace"
 
 function Reflection.IsTable(value)
     return Reflection.GetRawType(value) == STypes.Table
@@ -46,7 +47,7 @@ function Reflection.IsOptionallyBoolean(value)
 end
 
 function Reflection.IsInteger(value)
-    return Reflection.IsNumber(value) and Math.floor(value) == value
+    return Reflection.IsNumber(value) and Math.Floor(value) == value
 end
 
 function Reflection.IsOptionallyInteger(value)
@@ -69,12 +70,12 @@ function Reflection.IsOptionallyTableOrString(value)
     return value == nil or Reflection.IsTableOrString(value)
 end
 
-function Reflection.IsInstanceOf(object, desiredType)
+function Reflection.IsInstanceOf(object, desiredClassProto)
     if object == nil then
         return false
     end
 
-    return Reflection.TryGetNamespaceOfClassInstance(object) == Reflection.TryGetNamespaceOfType(desiredType)
+    return Reflection.TryGetNamespaceOfClassInstance(object) == Reflection.TryGetNamespaceOfClassProto(desiredClassProto)
 end
 
 function Reflection.TryGetNamespaceFromObjectOrItsRawType(object)
@@ -86,7 +87,7 @@ function Reflection.TryGetNamespaceOfObject(object)
         return nil
     end
     
-    return Reflection.TryGetNamespaceOfClassInstance(object) or Reflection.TryGetNamespaceOfType(object)
+    return Reflection.TryGetNamespaceOfClassInstance(object) or Reflection.TryGetNamespaceOfClassProto(object)
 end
 
 function Reflection.TryGetNamespaceOfClassInstance(object)
@@ -94,14 +95,14 @@ function Reflection.TryGetNamespaceOfClassInstance(object)
         return nil
     end
     
-    return Reflection.TryGetNamespaceOfType(object.__index)
+    return Reflection.TryGetNamespaceOfClassProto(object.__index)
 end
 
-function Reflection.TryFindClassTypeViaNamespace(namespacePath)
-    local classType = Reflection.TryFindTypeViaNamespace(namespacePath)
-    if not Reflection.IsTable(classType) then
+function Reflection.TryGetClassProtoViaNamespace(namespacePath)
+    local proto, symbolType = Reflection.TryGetSymbolProtoViaNamespace(namespacePath)
+    if proto == nil or symbolType == nil or symbolType ~= ESymbolType.Class then
         return nil
     end
     
-    return classType
+    return proto
 end

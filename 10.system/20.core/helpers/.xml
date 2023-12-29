@@ -3,7 +3,6 @@
     <Include file="arrays.lua"/>
     <Include file="tables.lua"/>
     
-    <Include file="strings.lua"/>
     <Include file="strings.find.lua"/>
     <Include file="strings.isdudstring.lua"/>
     <Include file="strings.tostring.lua"/>

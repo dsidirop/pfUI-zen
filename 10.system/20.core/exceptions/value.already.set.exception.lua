@@ -19,7 +19,7 @@ local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
-local Class = _namespacer("System.Exceptions.ValueAlreadySetException")
+local Class = _namespacer("System.Exceptions.ValueAlreadySetException [Partial]")
 
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
@@ -99,7 +99,7 @@ function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
         return optionalExpectationOrExpectedType
     end
 
-    local namespace = Reflection.TryGetNamespaceOfType(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
+    local namespace = Reflection.TryGetNamespaceOfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
     if namespace ~= nil then
         return namespace
     end

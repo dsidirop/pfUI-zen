@@ -19,7 +19,7 @@ local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
-local Class = _namespacer("System.Exceptions.Exception")
+local Class = _namespacer("System.Exceptions.Exception [Partial]")
 
 function Class:New(message)
     Scopify(EScopes.Function, self)
