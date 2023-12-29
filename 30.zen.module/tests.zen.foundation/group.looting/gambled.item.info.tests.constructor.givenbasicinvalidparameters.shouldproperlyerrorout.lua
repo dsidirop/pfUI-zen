@@ -18,8 +18,8 @@ local Try     = _importer("System.Try")
 local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
 local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
 
-local ArgumentOutOfRangeException           = _importer("System.Exceptions.ArgumentOutOfRangeException")
-local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ArgumentIsOfInappropriateTypeException")
+local ValueIsOutOfRangeException           = _importer("System.Exceptions.ValueIsOutOfRangeException")
+local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
@@ -111,7 +111,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
             local gambledItemInfo = Try(function() --@formatter:off
                 return GambledItemInfo:New(options)
             end)
-            :Catch(ArgumentOutOfRangeException, function(ex)
+            :Catch(ValueIsOutOfRangeException, function(ex)
                 -- _importer("System.Console").Out:WriteFormatted("%s", ex)
                 
                 properExceptionThrown = true

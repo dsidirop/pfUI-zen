@@ -66,7 +66,7 @@ end
 function Class:Start()
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsTable(_settings, "attempt to run without any settings being loaded")
+    Guard.Assert.IsNotNil(_settings, "Self.Settings")
 
     if _isRunning then
         return self -- nothing to do

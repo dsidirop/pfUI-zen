@@ -1,13 +1,14 @@
-﻿local _setfenv, _importer, _namespacer = (function()
+﻿local _setfenv, _tostring, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
+    local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _importer, _namespacer
+    return _setfenv, _tostring, _importer, _namespacer
 end)()
 
 _setfenv(1, {}) --                                                                 @formatter:off
@@ -19,22 +20,22 @@ local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
-local Class = _namespacer("System.Exceptions.AlreadySetException")
+local Class = _namespacer("System.Exceptions.ValueIsOutOfRangeException")
 
-function Class:New(optionalArgumentName)
+function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
+    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a string or table or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(optionalArgumentName),
+        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
     })
 end
 
--- getters
 function Class:GetMessage()
     Scopify(EScopes.Function, self)
 
@@ -55,7 +56,7 @@ function Class:ChainSetMessage(message)
 
     _message = message or "(exception message not available)"
     _stringified = nil
-    
+
     return self
 end
 
@@ -78,12 +79,19 @@ function Class:ToString()
 end
 
 -- private space
-function Class.FormulateMessage_(optionalArgumentName)
+function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
-            and "Property/field has already been set"
-            or optionalArgumentName .. " has already been set"
+            and "Value out of range"
+            or "Value '" .. optionalArgumentName .. "' is out of range"
+
+    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    if expectationString ~= nil then
+        message = message .. "(expected " .. _tostring(expectationString) .. " - got '" .. _tostring(value) .. "')"
+    else
+        message = message .. "(got '" .. _tostring(value) .. "')"
+    end
 
     return message
 end

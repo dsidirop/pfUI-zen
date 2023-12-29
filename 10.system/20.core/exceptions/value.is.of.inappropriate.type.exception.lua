@@ -11,26 +11,27 @@
     return _setfenv, _tostring, _importer, _namespacer
 end)()
 
-_setfenv(1, {}) --                                                         @formatter:off
+_setfenv(1, {}) --                                                                 @formatter:off
 
 local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
 local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
-local ExceptionUtilities = _importer("System.Exceptions.Utilities") --     @formatter:on
+local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
-local Class = _namespacer("System.Exceptions.ArgumentNilException")
+local Class = _namespacer("System.Exceptions.ValueIsOfInappropriateTypeException")
 
-function Class:New(optionalArgumentName)
+function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
+    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a type (table) or a description (string) or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(optionalArgumentName),
+        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
-        
+
         _stringified = nil
     })
 end
@@ -73,19 +74,45 @@ end
 
 function Class:ToString()
     Scopify(EScopes.Function, self)
-
+    
     return self:__tostring()
 end
 
 -- private space
-function Class.FormulateMessage_(optionalArgumentName)
+function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
-            and "Argument cannot be nil"
-            or "Argument '" .. _tostring(optionalArgumentName) .. "' cannot be nil"
+            and "Value is of inappropriate type"
+            or "'" .. optionalArgumentName .. "' is of inappropriate type"
 
+    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    if expectationString ~= nil then
+        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
+    else
+        message = message .. " (its type is '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
+    end
+    
     return message
+end
+
+function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    Scopify(EScopes.Function, Class)
+
+    if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then
+        return nil
+    end
+
+    if Reflection.IsString(optionalExpectationOrExpectedType) then
+        return optionalExpectationOrExpectedType
+    end
+
+    local namespace = Reflection.TryGetNamespaceOfType(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
+    if namespace ~= nil then
+        return namespace
+    end
+
+    return optionalExpectationOrExpectedType
 end
 
 function Class:__tostring()

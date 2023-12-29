@@ -11,27 +11,26 @@
     return _setfenv, _tostring, _importer, _namespacer
 end)()
 
-_setfenv(1, {}) --                                                                 @formatter:off
+_setfenv(1, {}) --                                                         @formatter:off
 
 local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
 local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
-local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
+local ExceptionUtilities = _importer("System.Exceptions.Utilities") --     @formatter:on
 
-local Class = _namespacer("System.Exceptions.ArgumentOutOfRangeException")
+local Class = _namespacer("System.Exceptions.ValueCannotBeNilException")
 
-function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
-    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a string or table or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = Class.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
-
+        
         _stringified = nil
     })
 end
@@ -79,40 +78,14 @@ function Class:ToString()
 end
 
 -- private space
-function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class.FormulateMessage_(optionalArgumentName)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
-            and "Argument out of range"
-            or "Argument '" .. _tostring(optionalArgumentName) .. "' is out of range"
-
-    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
-    if expectationString ~= nil then
-        message = message .. "(expected " .. _tostring(expectationString) .. " - got '" .. _tostring(value) .. "')"
-    else
-        message = message .. "(got '" .. _tostring(value) .. "')"
-    end
+            and "Value cannot be nil"
+            or "'" .. optionalArgumentName .. "' cannot be nil"
 
     return message
-end
-
-function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
-    Scopify(EScopes.Function, Class)
-
-    if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then
-        return nil
-    end
-
-    if Reflection.IsString(optionalExpectationOrExpectedType) then
-        return optionalExpectationOrExpectedType
-    end
-
-    local namespace = Reflection.TryGetNamespaceOfType(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
-    if namespace ~= nil then
-        return namespace
-    end
-
-    return optionalExpectationOrExpectedType
 end
 
 function Class:__tostring()

@@ -5,8 +5,8 @@
     <Include file="utilities.lua"/>
 
     <Include file="exception.lua"/>
-    <Include file="already.set.exception.lua"/>
-    <Include file="argument.nil.exception.lua"/>
-    <Include file="argument.out.of.range.exception.lua"/>
-    <Include file="argument.is.of.inappropriate.type.exception.lua"/>
+    <Include file="value.already.set.exception.lua"/>
+    <Include file="value.cannot.be.nil.exception.lua"/>
+    <Include file="value.is.out.of.range.exception.lua"/>
+    <Include file="value.is.of.inappropriate.type.exception.lua"/>
 </Ui>

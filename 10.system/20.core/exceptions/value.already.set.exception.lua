@@ -1,14 +1,13 @@
-﻿local _setfenv, _tostring, _importer, _namespacer = (function()
+﻿local _setfenv, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _tostring = _assert(_g.tostring)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     
-    return _setfenv, _tostring, _importer, _namespacer
+    return _setfenv, _importer, _namespacer
 end)()
 
 _setfenv(1, {}) --                                                                 @formatter:off
@@ -20,22 +19,22 @@ local Classify           = _importer("System.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
-local Class = _namespacer("System.Exceptions.ArgumentIsOfInappropriateTypeException")
+local Class = _namespacer("System.Exceptions.ValueAlreadySetException")
 
-function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
 
     Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
-    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a type (table) or a description (string) or nil")
 
     return Classify(self, {
-        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = Class.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
 
         _stringified = nil
     })
 end
 
+-- getters
 function Class:GetMessage()
     Scopify(EScopes.Function, self)
 
@@ -56,7 +55,7 @@ function Class:ChainSetMessage(message)
 
     _message = message or "(exception message not available)"
     _stringified = nil
-
+    
     return self
 end
 
@@ -74,25 +73,18 @@ end
 
 function Class:ToString()
     Scopify(EScopes.Function, self)
-    
+
     return self:__tostring()
 end
 
 -- private space
-function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class.FormulateMessage_(optionalArgumentName)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
-            and "Argument is of inappropriate type"
-            or "Argument '" .. _tostring(optionalArgumentName) .. "' is of inappropriate type"
+            and "Property/field has already been set"
+            or "'" .. optionalArgumentName .. "' has already been set"
 
-    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
-    if expectationString ~= nil then
-        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
-    else
-        message = message .. " (its type is '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
-    end
-    
     return message
 end
 

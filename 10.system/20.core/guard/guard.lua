@@ -15,15 +15,15 @@
     return _setfenv, _next, _strlen, _strfind, _strupper, _tostring, _importer, _namespacer
 end)()
 
-_setfenv(1, {}) --                                                                                                          @formatter:off
+_setfenv(1, {}) --                                                                                                    @formatter:off
 
 local Reflection = _importer("System.Reflection")
 
-local Throw                                  = _importer("System.Exceptions.Throw")
-local AlreadySetException                    = _importer("System.Exceptions.AlreadySetException")
-local ArgumentNilException                   = _importer("System.Exceptions.ArgumentNilException")
-local ArgumentOutOfRangeException            = _importer("System.Exceptions.ArgumentOutOfRangeException")
-local ArgumentIsOfInappropriateTypeException = _importer("System.Exceptions.ArgumentIsOfInappropriateTypeException") --     @formatter:on
+local Throw                               = _importer("System.Exceptions.Throw")
+local ValueAlreadySetException            = _importer("System.Exceptions.ValueAlreadySetException")
+local ValueCannotBeNilException           = _importer("System.Exceptions.ValueCannotBeNilException")
+local ValueIsOutOfRangeException          = _importer("System.Exceptions.ValueIsOutOfRangeException")
+local ValueIsOfInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException") --     @formatter:on
 
 local Guard = _namespacer("System.Guard")
 
@@ -33,20 +33,20 @@ do
     function Guard.Assert.IsUnset(value, optionalArgumentName)
         return value == nil
                 and Guard.Assert
-                or Throw(AlreadySetException:New(optionalArgumentName))
+                or Throw(ValueAlreadySetException:New(optionalArgumentName))
     end
     
     function Guard.Assert.IsNotNil(value, optionalArgumentName)
         return value ~= nil
                 and Guard.Assert
-                or Throw(ArgumentNilException:New(optionalArgumentName))
+                or Throw(ValueCannotBeNilException:New(optionalArgumentName))
     end
 
     -- TABLES
     function Guard.Assert.IsTable(value, optionalArgumentName)
         return Reflection.IsTable(value)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "table"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table"))
     end
 
     function Guard.Assert.IsOptionallyTable(value, optionalArgumentName)
@@ -57,11 +57,11 @@ do
 
     function Guard.Assert.IsNonEmptyTable(value, optionalArgumentName)
         if not Reflection.IsTable(value) then
-            Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "table"))
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table"))
         end
         
         if _next(value) == nil then
-            Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "non-empty table"))
+            Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "non-empty table"))
         end
 
         return Guard.Assert
@@ -77,7 +77,7 @@ do
     function Guard.Assert.IsEnumValue(enumType, value, optionalArgumentName)
         return enumType.IsValid(value)
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, enumType))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, enumType))
     end
     
     function Guard.Assert.IsOptionallyEnumValue(enumType, value, optionalArgumentName)
@@ -90,7 +90,7 @@ do
     function Guard.Assert.IsNumber(value, optionalArgumentName)
         return Reflection.IsNumber(value)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "number"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "number"))
     end
 
     function Guard.Assert.IsOptionallyNumber(value, optionalArgumentName)
@@ -103,7 +103,7 @@ do
     function Guard.Assert.IsInteger(value, optionalArgumentName)
         return Reflection.IsInteger(value)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "integer"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "integer"))
     end
 
     function Guard.Assert.IsPositiveInteger(value, optionalArgumentName)
@@ -111,7 +111,7 @@ do
         
         return value > 0
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer"))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "positive integer"))
     end
 
     function Guard.Assert.IsPositiveIntegerOrZero(value, optionalArgumentName)
@@ -119,7 +119,7 @@ do
 
         return value >= 0
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero"))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero"))
     end
 
     function Guard.Assert.IsPositiveIntegerOfMaxValue(value, maxValue, optionalArgumentName)
@@ -127,7 +127,7 @@ do
         
         return value > 0 and value <= maxValue
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer of max value " .. maxValue))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "positive integer of max value " .. maxValue))
     end
 
     function Guard.Assert.IsPositiveIntegerOrZeroOfMaxValue(value, maxValue, optionalArgumentName)
@@ -135,7 +135,7 @@ do
         
         return value >= 0 and value <= maxValue
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero of max value " .. maxValue))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "positive integer or zero of max value " .. maxValue))
     end
 
     function Guard.Assert.IsOptionallyPositiveInteger(value, optionalArgumentName)
@@ -176,7 +176,7 @@ do
 
         return value >= 0 and value <= 1
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "number between [0, 1]"))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "number between [0, 1]"))
     end
 
     function Guard.Assert.IsOptionallyRatioNumber(value, optionalArgumentName)
@@ -191,7 +191,7 @@ do
     function Guard.Assert.IsBooleanizable(value, optionalArgumentName)
         return Guard.Assert.IsBooleanizable_(value)
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "booleanizable value"))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "booleanizable value"))
     end
     
     function Guard.Assert.IsOptionallyBooleanizable(value, optionalArgumentName)
@@ -232,7 +232,7 @@ do
     function Guard.Assert.IsString(value, optionalArgumentName)
         return Reflection.IsString(value)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "string"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "string"))
     end
 
     function Guard.Assert.IsNonDudString(value, optionalArgumentName)
@@ -240,7 +240,7 @@ do
 
         return not Guard.Assert.IsDudString_(value)
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "non-dud string"))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "non-dud string"))
     end
 
     function Guard.Assert.IsNonDudStringOfMaxLength(value, maxLength, optionalArgumentName)
@@ -248,7 +248,7 @@ do
 
         return Guard.Assert.IsStringOfMaxLength_(value, maxLength)
                 and Guard.Assert
-                or Throw(ArgumentOutOfRangeException:New(value, optionalArgumentName, "string of max length " .. _tostring(maxLength)))
+                or Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "string of max length " .. _tostring(maxLength)))
     end
 
     function Guard.Assert.IsOptionallyString(value, optionalArgumentName)
@@ -289,7 +289,7 @@ do
     function Guard.Assert.IsFunction(value, optionalArgumentName)
         return Reflection.IsFunction(value)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "function"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "function"))
     end
 
     function Guard.Assert.IsOptionallyFunction(value, optionalArgumentName)
@@ -302,14 +302,14 @@ do
     function Guard.Assert.IsNamespaceStringOrRegisteredType(value, optionalArgumentName)
         return Reflection.IsString(value) or Reflection.TryGetNamespaceOfType(value) ~= nil
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered type"))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered type"))
     end
 
     -- ISA
     function Guard.Assert.IsInstanceOf(value, desiredType, optionalArgumentName)
         return Reflection.IsInstanceOf(value, desiredType)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
 
     function Guard.Assert.IsOptionallyInstanceOf(value, desiredType, optionalArgumentName)
@@ -319,6 +319,6 @@ do
         
         return Reflection.IsInstanceOf(value, desiredType)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+                or Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
 end
