@@ -20,14 +20,14 @@ local Guard = _importer("System.Guard")
 local Class = _namespacer("System.Helpers.Arrays")
 
 function Class.Count(array)
-    Guard.Check.IsTable(array)
+    Guard.Assert.IsTable(array)
 
     return _getn(array)
 end
 
 function Class.Append(array, value)
-    Guard.Check.IsTable(array)
-    Guard.Check.IsNotNil(value)
+    Guard.Assert.IsTable(array)
+    Guard.Assert.IsNotNil(value)
 
     return _tableInsert(array, value)
 end

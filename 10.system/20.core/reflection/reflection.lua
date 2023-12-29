@@ -20,38 +20,38 @@ local STypes = _importer("System.Reflection.STypes")
 
 local Reflection = _namespacer("System.Reflection")
 
-Reflection.Type = _type
+Reflection.RawType = _type
 
 function Reflection.IsTable(value)
-    return Reflection.Type(value) == STypes.Table
+    return Reflection.RawType(value) == STypes.Table
 end
 
 function Reflection.IsOptionallyTable(value)
-    return value == nil or Reflection.Type(value) == STypes.Table
+    return value == nil or Reflection.RawType(value) == STypes.Table
 end
 
 function Reflection.IsFunction(value)
-    return Reflection.Type(value) == STypes.Function
+    return Reflection.RawType(value) == STypes.Function
 end
 
 function Reflection.IsOptionallyFunction(value)
-    return value == nil or Reflection.Type(value) == STypes.Function
+    return value == nil or Reflection.RawType(value) == STypes.Function
 end
 
 function Reflection.IsNumber(value)
-    return Reflection.Type(value) == STypes.Number
+    return Reflection.RawType(value) == STypes.Number
 end
 
 function Reflection.IsOptionallyNumber(value)
-    return value == nil or Reflection.Type(value) == STypes.Number
+    return value == nil or Reflection.RawType(value) == STypes.Number
 end
 
 function Reflection.IsBoolean(value)
-    return Reflection.Type(value) == STypes.Boolean
+    return Reflection.RawType(value) == STypes.Boolean
 end
 
 function Reflection.IsOptionallyBoolean(value)
-    return value == nil or Reflection.Type(value) == STypes.Boolean
+    return value == nil or Reflection.RawType(value) == STypes.Boolean
 end
 
 function Reflection.IsInteger(value)
@@ -63,15 +63,15 @@ function Reflection.IsOptionallyInteger(value)
 end
 
 function Reflection.IsString(value)
-    return Reflection.Type(value) == STypes.String
+    return Reflection.RawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyString(value)
-    return value == nil or Reflection.Type(value) == STypes.String
+    return value == nil or Reflection.RawType(value) == STypes.String
 end
 
 function Reflection.IsTableOrString(value)
-    return Reflection.Type(value) == STypes.Table or Reflection.Type(value) == STypes.String
+    return Reflection.RawType(value) == STypes.Table or Reflection.RawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyTableOrString(value)
@@ -86,6 +86,9 @@ function Reflection.IsInstanceOf(object, desiredType)
     return Reflection.GetNamespaceOfInstance(object) == Reflection.GetNamespaceOfType(desiredType)
 end
 
+function Reflection.GetNamespaceOfInstanceOrRawType(object)
+    return Reflection.GetNamespaceOfInstance(object) or Reflection.RawType(object)    
+end
 
 function Reflection.GetNamespaceOfInstance(object)
     if object == nil then

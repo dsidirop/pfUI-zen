@@ -1,21 +1,17 @@
-local _g, _assert, _type, _print, _pairs, _strlen, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _setmetatable = (function()
+local _g, _assert, _type, _print, _strlen, _format, _setfenv, _tableGetn, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
 	local _type = _assert(_g.type)
-	local _pairs = _assert(_g.pairs)
 	local _print = _assert(_g.print)
 	local _strlen = _assert(_g.string.len)
-	local _strsub = _assert(_g.string.sub)
 	local _format = _assert(_g.string.format)
-	local _tostring = _assert(_g.tostring)
 	local _tableGetn = _assert(_g.table.getn)
-	local _debugstack = _assert(_g.debugstack)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g, _assert, _type, _print, _pairs, _strlen, _strsub, _format, _tostring, _setfenv, _tableGetn, _debugstack, _setmetatable
+	return _g, _assert, _type, _print, _strlen, _format, _setfenv, _tableGetn, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -24,24 +20,26 @@ local VWoWUnit = _g.VWoWUnit or {}
 _g.VWoWUnit = VWoWUnit
 _g = nil
 
-function VWoWUnit:New()
+local _Engine = {} -- local to this file only and instantiated only once at the bottom of this file
+
+function _Engine:New()
 	local instance = {
 		_testTags = {},
 		_testGroups = {},
 	}
 
 	_setmetatable(instance, self)
-	VWoWUnit.__index = self
+	self.__index = self
 
 	return instance
 end
 
 --[[ Run ]]--
 
-function VWoWUnit:RunAllTestGroups()
+function _Engine:RunAllTestGroups()
 	_setfenv(1, self)
 
-	for _, group in VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
 		_print("** Running test-group " .. group:GetName())
 		group:Run()
 		_print("")
@@ -50,28 +48,28 @@ function VWoWUnit:RunAllTestGroups()
 	-- 00  we want to ensure that tests with short names like system.exceptions to be run before tests with long names like pavilion.xyz.foo.bar 
 end
 
-function VWoWUnit:RunTestGroup(testGroupName)
+function _Engine:RunTestGroup(testGroupName)
 	_setfenv(1, self)
 	
 	local group = _testGroups[testGroupName]
 	if not group then
-		VWoWUnit.Raise_(_format("test group '%q' does not exist", testGroupName))
+		VWoWUnit.Raise_(_format("test group %q does not exist", testGroupName))
 	end
 
 	group:Run()
 end
 
-function VWoWUnit:RunTestGroupsByTag(tagName)
+function _Engine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
-	for _, group in VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
+	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
 end
 
 --[[ Registry ]]--
 
-function VWoWUnit:CreateOrUpdateGroup(options)
+function _Engine:CreateOrUpdateGroup(options)
 	_setfenv(1, self)
 	
 	_assert(_type(options) == "table")
@@ -94,13 +92,13 @@ function VWoWUnit:CreateOrUpdateGroup(options)
 	return group
 end
 
-function VWoWUnit:GetGroup(name)
+function _Engine:GetGroup(name)
 	_setfenv(1, self)
 	
 	return _testGroups[name]
 end
 
-function VWoWUnit:AssociateWithTestTag(group, tag)
+function _Engine:AssociateWithTestTag(group, tag)
 	_setfenv(1, self)
 
 	_testTags[tag] = _testTags[tag] or {}
@@ -108,88 +106,10 @@ function VWoWUnit:AssociateWithTestTag(group, tag)
 	_testTags[tag][group:GetName()] = group
 end
 
+-- private space
 
---[[ Assertions ]]--
-
-function VWoWUnit.AreEqual(a, b)
-	local path, aa, bb = VWoWUnit.Difference_(a, b)
-	if path == nil then
-		return
-	end
-	
-	local message = _format("expected %q, got %q", _tostring(bb), _tostring(aa))
-	if path ~= nil and path ~= "" then
-		message = _format("tables differ at %q - %s", _strsub(path, 2), message)
-	end
-
-	VWoWUnit.Raise_(message)
-end
-
-function VWoWUnit.IsTrue(value)
-	if value then
-		return
-	end
-
-	VWoWUnit.Raise_(_format("expected some value, got %q", _tostring(value)))
-end
-
-function VWoWUnit.IsFalse(value)
-	if not value then
-		return
-	end
-
-	VWoWUnit.Raise_(_format("expected no value, got %q", _tostring(value)))
-end
-
-
---[[ Helpers ]]--
-
-function VWoWUnit.FindInTableIfX_(tableObject, predicate)
-	for k, v in _pairs(tableObject) do
-		if predicate(v) then
-			return k, v
-		end
-	end
-
-	return nil
-end
-
-local ERROR_COLOR_CODE = "|cffff5555"
-function VWoWUnit.Raise_(message)
-	-- its absolutely vital to use assert() instead of error() because error() is overriden in addons like pfui to only print without
-	-- actually raising an error as an exception which is not what we want to happen here   by using assert() we ensure that we get an exception
-	_assert(false, ERROR_COLOR_CODE .. message .. "\n" .. _debugstack(3))
-end
-
-function VWoWUnit.IsTable_(value)
-	return _type(value) == "table"
-end
-
-function VWoWUnit.Difference_(a, b)
-	if VWoWUnit.IsTable_(a) and VWoWUnit.IsTable_(b) then
-		for key, value in _pairs(a) do
-			local path, aa, bb = VWoWUnit.Difference_(value, b[key])
-			if path then
-				return "." .. key .. path, aa, bb
-			end
-		end
-
-		for key, value in _pairs(b) do
-			if a[key] == nil then
-				return "." .. key, nil, value
-			end
-		end
-
-	elseif a ~= b then
-		return "", a, b
-	end
-
-	return nil
-end
-
-
-function VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(testGroups)
-	_setfenv(1, VWoWUnit)
+function _Engine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
+	_setfenv(1, _Engine)
 
 	if testGroups == nil then
 		return {}
@@ -203,4 +123,4 @@ function VWoWUnit.GetGroupTablePairsOrderedByGroupNames_(testGroups)
 	end)
 end
 
-VWoWUnit.I = VWoWUnit:New()
+VWoWUnit.TestsEngine = _Engine:New()

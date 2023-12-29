@@ -21,7 +21,7 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.Trim(input)
     Scopify(EScopes.Function, StringsHelper)
 
-    Guard.Check.IsString(input, "input")
+    Guard.Assert.IsString(input, "input")
     
     if input == "" then
         return input

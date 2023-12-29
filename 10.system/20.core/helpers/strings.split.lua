@@ -24,9 +24,9 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Scopify(EScopes.Function, StringsHelper)
     
-    Guard.Check.IsString(input, "input")
-    Guard.Check.IsOptionallyString(optionalDelimiter, "optionalDelimiter")
-    Guard.Check.IsOptionallyPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
+    Guard.Assert.IsString(input, "input")
+    Guard.Assert.IsOptionallyString(optionalDelimiter, "optionalDelimiter")
+    Guard.Assert.IsOptionallyPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
     
     if not input then
         return {}

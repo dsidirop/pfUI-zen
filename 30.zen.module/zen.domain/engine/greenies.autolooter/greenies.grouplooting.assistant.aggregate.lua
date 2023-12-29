@@ -175,7 +175,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     end
 
     local gambledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
-    Console.Out:WriteFormatted("** GLL.PLIGD030 rolledItemInfo: ", gambledItemInfo)
+    Console.Out:WriteFormatted("** GLL.PLIGD030 rolledItemInfo: %s", gambledItemInfo)
     if not gambledItemInfo:IsGreenQuality() then
         Console.Out:WriteFormatted("** GLL.PLIGD040 it's not green ...")
         return

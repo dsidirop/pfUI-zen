@@ -1,34 +1,34 @@
-﻿local _setfenv, _importer, _VWoWUnit = (function()
+﻿local U, _setfenv, _importer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _VWoWUnit = _assert(_g.VWoWUnit)
+    local U = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
 
-    return _setfenv, _importer, _VWoWUnit
+    return U, _setfenv, _importer
 end)()
 
 _setfenv(1, {})
 
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
-TestsGroup:AddTheory("StringsHelper.Match.GivenValidInput.ShouldMatchExpectedResults",
+TestsGroup:AddTheory("StringsHelper.Match.GivenGreenInput.ShouldMatchExpectedResults",
         {
-            ["SH.M.GVI.SMER.0000"] = {
+            ["SH.M.GGI.SMER.0000"] = {
                 Input = "Hello World\nOnce\nAgain",
                 Pattern = "([%w]+)%s([%w]+)%s([%w]+)%s([%w]+)",
                 ExpectedChunks = { "Hello", "World", "Once", "Again" },
             },
-            ["SH.M.GVI.SMER.0010"] = {
+            ["SH.M.GGI.SMER.0010"] = {
                 Input = "Hello World\n-------Once-------\nabc\n-------Again-------\n",
                 Pattern = "^[^\n]+\n([%s%S]+)",
                 ExpectedChunks = { "-------Once-------\nabc\n-------Again-------\n" },
             },
-            ["SH.M.GVI.SMER.0020"] = {
+            ["SH.M.GGI.SMER.0020"] = {
                 Input = "-------Once-------\nabc\n-------Again-------",
                 Pattern = "^[^\n]*----\n([%s%S]+\n)----[%s%S]*$",
                 ExpectedChunks = { "abc\n" },
@@ -41,6 +41,6 @@ TestsGroup:AddTheory("StringsHelper.Match.GivenValidInput.ShouldMatchExpectedRes
             local chunks = { StringsHelper.Match(options.Input, options.Pattern) }
 
             -- ASSERT
-            _VWoWUnit.AreEqual(chunks, options.ExpectedChunks)
+            U.Should.Be.Equivalent(chunks, options.ExpectedChunks)
         end
 )

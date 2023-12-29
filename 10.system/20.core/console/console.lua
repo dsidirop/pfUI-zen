@@ -29,7 +29,7 @@ Console.Writer = {}
 function Console.Writer:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsFunction(nativeWriteCallback)
+    Guard.Assert.IsFunction(nativeWriteCallback)
 
     return Classify(self, {
         _nativeWriteCallback = nativeWriteCallback
@@ -39,7 +39,7 @@ end
 function Console.Writer:WriteFormatted(format, ...)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsString(format, "format")
+    Guard.Assert.IsString(format, "format")
 
     if TablesHelper.IsEmptyOrNil(arg) then --optimization
         _nativeWriteCallback(format)
@@ -52,7 +52,7 @@ end
 function Console.Writer:Write(message)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsString(message, "message")
+    Guard.Assert.IsString(message, "message")
 
     _nativeWriteCallback(message)
 end
@@ -60,7 +60,7 @@ end
 function Console.Writer:WriteLine(message)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsString(message, "message")
+    Guard.Assert.IsString(message, "message")
 
     _nativeWriteCallback(message .. "\n")
 end

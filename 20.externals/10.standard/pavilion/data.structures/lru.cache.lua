@@ -43,10 +43,10 @@ function Class:New(options)
                 and Class.DefaultOptions_
                 or  options
 
-    Guard.Check.IsTable(options)
-               .IsOptionallyRatioNumber(options.TrimRatio)
-               .IsOptionallyPositiveInteger(options.MaxSize)
-               .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds)
+    Guard.Assert.IsTable(options, "options")
+                .IsOptionallyRatioNumber(options.TrimRatio, "options.TrimRatio")
+                .IsOptionallyPositiveInteger(options.MaxSize, "options.MaxSize")
+                .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
 
     return Classify(self, {
         _count = 0,
@@ -70,7 +70,7 @@ end
 function Class:Get(key)
     Scopify(EScopes.Function, self)
     
-    Guard.Check.IsNotNil(key)    
+    Guard.Assert.IsNotNil(key)    
 
     self:Cleanup()
     
@@ -121,7 +121,7 @@ end
 function Class:Upsert(key, valueOptional)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsNotNil(key)
+    Guard.Assert.IsNotNil(key)
 
     valueOptional = valueOptional == nil --00
             and true
@@ -148,7 +148,7 @@ end
 function Class:Remove(key)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsNotNil(key)
+    Guard.Assert.IsNotNil(key)
 
     _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
 

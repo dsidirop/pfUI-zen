@@ -1,21 +1,23 @@
-local _setfenv, _print, _VWoWUnit = (function()
+local U, _setfenv, _print = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	local U = _assert(_g.VWoWUnit)
 	local _print = _assert(_g.print)
-	local _VWoWUnit = _assert(_g.VWoWUnit)
 
-	return _setfenv, _print, _VWoWUnit
+	return U, _setfenv, _print
 end)()
 
 _setfenv(1, {})
 
-if _VWoWUnit then
+if U then
 	_print("Running VWoWUnit tests...\n ")
 
-	-- VWoWUnit.I:RunAllTestGroups()
+	-- U.TestsEngine:RunAllTestGroups()
 
-	_VWoWUnit.I:RunTestGroupsByTag("guard-check-booleanizables")
+	-- U.TestsEngine:RunTestGroupsByTag("guard-check-booleanizables")
+
+	U.TestsEngine:RunTestGroupsByTag("lru-cache")
 end

@@ -21,8 +21,8 @@ local Class = _namespacer("System.Helpers.Booleans")
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil
-            and Guard.Check.IsBooleanizable(value)
-            or Guard.Check.IsOptionallyBooleanizable(value)
+            and Guard.Assert.IsBooleanizable(value)
+            or Guard.Assert.IsOptionallyBooleanizable(value)
     
     if value == nil then
         return defaultValueWhenValueIsNil
@@ -44,6 +44,6 @@ function Class.Booleanize(value, defaultValueWhenValueIsNil)
     
     return value --10
     
-    -- 00  this must mirror the logic in Guard.Check.IsBooleanizableString_
+    -- 00  this must mirror the logic in Guard.Assert.IsBooleanizableString_
     -- 10  if we fallthrough then we must be dealing with a boolean
 end

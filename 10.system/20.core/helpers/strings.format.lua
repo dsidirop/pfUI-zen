@@ -25,8 +25,8 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 function StringsHelper.Format(format, ...)
     Scopify(EScopes.Function, StringsHelper)
 
-    Guard.Check.IsNonEmptyTable(arg)
-    Guard.Check.IsNonDudString(format)
+    Guard.Assert.IsNonEmptyTable(arg)
+    Guard.Assert.IsNonDudString(format)
 
     local argCount = ArraysHelper.Count(arg)
     if argCount == 0 then

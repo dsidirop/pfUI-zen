@@ -1,13 +1,13 @@
-﻿local _setfenv, _importer, _VWoWUnit = (function()
+﻿local U, _setfenv, _importer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _VWoWUnit = _assert(_g.VWoWUnit)
+    local U = _assert(_g.VWoWUnit)
     local _importer = _assert(_g.pvl_namespacer_get)
     
-    return _setfenv, _importer, _VWoWUnit
+    return U, _setfenv, _importer
 end)()
 
 _setfenv(1, {}) --                                           @formatter:off
@@ -15,7 +15,7 @@ _setfenv(1, {}) --                                           @formatter:off
 local Console      = _importer("System.Console")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
-local TestsGroup = _VWoWUnit.I:CreateOrUpdateGroup {
+local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Console.Tests",
     Tags = { "system", "output" },
 } --                                                         @formatter:on
@@ -31,7 +31,7 @@ TestsGroup:AddFact("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMes
     consoleWriter:Write("Hello")
 
     -- ASSERT
-    _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)
 
 TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
@@ -45,7 +45,7 @@ TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpecte
     consoleWriter:WriteLine("Hello")
 
     -- ASSERT
-    _VWoWUnit.AreEqual(allMessagesArray, { "Hello\n" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello\n" })
 end)
 
 TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
@@ -59,5 +59,5 @@ TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintEx
     consoleWriter:WriteFormatted("Hello")
 
     -- ASSERT
-    _VWoWUnit.AreEqual(allMessagesArray, { "Hello" })
+    U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)

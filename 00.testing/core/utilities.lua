@@ -1,14 +1,15 @@
-local _g, _pairs, _setfenv, _tableSort, _tableInsert = (function()
+local _g, _pairs, _type, _setfenv, _tableSort, _tableInsert = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	local _type = _assert(_g.type)
 	local _pairs = _assert(_g.pairs)
 	local _tableSort = _assert(_g.table.sort)
 	local _tableInsert = _assert(_g.table.insert)
 
-	return _g, _pairs, _setfenv, _tableSort, _tableInsert
+	return _g, _pairs, _type, _setfenv, _tableSort, _tableInsert
 end)()
 
 local VWoWUnit = _g.VWoWUnit or {}
@@ -40,4 +41,32 @@ function VWoWUnit.Utilities.GetTablePairsOrderedByKeys(tableObject, comparer)
 	end
 
 	return iteratorFunction
+end
+
+function VWoWUnit.Utilities.IsTable_(value)
+	_setfenv(1, VWoWUnit.Utilities)
+	
+	return _type(value) == "table"
+end
+
+function VWoWUnit.Utilities.Difference_(a, b)
+	if VWoWUnit.Utilities.IsTable_(a) and VWoWUnit.Utilities.IsTable_(b) then
+		for key, value in _pairs(a) do
+			local path, aa, bb = VWoWUnit.Utilities.Difference_(value, b[key])
+			if path then
+				return "." .. key .. path, aa, bb
+			end
+		end
+
+		for key, value in _pairs(b) do
+			if a[key] == nil then
+				return "." .. key, nil, value
+			end
+		end
+
+	elseif a ~= b then
+		return "", a, b
+	end
+
+	return nil
 end
