@@ -32,12 +32,12 @@ function Class:New(options)
 
     Guard.Assert.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
    
-    Guard.Assert.IsBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
     Guard.Assert.IsPositiveIntegerOrZero(options.GamblingId, "options.GamblingId")
     Guard.Assert.IsPositiveIntegerOfMaxValue(options.ItemQuality, 20, "options.ItemQuality") -- EWowItemQuality  but better not enforce checking for the enum type
 
     Guard.Assert.IsOptionallyBooleanizable(options.IsNeedable, "options.IsNeedable") -- the following are all optionals
     Guard.Assert.IsOptionallyBooleanizable(options.IsGreedable, "options.IsGreedable")
+    Guard.Assert.IsOptionallyBooleanizable(options.IsBindOnPickUp, "options.IsBindOnPickUp")
     Guard.Assert.IsOptionallyBooleanizable(options.IsDisenchantable, "options.IsDisenchantable")
     Guard.Assert.IsOptionallyBooleanizable(options.IsTransmogrifiable, "options.IsTransmogrifiable")
 
@@ -53,10 +53,10 @@ function Class:New(options)
         _name            = StringsHelper.Trim(options.Name),
         _gamblingId      = options.GamblingId,
         _itemQuality     = options.ItemQuality,
-        _isBindOnPickUp  = options.IsBindOnPickUp,
         
         _isNeedable                = BooleansHelper.Booleanize(options.IsNeedable,         true),
         _isGreedable               = BooleansHelper.Booleanize(options.IsGreedable,        true),
+        _isBindOnPickUp            = BooleansHelper.Booleanize(options.IsBindOnPickUp,     true),
         _isDisenchantable          = BooleansHelper.Booleanize(options.IsDisenchantable,   true),
         _isTransmogrifiable        = BooleansHelper.Booleanize(options.IsTransmogrifiable, true),
 
@@ -205,6 +205,11 @@ function Class:GetDisenchantInelligibilityReasonType()
     return _disenchantInelligibilityReasonType
 end
 
+function Class:ToString()
+    Scopify(EScopes.Function, self)
+    
+    return self:__tostring()
+end
 
 function Class:__tostring()
     Scopify(EScopes.Function, self)
