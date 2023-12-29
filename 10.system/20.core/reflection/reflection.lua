@@ -1,4 +1,4 @@
-﻿local using = assert(_G or getfenv(0) or {}).pvl_namespacer_get
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Math = using "System.Math"
 local STypes = using "System.Reflection.STypes"

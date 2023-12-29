@@ -1,10 +1,7 @@
-﻿local g = assert(_G or getfenv(0))
-local Bind = g.pvl_namespacer_bind
-local SetFunctionEnvironment = g.setfenv
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-Bind("System.EScopes", {
-    EGlobal = 0,
-    EFunction = 1,
-})
+local G = using "System.Global"
+local Binder = using "System.Namespacing.Binder"
 
-Bind("System.Scopify", SetFunctionEnvironment)
+Binder("System.Scopify", G.setfenv)
+Binder("System.EScopes", { EGlobal = 0, EFunction = 1 })
