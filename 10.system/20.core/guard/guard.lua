@@ -300,7 +300,7 @@ do
 
     -- NAMESPACES
     function Guard.Assert.IsNamespaceStringOrRegisteredType(value, optionalArgumentName)
-        return Reflection.IsString(value) or Reflection.GetNamespaceOfType(value) ~= nil
+        return Reflection.IsString(value) or Reflection.TryGetNamespaceOfType(value) ~= nil
                 and Guard.Assert
                 or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered type"))
     end
@@ -309,7 +309,7 @@ do
     function Guard.Assert.IsInstanceOf(value, desiredType, optionalArgumentName)
         return Reflection.IsInstanceOf(value, desiredType)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
 
     function Guard.Assert.IsOptionallyInstanceOf(value, desiredType, optionalArgumentName)
@@ -319,6 +319,6 @@ do
         
         return Reflection.IsInstanceOf(value, desiredType)
                 and Guard.Assert
-                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
 end

@@ -1,49 +1,38 @@
-﻿local _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert(_G or getfenv(0) or {}).pvl_namespacer_get --@formatter:off
 
-    _setfenv(1, {})
+local Guard        = using "System.Guard"
+local Scopify      = using "System.Scopify"
+local EScopes      = using "System.EScopes"
+local Console      = using "System.Console"
+local Classify     = using "System.Classify"
+local TablesHelper = using "System.Helpers.Tables"
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
-    return _setfenv, _importer, _namespacer
-end)()
+local GroupLootingHelper       = using "Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper"
+local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
+local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
-_setfenv(1, {})
+local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType"
+local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
+local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
-local Guard = _importer("System.Guard")
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local Console = _importer("System.Console")
-local Classify = _importer("System.Classify")
-local TablesHelper = _importer("System.Helpers.Tables")
+local Class = using "[namespace]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
 
-local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
-
-local EWowGamblingResponseType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType")
-local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
-local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
-
-local GroupLootingHelper = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper")
-local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
-local PfuiGroupLootingListener = _importer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
+Scopify(EScopes.Function, {})
 
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsOptionallyInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
-    Guard.Check.IsOptionallyInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
-    Guard.Check.IsOptionallyInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
-    
+    Guard.Assert.IsOptionallyInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
+    Guard.Assert.IsOptionallyInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
+    Guard.Assert.IsOptionallyInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
+
     return Classify(self, {
         _settings = nil,
 
         _isRunning = false,
-        _pendingLootGamblingRequests = LRUCache:New{
+        _pendingLootGamblingRequests = LRUCache:New {
             MaxSize = 20,
             MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
         },
@@ -77,7 +66,7 @@ end
 function Class:Start()
     Scopify(EScopes.Function, self)
 
-    Guard.Check.IsTable(_settings, "attempt to run without any settings being loaded")
+    Guard.Assert.IsTable(_settings, "attempt to run without any settings being loaded")
 
     if _isRunning then
         return self -- nothing to do
@@ -90,7 +79,7 @@ function Class:Start()
     _groupLootingListener:StartListening()
                          :EventPendingLootItemGamblingDetected_Subscribe(GroupLootingListener_PendingLootItemGamblingDetected_, self)
 
-    -- _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) -- dont start the keybind listener here 
+    -- _modifierKeysListener:Start() -- dont start the keybind listener here 
 
     _isRunning = true
 
@@ -233,11 +222,12 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
 
         _pendingLootGamblingRequests:Clear() --     order        
-        for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do -- order
+        for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do
+            -- order
             _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
     end
-    
+
     --00  we need to always keep in mind that the user might change the settings while item-gambling is in progress
 end
 

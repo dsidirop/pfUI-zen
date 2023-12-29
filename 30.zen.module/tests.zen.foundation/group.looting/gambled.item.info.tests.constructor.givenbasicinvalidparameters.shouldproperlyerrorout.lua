@@ -75,7 +75,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
                     Name = "Foobar",
                     GamblingId = 1,
                     ItemQuality = EWowItemQuality.Green,
-                    IsBindOnPickUp = nil,
+                    IsBindOnPickUp = { },
                 },
                 ["GII.CTOR.GBIP.SPEO.090"] = {
                     Name = "Foobar",

@@ -1,27 +1,16 @@
-﻿local _setfenv, _importer, _tryimport, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert(_G or getfenv(0) or {}).pvl_namespacer_get
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _tryimport = _assert(_g.pvl_namespacer_tryget)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    
-    return _setfenv, _importer, _tryimport, _namespacer
-end)()
+local Scopify            = using("System.Scopify") --                          @formatter:off
+local EScopes            = using("System.EScopes")
+local Classify           = using("System.Classify")
+local Reflection         = using("System.Reflection")
 
-_setfenv(1, {}) --                                                                 @formatter:off
+local Exception          = using("System.Exceptions.Exception")
+local StringsHelper      = using("System.Helpers.Strings") --                  @formatter:on
 
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
-local Reflection         = _importer("System.Reflection")
+local Class = using "[namespace]" "System.Try.ExceptionsDeserializationFactory"
 
-local Exception          = _importer("System.Exceptions.Exception")
-local StringsHelper      = _importer("System.Helpers.Strings") --                  @formatter:on
-
-local Class = _namespacer("System.Try.ExceptionsDeserializationFactory")
+Scopify(EScopes.Function, {})
 
 function Class:New()
     return Classify(self)
@@ -59,7 +48,7 @@ function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
     local message = StringsHelper.Match(firstLine, ":[%s]*([%s%S]+)$") or firstLine -- 10
     message = StringsHelper.Match(message, "%[[.%w%d]+] ([%s%S]+)$") -- 20
 
-    local exceptionType = _tryimport(exceptionNamespaceString) or Exception
+    local exceptionType = Reflection.TryFindClassTypeViaNamespace(exceptionNamespaceString) or Exception
 
     return message, exceptionType
 

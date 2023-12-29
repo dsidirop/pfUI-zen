@@ -1,57 +1,48 @@
-﻿local _type, _setfenv, _importer, _namespacer, _namespacer_reflector = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert(_G or getfenv(0) or {}).pvl_namespacer_get
 
-    _setfenv(1, {})
+local Math = using "System.Math"
+local STypes = using "System.Reflection.STypes"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _namespacer_reflector = _assert(_g.pvl_namespacer_reflect)
+local Reflection = using "[namespace]" "System.Reflection"
 
-    return _type, _setfenv, _importer, _namespacer, _namespacer_reflector
-end)()
+Scopify(EScopes.Function, {})
 
-_setfenv(1, {})
-
-local Math = _importer("System.Math")
-local STypes = _importer("System.Reflection.STypes")
-
-local Reflection = _namespacer("System.Reflection")
-
-Reflection.RawType = _type
+Reflection.GetRawType = using "System.GetRawType"
+Reflection.TryGetNamespaceOfType = using "System.Namespacing.TryGetNamespaceOfType"
+Reflection.TryFindTypeViaNamespace = using "System.Importing.TryFindTypeViaNamespace"
 
 function Reflection.IsTable(value)
-    return Reflection.RawType(value) == STypes.Table
+    return Reflection.GetRawType(value) == STypes.Table
 end
 
 function Reflection.IsOptionallyTable(value)
-    return value == nil or Reflection.RawType(value) == STypes.Table
+    return value == nil or Reflection.GetRawType(value) == STypes.Table
 end
 
 function Reflection.IsFunction(value)
-    return Reflection.RawType(value) == STypes.Function
+    return Reflection.GetRawType(value) == STypes.Function
 end
 
 function Reflection.IsOptionallyFunction(value)
-    return value == nil or Reflection.RawType(value) == STypes.Function
+    return value == nil or Reflection.GetRawType(value) == STypes.Function
 end
 
 function Reflection.IsNumber(value)
-    return Reflection.RawType(value) == STypes.Number
+    return Reflection.GetRawType(value) == STypes.Number
 end
 
 function Reflection.IsOptionallyNumber(value)
-    return value == nil or Reflection.RawType(value) == STypes.Number
+    return value == nil or Reflection.GetRawType(value) == STypes.Number
 end
 
 function Reflection.IsBoolean(value)
-    return Reflection.RawType(value) == STypes.Boolean
+    return Reflection.GetRawType(value) == STypes.Boolean
 end
 
 function Reflection.IsOptionallyBoolean(value)
-    return value == nil or Reflection.RawType(value) == STypes.Boolean
+    return value == nil or Reflection.GetRawType(value) == STypes.Boolean
 end
 
 function Reflection.IsInteger(value)
@@ -63,15 +54,15 @@ function Reflection.IsOptionallyInteger(value)
 end
 
 function Reflection.IsString(value)
-    return Reflection.RawType(value) == STypes.String
+    return Reflection.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyString(value)
-    return value == nil or Reflection.RawType(value) == STypes.String
+    return value == nil or Reflection.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsTableOrString(value)
-    return Reflection.RawType(value) == STypes.Table or Reflection.RawType(value) == STypes.String
+    return Reflection.GetRawType(value) == STypes.Table or Reflection.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyTableOrString(value)
@@ -83,26 +74,34 @@ function Reflection.IsInstanceOf(object, desiredType)
         return false
     end
 
-    return Reflection.GetNamespaceOfInstance(object) == Reflection.GetNamespaceOfType(desiredType)
+    return Reflection.TryGetNamespaceOfClassInstance(object) == Reflection.TryGetNamespaceOfType(desiredType)
 end
 
-function Reflection.GetNamespaceOfInstanceOrRawType(object)
-    return Reflection.GetNamespaceOfInstance(object) or Reflection.RawType(object)    
+function Reflection.TryGetNamespaceFromObjectOrItsRawType(object)
+    return Reflection.TryGetNamespaceOfObject(object) or Reflection.GetRawType(object)    
 end
 
-function Reflection.GetNamespaceOfInstance(object)
+function Reflection.TryGetNamespaceOfObject(object)
     if object == nil then
         return nil
     end
     
-    return Reflection.GetNamespaceOfType(object.__index)
+    return Reflection.TryGetNamespaceOfClassInstance(object) or Reflection.TryGetNamespaceOfType(object)
 end
 
-function Reflection.GetNamespaceOfType(typeOfObject)
-    if typeOfObject == nil then
+function Reflection.TryGetNamespaceOfClassInstance(object)
+    if not Reflection.IsTable(object) or object.__index == nil then
         return nil
     end
     
-    return _namespacer_reflector(typeOfObject)
+    return Reflection.TryGetNamespaceOfType(object.__index)
 end
 
+function Reflection.TryFindClassTypeViaNamespace(namespacePath)
+    local classType = Reflection.TryFindTypeViaNamespace(namespacePath)
+    if not Reflection.IsTable(classType) then
+        return nil
+    end
+    
+    return classType
+end

@@ -52,7 +52,7 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.GetNamespaceOfType(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceOfType(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -82,11 +82,11 @@ function Class:Run()
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.GetNamespaceOfType(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceOfType(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 
-    local fullNamespaceOfException = Reflection.GetNamespaceOfInstance(exception)
+    local fullNamespaceOfException = Reflection.TryGetNamespaceOfClassInstance(exception)
     local specificExceptionHandler = _allExceptionHandlers[fullNamespaceOfException]
     if specificExceptionHandler ~= nil then
         return specificExceptionHandler

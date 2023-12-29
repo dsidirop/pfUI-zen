@@ -166,9 +166,9 @@ do
     end
 end
 
-local Namespacer = {}
+local NamespaceRegistry = {}
 do
-    function Namespacer:New()
+    function NamespaceRegistry:New()
         _setfenv(1, self)
 
         local instance = {
@@ -184,7 +184,7 @@ do
 
     -- namespacer()
     local PatternToDetectPartialKeywordPostfix = "%s*%[[Pp]artial%]%s*$"
-    function Namespacer:Add(namespacePath)
+    function NamespaceRegistry:Add(namespacePath)
         _setfenv(1, self)
 
         _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud\n" .. _g.debugstack() .. "\n")
@@ -233,7 +233,7 @@ do
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
-    function Namespacer:Bind(namespacePath, symbol)
+    function NamespaceRegistry:Bind(namespacePath, symbol)
         _setfenv(1, self)
 
         _assert(symbol ~= nil, "symbol must not be nil")
@@ -248,9 +248,15 @@ do
         _reflection_registry[symbol] = namespacePath
         _namespaces_registry[namespacePath] = Entry:New(EIntention.ForExternalSymbol, symbol)
     end
+    
+    function NamespaceRegistry:TryFindTypeViaNamespace(namespacePath)
+        _setfenv(1, self)
+        
+        return self:Get(namespacePath, true)
+    end
 
     -- importer()
-    function Namespacer:Get(namespacePath, suppressExceptionIfNotFound)
+    function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
         _setfenv(1, self)
 
         _assert(namespacePath ~= nil and _type(namespacePath) == "string", "namespacePath must be a string") -- order
@@ -269,38 +275,51 @@ do
     end
 
     -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
-    function Namespacer:Reflect(object)
+    function NamespaceRegistry:TryGetNamespaceOfType(object)
         _setfenv(1, self)
 
-        _assert(object ~= nil, "object must not be nil")
+        if object == nil then
+            return nil
+        end
 
         return _reflection_registry[object]
     end
 end
 
-local Singleton = Namespacer:New()
-do  
-    -- namespacer()   todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__some_guid_here__add
+local NamespaceRegistrySingleton = NamespaceRegistry:New()
+do
+    -- using()
+    _g.pvl_namespacer_get = function(namespacePath) --    todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__<some_guid_here>__get
+        return NamespaceRegistrySingleton:Get(namespacePath)
+    end
+    
+    -- todo   remove these functions below once we migrate our codebase over to the using() scheme
+
+    -- namespacer()
     _g.pvl_namespacer_add = function(namespacePath)
-        return Singleton:Add(namespacePath)
+        return NamespaceRegistrySingleton:Add(namespacePath)
     end
 
     -- namespacer_binder()
     _g.pvl_namespacer_bind = function(namespacePath, symbol)
-        return Singleton:Bind(namespacePath, symbol)
+        return NamespaceRegistrySingleton:Bind(namespacePath, symbol)
     end
 
     -- importer()
-    _g.pvl_namespacer_get = function(namespacePath)
-        return Singleton:Get(namespacePath)
+    _g.pvl_namespacer_tryload = function(namespacePath)
+        return NamespaceRegistrySingleton:TryFindTypeViaNamespace(namespacePath)
     end
 
-    -- importer()
-    _g.pvl_namespacer_tryget = function(namespacePath)
-        return Singleton:Get(namespacePath, true)
-    end
-
-    _g.pvl_namespacer_reflect = function(object)
-        return Singleton:Reflect(object)
+    _g.pvl_namespacer_reflect = function(instanceType)
+        return NamespaceRegistrySingleton:TryGetNamespaceOfType(instanceType)
     end
 end
+
+-- @formatter:off
+_g.pvl_namespacer_bind("System.Importing.Using",                        function(namespacePath        ) return NamespaceRegistrySingleton:Get                          (namespacePath        ) end) -- not really being used anywhere but its nice to have
+_g.pvl_namespacer_bind("System.Importing.TryFindTypeViaNamespace",      function(namespacePath        ) return NamespaceRegistrySingleton:TryFindTypeViaNamespace      (namespacePath        ) end)
+_g.pvl_namespacer_bind("System.Namespacing.Binder",                     function(namespacePath, symbol) return NamespaceRegistrySingleton:Bind                         (namespacePath, symbol) end)
+_g.pvl_namespacer_bind("System.Namespacing.TryGetNamespaceOfType",      function(classType            ) return NamespaceRegistrySingleton:TryGetNamespaceOfType        (classType            ) end)
+
+_g.pvl_namespacer_bind("[namespace]",                                   function(namespacePath        ) return NamespaceRegistrySingleton:Add                          (namespacePath        ) end)
+-- @formatter:on
