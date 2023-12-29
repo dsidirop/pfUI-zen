@@ -35,13 +35,17 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGr
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
     Scopify(EScopes.Function, self)
 
+    Guard.Check.IsOptionallyInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
+    Guard.Check.IsOptionallyInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
+    Guard.Check.IsOptionallyInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
+    
     return Classify(self, {
         _settings = nil,
 
         _isRunning = false,
         _pendingLootGamblingRequests = LRUCache:New{
             MaxSize = 20,
-            MaxLifespanPerEntryInSeconds = 5 * 60,
+            MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
         },
 
         _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI

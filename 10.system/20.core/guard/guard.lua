@@ -311,4 +311,14 @@ do
                 and Guard.Assert
                 or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
     end
+
+    function Guard.Assert.IsOptionallyInstanceOf(value, desiredType, optionalArgumentName)
+        if value == nil then
+            return Guard.Assert
+        end
+        
+        return Reflection.IsInstanceOf(value, desiredType)
+                and Guard.Assert
+                or Throw(ArgumentIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.GetNamespaceOfType(desiredType) .. "(desired type is unknown!)")))
+    end
 end
