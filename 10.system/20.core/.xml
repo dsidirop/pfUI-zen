@@ -4,9 +4,10 @@
     <Include file="core.symbols.namespaces\.xml"/>
 
     <Include file="global.environment\.xml"/>
-    <Include file="iterators\.xml"/>
+    <Include file="debug\.xml"/>
     <Include file="scopify\.xml"/>
-    <Include file="get.raw.type\.xml"/>
+    <Include file="iterators\.xml"/>
+    <Include file="primitives.types\.xml"/>
     <Include file="default.chat.frame\.xml"/>
 
     <Include file="math\.xml"/>
@@ -14,7 +15,6 @@
     <Include file="table\.xml"/>
     
     <Include file="classify\.xml"/>
-    <Include file="debug\.xml"/>
     <Include file="reflection\.xml"/>
     <Include file="exceptions\.xml"/>
 

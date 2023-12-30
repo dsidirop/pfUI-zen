@@ -23,7 +23,12 @@ STypes.Table    = "table"
 STypes.Number   = "number"
 STypes.String   = "string"
 STypes.Boolean  = "boolean"
-STypes.Function = "function" --@formatter:on
+STypes.Function = "function"
+
+STypes.Enum      = "Enum"
+STypes.Class     = "Class"
+STypes.Interface = "Interface"
+--@formatter:on
 
 _setmetatable(STypes, {
     __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves

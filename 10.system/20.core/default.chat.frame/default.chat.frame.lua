@@ -1,10 +1,8 @@
-local _g = assert(_G or getfenv(0))
-local _setfenv = assert(_g.setfenv)
-local _namespacer_binder = assert(_g.pvl_namespacer_bind)
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local _defaultChatFrame = _g.DEFAULT_CHAT_FRAME --dont use assert here
+local Debug = using "System.Debug"
+local GlobalEnvironment = using "System.Global"
 
-_g = nil
-_setfenv(1, {})
+local WoWUIGlobalFrames = using "[declare]" "System.Externals.WoW.UI.GlobalFrames [Partial]"
 
-_namespacer_binder("System.Externals.WoW.DefaultChatFrame", _defaultChatFrame)
+WoWUIGlobalFrames.DefaultChatFrame = Debug.Assert(GlobalEnvironment.DEFAULT_CHAT_FRAME)

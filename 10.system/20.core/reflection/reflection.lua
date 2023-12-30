@@ -2,49 +2,52 @@
 
 local Math = using "System.Math"
 local Guard = using "System.Guard"
-local STypes = using "System.Reflection.STypes"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Types = using "System.Primitives.Types"
+
+local STypes = using "System.Reflection.STypes"
 local ESymbolType = using "System.Namespacing.ESymbolType"
 
 local Reflection = using "[declare]" "System.Reflection [Partial]"
 
 Scopify(EScopes.Function, {})
 
-Reflection.GetRawType = using "System.GetRawType"
+Reflection.GetRawType = Types.GetRawType -- for the sake of completeness   just in case someone needs it
 Reflection.TryGetNamespaceOfClassProto = using "System.Namespacing.TryGetNamespaceOfClassProto"
 Reflection.TryGetSymbolProtoViaNamespace = using "System.Importing.TryGetSymbolProtoViaNamespace"
 
 function Reflection.IsTable(value)
-    return Reflection.GetRawType(value) == STypes.Table
+    return Types.GetRawType(value) == STypes.Table
 end
 
 function Reflection.IsOptionallyTable(value)
-    return value == nil or Reflection.GetRawType(value) == STypes.Table
+    return value == nil or Types.GetRawType(value) == STypes.Table
 end
 
 function Reflection.IsFunction(value)
-    return Reflection.GetRawType(value) == STypes.Function
+    return Types.GetRawType(value) == STypes.Function
 end
 
 function Reflection.IsOptionallyFunction(value)
-    return value == nil or Reflection.GetRawType(value) == STypes.Function
+    return value == nil or Types.GetRawType(value) == STypes.Function
 end
 
 function Reflection.IsNumber(value)
-    return Reflection.GetRawType(value) == STypes.Number
+    return Types.GetRawType(value) == STypes.Number
 end
 
 function Reflection.IsOptionallyNumber(value)
-    return value == nil or Reflection.GetRawType(value) == STypes.Number
+    return value == nil or Types.GetRawType(value) == STypes.Number
 end
 
 function Reflection.IsBoolean(value)
-    return Reflection.GetRawType(value) == STypes.Boolean
+    return Types.GetRawType(value) == STypes.Boolean
 end
 
 function Reflection.IsOptionallyBoolean(value)
-    return value == nil or Reflection.GetRawType(value) == STypes.Boolean
+    return value == nil or Types.GetRawType(value) == STypes.Boolean
 end
 
 function Reflection.IsInteger(value)
@@ -56,15 +59,15 @@ function Reflection.IsOptionallyInteger(value)
 end
 
 function Reflection.IsString(value)
-    return Reflection.GetRawType(value) == STypes.String
+    return Types.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyString(value)
-    return value == nil or Reflection.GetRawType(value) == STypes.String
+    return value == nil or Types.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsTableOrString(value)
-    return Reflection.GetRawType(value) == STypes.Table or Reflection.GetRawType(value) == STypes.String
+    return Types.GetRawType(value) == STypes.Table or Types.GetRawType(value) == STypes.String
 end
 
 function Reflection.IsOptionallyTableOrString(value)
@@ -89,7 +92,7 @@ end
 function Reflection.TryGetType(object) -- the object might be anything: nil, a class-instance or a class-proto or just a mere raw type (number, string, boolean, function, table)
     return Reflection.TryGetNamespaceOfClassInstance(object) --   order    
             or Reflection.TryGetNamespaceOfClassProto(object) --  order
-            or Reflection.GetRawType(object) --                   order    keep last
+            or Types.GetRawType(object) --                   order    keep last
 end
 
 function Reflection.IsClassInstance(object)

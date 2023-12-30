@@ -8,7 +8,7 @@ local Classify = using "System.Classify"
 local TablesHelper = using "System.Helpers.Tables"
 local StringsHelper = using "System.Helpers.Strings"
 
-local WoWDefaultChatFrame = using "System.Externals.WoW.DefaultChatFrame"
+local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
 local Console = using "[declare]" "System.Console [Partial]"
 
@@ -56,6 +56,6 @@ function Console.Writer:WriteLine(message)
 end
 
 -- @formatter:off
-Console.Out   = Console.Writer:New(function(message) WoWDefaultChatFrame:AddMessage(StringsHelper.Format("|cffffff55%s", message)) end)
-Console.Error = Console.Writer:New(function(message) WoWDefaultChatFrame:AddMessage(StringsHelper.Format("|cffff5555%s", message)) end)
+Console.Out   = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(StringsHelper.Format("|cffffff55%s", message)) end)
+Console.Error = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(StringsHelper.Format("|cffff5555%s", message)) end)
 -- @formatter:on

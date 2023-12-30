@@ -23,6 +23,8 @@ using "[declare]" "System.Helpers.Tables"
 using "[declare]" "System.Helpers.Strings"
 using "[declare]" "System.Helpers.Booleans"
 
+using "[declare]" "System.Primitives.Types"
+
 -- using "[declare]" "System.Exceptions.Throw" -- needs to be refactored first
 -- using "[declare]" "System.Exceptions.Rethrow" -- needs to be refactored first
 using "[declare]" "System.Exceptions.Exception"
@@ -30,3 +32,5 @@ using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"
 using "[declare]" "System.Exceptions.ValueIsOutOfRangeException"
 using "[declare]" "System.Exceptions.ValueIsOfInappropriateTypeException"
+
+using "[declare]" "System.Externals.WoW.UI.GlobalFrames"

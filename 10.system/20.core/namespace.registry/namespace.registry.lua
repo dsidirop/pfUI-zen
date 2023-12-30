@@ -130,13 +130,17 @@ do
     function Entry:GetSymbol()
         _setfenv(1, self)
 
-        return _assert(_symbol ~= nil, "spotted unset symbol (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
+        _assert(_symbol ~= nil, "spotted unset symbol (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
+
+        return _symbol
     end
 
     function Entry:GetSymbolType()
         _setfenv(1, self)
 
-        return _assert(_symbolType ~= nil, "spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
+        _assert(_symbolType ~= nil, "spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
+
+        return _symbolType
     end
 
     function Entry:IsPartialEntry()
@@ -252,8 +256,8 @@ do
     function NamespaceRegistry:Bind(namespacePath, symbol)
         _setfenv(1, self)
 
-        _assert(symbol ~= nil, "symbol must not be nil")
-        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud.\n" .. _g.debugstack(3) .. "\n")
+        _assert(symbol ~= nil, "symbol must not be nil\n" .. _g.debugstack(3) .. "\n")
+        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud\n" .. _g.debugstack(3) .. "\n")
 
         namespacePath = _strtrim(namespacePath)
 
