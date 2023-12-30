@@ -299,7 +299,8 @@ do
 
     -- NAMESPACES
     function Guard.Assert.IsNamespaceStringOrRegisteredClassProto(value, optionalArgumentName)
-        if not (Reflection.IsString(value) or Reflection.TryGetNamespaceIfClassProto(value) ~= nil) then
+        local isNamespaceStringOrRegisteredClassProto = Reflection.IsString(value) or Reflection.TryGetNamespaceIfClassProto(value) ~= nil
+        if not isNamespaceStringOrRegisteredClassProto then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered proto"))
         end
         

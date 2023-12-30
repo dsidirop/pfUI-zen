@@ -4,18 +4,13 @@ local Math = using "System.Math"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-
-local ESymbolType = using "System.Namespacing.ESymbolType"
-
--- local SRawTypes = using "System.Language.SRawTypes"
+local Namespacer = using "System.Namespacer"
+local ESymbolType = using "System.Namespacer.ESymbolType"
 local RawTypeSystem = using "System.Language.RawTypeSystem"
 
 local Reflection = using "[declare]" "System.Reflection [Partial]"
 
 Scopify(EScopes.Function, {})
-
-Reflection.TryGetNamespaceIfClassProto = using "System.Namespacing.TryGetNamespaceIfClassProto"
-Reflection.TryGetProtoTidbitsViaNamespace = using "System.Importing.TryGetProtoTidbitsViaNamespace"
 
 Reflection.IsNil = RawTypeSystem.IsNil
 Reflection.IsTable = RawTypeSystem.IsTable
@@ -25,6 +20,8 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
+-- local SRawTypes = using "System.Language.SRawTypes"
+--
 -- returns   { ESymbolType, Namespace }
 -- function Reflection.GetInfo(value) -- value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
 --    todo  if we ever actually need this
@@ -36,7 +33,7 @@ Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness
 --    end
 --
 --    if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
---    local symbolType, namespace = using "System.Namespacing.TryGetInfo"(value.__index or value)
+--    local symbolType, namespace = using "System.Namespacer.TryGetInfo"(value.__index or value)
 --    if symbolType ~= nil then
 --         return symbolType, namespace
 --    end
@@ -133,4 +130,12 @@ function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     end
     
     return symbolProto
+end
+
+function Reflection.TryGetNamespaceIfClassProto(value)
+    return Namespacer:TryGetNamespaceIfClassProto(value) -- keep it like this   dont try to inline this ala   Reflection.TryGetNamespaceIfClassProto = Namespacer.TryGetNamespaceIfClassProto!! 
+end
+
+function Reflection.TryGetProtoTidbitsViaNamespace(value)
+    return Namespacer:TryGetProtoTidbitsViaNamespace(value) -- keep it like this   dont try to inline this ala   Reflection.TryGetProtoTidbitsViaNamespace = Namespacer.TryGetProtoTidbitsViaNamespace!!
 end

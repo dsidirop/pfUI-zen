@@ -345,14 +345,14 @@ do
     end
 
     -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
-    function NamespaceRegistry:TryGetNamespaceIfClassProto(proto)
+    function NamespaceRegistry:TryGetNamespaceIfClassProto(symbolProto)
         _setfenv(1, self)
 
         if object == nil then
             return nil
         end
 
-        local entry = _reflection_registry[proto]
+        local entry = _reflection_registry[symbolProto]
         if entry == nil then
             return nil
         end
@@ -382,23 +382,16 @@ do
     end
 end
 
--- @formatter:off
-NamespaceRegistrySingleton:Bind("System.Importing.Using",                          function(namespacePath        ) return NamespaceRegistrySingleton:Get                            (namespacePath        ) end) -- not really being used anywhere but its nice to have
-NamespaceRegistrySingleton:Bind("System.Importing.TryGetProtoTidbitsViaNamespace", function(namespacePath        ) return NamespaceRegistrySingleton:TryGetProtoTidbitsViaNamespace (namespacePath        ) end)
+NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
-NamespaceRegistrySingleton:Bind("System.Namespacing.Binder",                       function(namespacePath, symbol) return NamespaceRegistrySingleton:Bind                           (namespacePath, symbol) end)
-NamespaceRegistrySingleton:Bind("System.Namespacing.TryGetNamespaceIfClassProto",  function(classProto           ) return NamespaceRegistrySingleton:TryGetNamespaceIfClassProto    (classProto           ) end)
-
--- todo   also introduce [declare partial] [declare partial:enum] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
-
-NamespaceRegistrySingleton:Bind("[declare]",                                       function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs         (namespacePath, ESymbolType.Class    ) end)
-NamespaceRegistrySingleton:Bind("[declare:class]",                                 function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs         (namespacePath, ESymbolType.Class    ) end)
-
-NamespaceRegistrySingleton:Bind("[declare:enum]",                                  function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs         (namespacePath, ESymbolType.Enum     ) end)
-NamespaceRegistrySingleton:Bind("[declare:interface]",                             function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs         (namespacePath, ESymbolType.Interface) end)
+-- @formatter:off   todo   also introduce [declare partial] [declare partial:enum] [declare:testbed] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
+NamespaceRegistrySingleton:Bind("[declare]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Class    ) end)
+NamespaceRegistrySingleton:Bind("[declare:enum]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Enum     ) end)
+NamespaceRegistrySingleton:Bind("[declare:class]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Class    ) end)
+NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Interface) end)
 -- @formatter:on
 
-local advertisedESymbolType = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacing.ESymbolType", ESymbolType.Enum)
+local advertisedESymbolType = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.ESymbolType", ESymbolType.Enum)
 for k, v in _pairs(ESymbolType) do -- this is the only way to get the enum values to be advertised to the outside world
     advertisedESymbolType[k] = v
 end

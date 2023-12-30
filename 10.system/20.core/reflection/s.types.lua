@@ -27,7 +27,7 @@ STypes.Function = "function"
 STypes.Thread   = "thread" --   rarely encountered
 STypes.Userdata = "userdata" -- rarely encountered
 
-STypes.Class     = "Class"
+STypes.Class    = "Class"
 --STypes.Enum      = "Enum" -- todo
 --STypes.Interface = "Interface"
 --@formatter:on
