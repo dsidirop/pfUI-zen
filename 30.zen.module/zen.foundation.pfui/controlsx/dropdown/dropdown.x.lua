@@ -25,7 +25,7 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
+local Classify = _importer("System.Class.Classify")
 
 local Event = _importer("System.Event")
 local TablesHelper = _importer("System.Helpers.Tables")

@@ -15,7 +15,7 @@ _setfenv(1, {}) --                                                              
 local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
+local Classify           = _importer("System.Class.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 

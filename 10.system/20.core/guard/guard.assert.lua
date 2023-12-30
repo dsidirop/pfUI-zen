@@ -299,7 +299,7 @@ do
 
     -- NAMESPACES
     function Guard.Assert.IsNamespaceStringOrRegisteredClassProto(value, optionalArgumentName)
-        if not (Reflection.IsString(value) or Reflection.TryGetNamespaceOfClassProto(value) ~= nil) then
+        if not (Reflection.IsString(value) or Reflection.TryGetNamespaceIfClassProto(value) ~= nil) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered proto"))
         end
         
@@ -309,7 +309,7 @@ do
     -- ISA
     function Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
         if not Reflection.IsInstanceOf(value, desiredClassProto) then
-            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceOfClassProto(desiredClassProto) or "(desired proto is unknown!)")))
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
         
         return value 

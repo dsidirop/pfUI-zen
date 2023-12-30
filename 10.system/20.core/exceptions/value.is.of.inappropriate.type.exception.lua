@@ -16,7 +16,7 @@ _setfenv(1, {}) --                                                              
 local Debug              = _importer("System.Debug")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
+local Classify           = _importer("System.Class.Classify")
 local Reflection         = _importer("System.Reflection")
 local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
 
@@ -88,9 +88,9 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetType(value) .. "')"
+        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetNamespaceWithFallbackToRawType(value) .. "')"
     else
-        message = message .. " (its type is '" .. Reflection.TryGetType(value) .. "')"
+        message = message .. " (its type is '" .. Reflection.TryGetNamespaceWithFallbackToRawType(value) .. "')"
     end
     
     return message
@@ -107,7 +107,7 @@ function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
         return optionalExpectationOrExpectedType
     end
 
-    local namespace = Reflection.TryGetNamespaceOfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
+    local namespace = Reflection.TryGetNamespaceIfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
     if namespace ~= nil then
         return namespace
     end

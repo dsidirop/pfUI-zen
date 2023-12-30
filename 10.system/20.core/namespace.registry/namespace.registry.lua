@@ -233,10 +233,18 @@ do
 
     NamespaceRegistry._StandardClassMetatable = { -- add a shortcut to the default constructor on the class
         __call = function(classSymbol, ...)
-            _assert(_type(classSymbol.New) == "function", "Cannot call class() because the default constructor method :New(...) has not been defined on this class!\n" .. _g.debugstack(2) .. "\n")
+            local hasConstructorFunction = _type(classSymbol.New) == "function"
+            local hasImplicitCallFunction = _type(classSymbol.__Call__) == "function"
+            _assert(hasConstructorFunction or hasImplicitCallFunction, "Cannot call class() because the symbol lacks both methods :New(...) and :__Call__()!\n" .. _g.debugstack(2) .. "\n")
+            
+            if hasImplicitCallFunction then --00
+                return classSymbol:__Call__(_unpack(arg))
+            end
 
             return classSymbol:New(_unpack(arg))
         end
+        
+        --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     }
     function NamespaceRegistry.SpawnNewSymbol_(symbolType)
         _setfenv(1, NamespaceRegistry)
@@ -311,7 +319,7 @@ do
     end
 
     -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
-    function NamespaceRegistry:TryGetNamespaceOfClassProto(object)
+    function NamespaceRegistry:TryGetNamespaceIfClassProto(object)
         _setfenv(1, self)
 
         if object == nil then
@@ -348,7 +356,7 @@ do
     end
 
     _g.pvl_namespacer_reflect = function(instanceType)
-        return NamespaceRegistrySingleton:TryGetNamespaceOfClassProto(instanceType)
+        return NamespaceRegistrySingleton:TryGetNamespaceIfClassProto(instanceType)
     end
 end
 
@@ -357,7 +365,7 @@ NamespaceRegistrySingleton:Bind("System.Importing.Using",                       
 NamespaceRegistrySingleton:Bind("System.Importing.TryGetSymbolProtoViaNamespace", function(namespacePath        ) return NamespaceRegistrySingleton:TryGetSymbolProtoViaNamespace (namespacePath        ) end)
 
 NamespaceRegistrySingleton:Bind("System.Namespacing.Binder",                      function(namespacePath, symbol) return NamespaceRegistrySingleton:Bind                          (namespacePath, symbol) end)
-NamespaceRegistrySingleton:Bind("System.Namespacing.TryGetNamespaceOfClassProto", function(classProto           ) return NamespaceRegistrySingleton:TryGetNamespaceOfClassProto   (classProto           ) end)
+NamespaceRegistrySingleton:Bind("System.Namespacing.TryGetNamespaceIfClassProto", function(classProto           ) return NamespaceRegistrySingleton:TryGetNamespaceIfClassProto   (classProto           ) end)
 
 -- todo   also introduce [declare partial] [declare partial:enum] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
 

@@ -7,7 +7,6 @@ local function Main(_pfUI)
 
         local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
-        local _error = _g.assert(_g.error)
         local _print = _g.assert(_g.print)
         local _format = _g.assert(_g.string.format)
         local _setfenv = _g.assert(_g.setfenv)
@@ -47,13 +46,11 @@ local function Main(_pfUI)
                             :FirstOrDefault() -- @formatter:on
 
         if (not addonPath) then
-            _error(_format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
-            return
+            _g.assert(false, _format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
         end
 
         if (not _pfuiGui.CreateGUIEntry) then
-            _error(_format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
-            return
+            _g.assert(false, _format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
         end
 
         UserPreferencesForm -- @formatter:off

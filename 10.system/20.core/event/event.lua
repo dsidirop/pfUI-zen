@@ -3,7 +3,7 @@
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Classify = using "System.Classify"
+local Classify = using "System.Class.Classify"
 local TablesHelper = using "System.Helpers.Tables"
 
 local Class = using "[declare]" "System.Event [Partial]"

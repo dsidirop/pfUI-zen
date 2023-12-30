@@ -19,7 +19,7 @@ _setfenv(1, {}) -- @formatter:off
 
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
+local Classify = _importer("System.Class.Classify")
 
 local Event                                             = _importer("System.Event")
 local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
@@ -105,10 +105,7 @@ function Class:OnRequestingCurrentUserPreferences_()
             })
             .Response -- @formatter:on
 
-    if not response.UserPreferences then
-        _error("[ZUPF.OCUPR.010] failed to retrieve user-preferences")
-        return nil
-    end
+    _assert(response.UserPreferences ~= nil, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
 
     _commandsEnabled = false --00
 

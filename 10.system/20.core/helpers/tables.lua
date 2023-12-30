@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _next, _unpack, _pairs, _error, _rawget, _tostring, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -8,33 +8,36 @@
     local _type = _assert(_g.type)
     local _next = _assert(_g.next)
     local _pairs = _assert(_g.pairs)
-    local _error = _assert(_g.error)
     local _rawget = _assert(_g.rawget)
     local _unpack = _assert(_g.unpack)
     local _tostring = _assert(_g.tostring)
+    local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
+    local _tableInsert = _assert(_g.table.insert)
     local _setmetatable = _assert(_g.setmetatable)
+    local _getmetatable = _assert(_g.getmetatable)
 
-    return _assert, _setfenv, _type, _next, _unpack, _pairs, _error, _rawget, _tostring, _namespacer, _setmetatable
+    return _assert, _setfenv, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable
 end)()
 
 _setfenv(1, {})
+
+local Guard = _importer("System.Guard")
 
 local Class = _namespacer("System.Helpers.Tables [Partial]")
 
 function Class.Clear(tableObject)
     _assert(_type(tableObject) == 'table')
 
-    for k, v in _pairs(tableObject) do
+    for k in _pairs(tableObject) do
         tableObject[k] = nil
     end
 end
 
 function Class.RawGetValue(table, key) -- 00
     local value = _rawget(table, key)
-    if value == nil then
-        _error("object doesn't contain any property named '" .. _tostring(key) .. "'", 2)
-    end
+    
+    _assert(value ~= nil, "object doesn't contain any property named '" .. _tostring(key) .. "'", 2)
 
     return value
     
@@ -54,7 +57,7 @@ function Class.Clone(tableObject, seen)
     local res = _setmetatable({}, _getmetatable(tableObject))
 
     s[tableObject] = res
-    for k, v in TablesHelper.GetKeyValuePairs(tableObject) do
+    for k, v in Class.GetKeyValuePairs(tableObject) do
         res[Class.Clone(k, s)] = Class.Clone(v, s)
     end
 

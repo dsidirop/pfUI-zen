@@ -21,7 +21,7 @@ local Guard         = _importer("System.Guard")
 local Table         = _importer("System.Table")
 local Scopify       = _importer("System.Scopify")
 local EScopes       = _importer("System.EScopes")
-local Classify      = _importer("System.Classify")
+local Classify      = _importer("System.Class.Classify")
 local TablesHelper  = _importer("System.Helpers.Tables")
 local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
 

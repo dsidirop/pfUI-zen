@@ -16,7 +16,7 @@ _setfenv(1, {}) --                                                              
 local Guard              = _importer("System.Guard")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
+local Classify           = _importer("System.Class.Classify")
 local Reflection         = _importer("System.Reflection")
 
 local Rethrow                          = _importer("System.Exceptions.Rethrow")
@@ -48,7 +48,7 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.TryGetNamespaceOfClassProto(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceIfClassProto(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -78,11 +78,11 @@ function Class:Run()
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceOfClassProto(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfClassProto(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 
-    local fullNamespaceOfException = Reflection.TryGetNamespaceOfClassInstance(exception)
+    local fullNamespaceOfException = Reflection.TryGetNamespaceIfClassInstance(exception)
     local specificExceptionHandler = _allExceptionHandlers[fullNamespaceOfException]
     if specificExceptionHandler ~= nil then
         return specificExceptionHandler

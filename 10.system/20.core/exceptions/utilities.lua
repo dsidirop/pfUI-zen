@@ -23,7 +23,7 @@ local Class = _namespacer("System.Exceptions.Utilities")
 function Class.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Class)
 
-    return "[" .. (Reflection.TryGetNamespaceOfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(exception message not available)")
+    return "[" .. (Reflection.TryGetNamespaceIfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(exception message not available)")
             .. "\n\n--------------[ Stacktrace ]--------------\n"
             .. (exception:GetStacktrace() or "(stacktrace not available)")
             .. "------------[ End Stacktrace ]------------\n "

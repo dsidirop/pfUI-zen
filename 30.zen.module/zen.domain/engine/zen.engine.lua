@@ -22,7 +22,7 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
+local Classify = _importer("System.Class.Classify")
 
 local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
@@ -51,11 +51,7 @@ function Class:SetSettings(settings) -- todo   partial classes
     Scopify(EScopes.Function, self)
 
     _assert(_type(settings) == "table", "settings parameter is expected to be an object")
-    
-    if _isRunning then
-        _error("cannot change settings while engine is running - stop the engine first")
-        return self
-    end
+    _assert(not _isRunning, "cannot change settings while engine is running - stop the engine first")
     
     if settings == _settings then
         return self -- nothing to do

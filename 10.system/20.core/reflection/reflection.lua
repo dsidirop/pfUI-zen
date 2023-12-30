@@ -5,49 +5,38 @@ local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local Types = using "System.Primitives.Types"
-
-local STypes = using "System.Reflection.STypes"
 local ESymbolType = using "System.Namespacing.ESymbolType"
+local RawTypeSystem = using "System.Language.RawTypeSystem"
 
 local Reflection = using "[declare]" "System.Reflection [Partial]"
 
 Scopify(EScopes.Function, {})
 
-Reflection.GetRawType = Types.GetRawType -- for the sake of completeness   just in case someone needs it
-Reflection.TryGetNamespaceOfClassProto = using "System.Namespacing.TryGetNamespaceOfClassProto"
+Reflection.TryGetNamespaceIfClassProto = using "System.Namespacing.TryGetNamespaceIfClassProto"
 Reflection.TryGetSymbolProtoViaNamespace = using "System.Importing.TryGetSymbolProtoViaNamespace"
 
-function Reflection.IsTable(value)
-    return Types.GetRawType(value) == STypes.Table
-end
+Reflection.IsNil = RawTypeSystem.IsNil
+Reflection.IsTable = RawTypeSystem.IsTable
+Reflection.IsNumber = RawTypeSystem.IsNumber
+Reflection.IsString = RawTypeSystem.IsString
+Reflection.IsBoolean = RawTypeSystem.IsBoolean
+Reflection.IsFunction = RawTypeSystem.IsFunction
+Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
 function Reflection.IsOptionallyTable(value)
-    return value == nil or Types.GetRawType(value) == STypes.Table
-end
-
-function Reflection.IsFunction(value)
-    return Types.GetRawType(value) == STypes.Function
+    return value == nil or RawTypeSystem.IsTable(value)
 end
 
 function Reflection.IsOptionallyFunction(value)
-    return value == nil or Types.GetRawType(value) == STypes.Function
-end
-
-function Reflection.IsNumber(value)
-    return Types.GetRawType(value) == STypes.Number
+    return value == nil or RawTypeSystem.IsFunction(value)
 end
 
 function Reflection.IsOptionallyNumber(value)
-    return value == nil or Types.GetRawType(value) == STypes.Number
-end
-
-function Reflection.IsBoolean(value)
-    return Types.GetRawType(value) == STypes.Boolean
+    return value == nil or RawTypeSystem.IsNumber(value)
 end
 
 function Reflection.IsOptionallyBoolean(value)
-    return value == nil or Types.GetRawType(value) == STypes.Boolean
+    return value == nil or RawTypeSystem.IsBoolean(value)
 end
 
 function Reflection.IsInteger(value)
@@ -58,16 +47,12 @@ function Reflection.IsOptionallyInteger(value)
     return value == nil or Reflection.IsInteger(value)
 end
 
-function Reflection.IsString(value)
-    return Types.GetRawType(value) == STypes.String
-end
-
 function Reflection.IsOptionallyString(value)
-    return value == nil or Types.GetRawType(value) == STypes.String
+    return value == nil or RawTypeSystem.IsString(value)
 end
 
 function Reflection.IsTableOrString(value)
-    return Types.GetRawType(value) == STypes.Table or Types.GetRawType(value) == STypes.String
+    return RawTypeSystem.IsTable(value) or RawTypeSystem.IsString(value)
 end
 
 function Reflection.IsOptionallyTableOrString(value)
@@ -75,13 +60,13 @@ function Reflection.IsOptionallyTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredClassProto)
-    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceOfClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
+    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceIfClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
 
     if object == nil then
         return false
     end
     
-    local objectNamespace = Reflection.TryGetNamespaceOfClassInstance(object)
+    local objectNamespace = Reflection.TryGetNamespaceIfClassInstance(object)
     if objectNamespace == nil then
         return false
     end
@@ -89,26 +74,35 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
     return objectNamespace == desiredNamespace
 end
 
-function Reflection.TryGetType(object) -- the object might be anything: nil, a class-instance or a class-proto or just a mere raw type (number, string, boolean, function, table)
-    return Reflection.TryGetNamespaceOfClassInstance(object) --   order    
-            or Reflection.TryGetNamespaceOfClassProto(object) --  order
-            or Types.GetRawType(object) --                   order    keep last
+function Reflection.TryGetNamespaceWithFallbackToRawType(object) --00
+
+    return Reflection.TryGetNamespaceIfClassInstance(object) --   order    
+            or Reflection.TryGetNamespaceIfClassProto(object) --  order
+            or RawTypeSystem.GetRawType(object) --                order    keep last
+
+    -- 00  the object might be anything
+    --
+    --         nil
+    --         a class-instance
+    --         a class-proto
+    --         or just a mere raw type (number, string, boolean, function, table)
+    --
 end
 
 function Reflection.IsClassInstance(object)
-    return Reflection.TryGetNamespaceOfClassInstance(object) ~= nil
+    return Reflection.TryGetNamespaceIfClassInstance(object) ~= nil
 end
 
 function Reflection.IsClassProto(object)
-    return Reflection.TryGetNamespaceOfClassProto(object) ~= nil
+    return Reflection.TryGetNamespaceIfClassProto(object) ~= nil
 end
 
-function Reflection.TryGetNamespaceOfClassInstance(object)
+function Reflection.TryGetNamespaceIfClassInstance(object)
     if not Reflection.IsTable(object) or object.__index == nil then
         return nil
     end
     
-    return Reflection.TryGetNamespaceOfClassProto(object.__index)
+    return Reflection.TryGetNamespaceIfClassProto(object.__index)
 end
 
 function Reflection.TryGetClassProtoViaNamespace(namespacePath)

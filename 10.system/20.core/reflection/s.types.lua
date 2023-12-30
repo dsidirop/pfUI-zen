@@ -1,4 +1,4 @@
-﻿local _setfenv, _type, _error, _rawget, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _rawget, _namespacer, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,12 +6,11 @@
     _setfenv(1, {})
 
     local _type = _assert(_g.type)
-    local _error = _assert(_g.error)
     local _rawget = _assert(_g.rawget)
     local _namespacer = _assert(_g.pvl_namespacer_add)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _setfenv, _type, _error, _rawget, _namespacer, _setmetatable
+    return _assert, _setfenv, _type, _rawget, _namespacer, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -25,16 +24,19 @@ STypes.String   = "string"
 STypes.Boolean  = "boolean"
 STypes.Function = "function"
 
-STypes.Enum      = "Enum"
-STypes.Class     = "Class"
-STypes.Interface = "Interface"
+STypes.Thread   = "thread" --   rarely encountered
+STypes.Userdata = "userdata" -- rarely encountered
+
+--STypes.Enum      = "Enum" -- todo
+--STypes.Class     = "Class"
+--STypes.Interface = "Interface"
 --@formatter:on
 
 _setmetatable(STypes, {
     __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
         local value = _rawget(tableObject, key)
         if value == nil then
-            _error("STypes enum doesn't have a member named '" .. key .. "'", 2)
+            _assert(false, "STypes enum doesn't have a member named '" .. key .. "'", 2)
         end
         
         return value
