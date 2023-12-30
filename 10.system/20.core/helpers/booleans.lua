@@ -44,6 +44,6 @@ function Class.Booleanize(value, defaultValueWhenValueIsNil)
     
     return value --10
     
-    -- 00  this must mirror the logic in Guard.Assert.IsBooleanizableString_
+    -- 00  this must mirrors the logic in Guard.Utilities.IsBooleanizableString
     -- 10  if we fallthrough then we must be dealing with a boolean
 end

@@ -5,7 +5,8 @@
     
     <Include file="strings.find.lua"/>
     <Include file="strings.isdudstring.lua"/>
-    <Include file="strings.tostring.lua"/>
+    <Include file="strings.stringify.lua"/>
+    <Include file="strings.length.lua"/>
     <Include file="strings.format.lua"/>
     <Include file="strings.trim.lua"/>
     <Include file="strings.split.lua"/>

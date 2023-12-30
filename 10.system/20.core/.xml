@@ -4,6 +4,7 @@
     <Include file="core.symbols.namespaces\.xml"/>
 
     <Include file="global.environment\.xml"/>
+    <Include file="iterators\.xml"/>
     <Include file="scopify\.xml"/>
     <Include file="get.raw.type\.xml"/>
     <Include file="default.chat.frame\.xml"/>

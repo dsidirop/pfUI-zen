@@ -14,6 +14,7 @@ end)()
 _setfenv(1, {}) --                                                         @formatter:off
 
 local Debug              = _importer("System.Debug")
+local Guard              = _importer("System.Guard")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
 local Classify           = _importer("System.Classify")
@@ -25,12 +26,25 @@ local Class = _namespacer("System.Exceptions.ValueCannotBeNilException [Partial]
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
+    Guard.Check.IsOptionallyString(optionalArgumentName, "optionalArgumentName")
 
     return Classify(self, {
         _message = Class.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
         
+        _stringified = nil
+    })
+end
+
+function Class:NewWithMessage(customMessage)
+    Scopify(EScopes.Function, self)
+
+    Guard.Check.IsNonDudString(customMessage, "customMessage")
+
+    return Classify(self, {
+        _message = customMessage,
+        _stacktrace = "",
+
         _stringified = nil
     })
 end

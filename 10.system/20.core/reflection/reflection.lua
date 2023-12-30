@@ -1,6 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Math = using "System.Math"
+local Guard = using "System.Guard"
 local STypes = using "System.Reflection.STypes"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -71,23 +72,32 @@ function Reflection.IsOptionallyTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredClassProto)
+    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceOfClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
+
     if object == nil then
         return false
     end
-
-    return Reflection.TryGetNamespaceOfClassInstance(object) == Reflection.TryGetNamespaceOfClassProto(desiredClassProto)
-end
-
-function Reflection.TryGetNamespaceFromObjectOrItsRawType(object)
-    return Reflection.TryGetNamespaceOfObject(object) or Reflection.GetRawType(object)    
-end
-
-function Reflection.TryGetNamespaceOfObject(object)
-    if object == nil then
-        return nil
-    end
     
-    return Reflection.TryGetNamespaceOfClassInstance(object) or Reflection.TryGetNamespaceOfClassProto(object)
+    local objectNamespace = Reflection.TryGetNamespaceOfClassInstance(object)
+    if objectNamespace == nil then
+        return false
+    end
+
+    return objectNamespace == desiredNamespace
+end
+
+function Reflection.TryGetType(object) -- the object might be anything: nil, a class-instance or a class-proto or just a mere raw type (number, string, boolean, function, table)
+    return Reflection.TryGetNamespaceOfClassInstance(object) --   order    
+            or Reflection.TryGetNamespaceOfClassProto(object) --  order
+            or Reflection.GetRawType(object) --                   order    keep last
+end
+
+function Reflection.IsClassInstance(object)
+    return Reflection.TryGetNamespaceOfClassInstance(object) ~= nil
+end
+
+function Reflection.IsClassProto(object)
+    return Reflection.TryGetNamespaceOfClassProto(object) ~= nil
 end
 
 function Reflection.TryGetNamespaceOfClassInstance(object)

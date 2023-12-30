@@ -34,48 +34,48 @@ function StringsHelper.Format(format, ...)
     end
     
     if argCount == 1 then
-        return _strformat(format, StringsHelper.ToString(arg[1]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]))
     end
 
     if argCount == 2 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]))
     end
 
     if argCount == 3 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]))
     end
 
     if argCount == 4 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]))
     end
 
     if argCount == 5 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]))
     end
 
     if argCount == 6 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]), StringsHelper.ToString(arg[6]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]), StringsHelper.Stringify(arg[6]))
     end
 
     if argCount == 7 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]), StringsHelper.ToString(arg[6]), StringsHelper.ToString(arg[7]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]), StringsHelper.Stringify(arg[6]), StringsHelper.Stringify(arg[7]))
     end
 
     if argCount == 8 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]), StringsHelper.ToString(arg[6]), StringsHelper.ToString(arg[7]), StringsHelper.ToString(arg[8]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]), StringsHelper.Stringify(arg[6]), StringsHelper.Stringify(arg[7]), StringsHelper.Stringify(arg[8]))
     end
 
     if argCount == 9 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]), StringsHelper.ToString(arg[6]), StringsHelper.ToString(arg[7]), StringsHelper.ToString(arg[8]), StringsHelper.ToString(arg[9]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]), StringsHelper.Stringify(arg[6]), StringsHelper.Stringify(arg[7]), StringsHelper.Stringify(arg[8]), StringsHelper.Stringify(arg[9]))
     end
 
     if argCount == 10 then
-        return _strformat(format, StringsHelper.ToString(arg[1]), StringsHelper.ToString(arg[2]), StringsHelper.ToString(arg[3]), StringsHelper.ToString(arg[4]), StringsHelper.ToString(arg[5]), StringsHelper.ToString(arg[6]), StringsHelper.ToString(arg[7]), StringsHelper.ToString(arg[8]), StringsHelper.ToString(arg[9]), StringsHelper.ToString(arg[10]))
+        return _strformat(format, StringsHelper.Stringify(arg[1]), StringsHelper.Stringify(arg[2]), StringsHelper.Stringify(arg[3]), StringsHelper.Stringify(arg[4]), StringsHelper.Stringify(arg[5]), StringsHelper.Stringify(arg[6]), StringsHelper.Stringify(arg[7]), StringsHelper.Stringify(arg[8]), StringsHelper.Stringify(arg[9]), StringsHelper.Stringify(arg[10]))
     end
 
     local stringifiedArgs = {}
     for i = 1, argCount do
-        stringifiedArgs[i] = StringsHelper.ToString(arg[i])
+        stringifiedArgs[i] = StringsHelper.Stringify(arg[i])
     end
     
     return _strformat(format, TablesHelper.Unpack(stringifiedArgs))

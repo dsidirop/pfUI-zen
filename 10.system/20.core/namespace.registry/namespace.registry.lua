@@ -281,6 +281,10 @@ do
 
     function NamespaceRegistry:TryGetSymbolProtoViaNamespace(namespacePath)
         _setfenv(1, self)
+        
+        if namespacePath == nil then -- we dont want to error out in this case   this is a try-method
+            return nil, nil
+        end
 
         local entry = self:GetEntry_(namespacePath)
         if entry == nil then
@@ -301,16 +305,17 @@ do
 
         _assert(entry, "namespace '" .. namespacePath .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
         _assert(not entry:IsPartialEntry(), "namespace '" .. namespacePath .. "' holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?\n" .. _g.debugstack() .. "\n")
-
+        
         return _assert(entry:GetSymbol())
     end
 
     function NamespaceRegistry:GetEntry_(namespacePath)
         _setfenv(1, self)
 
-        _assert(namespacePath ~= nil and _type(namespacePath) == "string", "namespacePath must be a string") -- order
-        namespacePath = _strtrim(namespacePath) -- order
-        _assert(namespacePath ~= "", "namespacePath must not be dud") -- order        
+        _assert(_type(namespacePath) == "string", "namespacePath must be a string (got '" .. _type(namespacePath) .. "')\n" .. _g.debugstack() .. "\n")
+
+        namespacePath = _strtrim(namespacePath)
+        _assert(namespacePath ~= "", "namespacePath must not be dud\n" .. _g.debugstack() .. "\n")
 
         return _namespaces_registry[namespacePath]
     end

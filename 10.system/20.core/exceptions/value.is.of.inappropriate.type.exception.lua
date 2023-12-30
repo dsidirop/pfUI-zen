@@ -88,9 +88,9 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
+        message = message .. " (expected " .. _tostring(expectationString) .. " - got '" .. Reflection.TryGetType(value) .. "')"
     else
-        message = message .. " (its type is '" .. Reflection.TryGetNamespaceFromObjectOrItsRawType(value) .. "')"
+        message = message .. " (its type is '" .. Reflection.TryGetType(value) .. "')"
     end
     
     return message

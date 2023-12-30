@@ -93,7 +93,7 @@ function VWoWUnit.Test:RunImpl_(testName, data)
 	_assert(_type(data) == "table", "test data must be a table")
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
 
-	_print("****" .. testName .. " starting ... ")
+	-- _print("****" .. testName .. " starting ... ")
 
 	local success, errorMessage = _pcall(_testFunction, data)
 	if success == nil or success == false or errorMessage ~= nil then

@@ -15,6 +15,7 @@ using "[declare]" "System.Guard"
 using "[declare]" "System.Debug"
 using "[declare]" "System.Event"
 using "[declare]" "System.Console"
+using "[declare]" "System.Iterators"
 using "[declare]" "System.Reflection"
 
 using "[declare]" "System.Helpers.Arrays"
