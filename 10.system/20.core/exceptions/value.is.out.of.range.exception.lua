@@ -84,7 +84,7 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local message = optionalArgumentName == nil
             and "Value out of range"
-            or "Value '" .. optionalArgumentName .. "' is out of range"
+            or "Value of '" .. optionalArgumentName .. "' is out of range"
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then

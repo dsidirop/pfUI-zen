@@ -18,7 +18,7 @@ local Exception = _importer("System.Exceptions.Exception")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Guard.Assert.IsBooleanizable",
-    Tags = { "guard", "guard-check", "guard-check-booleanizables" }
+    Tags = { "system", "guard", "guard-check", "guard-check-booleanizables" }
 }
 
 TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",

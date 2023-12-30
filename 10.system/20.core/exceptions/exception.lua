@@ -1,6 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Debug = using "System.Debug"
+local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
@@ -10,10 +11,12 @@ local ExceptionUtilities = using "System.Exceptions.Utilities"
 
 local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
 
+Scopify(EScopes.Function, {})
+
 function Class:New(message)
     Scopify(EScopes.Function, self)
-
-    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
+   
+    Guard.Assert.IsOptionallyNonDudString(message, "message")
 
     return Classify(self, {
         _message = nil,
