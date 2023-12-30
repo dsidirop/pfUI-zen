@@ -1,12 +1,8 @@
-local _g = assert(_G or getfenv(0))
-local _setfenv = assert(_g.setfenv)
-local _namespacer = assert(_g.pvl_namespacer_add)
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local _mathFloor = assert((_g.math or {}).floor)
+local Debug = using "System.Debug"
+local GlobalEnvironment = using "System.Global"
 
-_g = nil
-_setfenv(1, {})
+local Math = using "[declare]" "System.Math [Partial]"
 
-local Math = _namespacer("System.Math [Partial]")
-
-Math.Floor = _mathFloor
+Math.Floor = Debug.Assert((GlobalEnvironment.math or {}).floor)
