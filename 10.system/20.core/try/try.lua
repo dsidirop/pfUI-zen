@@ -16,7 +16,7 @@ _setfenv(1, {}) --                                                              
 local Guard              = _importer("System.Guard")
 local Scopify            = _importer("System.Scopify")
 local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Class.Classify")
+local Classify           = _importer("System.Classes.Classify")
 local Reflection         = _importer("System.Reflection")
 
 local Rethrow                          = _importer("System.Exceptions.Rethrow")

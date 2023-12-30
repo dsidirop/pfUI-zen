@@ -19,7 +19,7 @@ _setfenv(1, {}) -- @formatter:off
 
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
-local Classify = _importer("System.Class.Classify")
+local Classify = _importer("System.Classes.Classify")
 
 local Event                                             = _importer("System.Event")
 local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")

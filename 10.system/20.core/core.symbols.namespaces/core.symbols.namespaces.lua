@@ -16,8 +16,8 @@ using "[declare]" "System.Console"
 using "[declare]" "System.Iterators"
 using "[declare]" "System.Reflection"
 
-using "[declare]" "System.Class.Classify"
-using "[declare]" "System.Class.MetaTable"
+using "[declare]" "System.Classes.Classify"
+using "[declare]" "System.Classes.MetaTable"
 
 using "[declare]" "System.Helpers.Arrays"
 using "[declare]" "System.Helpers.Tables"

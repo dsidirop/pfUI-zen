@@ -1,10 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Debug = using "System.Debug"
-local MetaTable = using "System.Class.MetaTable"
+local MetaTable = using "System.Classes.MetaTable"
 local RawTypeSystem = using "System.Language.RawTypeSystem"
 
-local Classify = using "[declare]" "System.Class.Classify [Partial]"
+local Classify = using "[declare]" "System.Classes.Classify [Partial]"
 
 -- Classify() calls go here
 --

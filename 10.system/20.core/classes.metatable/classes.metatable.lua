@@ -3,7 +3,7 @@
 local Debug = using "System.Debug"
 local Global = using "System.Global"
 
-local Metatable = using "[declare]" "System.Class.MetaTable [Partial]"
+local Metatable = using "[declare]" "System.Classes.MetaTable [Partial]"
 
 Metatable.Set = Debug.Assert(Global.setmetatable, "Global.setmetatable is undefined (how is this even possible?)")
 Metatable.Get = Debug.Assert(Global.getmetatable, "Global.getmetatable is undefined (how is this even possible?)")

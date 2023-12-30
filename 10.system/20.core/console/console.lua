@@ -3,7 +3,7 @@
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Classify = using "System.Class.Classify"
+local Classify = using "System.Classes.Classify"
 
 local TablesHelper = using "System.Helpers.Tables"
 local StringsHelper = using "System.Helpers.Strings"
@@ -20,7 +20,7 @@ function Console.Writer:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(nativeWriteCallback)
-
+    
     return Classify(self, {
         _nativeWriteCallback = nativeWriteCallback
     })

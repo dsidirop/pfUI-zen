@@ -22,7 +22,7 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Class.Classify")
+local Classify = _importer("System.Classes.Classify")
 
 local Check = _importer("System.Guard.Assert")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")

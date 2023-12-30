@@ -4,7 +4,7 @@ local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 local Console      = using "System.Console"
-local Classify     = using "System.Class.Classify"
+local Classify     = using "System.Classes.Classify"
 local TablesHelper = using "System.Helpers.Tables"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"

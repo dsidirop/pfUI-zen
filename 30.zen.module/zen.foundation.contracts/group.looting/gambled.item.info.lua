@@ -16,7 +16,7 @@ _setfenv(1, {}) --                                                              
 local Guard           = _importer("System.Guard")
 local Scopify         = _importer("System.Scopify")
 local EScopes         = _importer("System.EScopes")
-local Classify        = _importer("System.Class.Classify")
+local Classify        = _importer("System.Classes.Classify")
 
 local StringsHelper   = _importer("System.Helpers.Strings")
 local BooleansHelper  = _importer("System.Helpers.Booleans")

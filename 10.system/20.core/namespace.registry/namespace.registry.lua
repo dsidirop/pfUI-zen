@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _gsub, _pairs, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable = (function()
+﻿local _g, _print, _assert, _type, _gsub, _pairs, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,6 +6,7 @@
 
     local _type = _assert(_g.type)
     local _gsub = _assert(_g.string.gsub)
+    local _print = _assert(_g.print)
     local _pairs = _assert(_g.pairs)
     local _unpack = _assert(_g.unpack)
     local _strsub = _assert(_g.string.sub)
@@ -13,7 +14,7 @@
     local _tostring = _assert(_g.tostring)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _g, _assert, _type, _gsub, _pairs, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable
+    return _g, _print, _assert, _type, _gsub, _pairs, _unpack, _strsub, _strfind, _tostring, _setfenv, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -235,7 +236,7 @@ do
         __call = function(classSymbol, ...)
             local hasConstructorFunction = _type(classSymbol.New) == "function"
             local hasImplicitCallFunction = _type(classSymbol.__Call__) == "function"
-            _assert(hasConstructorFunction or hasImplicitCallFunction, "Cannot call class() because the symbol lacks both methods :New(...) and :__Call__()!\n" .. _g.debugstack(2) .. "\n")
+            _assert(hasConstructorFunction or hasImplicitCallFunction, "Cannot call class() because the symbol lacks both methods :New() and :__Call__()\n" .. _g.debugstack() .. "\n")
             
             if hasImplicitCallFunction then --00
                 return classSymbol:__Call__(_unpack(arg))

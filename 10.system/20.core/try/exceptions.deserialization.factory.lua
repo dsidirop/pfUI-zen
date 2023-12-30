@@ -2,7 +2,7 @@
 
 local Scopify            = using("System.Scopify") --                          @formatter:off
 local EScopes            = using("System.EScopes")
-local Classify           = using("System.Class.Classify")
+local Classify           = using("System.Classes.Classify")
 local Reflection         = using("System.Reflection")
 
 local Exception          = using("System.Exceptions.Exception")
