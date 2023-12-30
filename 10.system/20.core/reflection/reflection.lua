@@ -105,7 +105,7 @@ function Reflection.TryGetNamespaceIfClassInstance(object)
     return Reflection.TryGetNamespaceIfClassProto(object.__index)
 end
 
-function Reflection.TryGetClassProtoViaNamespace(namespacePath)
+function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     local proto, symbolType = Reflection.TryGetSymbolProtoViaNamespace(namespacePath)
     if proto == nil or symbolType == nil or symbolType ~= ESymbolType.Class then
         return nil

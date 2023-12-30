@@ -48,7 +48,7 @@ function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
     local message = StringsHelper.Match(firstLine, ":[%s]*([%s%S]+)$") or firstLine -- 10
     message = StringsHelper.Match(message, "%[[.%w%d]+] ([%s%S]+)$") -- 20
 
-    local exceptionType = Reflection.TryGetClassProtoViaNamespace(exceptionNamespaceString) or Exception
+    local exceptionType = Reflection.TryGetProtoViaClassNamespace(exceptionNamespaceString) or Exception
 
     return message, exceptionType
 
