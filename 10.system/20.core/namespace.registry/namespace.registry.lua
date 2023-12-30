@@ -320,14 +320,14 @@ do
     end
 
     -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
-    function NamespaceRegistry:TryGetNamespaceIfClassProto(object)
+    function NamespaceRegistry:TryGetNamespaceIfClassProto(proto)
         _setfenv(1, self)
 
         if object == nil then
             return nil
         end
 
-        return _reflection_registry[object]
+        return _reflection_registry[proto]
     end
 end
 
