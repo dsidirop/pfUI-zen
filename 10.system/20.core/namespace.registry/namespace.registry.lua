@@ -353,7 +353,7 @@ do
         end
 
         local entry = _reflection_registry[symbolProto]
-        if entry == nil then
+        if entry == nil or not entry:IsClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
             return nil
         end
 
