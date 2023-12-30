@@ -1,25 +1,15 @@
-﻿local _assert, _setfenv, _debugstack, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Global = using "System.Global"
 
-    local _debugstack = _assert(_g.debugstack)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Debug = using "[declare]" "System.Debug [Partial]"
 
-    return _assert, _setfenv, _debugstack, _namespacer
-end)()
+Debug.Assert = Global.assert or assert --order
 
-_setfenv(1, {})
+local _debugstack = Debug.Assert(Global.debugstack or debugstack, "Global.debugstack is not available (how is this even possible?)") --order
 
-local Debug = _namespacer("System.Debug [Partial]")
+function Debug.Stacktrace(optionalExtraStackframesToSkipping)
+    optionalExtraStackframesToSkipping = optionalExtraStackframesToSkipping or 0
 
-Debug.Assert = _assert
-
-function Debug.Stacktrace(optionalStackDepth)
-    optionalStackDepth = optionalStackDepth or 0
-
-    local stacktrace = _debugstack(2 + optionalStackDepth)
-    return stacktrace
+    return _debugstack(2 + optionalExtraStackframesToSkipping)
 end
