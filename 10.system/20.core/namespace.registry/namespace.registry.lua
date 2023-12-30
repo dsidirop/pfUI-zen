@@ -130,25 +130,25 @@ do
     function Entry:GetSymbol()
         _setfenv(1, self)
 
-        return _assert(_symbol)
+        return _assert(_symbol ~= nil, "spotted unset symbol (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
     end
 
     function Entry:GetSymbolType()
         _setfenv(1, self)
 
-        return _assert(_symbolType)
-    end
-
-    function Entry:IsClassEntry()
-        _setfenv(1, self)
-
-        return _symbolType == ESymbolType.Class
+        return _assert(_symbolType ~= nil, "spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
     end
 
     function Entry:IsPartialEntry()
         _setfenv(1, self)
 
         return _isForPartial
+    end
+
+    function Entry:IsClassEntry()
+        _setfenv(1, self)
+
+        return _symbolType == ESymbolType.Class
     end
 
     function Entry:IsEnumEntry()
@@ -161,24 +161,6 @@ do
         _setfenv(1, self)
 
         return _symbolType == ESymbolType.Interface
-    end
-
-    function Entry:IsSupportingPartials()
-        _setfenv(1, self)
-
-        return self:IsClassEntry()
-                or self:IsEnumEntry()
-                or self:IsInterfaceEntry()
-                or self:IsPartialEntry()
-    end
-
-    function Entry:UpgradeSymbolTypeFromPartialTo(newSymbolType)
-        _setfenv(1, self)
-
-        _assert(_isForPartial, "the current entry was supposed to be a partial class but it was not marked as such\n" .. _g.debugstack(3) .. "\n")
-
-        _symbolType = newSymbolType
-        return true
     end
 end
 
@@ -199,7 +181,6 @@ do
     end
 
     -- namespacer()
-    local PatternToDetectPartialKeywordPostfix = "%s*%[[Pp]artial%]%s*$"
     function NamespaceRegistry:UpsertSymbol(namespacePath, symbolType)
         _setfenv(1, self)
 
@@ -209,7 +190,7 @@ do
         namespacePath = _strtrim(namespacePath)        
         _assert(namespacePath ~= "", "namespacePath must not be dud\n" .. _g.debugstack(3) .. "\n")
 
-        local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath) -- remove the [partial] postfix from the namespace path
+        local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
         
         local preExistingEntry = _namespaces_registry[sanitizedNamespacePath]
         if preExistingEntry == nil then
@@ -223,27 +204,32 @@ do
             return newSymbol
         end
 
-        _assert(symbolType == preExistingEntry:GetSymbolType(), "cannot register namespace '" .. sanitizedNamespacePath .. "' with type='" .. symbolType .. "' as it has already been assigned to a symbol with type='" .. preExistingEntry:GetSymbolType() .. "'.\n" .. _g.debugstack() .. "\n")
-        _assert(isForPartial or preExistingEntry:IsPartialEntry(), "namespace '" .. sanitizedNamespacePath .. "' has already been assigned to a symbol marked as '" .. preExistingEntry:GetSymbolType() .. "' (did you mean to use a partial class?).\n" .. _g.debugstack() .. "\n")
+        _assert(symbolType == preExistingEntry:GetSymbolType(), "cannot register namespace '" .. sanitizedNamespacePath .. "' with type='" .. symbolType .. "' as it has already been assigned to a symbol with type='" .. preExistingEntry:GetSymbolType() .. "'.\n" .. _g.debugstack() .. "\n") -- 10
+        _assert(isForPartial or preExistingEntry:IsPartialEntry(), "namespace '" .. sanitizedNamespacePath .. "' has already been assigned to a symbol marked as '" .. preExistingEntry:GetSymbolType() .. "' (did you mean to use a partial class?).\n" .. _g.debugstack() .. "\n") -- 10
 
         return preExistingEntry:GetSymbol()
 
-        --00  notice that if the symbolType is to declare an extension-class then we dont care if the class already
-        --    exists its also perfectly fine if the the core class gets loaded after its associated extension classes too
+        -- 10  notice that if the intention is to declare an extension-class then we dont care if the class already exists
+        --     and its also perfectly fine if the the core class gets loaded after its associated extension classes too
     end
 
+    NamespaceRegistry.PatternToDetectPartialKeywordPostfix = "%s*%[[Pp][Aa][Rr][Tt][Ii][Aa][Ll]%]%s*$"
     function NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
         _setfenv(1, NamespaceRegistry)
 
-        local sanitized = _gsub(namespacePath, PatternToDetectPartialKeywordPostfix, "") -- remove the [partial] postfix from the namespace path
+        local sanitized = _gsub(namespacePath, NamespaceRegistry.PatternToDetectPartialKeywordPostfix, "") --00
         local isForPartial = sanitized ~= namespacePath
-
-        return sanitized, isForPartial 
+        
+        -- sanitized = _strtrim(sanitized) noneed
+        
+        return sanitized, isForPartial
+        
+        -- 00  remove the [partial] postfix from the namespace string if it exists
     end
 
     NamespaceRegistry._StandardClassMetatable = { -- add a shortcut to the default constructor on the class
         __call = function(classSymbol, ...)
-            _assert(_type(classSymbol.New) == "function", "Cannot call class() because the default constructor method :New(...) has not been defined on this class!")
+            _assert(_type(classSymbol.New) == "function", "Cannot call class() because the default constructor method :New(...) has not been defined on this class!\n" .. _g.debugstack(2) .. "\n")
 
             return classSymbol:New(_unpack(arg))
         end
@@ -267,13 +253,13 @@ do
         _setfenv(1, self)
 
         _assert(symbol ~= nil, "symbol must not be nil")
-        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud")
+        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud.\n" .. _g.debugstack(3) .. "\n")
 
         namespacePath = _strtrim(namespacePath)
 
         local possiblePreexistingEntry = _namespaces_registry[namespacePath]
 
-        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.")
+        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.\n" .. _g.debugstack(3) .. "\n")
 
         _reflection_registry[symbol] = namespacePath
         _namespaces_registry[namespacePath] = Entry:New(ESymbolType.RawSymbol, symbol)
@@ -303,10 +289,10 @@ do
             return nil
         end
 
-        _assert(entry, "namespace '" .. namespacePath .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
+        _assert(entry ~= nil, "namespace '" .. namespacePath .. "' has not been registered.\n" .. _g.debugstack() .. "\n")
         _assert(not entry:IsPartialEntry(), "namespace '" .. namespacePath .. "' holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?\n" .. _g.debugstack() .. "\n")
         
-        return _assert(entry:GetSymbol())
+        return entry:GetSymbol()
     end
 
     function NamespaceRegistry:GetEntry_(namespacePath)
@@ -368,6 +354,8 @@ NamespaceRegistrySingleton:Bind("System.Importing.TryGetSymbolProtoViaNamespace"
 
 NamespaceRegistrySingleton:Bind("System.Namespacing.Binder",                      function(namespacePath, symbol) return NamespaceRegistrySingleton:Bind                          (namespacePath, symbol) end)
 NamespaceRegistrySingleton:Bind("System.Namespacing.TryGetNamespaceOfClassProto", function(classProto           ) return NamespaceRegistrySingleton:TryGetNamespaceOfClassProto   (classProto           ) end)
+
+-- todo   also introduce [declare partial] [declare partial:enum] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
 
 NamespaceRegistrySingleton:Bind("[declare]",                                      function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbol                  (namespacePath, ESymbolType.Class    ) end)
 NamespaceRegistrySingleton:Bind("[declare:class]",                                function(namespacePath        ) return NamespaceRegistrySingleton:UpsertSymbol                  (namespacePath, ESymbolType.Class    ) end)
