@@ -27,8 +27,8 @@ STypes.Function = "function"
 STypes.Thread   = "thread" --   rarely encountered
 STypes.Userdata = "userdata" -- rarely encountered
 
+STypes.Class     = "Class"
 --STypes.Enum      = "Enum" -- todo
---STypes.Class     = "Class"
 --STypes.Interface = "Interface"
 --@formatter:on
 
@@ -55,4 +55,8 @@ function STypes.IsValid(value)
             or value == STypes.String
             or value == STypes.Boolean
             or value == STypes.Function
+
+            or value == STypes.Class
+            -- or value == STypes.Enum --todo
+            -- or value == STypes.Interface
 end
