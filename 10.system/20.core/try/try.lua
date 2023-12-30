@@ -44,7 +44,7 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
+    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
