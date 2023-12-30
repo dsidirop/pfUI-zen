@@ -350,15 +350,6 @@ do
     _g.pvl_namespacer_bind = function(namespacePath, symbol)
         return NamespaceRegistrySingleton:Bind(namespacePath, symbol)
     end
-
-    -- importer()
-    _g.pvl_namespacer_tryload = function(namespacePath)
-        return NamespaceRegistrySingleton:TryGetSymbolProtoViaNamespace(namespacePath)
-    end
-
-    _g.pvl_namespacer_reflect = function(instanceType)
-        return NamespaceRegistrySingleton:TryGetNamespaceIfClassProto(instanceType)
-    end
 end
 
 -- @formatter:off
