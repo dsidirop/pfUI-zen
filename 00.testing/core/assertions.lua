@@ -21,6 +21,7 @@ _setfenv(1, {})
 
 VWoWUnit.Should = {}
 VWoWUnit.Should.Be = {}
+VWoWUnit.Should.Not = {}
 
 function VWoWUnit.Should.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
@@ -34,13 +35,13 @@ function VWoWUnit.Should.Throw(action)
 	return result
 end
 
-function VWoWUnit.Should.NotThrow(action)
+function VWoWUnit.Should.Not.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
 	
 	local success, result = _pcall(action)
 
 	if not success then
-		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.NotThrow()] Was not expecting an exception to be thrown but got this one:\n\n%s ", result))
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s ", result))
 	end
 	
 	return result

@@ -42,7 +42,7 @@ TestsGroup:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
             -- ARRANGE
 
             -- ACT + ASSERT
-            U.Should.NotThrow(function()
+            U.Should.Not.Throw(function()
                 LRUCache:New(options)
             end)
         end
