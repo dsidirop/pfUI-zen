@@ -6,6 +6,8 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local ESymbolType = using "System.Namespacing.ESymbolType"
+
+-- local SRawTypes = using "System.Language.SRawTypes"
 local RawTypeSystem = using "System.Language.RawTypeSystem"
 
 local Reflection = using "[declare]" "System.Reflection [Partial]"
@@ -13,7 +15,7 @@ local Reflection = using "[declare]" "System.Reflection [Partial]"
 Scopify(EScopes.Function, {})
 
 Reflection.TryGetNamespaceIfClassProto = using "System.Namespacing.TryGetNamespaceIfClassProto"
-Reflection.TryGetSymbolProtoViaNamespace = using "System.Importing.TryGetSymbolProtoViaNamespace"
+Reflection.TryGetProtoTidbitsViaNamespace = using "System.Importing.TryGetProtoTidbitsViaNamespace"
 
 Reflection.IsNil = RawTypeSystem.IsNil
 Reflection.IsTable = RawTypeSystem.IsTable
@@ -22,6 +24,25 @@ Reflection.IsString = RawTypeSystem.IsString
 Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
+
+-- returns   { ESymbolType, Namespace }
+-- function Reflection.GetInfo(value) -- value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
+--    todo  if we ever actually need this
+--
+--    local rawType = RawTypeSystem.GetRawType(value)
+--    if rawType ~= SRawTypes.Table then
+--        local symbolType = ConvertRawTypeToESymbolType(rawType)
+--        return symbolType, nil
+--    end
+--
+--    if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
+--    local symbolType, namespace = using "System.Namespacing.TryGetInfo"(value.__index or value)
+--    if symbolType ~= nil then
+--         return symbolType, namespace
+--    end
+--
+--    return ESymbolType.Table, nil
+-- end
 
 function Reflection.IsOptionallyTable(value)
     return value == nil or RawTypeSystem.IsTable(value)
@@ -106,10 +127,10 @@ function Reflection.TryGetNamespaceIfClassInstance(object)
 end
 
 function Reflection.TryGetProtoViaClassNamespace(namespacePath)
-    local proto, symbolType = Reflection.TryGetSymbolProtoViaNamespace(namespacePath)
-    if proto == nil or symbolType == nil or symbolType ~= ESymbolType.Class then
+    local symbolProto, symbolType = Reflection.TryGetProtoTidbitsViaNamespace(namespacePath)
+    if symbolProto == nil or symbolType == nil or symbolType ~= ESymbolType.Class then
         return nil
     end
     
-    return proto
+    return symbolProto
 end
