@@ -65,13 +65,6 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
 
-    return self:__tostring()
-end
-
--- private space
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
-
     if _stringified ~= nil then
         return _stringified
     end
@@ -79,3 +72,4 @@ function Class:__tostring()
     _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
     return _stringified
 end
+Class.__tostring = Class.ToString

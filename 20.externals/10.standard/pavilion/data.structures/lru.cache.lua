@@ -164,8 +164,16 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
 
-    return self:__tostring()
+    local s = "{ "
+    local sep = ""
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
+        sep = ", "
+    end
+
+    return s .. " }"
 end
+Class.__tostring = Class.ToString
 
 function Class:Cleanup()
     Scopify(EScopes.Function, self)
@@ -232,19 +240,6 @@ function Class:Sort_(t)
     end)
 
     return array
-end
-
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
-
-    local s = "{ "
-    local sep = ""
-    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
-        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
-        sep = ", "
-    end
-
-    return s .. " }"
 end
 
 function Class:__len()

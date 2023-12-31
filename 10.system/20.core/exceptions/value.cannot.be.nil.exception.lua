@@ -75,8 +75,14 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
 
-    return self:__tostring()
+    if _stringified ~= nil then
+        return _stringified
+    end
+
+    _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
+    return _stringified
 end
+Class.__tostring = Class.ToString
 
 -- private space
 function Class.FormulateMessage_(optionalArgumentName)
@@ -87,15 +93,4 @@ function Class.FormulateMessage_(optionalArgumentName)
             or "'" .. optionalArgumentName .. "' cannot be nil"
 
     return message
-end
-
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
-
-    if _stringified ~= nil then
-        return _stringified
-    end
-
-    _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
-    return _stringified
 end

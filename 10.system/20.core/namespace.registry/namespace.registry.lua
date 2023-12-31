@@ -219,6 +219,13 @@ do
 
         return _symbolType == EManagedSymbolTypes.RawSymbol
     end
+
+    function Entry:ToString()
+        _setfenv(1, self)
+
+        return "symbolType='" .. _tostring(_symbolType) .. "', symbolProto='" .. _tostring(_symbolProto) .. "', namespacePath='" .. _tostring(_namespacePath) .. "', isForPartial='" .. _tostring(_isForPartial) .. "'"
+    end
+    Entry.__tostring = Entry.ToString
 end
 
 local NamespaceRegistry = {}
@@ -396,12 +403,12 @@ do
 
         _g.print("** namespaces-registry **")
         for namespace, entry in _pairs(self._namespaces_registry) do
-            _g.print("**** namespace='" .. (namespace or "nil") .. "' -> symbolType=" .. _tostring(entry:GetManagedSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+            _g.print("**** namespace='" .. _tostring(namespace) .. "' ->  " .. entry:ToString())
         end
 
         _g.print("** reflection-registry **")
         for symbolProto, entry in _pairs(self._reflection_registry) do
-            _g.print("**** symbolProto='" .. _tostring(symbolProto or "nil") .. "' -> symbolType=" .. _tostring(entry:GetManagedSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+            _g.print("**** symbolProto='" .. _tostring(symbolProto) .. "' ->  " .. entry:ToString())
         end
 
         _g.print("\n\n")         

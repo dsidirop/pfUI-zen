@@ -79,10 +79,6 @@ function Class:HasModifierControl()
 end
 
 function Class:ToString()
-    return self:__tostring()
-end
-
-function Class:__tostring()
     Scopify(EScopes.Function, self)
     
     if _stringified then
@@ -116,3 +112,5 @@ function Class:__tostring()
     _stringified = result
     return result
 end
+Class.__tostring = Class.ToString
+

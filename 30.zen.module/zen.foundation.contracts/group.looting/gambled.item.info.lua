@@ -207,12 +207,6 @@ end
 
 function Class:ToString()
     Scopify(EScopes.Function, self)
-    
-    return self:__tostring()
-end
-
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
 
     return StringsHelper.Format( --@formatter:off
             "{\n"                                              ..
@@ -253,3 +247,5 @@ function Class:__tostring()
             self:GetDisenchantInelligibilityReasonType()            
     ) --@formatter:on
 end
+Class.__tostring = Class.ToString
+
