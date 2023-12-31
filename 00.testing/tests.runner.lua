@@ -15,9 +15,9 @@ _setfenv(1, {})
 if U then
 	_print("Running VWoWUnit tests...\n ")
 
-	U.TestsEngine:RunAllTestGroups()
+	-- U.TestsEngine:RunAllTestGroups()
 
-	-- U.TestsEngine:RunTestGroupsByTag("guard-check-booleanizables")
-
+	U.TestsEngine:RunTestGroupsByTag("nils")
+	
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 end

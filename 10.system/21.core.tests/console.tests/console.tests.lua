@@ -1,19 +1,15 @@
-﻿local U, _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local U = _assert(_g.VWoWUnit)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    
-    return U, _setfenv, _importer
-end)()
+local Debug = using "System.Debug"
+local Global = using "System.Global"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+local Console = using "System.Console"
+local ArraysHelper = using "System.Helpers.Arrays"
 
-_setfenv(1, {}) --                                           @formatter:off
+local U = Debug.Assert(Global.VWoWUnit)
 
-local Console      = _importer("System.Console")
-local ArraysHelper = _importer("System.Helpers.Arrays")
+Scopify(EScopes.Function, {})
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Console.Tests",

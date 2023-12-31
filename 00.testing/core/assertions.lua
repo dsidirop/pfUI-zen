@@ -47,6 +47,16 @@ function VWoWUnit.Should.Not.Throw(action)
 	return result
 end
 
+function VWoWUnit.Should.Be.PlainlyEqual(a, b)
+	_setfenv(1, VWoWUnit.Should)
+
+	if a == b then
+		return
+	end
+
+	VWoWUnit.Raise_(_format("[Should.Be.PlainlyEqual()] Expected the two values to be plainly-equal but they're not (got %q which is not equal %q)", _tostring(a), _tostring(b)))
+end
+
 function VWoWUnit.Should.Be.Equivalent(a, b)
 	_setfenv(1, VWoWUnit.Should)
 

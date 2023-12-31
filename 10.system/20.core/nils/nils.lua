@@ -2,12 +2,12 @@
 
 local Nils = using "[declare]" "System.Nils [Partial]"
 
-function Nils.Coalesce(value, defaultValueIfNil)
+function Nils.Coalesce(value, fallbackValueIfNil)
     if value == nil then -- 00
-        return defaultValueIfNil
+        return fallbackValueIfNil
     end
     
     return value
     
-    -- 00  dont try to inline this like 'value ~= nil and value or defaultValueIfNil' because it will fail when value=false !!
+    -- 00  dont try to inline this like 'value ~= nil and value or fallbackValueIfNil' because it will fail when value=false !!
 end
