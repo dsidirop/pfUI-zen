@@ -44,7 +44,8 @@ function VWoWUnit.Should.Not.Throw(action)
 	_tableRemove(returnValuesTable, 1)
 	
 	if not success then
-		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s", result))
+		local errorMessage = returnValuesTable[1]
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s", _tostring(errorMessage)))
 	end
 	
 	return _unpack(returnValuesTable)
