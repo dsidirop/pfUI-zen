@@ -27,9 +27,9 @@ STypes.Function = "function"
 STypes.Thread   = "thread" --   rarely encountered
 STypes.Userdata = "userdata" -- rarely encountered
 
+STypes.Enum     = "enum"
 STypes.Class    = "class"
---STypes.Enum      = "Enum" -- todo
---STypes.Interface = "Interface"
+--STypes.Interface = "Interface" -- todo
 --@formatter:on
 
 _setmetatable(STypes, {
@@ -59,7 +59,7 @@ function STypes.IsValid(value)
             or value == STypes.Thread
             or value == STypes.Userdata
 
+            or value == STypes.Enum
             or value == STypes.Class
-            -- or value == STypes.Enum --todo
             -- or value == STypes.Interface
 end

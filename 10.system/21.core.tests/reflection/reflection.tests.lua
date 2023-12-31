@@ -19,22 +19,25 @@ Scopify(EScopes.Function, {})
 
 TestsGroup:AddTheory("Reflection.GetInfo.GivenVariousGreenValues.ShouldReturnCorrectTypes", -- @formatter:on
         {
-            ["REF.GI.GVGV.SRCT.0000"] = {   Value = nil,               Expected = { Type = STypes.Nil,       Namespace = nil }   },
-            ["REF.GI.GVGV.SRCT.0010"] = {   Value = "",                Expected = { Type = STypes.String,    Namespace = nil }   },
-            ["REF.GI.GVGV.SRCT.0020"] = {   Value =  1,                Expected = { Type = STypes.Number,    Namespace = nil }   },
-            ["REF.GI.GVGV.SRCT.0030"] = {   Value = {},                Expected = { Type = STypes.Table,     Namespace = nil }   },
-            ["REF.GI.GVGV.SRCT.0040"] = {   Value = function() end,    Expected = { Type = STypes.Function,  Namespace = nil }   },
+            ["REF.GI.GVGV.SRCT.0000"] = {   Value = nil,               Expected = { SymbolType = STypes.Nil,       SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0010"] = {   Value = "",                Expected = { SymbolType = STypes.String,    SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0020"] = {   Value =  1,                Expected = { SymbolType = STypes.Number,    SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0030"] = {   Value = {},                Expected = { SymbolType = STypes.Table,     SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0040"] = {   Value = function() end,    Expected = { SymbolType = STypes.Function,  SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0050"] = {   Value = true,              Expected = { SymbolType = STypes.Boolean,   SymbolNamespace = nil                        }   },
+            ["REF.GI.GVGV.SRCT.0060"] = {   Value = Reflection,        Expected = { SymbolType = STypes.Class,     SymbolNamespace = "System.Reflection"        }   },
+            -- ["REF.GI.GVGV.SRCT.0070"] = {   Value = STypes,            Expected = { Type = STypes.Enum,      Namespace = "System.Reflection.STypes" }   },
         }, -- @formatter:off
         function(options)
             -- ARRANGE
             
             -- ACT
-            local type, namespace = U.Should.Not.Throw(function()
+            local symbolType, symbolNamespace = U.Should.Not.Throw(function()
                 return Reflection.GetInfo(options.Value)
             end)
             
             -- ASSERT
-            U.Should.Be.PlainlyEqual(options.Expected.Type, type)
-            U.Should.Be.PlainlyEqual(options.Expected.Namespace, namespace)
+            U.Should.Be.PlainlyEqual(symbolType, options.Expected.SymbolType)
+            U.Should.Be.PlainlyEqual(symbolNamespace, options.Expected.SymbolNamespace)
         end
 )

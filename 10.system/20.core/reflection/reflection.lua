@@ -34,7 +34,8 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
     
     local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) -- 00
     if protoTidbits ~= nil then
-        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToESymbolType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
+        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
+
         return overallSymbolType, protoTidbits:GetNamespace()
     end
 
@@ -46,7 +47,7 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
     -- 10  value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
 end
 
-function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, valueOrClassInstanceOrProto)
+function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOrClassInstanceOrProto)
     Guard.Assert.IsEnumValue(EManagedSymbolTypes, managedSymbolType, "managedSymbolType")
     
     if managedSymbolType == EManagedSymbolTypes.Enum then

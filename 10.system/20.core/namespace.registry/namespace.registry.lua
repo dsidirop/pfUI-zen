@@ -27,6 +27,7 @@ _setfenv(1, {})
 
 local EManagedSymbolTypes = {
     Enum = 0,
+    
     Class = 1, --      for classes declared by this project
     Interface = 2,
     RawSymbol = 3, --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
