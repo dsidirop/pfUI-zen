@@ -1,30 +1,20 @@
-﻿local _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    
-    return _setfenv, _importer, _namespacer
-end)()
+local Guard              = using "System.Guard" --                            @formatter:off
+local Scopify            = using "System.Scopify"
+local EScopes            = using "System.EScopes"
+local Classify           = using "System.Classes.Classify"
+local Reflection         = using "System.Reflection"
+local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
-_setfenv(1, {}) --                                                                 @formatter:off
+local Class = using "[declare]" "System.Exceptions.ValueAlreadySetException [Partial]"
 
-local Debug              = _importer("System.Debug")
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classes.Classify")
-local Reflection         = _importer("System.Reflection")
-local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
-
-local Class = _namespacer("System.Exceptions.ValueAlreadySetException [Partial]")
+Scopify(EScopes.Function, {})
 
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
-
-    Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
+  
+    Guard.Assert.IsOptionallyNonDudString(optionalArgumentName, "optionalArgumentName")
 
     return Classify(self, {
         _message = Class.FormulateMessage_(optionalArgumentName),
@@ -50,8 +40,8 @@ end
 -- setters   used by the exception-deserialization-factory
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
-
-    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
+    
+    Guard.Assert.IsOptionallyNonDudString(message, "message")
 
     _message = message or "(exception message not available)"
     _stringified = nil
@@ -63,7 +53,7 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(stacktrace), "stacktrace must be a string or nil")
+    Guard.Assert.IsOptionallyNonDudString(stacktrace, "stacktrace")
 
     _stacktrace = stacktrace or ""
     _stringified = nil
