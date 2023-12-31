@@ -10,7 +10,7 @@ function Throw:__Call__(exception)
         exception:ChainSetStacktrace(Validation.Stacktrace(1))
     end
 
-    Validation.Assert(false, StringsHelper.Stringify(exception)) -- 00
+    Validation.Fail(exception) -- 00
 
     -- 00  notice that we intentionally use assert() instead of error() here primarily because pfui and other libraries override the vanilla
     --     error() function to make it not throw an exception-error opting to simply print a message to the chat frame  this ofcourse is bad

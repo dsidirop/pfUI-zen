@@ -64,7 +64,7 @@ function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, v
         return Reflection.ConvertERawTypeToESymbolType_(rawType)
     end
     
-    Validation.Assert(false, "managedSymbolType is out of range", 2) -- cant throw an exception here
+    Validation.FailFormatted("managedSymbolType has value %q which is out of range and cannot be converted into a EManagedSymbolTypes", managedSymbolType) -- cant throw an exception here
 end
 
 function Reflection.ConvertERawTypeToESymbolType_(rawType)
@@ -100,7 +100,7 @@ function Reflection.ConvertERawTypeToESymbolType_(rawType)
         return STypes.Thread
     end
 
-    Validation.Assert(false, "rawType is out of range", 2) -- cant throw an exception here
+    Validation.FailFormatted("rawType has value %q which is out of range and cannot be converted into an SRawTypes value", rawType) -- cant throw an exception here
 end
 
 function Reflection.IsNilOrTable(value)
