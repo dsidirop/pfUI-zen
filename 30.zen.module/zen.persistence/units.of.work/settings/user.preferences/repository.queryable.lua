@@ -36,7 +36,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.Use
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    Check.IsOptionallyTable(dbcontextReadonly)
+    Check.IsNilOrTable(dbcontextReadonly)
 
     dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
 

@@ -5,9 +5,9 @@ local Debug              = using "System.Debug"
 local Global             = using "System.Global"
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
-local Classify           = using "System.Classes.Classify"
 local Reflection         = using "System.Reflection"
 
+local Classify                         = using "System.Classes.Classify"
 local Rethrow                          = using "System.Exceptions.Rethrow"
 local Exception                        = using "System.Exceptions.Exception"
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
@@ -16,14 +16,14 @@ local Class = using "[declare]" "System.Try [Partial]"
 
 Scopify(EScopes.Function, {})
 
-Class.ProtectedCall = Debug.Assert(Global.pcall, "Debug.pcall is undefined (how did this even happen?)")
+Class.ProtectedCall = Debug.Assert(Global.pcall, "Debug.pcall() is undefined (how did this even happen?)")
 Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
 
 function Class:New(action, exceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
-    Guard.Assert.IsOptionallyInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsNilOrInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
     return Classify(self, {
         _action = action,

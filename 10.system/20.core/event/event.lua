@@ -24,7 +24,7 @@ function Class:Subscribe(handler, owner)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(handler, "handler")
-    Guard.Assert.IsOptionallyTable(owner, "owner")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     _handlers[handler] = owner or NoOwner -- we prevent double-subscriptions by using the handler itself as the key
     
@@ -35,7 +35,7 @@ function Class:SubscribeOnce(handler, owner)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(handler, "handler")
-    Guard.Assert.IsOptionallyTable(owner, "owner")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     self:Subscribe(handler, owner)
     self:SubscribeOnceImpl_(handler, owner)
@@ -53,7 +53,7 @@ function Class:SubscribeOnceImpl_(handler, owner)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(handler, "handler")
-    Guard.Assert.IsOptionallyTable(owner, "owner")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     _handlersJustOnce[handler] = owner or NoOwner
 

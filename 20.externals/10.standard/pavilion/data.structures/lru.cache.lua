@@ -44,9 +44,9 @@ function Class:New(options)
                 or  options
 
     Guard.Assert.IsTable(options, "options")
-    Guard.Assert.IsOptionallyRatioNumber(options.TrimRatio, "options.TrimRatio")
-    Guard.Assert.IsOptionallyPositiveInteger(options.MaxSize, "options.MaxSize")
-    Guard.Assert.IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
+    Guard.Assert.IsNilOrRatioNumber(options.TrimRatio, "options.TrimRatio")
+    Guard.Assert.IsNilOrPositiveInteger(options.MaxSize, "options.MaxSize")
+    Guard.Assert.IsNilOrPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
 
     return Classify(self, {
         _count = 0,

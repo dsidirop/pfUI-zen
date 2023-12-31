@@ -24,9 +24,9 @@ Scopify(EScopes.Function, {})
 function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsOptionallyInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
-    Guard.Assert.IsOptionallyInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
-    Guard.Assert.IsOptionallyInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
+    Guard.Assert.IsNilOrInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
+    Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
+    Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
 
     return Classify(self, {
         _settings = nil,

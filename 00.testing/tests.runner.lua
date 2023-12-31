@@ -19,5 +19,5 @@ if U then
 
 	-- U.TestsEngine:RunTestGroupsByTag("guard-check-booleanizables")
 
-	-- U.TestsEngine:RunTestGroupsByTag("lru-cache")
+	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 end

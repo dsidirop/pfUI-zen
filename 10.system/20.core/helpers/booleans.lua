@@ -22,7 +22,7 @@ local Class = _namespacer("System.Helpers.Booleans [Partial]")
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil
             and Guard.Assert.IsBooleanizable(value)
-            or Guard.Assert.IsOptionallyBooleanizable(value)
+            or Guard.Assert.IsNilOrBooleanizable(value)
     
     if value == nil then
         return defaultValueWhenValueIsNil

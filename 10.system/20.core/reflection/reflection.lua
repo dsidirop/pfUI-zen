@@ -103,19 +103,19 @@ function Reflection.ConvertERawTypeToESymbolType_(rawType)
     Debug.Assert(false, "rawType is out of range", 2) -- cant throw an exception here
 end
 
-function Reflection.IsOptionallyTable(value)
+function Reflection.IsNilOrTable(value)
     return value == nil or RawTypeSystem.IsTable(value)
 end
 
-function Reflection.IsOptionallyFunction(value)
+function Reflection.IsNilOrFunction(value)
     return value == nil or RawTypeSystem.IsFunction(value)
 end
 
-function Reflection.IsOptionallyNumber(value)
+function Reflection.IsNilOrNumber(value)
     return value == nil or RawTypeSystem.IsNumber(value)
 end
 
-function Reflection.IsOptionallyBoolean(value)
+function Reflection.IsNilOrBoolean(value)
     return value == nil or RawTypeSystem.IsBoolean(value)
 end
 
@@ -123,11 +123,11 @@ function Reflection.IsInteger(value)
     return Reflection.IsNumber(value) and Math.Floor(value) == value
 end
 
-function Reflection.IsOptionallyInteger(value)
+function Reflection.IsNilOrInteger(value)
     return value == nil or Reflection.IsInteger(value)
 end
 
-function Reflection.IsOptionallyString(value)
+function Reflection.IsNilOrString(value)
     return value == nil or RawTypeSystem.IsString(value)
 end
 
@@ -135,7 +135,7 @@ function Reflection.IsTableOrString(value)
     return RawTypeSystem.IsTable(value) or RawTypeSystem.IsString(value)
 end
 
-function Reflection.IsOptionallyTableOrString(value)
+function Reflection.IsNilOrTableOrString(value)
     return value == nil or Reflection.IsTableOrString(value)
 end
 

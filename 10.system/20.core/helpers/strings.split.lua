@@ -25,8 +25,8 @@ function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Scopify(EScopes.Function, StringsHelper)
     
     Guard.Assert.IsString(input, "input")
-    Guard.Assert.IsOptionallyString(optionalDelimiter, "optionalDelimiter")
-    Guard.Assert.IsOptionallyPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
+    Guard.Assert.IsNilOrString(optionalDelimiter, "optionalDelimiter")
+    Guard.Assert.IsNilOrPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
     
     if not input then
         return {}

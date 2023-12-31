@@ -46,7 +46,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyTable(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrTable(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -66,7 +66,7 @@ do
         return value
     end
     
-    function Guard.Assert.IsOptionallyTableOrNonDudString(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrTableOrNonDudString(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -83,7 +83,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyNonEmptyTable(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrNonEmptyTable(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -100,7 +100,7 @@ do
         return value
     end
     
-    function Guard.Assert.IsOptionallyEnumValue(enumType, value, optionalArgumentName)
+    function Guard.Assert.IsNilOrEnumValue(enumType, value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -117,7 +117,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyNumber(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrNumber(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -176,7 +176,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyPositiveInteger(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrPositiveInteger(value, optionalArgumentName)
         if value == nil then
             return value
         end
@@ -184,7 +184,7 @@ do
         return Guard.Assert.IsPositiveInteger(value, optionalArgumentName)
     end
 
-    function Guard.Assert.IsOptionallyPositiveIntegerOfMaxValue(value, maxValue, optionalArgumentName)
+    function Guard.Assert.IsNilOrPositiveIntegerOfMaxValue(value, maxValue, optionalArgumentName)
         if value == nil then
             return value
         end
@@ -192,7 +192,7 @@ do
         return Guard.Assert.IsPositiveIntegerOfMaxValue(value, maxValue, optionalArgumentName)
     end
 
-    function Guard.Assert.IsOptionallyPositiveIntegerOrZero(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrPositiveIntegerOrZero(value, optionalArgumentName)
         if value == nil then
             return value
         end
@@ -200,7 +200,7 @@ do
         return Guard.Assert.IsPositiveIntegerOrZero(value, optionalArgumentName)
     end
 
-    function Guard.Assert.IsOptionallyPositiveIntegerOrZeroOfMaxValue(value, maxValue, optionalArgumentName)
+    function Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(value, maxValue, optionalArgumentName)
         if value == nil then
             return value
         end
@@ -219,7 +219,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyRatioNumber(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrRatioNumber(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -236,7 +236,7 @@ do
         return value
     end
     
-    function Guard.Assert.IsOptionallyBooleanizable(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrBooleanizable(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -273,7 +273,7 @@ do
         return value 
     end
 
-    function Guard.Assert.IsOptionallyString(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrString(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -281,7 +281,7 @@ do
         return Guard.Assert.IsString(value, optionalArgumentName)
     end
 
-    function Guard.Assert.IsOptionallyNonDudString(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrNonDudString(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -289,7 +289,7 @@ do
         return Guard.Assert.IsNonDudString(value, optionalArgumentName)
     end
 
-    function Guard.Assert.IsOptionallyNonDudStringOfMaxLength(value, maxLength, optionalArgumentName)
+    function Guard.Assert.IsNilOrNonDudStringOfMaxLength(value, maxLength, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -306,7 +306,7 @@ do
         return value
     end
 
-    function Guard.Assert.IsOptionallyFunction(value, optionalArgumentName)
+    function Guard.Assert.IsNilOrFunction(value, optionalArgumentName)
         if value == nil then
             return nil
         end
@@ -333,7 +333,7 @@ do
         return value 
     end
 
-    function Guard.Assert.IsOptionallyInstanceOf(value, desiredClassProto, optionalArgumentName)
+    function Guard.Assert.IsNilOrInstanceOf(value, desiredClassProto, optionalArgumentName)
         if value == nil then
             return nil
         end

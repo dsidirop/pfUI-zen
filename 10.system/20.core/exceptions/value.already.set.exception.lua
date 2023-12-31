@@ -14,7 +14,7 @@ Scopify(EScopes.Function, {})
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
   
-    Guard.Assert.IsOptionallyNonDudString(optionalArgumentName, "optionalArgumentName")
+    Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
     return Classify(self, {
         _message = Class.FormulateMessage_(optionalArgumentName),
@@ -41,7 +41,7 @@ end
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsOptionallyNonDudString(message, "message")
+    Guard.Assert.IsNilOrNonDudString(message, "message")
 
     _message = message or "(exception message not available)"
     _stringified = nil
@@ -53,7 +53,7 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsOptionallyNonDudString(stacktrace, "stacktrace")
+    Guard.Assert.IsNilOrNonDudString(stacktrace, "stacktrace")
 
     _stacktrace = stacktrace or ""
     _stringified = nil
