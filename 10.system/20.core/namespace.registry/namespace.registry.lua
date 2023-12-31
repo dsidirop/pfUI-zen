@@ -1,14 +1,16 @@
-﻿local _g, _assert, _type, _gsub, _pairs, _rawget, _unpack, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
     local _type = _assert(_g.type)
+    local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
     local _pairs = _assert(_g.pairs)
     local _rawget = _assert(_g.rawget)
     local _unpack = _assert(_g.unpack)
+    local _format = _assert(_g.string.format)
     local _strsub = _assert(_g.string.sub)
     local _strfind = _assert(_g.string.find)
     local _tostring = _assert(_g.tostring)
@@ -16,7 +18,7 @@
     local _getmetatable = _assert(_g.getmetatable)
     local _setmetatable = _assert(_g.setmetatable)
     
-    return _g, _assert, _type, _gsub, _pairs, _rawget, _unpack, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable
+    return _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -25,34 +27,18 @@ end
 
 _setfenv(1, {})
 
-local EManagedSymbolTypes = {
-    Enum = 0,
-    
-    Class = 1, --      for classes declared by this project
-    Interface = 2,
-    RawSymbol = 3, --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
-}
+local function _throw_exception(format, ...)
+    local variadicArguments = arg
 
-_setmetatable(EManagedSymbolTypes, {
-    __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
-        local value = _rawget(tableObject, key)
-
-        _assert(value ~= nil, "EManagedSymbolTypes enum doesn't have a member named '" .. key .. "'\n" .. _debugstack(2) .. "\n")
-
-        return value
-    end
-})
-
-function EManagedSymbolTypes.IsValid(value)
-    if _type(value) ~= "number" then
-        return false
+    for i = 1, _getn(variadicArguments) do
+        variadicArguments[i] = _tostring(variadicArguments[i])
     end
 
-    return value >= EManagedSymbolTypes.Enum and value <= EManagedSymbolTypes.RawSymbol
+    _assert(false, _format(format, _unpack(variadicArguments)) .. "\n\n---------------Stacktrace---------------" .. _debugstack(10) .. "\n---------------End Stacktrace---------------\n ")
 end
 
 local function _strmatch(input, patternString, ...)
-    _assert(patternString ~= nil)
+    _ = patternString ~= nil or _throw_exception("patternString must not be nil")
 
     if patternString == "" then
         -- todo  test out these corner cases
@@ -128,7 +114,7 @@ local function _strtrim(input)
     return _strmatch(input, '^%s*(.*%S)') or ''
 end
 
-local function _nilCoallesce(value, defaultFallbackValue)
+local function _nilCoalesce(value, defaultFallbackValue)
     if value == nil then
         return defaultFallbackValue
     end
@@ -136,20 +122,54 @@ local function _nilCoallesce(value, defaultFallbackValue)
     return value
 end
 
+local EManagedSymbolTypes = {
+    Enum = 0,
+    
+    Class = 1, --      for classes declared by this project
+    Interface = 2,
+    RawSymbol = 3, --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+}
+
+_setmetatable(EManagedSymbolTypes, {
+    __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
+        local value = _rawget(tableObject, key)
+
+        if value == nil then
+            _throw_exception("EManagedSymbolTypes enum doesn't have a member named %q", key)
+        end
+
+        return value
+    end
+})
+
+function EManagedSymbolTypes.IsMainstreamFlavour(value)
+    return value == EManagedSymbolTypes.Class
+            or value == EManagedSymbolTypes.Enum
+            or value == EManagedSymbolTypes.Interface
+end
+
+function EManagedSymbolTypes.IsValid(value)
+    if _type(value) ~= "number" then
+        return false
+    end
+
+    return value >= EManagedSymbolTypes.Enum and value <= EManagedSymbolTypes.RawSymbol
+end
+
 local Entry = {}
 do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(1, self)
 
-        _assert(symbolProto ~= nil, "symbolProto must not be nil\n" .. _debugstack(2) .. "\n")
-        _assert(isForPartial == nil or _type(isForPartial) == "boolean", "isForPartial must be a boolean or nil (got '" .. _type(isForPartial) .. "')\n" .. _debugstack(2) .. "\n")
-        _assert(symbolType == EManagedSymbolTypes.Class or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface or symbolType == EManagedSymbolTypes.RawSymbol, "symbolType must be valid\n" .. _debugstack(2) .. "\n")
-        _assert(_type(namespacePath) == "string", "namespacePath must be a string\n" .. _debugstack(2) .. "\n")
+        _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
+        _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
+        _ = EManagedSymbolTypes.IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType)
+        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
 
         local instance = {
             _symbolType = symbolType,
             _symbolProto = symbolProto,
-            _isForPartial = _nilCoallesce(isForPartial, false),
+            _isForPartial = _nilCoalesce(isForPartial, false),
             _namespacePath = namespacePath,
         }
 
@@ -168,7 +188,7 @@ do
     function Entry:GetNamespace()
         _setfenv(1, self)
 
-        _assert(_type(_namespacePath) == "string", "spotted unset namespace-path for a namespace-entry (how is this even possible?)\n" .. _debugstack(2) .. "\n")
+        _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
 
         return _namespacePath
     end
@@ -176,7 +196,7 @@ do
     function Entry:GetSymbolProto()
         _setfenv(1, self)
 
-        _assert(_symbolProto ~= nil, "spotted unset symbol (nil) for a namespace-entry (how is this even possible?)\n" .. _debugstack(2) .. "\n")
+        _ = _symbolProto ~= nil or _throw_exception("spotted unset symbol (nil) for a namespace-entry (how is this even possible?)")
 
         return _symbolProto
     end
@@ -184,7 +204,7 @@ do
     function Entry:GetManagedSymbolType()
         _setfenv(1, self)
 
-        _assert(_symbolType ~= nil, "spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)\n" .. _debugstack(2) .. "\n")
+        _ = _symbolType ~= nil or _throw_exception("spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)")
 
         return _symbolType
     end
@@ -192,7 +212,7 @@ do
     function Entry:IsPartialEntry()
         _setfenv(1, self)
 
-        _assert(_isForPartial ~= nil, "spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)\n" .. _debugstack(2) .. "\n")
+        _ = _isForPartial ~= nil or _throw_exception("spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)")
 
         return _isForPartial
     end
@@ -249,11 +269,8 @@ do
     function NamespaceRegistry:UpsertSymbolProtoSpecs(namespacePath, symbolType)
         _setfenv(1, self)
 
-        _assert(_type(namespacePath) == "string", "namespacePath must be a string\n" .. _debugstack(3) .. "\n")
-        _assert(symbolType == EManagedSymbolTypes.Class or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface, "symbolType for namespace '" .. namespacePath .. "' must be either ESymbolType.Class or ESymbolType.Enum or ESymbolType.Interface (got '" .. _tostring(symbolType) .. "')\n" .. _debugstack(3) .. "\n")
-        
-        namespacePath = _strtrim(namespacePath)        
-        _assert(namespacePath ~= "", "namespacePath must not be dud\n" .. _debugstack(3) .. "\n")
+        _ = EManagedSymbolTypes.IsMainstreamFlavour(symbolType) or _throw_exception("symbolType for namespace %q must be mainstream: Enum(0), Class(1) or Interface(2) expected but got %q instead", namespacePath, symbolType)
+        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
         
@@ -270,8 +287,8 @@ do
         end
 
         -- update existing entry
-        _assert(symbolType == preExistingEntry:GetManagedSymbolType(), "cannot register namespace '" .. sanitizedNamespacePath .. "' with type='" .. symbolType .. "' as it has already been assigned to a symbol with type='" .. preExistingEntry:GetManagedSymbolType() .. "'.\n" .. _debugstack() .. "\n") -- 10
-        _assert(isForPartial or preExistingEntry:IsPartialEntry(), "namespace '" .. sanitizedNamespacePath .. "' has already been assigned to a symbol marked as '" .. preExistingEntry:GetManagedSymbolType() .. "' (did you mean to use a partial class?).\n" .. _debugstack() .. "\n") -- 10
+        _ = symbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot register namespace %q with type=%q as it has already been assigned to a symbol with type=%q.", sanitizedNamespacePath, symbolType, preExistingEntry:GetManagedSymbolType()) -- 10
+        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace %q has already been assigned to a symbol marked as %q (did you mean to use a partial class?).", sanitizedNamespacePath, preExistingEntry:GetManagedSymbolType()) -- 10
 
         if not isForPartial then -- 20
             preExistingEntry:UnsetPartiality()
@@ -303,7 +320,7 @@ do
         __call = function(classProto, ...)
             local hasConstructorFunction = _type(classProto.New) == "function"
             local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
-            _assert(hasConstructorFunction or hasImplicitCallFunction, "Cannot call class() because the symbol lacks both methods :New() and :__Call__()\n" .. _debugstack() .. "\n")
+            _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
             
             if hasImplicitCallFunction then --00
                 return classProto:__Call__(_unpack(arg))
@@ -333,14 +350,12 @@ do
     function NamespaceRegistry:Bind(namespacePath, rawSymbolProto)
         _setfenv(1, self)
 
-        _assert(rawSymbolProto ~= nil, "rawSymbol must not be nil\n" .. _debugstack(3) .. "\n")
-        _assert(namespacePath ~= nil and _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "", "namespacePath must not be dud\n" .. _debugstack(3) .. "\n")
-
-        namespacePath = _strtrim(namespacePath)
+        _ = rawSymbolProto ~= nil or _throw_exception("rawSymbol must not be nil")
+        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
 
         local possiblePreexistingEntry = _namespaces_registry[namespacePath]
 
-        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.\n" .. _debugstack(3) .. "\n")
+        _ = possiblePreexistingEntry == nil or _throw_exception("namespace %q has already been assigned to another symbol.", namespacePath)
         
         local newEntry = Entry:New(EManagedSymbolTypes.RawSymbol, rawSymbolProto, namespacePath)
 
@@ -371,9 +386,9 @@ do
         if entry == nil and suppressExceptionIfNotFound then
             return nil
         end
-
-        _assert(entry ~= nil, "namespace '" .. namespacePath .. "' has not been registered.\n" .. _debugstack() .. "\n")
-        _assert(not entry:IsPartialEntry(), "namespace '" .. namespacePath .. "' holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?\n" .. _debugstack() .. "\n")
+        
+        _ = entry ~= nil or _throw_exception("namespace %q has not been registered.", namespacePath)
+        _ = not entry:IsPartialEntry() or _throw_exception("namespace %q holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
         
         return entry:GetSymbolProto()
     end
@@ -381,10 +396,7 @@ do
     function NamespaceRegistry:GetEntry_(namespacePath)
         _setfenv(1, self)
 
-        _assert(_type(namespacePath) == "string", "namespacePath must be a string (got '" .. _type(namespacePath) .. "')\n" .. _debugstack() .. "\n")
-
-        namespacePath = _strtrim(namespacePath)
-        _assert(namespacePath ~= "", "namespacePath must not be dud\n" .. _debugstack() .. "\n")
+        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
 
         return _namespaces_registry[namespacePath]
     end
