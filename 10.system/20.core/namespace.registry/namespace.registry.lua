@@ -369,6 +369,22 @@ do
 
         return entry:GetNamespace() 
     end
+    
+    function NamespaceRegistry:PrintOut()
+        _setfenv(1, self)
+
+        _g.print("** namespaces-registry **")
+        for namespace, entry in _pairs(self._namespaces_registry) do
+            _g.print("**** namespace='" .. (namespace or "nil") .. "' -> symbolType=" .. _tostring(entry:GetSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+        end
+
+        _g.print("** reflection-registry **")
+        for symbolProto, entry in _pairs(self._reflection_registry) do
+            _g.print("**** symbolProto='" .. _tostring(symbolProto or "nil") .. "' -> symbolType=" .. _tostring(entry:GetSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+        end
+
+        _g.print("\n\n")         
+    end
 end
 
 local NamespaceRegistrySingleton = NamespaceRegistry:New()
