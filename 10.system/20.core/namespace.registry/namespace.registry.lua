@@ -358,7 +358,7 @@ do
     function NamespaceRegistry:TryGetNamespaceIfClassProto(symbolProto)
         _setfenv(1, self)
 
-        if object == nil then
+        if symbolProto == nil then
             return nil
         end
 
