@@ -28,13 +28,11 @@ VWoWUnit.Should.Not = {}
 function VWoWUnit.Should.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
 
-	local success, result = _pcall(action)
+	local success = _pcall(action)
 
 	if success then
 		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
 	end
-
-	return result
 end
 
 function VWoWUnit.Should.Not.Throw(action)
