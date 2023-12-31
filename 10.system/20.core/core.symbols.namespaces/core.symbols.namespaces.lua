@@ -5,6 +5,7 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:o
 -- using "[declare]" "System.Scopify"      no need to predeclare this really
 
 using "[declare]" "System.Try"
+using "[declare]" "System.Nils"
 using "[declare]" "System.Math"
 using "[declare]" "System.Time"
 using "[declare]" "System.Table"
