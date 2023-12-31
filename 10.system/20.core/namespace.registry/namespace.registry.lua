@@ -106,6 +106,14 @@ local function _strtrim(input)
     return _strmatch(input, '^%s*(.*%S)') or ''
 end
 
+local function _nilCoallesce(value, defaultFallbackValue)
+    if value == nil then
+        return defaultFallbackValue
+    end
+
+    return value
+end
+
 local Entry = {}
 do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
@@ -119,7 +127,7 @@ do
         local instance = {
             _symbolType = symbolType,
             _symbolProto = symbolProto,
-            _isForPartial = isForPartial == nil and false or isForPartial,
+            _isForPartial = _nilCoallesce(isForPartial, false),
             _namespacePath = namespacePath,
         }
 
@@ -161,6 +169,8 @@ do
 
     function Entry:IsPartialEntry()
         _setfenv(1, self)
+
+        _assert(_isForPartial ~= nil, "spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
 
         return _isForPartial
     end
