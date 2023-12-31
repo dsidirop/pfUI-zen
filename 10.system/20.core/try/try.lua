@@ -1,31 +1,24 @@
-﻿local _setfenv, _pcall, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _pcall = _assert(_g.pcall)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Guard              = using "System.Guard" --                                                    @formatter:off
+local Debug              = using "System.Debug"
+local Global             = using "System.Global"
+local Scopify            = using "System.Scopify"
+local EScopes            = using "System.EScopes"
+local Classify           = using "System.Classes.Classify"
+local Reflection         = using "System.Reflection"
 
-    return _setfenv, _pcall, _importer, _namespacer
-end)()
+local Rethrow                          = using "System.Exceptions.Rethrow"
+local Exception                        = using "System.Exceptions.Exception"
+local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
-_setfenv(1, {}) --                                                                                         @formatter:off
+local Class = using "[declare]" "System.Try [Partial]"
 
-local Guard              = _importer("System.Guard")
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classes.Classify")
-local Reflection         = _importer("System.Reflection")
+Scopify(EScopes.Function, {})
 
-local Rethrow                          = _importer("System.Exceptions.Rethrow")
-local Exception                        = _importer("System.Exceptions.Exception")
-local ExceptionsDeserializationFactory = _importer("System.Try.ExceptionsDeserializationFactory") --       @formatter:on
-
-local Class = _namespacer("System.Try [Partial]")
-
+Class.ProtectedCall = Debug.Assert(Global.pcall, "Debug.pcall is undefined (how did this even happen?)")
 Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
+
 function Class:New(action, exceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
@@ -60,7 +53,7 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local success, result = _pcall(_action)
+    local success, result = Class.ProtectedCall(_action)
     if success then
         return result
     end
