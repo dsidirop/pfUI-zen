@@ -47,6 +47,8 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
 end
 
 function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, valueOrClassInstanceOrProto)
+    Guard.Assert.IsEnumValue(EManagedSymbolTypes, managedSymbolType, "managedSymbolType")
+    
     if managedSymbolType == EManagedSymbolTypes.Enum then
         return STypes.Enum
     end
@@ -63,8 +65,8 @@ function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, v
         local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto)
         return Reflection.ConvertERawTypeToESymbolType_(rawType)
     end
-    
-    Validation.FailFormatted("managedSymbolType has value %q which is out of range and cannot be converted into a EManagedSymbolTypes", managedSymbolType) -- cant throw an exception here
+
+    Validation.FailFormatted("(NotImplemented) cannot convert managedSymbolType %q to EManagedSymbolTypes", managedSymbolType) -- cant throw an exception here
 end
 
 function Reflection.ConvertERawTypeToESymbolType_(rawType)
