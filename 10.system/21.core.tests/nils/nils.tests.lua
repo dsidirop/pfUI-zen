@@ -16,15 +16,15 @@ Scopify(EScopes.Function, {})
 
 TestsGroup:AddTheory("Nils.Coalesce.GivenGreenInput.ShouldReturnExpectedValues", -- @formatter:off
         {
-            ["NILS.NILS.COA.GGI.SREV.0000"] = { Value = nil,                         FallbackValue = 1,   ExpectValueNotFallbackValue = false },
-            ["NILS.NILS.COA.GGI.SREV.0010"] = { Value = 0,                           FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
-            ["NILS.NILS.COA.GGI.SREV.0020"] = { Value = 1,                           FallbackValue = 2,   ExpectValueNotFallbackValue = true  },
-            ["NILS.NILS.COA.GGI.SREV.0030"] = { Value = "abc",                       FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
-            ["NILS.NILS.COA.GGI.SREV.0040"] = { Value = {},                          FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
-            ["NILS.NILS.COA.GGI.SREV.0050"] = { Value = function() return 123 end,   FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0000"] = { Value = nil,                         FallbackValue = 1,   ExpectValueNotFallbackValue = false },
+            ["NILS.COA.GGI.SREV.0010"] = { Value = 0,                           FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0020"] = { Value = 1,                           FallbackValue = 2,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0030"] = { Value = "abc",                       FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0040"] = { Value = {},                          FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0050"] = { Value = function() return 123 end,   FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
                                                                          
-            ["NILS.NILS.COA.GGI.SREV.0060"] = { Value = true,                        FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
-            ["NILS.NILS.COA.GGI.SREV.0070"] = { Value = false,                       FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0060"] = { Value = true,                        FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
+            ["NILS.COA.GGI.SREV.0070"] = { Value = false,                       FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
         }, -- @formatter:on
         function(options)
             -- ARRANGE

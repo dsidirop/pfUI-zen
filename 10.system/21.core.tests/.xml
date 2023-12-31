@@ -3,6 +3,7 @@
     <Include file="time\.xml"/>
     <Include file="guard\.xml"/>
     <Include file="console\.xml"/>
+    <Include file="reflection\.xml"/>
     <Include file="exceptions\.xml"/>
     <Include file="strings.helper\.xml"/>    
 </Ui>
