@@ -1,10 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Math = using "System.Math"
-local Debug = using "System.Debug"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+local Validation = using "System.Validation"
 local Namespacer = using "System.Namespacer"
 
 local STypes = using "System.Reflection.STypes"
@@ -64,7 +64,7 @@ function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, v
         return Reflection.ConvertERawTypeToESymbolType_(rawType)
     end
     
-    Debug.Assert(false, "managedSymbolType is out of range", 2) -- cant throw an exception here
+    Validation.Assert(false, "managedSymbolType is out of range", 2) -- cant throw an exception here
 end
 
 function Reflection.ConvertERawTypeToESymbolType_(rawType)
@@ -100,7 +100,7 @@ function Reflection.ConvertERawTypeToESymbolType_(rawType)
         return STypes.Thread
     end
 
-    Debug.Assert(false, "rawType is out of range", 2) -- cant throw an exception here
+    Validation.Assert(false, "rawType is out of range", 2) -- cant throw an exception here
 end
 
 function Reflection.IsNilOrTable(value)

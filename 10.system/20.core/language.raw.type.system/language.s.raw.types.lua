@@ -1,13 +1,13 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
+local Validation = using "System.Validation"
 local GlobalEnvironment = using "System.Global"
 
 local SRawTypes = using "[declare]" "System.Language.SRawTypes [Partial]"
 
-local _type = Debug.Assert(GlobalEnvironment.type) --         considering how early on this enum is being registered
-local _rawget = Debug.Assert(GlobalEnvironment.rawget) --     we need to use native facilities to get things working
-local _setmetatable = Debug.Assert(GlobalEnvironment.setmetatable)
+local _type = Validation.Assert(GlobalEnvironment.type) --         considering how early on this enum is being registered
+local _rawget = Validation.Assert(GlobalEnvironment.rawget) --     we need to use native facilities to get things working
+local _setmetatable = Validation.Assert(GlobalEnvironment.setmetatable)
 
 SRawTypes.Nil      = "nil" --                                 @formatter:off
 SRawTypes.Table    = "table"
@@ -23,7 +23,7 @@ _setmetatable(SRawTypes, {
     __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
         local value = _rawget(tableObject, key)
 
-        Debug.Assert(value ~= nil, "SRawTypes enum doesn't have a member named '" .. key .. "'", 2)
+        Validation.Assert(value ~= nil, "SRawTypes enum doesn't have a member named '" .. key .. "'", 2)
 
         return value
     end

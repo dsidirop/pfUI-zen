@@ -1,14 +1,14 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
 local Guard = using "System.Guard"
 local Global = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+local Validation = using "System.Validation"
 
 Scopify(EScopes.Function, {})
 
-local U = Debug.Assert(Global.VWoWUnit)
+local U = Validation.Assert(Global.VWoWUnit)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Guard.Assert.IsBooleanizable",

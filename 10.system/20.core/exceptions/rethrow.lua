@@ -1,12 +1,12 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
+local Validation = using "System.Validation"
 local StringsHelper = using "System.Helpers.Strings"
 
 local Rethrow = using "[declare]" "System.Exceptions.Rethrow [Partial]"
 
 function Rethrow:__Call__(exception)
-    Debug.Assert(false, StringsHelper.Stringify(exception)) -- 00
+    Validation.Assert(false, StringsHelper.Stringify(exception)) -- 00
 
     -- 00  notice that we intentionally use assert() instead of error() here primarily because pfui and other libraries override the vanilla
     --     error() function to make it not throw an exception-error opting to simply print a message to the chat frame  this ofcourse is bad

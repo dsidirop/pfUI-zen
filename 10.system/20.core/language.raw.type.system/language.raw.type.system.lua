@@ -1,13 +1,13 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
-local GlobalEnvironment = using "System.Global"
+local Global = using "System.Global"
+local Validation = using "System.Validation"
 
 local SRawTypes = using "System.Language.SRawTypes"
 
 local RawTypeSystem = using "[declare]" "System.Language.RawTypeSystem [Partial]"
 
-RawTypeSystem.GetRawType = Debug.Assert(GlobalEnvironment.type, "_G.type() is undefined (how is this even possible?)")
+RawTypeSystem.GetRawType = Validation.Assert(Global.type, "_G.type() is undefined (how is this even possible?)")
 
 function RawTypeSystem.IsNil(value)
     return value == nil -- should be faster than type(value) == "nil"

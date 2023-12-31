@@ -1,13 +1,13 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
 local Global = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Console = using "System.Console"
+local Validation = using "System.Validation"
 local ArraysHelper = using "System.Helpers.Arrays"
 
-local U = Debug.Assert(Global.VWoWUnit)
+local U = Validation.Assert(Global.VWoWUnit)
 
 Scopify(EScopes.Function, {})
 

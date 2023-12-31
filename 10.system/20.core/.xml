@@ -6,7 +6,7 @@
     <Include file="global.environment\.xml"/>
     <Include file="nils\.xml"/>
     <Include file="scopify\.xml"/>
-    <Include file="debug\.xml"/>
+    <Include file="validation\.xml"/>
     
     <Include file="classes.metatable\.xml"/>
     <Include file="language.raw.type.system\.xml"/>

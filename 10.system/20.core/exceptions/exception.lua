@@ -1,10 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
+local Validation = using "System.Validation"
 
 local Classify = using "System.Classes.Classify"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
@@ -42,7 +42,7 @@ end
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsNilOrString(message), "message must be a string or nil")
+    Validation.Assert(Reflection.IsNilOrString(message), "message must be a string or nil")
 
     _message = message or "(exception message not available)"
     _stringified = nil
@@ -54,7 +54,7 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsNilOrString(stacktrace), "stacktrace must be a string or nil")
+    Validation.Assert(Reflection.IsNilOrString(stacktrace), "stacktrace must be a string or nil")
 
     _stacktrace = stacktrace or ""
     _stringified = nil

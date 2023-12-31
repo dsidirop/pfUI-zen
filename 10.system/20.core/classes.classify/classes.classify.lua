@@ -1,6 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Debug = using "System.Debug"
+local Validation = using "System.Validation"
+
 local MetaTable = using "System.Classes.MetaTable"
 local RawTypeSystem = using "System.Language.RawTypeSystem"
 
@@ -12,8 +13,8 @@ local Classify = using "[declare]" "System.Classes.Classify [Partial]"
 -- 'system' project during bootstrapping and guard.assert is not guaranteed to be available during this time
 --
 function Classify:__Call__(classProto, optionalClassFields)
-    Debug.Assert(RawTypeSystem.IsTable(classProto), "classProto was expected to be a table")
-    Debug.Assert(RawTypeSystem.IsNilOrTable(classProto), "optionalClassFields was expected to be either a table or nil")
+    Validation.Assert(RawTypeSystem.IsTable(classProto), "classProto was expected to be a table")
+    Validation.Assert(RawTypeSystem.IsNilOrTable(classProto), "optionalClassFields was expected to be either a table or nil")
 
     optionalClassFields = optionalClassFields or {}
 
