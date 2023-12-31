@@ -6,6 +6,7 @@ local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
 local Validation         = using "System.Validation"
+local ArraysHelper       = using "System.Helpers.Arrays"
 
 local Classify                         = using "System.Classes.Classify"
 local Rethrow                          = using "System.Exceptions.Rethrow"
@@ -53,12 +54,15 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local success, result = Class.ProtectedCall(_action)
+    local returnValuesTable = {Class.ProtectedCall(_action)}
+
+    local success = ArraysHelper.PopFirst(returnValuesTable)
     if success then
-        return result
+        return ArraysHelper.Unpack(returnValuesTable)
     end
 
-    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(result)
+    local exceptionMessage = ArraysHelper.PopFirst(returnValuesTable)
+    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
     
     local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)
     if properExceptionHandler ~= nil then
