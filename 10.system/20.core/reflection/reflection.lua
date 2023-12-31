@@ -1,12 +1,18 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Math = using "System.Math"
+local Debug = using "System.Debug"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Namespacer = using "System.Namespacer"
-local ESymbolType = using "System.Namespacer.ESymbolType"
+
+local STypes = using "System.Reflection.STypes"
+
+local SRawTypes = using "System.Language.SRawTypes"
 local RawTypeSystem = using "System.Language.RawTypeSystem"
+
+local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
 local Reflection = using "[declare]" "System.Reflection [Partial]"
 
@@ -20,26 +26,82 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
--- local SRawTypes = using "System.Language.SRawTypes"
---
--- returns   { ESymbolType, Namespace }
--- function Reflection.GetInfo(value) -- value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
---    todo  if we ever actually need this
---
---    local rawType = RawTypeSystem.GetRawType(value)
---    if rawType ~= SRawTypes.Table then
---        local symbolType = ConvertRawTypeToESymbolType(rawType)
---        return symbolType, nil
---    end
---
---    if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
---    local symbolType, namespace = using "System.Namespacer.TryGetInfo"(value.__index or value)
---    if symbolType ~= nil then
---         return symbolType, namespace
---    end
---
---    return ESymbolType.Table, nil
--- end
+-- returns   { STypes (strenum), Namespace (string) }
+function Reflection.GetInfo(valueOrClassInstanceOrProto)
+    if valueOrClassInstanceOrProto == nil then
+        return STypes.Nil, nil
+    end
+    
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) -- 00
+    if protoTidbits ~= nil then
+        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToESymbolType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
+        return overallSymbolType, protoTidbits:GetNamespace()
+    end
+
+    local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto) -- 10
+
+    return Reflection.ConvertERawTypeToESymbolType_(rawType), nil
+
+    -- 00  if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
+    -- 10  value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
+end
+
+function Reflection.ConvertEManagedSymbolTypeToESymbolType_(managedSymbolType, valueOrClassInstanceOrProto)
+    if managedSymbolType == EManagedSymbolTypes.Enum then
+        return STypes.Enum
+    end
+    
+    if managedSymbolType == EManagedSymbolTypes.Class then
+        return STypes.Class
+    end
+
+    if managedSymbolType == EManagedSymbolTypes.Interface then
+        return STypes.Interface
+    end
+    
+    if managedSymbolType == EManagedSymbolTypes.RawSymbol then
+        local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto)
+        return Reflection.ConvertERawTypeToESymbolType_(rawType)
+    end
+    
+    Debug.Assert(false, "managedSymbolType is out of range", 2) -- cant throw an exception here
+end
+
+function Reflection.ConvertERawTypeToESymbolType_(rawType)
+    if rawType == SRawTypes.Nil then
+        return STypes.Nil
+    end
+    
+    if rawType == SRawTypes.Table then
+        return STypes.Table
+    end
+    
+    if rawType == SRawTypes.Number then
+        return STypes.Number
+    end
+    
+    if rawType == SRawTypes.String then
+        return STypes.String
+    end
+    
+    if rawType == SRawTypes.Boolean then
+        return STypes.Boolean
+    end
+    
+    if rawType == SRawTypes.Function then
+        return STypes.Function
+    end
+
+    if rawType == SRawTypes.Userdata then
+        return STypes.Userdata
+    end
+
+    if rawType == SRawTypes.Thread then
+        return STypes.Thread
+    end
+
+    Debug.Assert(false, "rawType is out of range", 2) -- cant throw an exception here
+end
 
 function Reflection.IsOptionallyTable(value)
     return value == nil or RawTypeSystem.IsTable(value)
@@ -125,7 +187,7 @@ end
 
 function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     local symbolProto, symbolType = Reflection.TryGetProtoTidbitsViaNamespace(namespacePath)
-    if symbolProto == nil or symbolType == nil or symbolType ~= ESymbolType.Class then
+    if symbolProto == nil or symbolType == nil or symbolType ~= EManagedSymbolTypes.Class then
         return nil
     end
     

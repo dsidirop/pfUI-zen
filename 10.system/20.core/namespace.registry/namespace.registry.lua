@@ -22,7 +22,7 @@ end
 
 _setfenv(1, {})
 
-local ESymbolType = {
+local EManagedSymbolType = {
     Enum = 0,
     Class = 1, --      for classes declared by this project
     Interface = 2,
@@ -121,7 +121,7 @@ do
 
         _assert(symbolProto ~= nil, "symbolProto must not be nil\n" .. _g.debugstack(2) .. "\n")
         _assert(isForPartial == nil or _type(isForPartial) == "boolean", "isForPartial must be a boolean or nil (got '" .. _type(isForPartial) .. "')\n" .. _g.debugstack(2) .. "\n")
-        _assert(symbolType == ESymbolType.Class or symbolType == ESymbolType.Enum or symbolType == ESymbolType.Interface or symbolType == ESymbolType.RawSymbol, "symbolType must be valid\n" .. _g.debugstack(2) .. "\n")
+        _assert(symbolType == EManagedSymbolType.Class or symbolType == EManagedSymbolType.Enum or symbolType == EManagedSymbolType.Interface or symbolType == EManagedSymbolType.RawSymbol, "symbolType must be valid\n" .. _g.debugstack(2) .. "\n")
         _assert(_type(namespacePath) == "string", "namespacePath must be a string\n" .. _g.debugstack(2) .. "\n")
 
         local instance = {
@@ -159,7 +159,7 @@ do
         return _symbolProto
     end
 
-    function Entry:GetSymbolType()
+    function Entry:GetManagedSymbolType()
         _setfenv(1, self)
 
         _assert(_symbolType ~= nil, "spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)\n" .. _g.debugstack(2) .. "\n")
@@ -178,19 +178,25 @@ do
     function Entry:IsClassEntry()
         _setfenv(1, self)
 
-        return _symbolType == ESymbolType.Class
+        return _symbolType == EManagedSymbolType.Class
     end
 
     function Entry:IsEnumEntry()
         _setfenv(1, self)
 
-        return _symbolType == ESymbolType.Enum
+        return _symbolType == EManagedSymbolType.Enum
     end
 
     function Entry:IsInterfaceEntry()
         _setfenv(1, self)
 
-        return _symbolType == ESymbolType.Interface
+        return _symbolType == EManagedSymbolType.Interface
+    end
+
+    function Entry:IsRawSymbol()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolType.RawSymbol
     end
 end
 
@@ -215,7 +221,7 @@ do
         _setfenv(1, self)
 
         _assert(_type(namespacePath) == "string", "namespacePath must be a string\n" .. _g.debugstack(3) .. "\n")
-        _assert(symbolType == ESymbolType.Class or symbolType == ESymbolType.Enum or symbolType == ESymbolType.Interface, "symbolType for namespace '" .. namespacePath .. "' must be either ESymbolType.Class or ESymbolType.Enum or ESymbolType.Interface (got '" .. _tostring(symbolType) .. "')\n" .. _g.debugstack(3) .. "\n")
+        _assert(symbolType == EManagedSymbolType.Class or symbolType == EManagedSymbolType.Enum or symbolType == EManagedSymbolType.Interface, "symbolType for namespace '" .. namespacePath .. "' must be either ESymbolType.Class or ESymbolType.Enum or ESymbolType.Interface (got '" .. _tostring(symbolType) .. "')\n" .. _g.debugstack(3) .. "\n")
         
         namespacePath = _strtrim(namespacePath)        
         _assert(namespacePath ~= "", "namespacePath must not be dud\n" .. _g.debugstack(3) .. "\n")
@@ -235,8 +241,8 @@ do
         end
 
         -- update existing entry
-        _assert(symbolType == preExistingEntry:GetSymbolType(), "cannot register namespace '" .. sanitizedNamespacePath .. "' with type='" .. symbolType .. "' as it has already been assigned to a symbol with type='" .. preExistingEntry:GetSymbolType() .. "'.\n" .. _g.debugstack() .. "\n") -- 10
-        _assert(isForPartial or preExistingEntry:IsPartialEntry(), "namespace '" .. sanitizedNamespacePath .. "' has already been assigned to a symbol marked as '" .. preExistingEntry:GetSymbolType() .. "' (did you mean to use a partial class?).\n" .. _g.debugstack() .. "\n") -- 10
+        _assert(symbolType == preExistingEntry:GetManagedSymbolType(), "cannot register namespace '" .. sanitizedNamespacePath .. "' with type='" .. symbolType .. "' as it has already been assigned to a symbol with type='" .. preExistingEntry:GetManagedSymbolType() .. "'.\n" .. _g.debugstack() .. "\n") -- 10
+        _assert(isForPartial or preExistingEntry:IsPartialEntry(), "namespace '" .. sanitizedNamespacePath .. "' has already been assigned to a symbol marked as '" .. preExistingEntry:GetManagedSymbolType() .. "' (did you mean to use a partial class?).\n" .. _g.debugstack() .. "\n") -- 10
 
         if not isForPartial then -- 20
             preExistingEntry:UnsetPartiality()
@@ -282,7 +288,7 @@ do
     function NamespaceRegistry.SpawnNewSymbol_(symbolType)
         _setfenv(1, NamespaceRegistry)
         
-        if symbolType == ESymbolType.Class then
+        if symbolType == EManagedSymbolType.Class then
             return _setmetatable({}, NamespaceRegistry._StandardClassMetatable)
         end
 
@@ -307,7 +313,7 @@ do
 
         _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.\n" .. _g.debugstack(3) .. "\n")
         
-        local newEntry = Entry:New(ESymbolType.RawSymbol, rawSymbolProto, namespacePath)
+        local newEntry = Entry:New(EManagedSymbolType.RawSymbol, rawSymbolProto, namespacePath)
 
         _namespaces_registry[namespacePath] = newEntry
         _reflection_registry[rawSymbolProto] = newEntry
@@ -325,7 +331,7 @@ do
             return nil, nil
         end
         
-        return entry:GetSymbolProto(), entry:GetSymbolType()
+        return entry:GetSymbolProto(), entry:GetManagedSymbolType()
     end
 
     -- importer()
@@ -369,12 +375,12 @@ do
 
         _g.print("** namespaces-registry **")
         for namespace, entry in _pairs(self._namespaces_registry) do
-            _g.print("**** namespace='" .. (namespace or "nil") .. "' -> symbolType=" .. _tostring(entry:GetSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+            _g.print("**** namespace='" .. (namespace or "nil") .. "' -> symbolType=" .. _tostring(entry:GetManagedSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
         end
 
         _g.print("** reflection-registry **")
         for symbolProto, entry in _pairs(self._reflection_registry) do
-            _g.print("**** symbolProto='" .. _tostring(symbolProto or "nil") .. "' -> symbolType=" .. _tostring(entry:GetSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
+            _g.print("**** symbolProto='" .. _tostring(symbolProto or "nil") .. "' -> symbolType=" .. _tostring(entry:GetManagedSymbolType()) .. ", isPartialEntry=" .. _tostring(entry:IsPartialEntry()))
         end
 
         _g.print("\n\n")         
@@ -393,7 +399,7 @@ do
 
     -- using "[declare]" "x.y.z"
     _g.pvl_namespacer_add = function(namespacePath)
-        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Class)
+        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolType.Class)
     end
 
     -- namespacer_binder()
@@ -405,13 +411,13 @@ end
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
 -- @formatter:off   todo   also introduce [declare partial] [declare partial:enum] [declare:testbed] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
-NamespaceRegistrySingleton:Bind("[declare]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Class    ) end)
-NamespaceRegistrySingleton:Bind("[declare:enum]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Enum     ) end)
-NamespaceRegistrySingleton:Bind("[declare:class]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Class    ) end)
-NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, ESymbolType.Interface) end)
+NamespaceRegistrySingleton:Bind("[declare]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolType.Class    ) end)
+NamespaceRegistrySingleton:Bind("[declare:enum]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolType.Enum     ) end)
+NamespaceRegistrySingleton:Bind("[declare:class]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolType.Class    ) end)
+NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolType.Interface) end)
 -- @formatter:on
 
-local advertisedESymbolType = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.ESymbolType", ESymbolType.Enum)
-for k, v in _pairs(ESymbolType) do -- this is the only way to get the enum values to be advertised to the outside world
+local advertisedESymbolType = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.EManagedSymbolTypes", EManagedSymbolType.Enum)
+for k, v in _pairs(EManagedSymbolType) do -- this is the only way to get the enum values to be advertised to the outside world
     advertisedESymbolType[k] = v
 end
