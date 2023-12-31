@@ -28,7 +28,7 @@ using "[declare]" "System.Language.SRawTypes"
 using "[declare]" "System.Language.RawTypeSystem"
 
 using "[declare]" "System.Exceptions.Throw"
--- using "[declare]" "System.Exceptions.Rethrow" -- needs to be refactored first
+using "[declare]" "System.Exceptions.Rethrow"
 using "[declare]" "System.Exceptions.Exception"
 using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"

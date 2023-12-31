@@ -1,22 +1,14 @@
-﻿local _assert, _setfenv, _namespacer_bind, _tostring = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Debug = using "System.Debug"
+local StringsHelper = using "System.Helpers.Strings"
 
-    local _tostring = _assert(_g.tostring)
-    local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
+local Rethrow = using "[declare]" "System.Exceptions.Rethrow [Partial]"
 
-    return _assert, _setfenv, _namespacer_bind, _tostring
-end)()
-
-_setfenv(1, {})
-
-_namespacer_bind("System.Exceptions.Rethrow", function(exception)
-    _assert(false, _tostring(exception)) -- 00
+function Rethrow:__Call__(exception)
+    Debug.Assert(false, StringsHelper.Stringify(exception)) -- 00
 
     -- 00  notice that we intentionally use assert() instead of error() here primarily because pfui and other libraries override the vanilla
     --     error() function to make it not throw an exception-error opting to simply print a message to the chat frame  this ofcourse is bad
     --     practice but we have to live with this shortcoming   so we use assert() instead which is typically not overriden
-end)
+end
