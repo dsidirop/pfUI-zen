@@ -332,7 +332,7 @@ do
 
         local possiblePreexistingEntry = _namespaces_registry[namespacePath]
 
-        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol.\n" .. _debugstack(3) .. "\n")
+        _assert(possiblePreexistingEntry == nil, "namespace '" .. namespacePath .. "' has already been assigned to another symbol with type '" .. possiblePreexistingEntry:GetManagedSymbolType() .. "'.\n" .. _debugstack(3) .. "\n")
         
         local newEntry = Entry:New(EManagedSymbolTypes.RawSymbol, rawSymbolProto, namespacePath)
 
