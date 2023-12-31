@@ -2,8 +2,7 @@
 
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
--- using "[declare]" "System.Scopify"      no need to predeclare these really
--- using "[declare]" "System.Exceptions.Utilities"
+-- using "[declare]" "System.Scopify"      no need to predeclare this really
 
 using "[declare]" "System.Try"
 using "[declare]" "System.Math"
@@ -30,6 +29,7 @@ using "[declare]" "System.Language.RawTypeSystem"
 using "[declare]" "System.Exceptions.Throw"
 using "[declare]" "System.Exceptions.Rethrow"
 using "[declare]" "System.Exceptions.Exception"
+using "[declare]" "System.Exceptions.Utilities"
 using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"
 using "[declare]" "System.Exceptions.ValueIsOutOfRangeException"
