@@ -264,13 +264,29 @@ do
 
         return instance
     end
+    
+    NamespaceRegistry.Assert = {}
+    NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath)
+        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+    end
+    NamespaceRegistry.Assert.SymbolTypeHasMainstreamFlavour = function(symbolType)
+        _ = EManagedSymbolTypes.IsMainstreamFlavour(symbolType) or _throw_exception("symbolType must be a mainstream flavour (got %q)", symbolType)
+    end
+
+    NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
+        _ = incomingSymbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot register namespace %q with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetManagedSymbolType()) -- 10
+    end
+
+    NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial = function(isForPartial, preExistingEntry, sanitizedNamespacePath)
+        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace %q has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetManagedSymbolType()) -- 10
+    end
 
     -- namespacer()
     function NamespaceRegistry:UpsertSymbolProtoSpecs(namespacePath, symbolType)
         _setfenv(1, self)
 
-        _ = EManagedSymbolTypes.IsMainstreamFlavour(symbolType) or _throw_exception("symbolType for namespace %q must be mainstream: Enum(0), Class(1) or Interface(2) expected but got %q instead", namespacePath, symbolType)
-        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.SymbolTypeHasMainstreamFlavour(symbolType)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
         
@@ -287,8 +303,8 @@ do
         end
 
         -- update existing entry
-        _ = symbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot register namespace %q with type=%q as it has already been assigned to a symbol with type=%q.", sanitizedNamespacePath, symbolType, preExistingEntry:GetManagedSymbolType()) -- 10
-        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace %q has already been assigned to a symbol marked as %q (did you mean to use a partial class?).", sanitizedNamespacePath, preExistingEntry:GetManagedSymbolType()) -- 10
+        NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType(symbolType, preExistingEntry, sanitizedNamespacePath) -- 10
+        NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial(isForPartial, preExistingEntry, sanitizedNamespacePath) -- 10
 
         if not isForPartial then -- 20
             preExistingEntry:UnsetPartiality()
@@ -320,7 +336,7 @@ do
         __call = function(classProto, ...)
             local hasConstructorFunction = _type(classProto.New) == "function"
             local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
-            _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
+            _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
             
             if hasImplicitCallFunction then --00
                 return classProto:__Call__(_unpack(arg))
@@ -341,6 +357,14 @@ do
         return {} -- enums, interfaces
     end
 
+    NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable = function(possiblePreexistingEntry, namespacePath)
+        _ = possiblePreexistingEntry == nil or _throw_exception("namespace %q has already been assigned to another symbol", namespacePath)
+    end
+    
+    NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil = function(rawSymbolProto)
+        _ = rawSymbolProto ~= nil or _throw_exception("rawSymbolProto must not be nil")
+    end
+
     -- used for binding external libs to a local namespace
     --
     --     _namespacer_bind("Foo.Bar", function(x, y) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
@@ -350,13 +374,13 @@ do
     function NamespaceRegistry:Bind(namespacePath, rawSymbolProto)
         _setfenv(1, self)
 
-        _ = rawSymbolProto ~= nil or _throw_exception("rawSymbol must not be nil")
-        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbolProto)
 
         local possiblePreexistingEntry = _namespaces_registry[namespacePath]
 
-        _ = possiblePreexistingEntry == nil or _throw_exception("namespace %q has already been assigned to another symbol.", namespacePath)
-        
+        NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable(possiblePreexistingEntry, namespacePath)
+
         local newEntry = Entry:New(EManagedSymbolTypes.RawSymbol, rawSymbolProto, namespacePath)
 
         _namespaces_registry[namespacePath] = newEntry
@@ -366,39 +390,42 @@ do
     function NamespaceRegistry:TryGetProtoTidbitsViaNamespace(namespacePath)
         _setfenv(1, self)
         
+        -- we intentionally omit validating the namespacepath in terms of whitespaces etc
+        -- thats because this method is meant to be used by the reflection.* family of methods
+        
         if namespacePath == nil then -- we dont want to error out in this case   this is a try-method
             return nil, nil
         end
 
-        local entry = self:GetEntry_(namespacePath)
+        local entry = _namespaces_registry[namespacePath]
         if entry == nil then
             return nil, nil
         end
         
         return entry:GetSymbolProto(), entry:GetManagedSymbolType()
     end
-
+    
     -- importer()
     function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
         _setfenv(1, self)
 
-        local entry = self:GetEntry_(namespacePath)
-        if entry == nil and suppressExceptionIfNotFound then
-            return nil
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+
+        local entry = _namespaces_registry[namespacePath]
+        if entry == nil then
+            if suppressExceptionIfNotFound then
+                return nil
+            end
+
+            _throw_exception("namespace %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
         
-        _ = entry ~= nil or _throw_exception("namespace %q has not been registered.", namespacePath)
-        _ = not entry:IsPartialEntry() or _throw_exception("namespace %q holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
+        if entry:IsPartialEntry() then
+            -- dont turn this into an debug.assertion   we want to know about this in production builds too
+            _throw_exception("namespace %q holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
+        end
         
         return entry:GetSymbolProto()
-    end
-
-    function NamespaceRegistry:GetEntry_(namespacePath)
-        _setfenv(1, self)
-
-        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
-
-        return _namespaces_registry[namespacePath]
     end
 
     function NamespaceRegistry:TryGetProtoTidbitsViaSymbolProto(symbolProto)
