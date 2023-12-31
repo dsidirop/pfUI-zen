@@ -2,7 +2,7 @@
     <Include file="nils\.xml"/>
     <Include file="time\.xml"/>
     <Include file="guard\.xml"/>
+    <Include file="console\.xml"/>
     <Include file="exceptions\.xml"/>
-    <Include file="console.tests\.xml"/>
-    <Include file="strings.helper.tests\.xml"/>    
+    <Include file="strings.helper\.xml"/>    
 </Ui>
