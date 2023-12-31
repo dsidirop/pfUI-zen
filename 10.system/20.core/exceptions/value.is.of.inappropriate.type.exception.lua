@@ -17,7 +17,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsOptionallyString(optionalArgumentName, "optionalArgumentName")
-    Guard.Assert.IsOptionallyTableOrString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
+    Guard.Assert.IsOptionallyTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return Classify(self, {
         _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),

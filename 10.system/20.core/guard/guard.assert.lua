@@ -65,6 +65,23 @@ do
 
         return value
     end
+    
+    function Guard.Assert.IsOptionallyTableOrNonDudString(value, optionalArgumentName)
+        if value == nil then
+            return nil
+        end
+
+        return Guard.Assert.IsTableOrNonDudString(value, optionalArgumentName)
+    end
+    
+    function Guard.Assert.IsTableOrNonDudString(value, optionalArgumentName)
+        local IsTableOrNonDudString = Reflection.IsTable(value) or (Reflection.IsString(value) and StringsHelper.Trim(value) ~= "")
+        if not IsTableOrNonDudString then
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table or non-dud string"))
+        end
+        
+        return value
+    end
 
     function Guard.Assert.IsOptionallyNonEmptyTable(value, optionalArgumentName)
         if value == nil then

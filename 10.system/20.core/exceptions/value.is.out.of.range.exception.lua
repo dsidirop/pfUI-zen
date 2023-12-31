@@ -1,32 +1,23 @@
-﻿local _setfenv, _tostring, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _tostring = _assert(_g.tostring)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    
-    return _setfenv, _tostring, _importer, _namespacer
-end)()
+local Guard              = using "System.Guard" --                            @formatter:off
+local Scopify            = using "System.Scopify"
+local EScopes            = using "System.EScopes"
+local Reflection         = using "System.Reflection"
+local StringsHelper      = using "System.Helpers.Strings"
 
-_setfenv(1, {}) --                                                                 @formatter:off
+local Classify           = using "System.Classes.Classify"
+local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
-local Debug              = _importer("System.Debug")
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classes.Classify")
-local Reflection         = _importer("System.Reflection")
-local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
+local Class = using "[declare]" "System.Exceptions.ValueIsOutOfRangeException [Partial]"
 
-local Class = _namespacer("System.Exceptions.ValueIsOutOfRangeException [Partial]")
+Scopify(EScopes.Function, {})
 
 function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(optionalArgumentName), "optionalArgumentName must be a string or nil")
-    Debug.Assert(Reflection.IsOptionallyTableOrString(optionalExpectationOrExpectedType), "optionalExpectationOrExpectedType must be a string or table or nil")
+    Guard.Assert.IsOptionallyNonDudString(optionalArgumentName, "optionalArgumentName")
+    Guard.Assert.IsOptionallyTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return Classify(self, {
         _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
@@ -52,7 +43,7 @@ end
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
+    Guard.Assert.IsOptionallyNonDudString(message, "message")
 
     _message = message or "(exception message not available)"
     _stringified = nil
@@ -64,7 +55,7 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(stacktrace), "stacktrace must be a string or nil")
+    Guard.Assert.IsOptionallyNonDudString(stacktrace, "stacktrace")
 
     _stacktrace = stacktrace or ""
     _stringified = nil
@@ -88,9 +79,9 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = message .. "(expected " .. _tostring(expectationString) .. " - got '" .. _tostring(value) .. "')"
+        StringsHelper.Format("%s (expected %s - got %q)", message, expectationString, value)
     else
-        message = message .. "(got '" .. _tostring(value) .. "')"
+        StringsHelper.Format("%s (got %q)", message, value)
     end
 
     return message
