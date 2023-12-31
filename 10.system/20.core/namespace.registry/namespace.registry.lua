@@ -354,20 +354,14 @@ do
         return _namespaces_registry[namespacePath]
     end
 
-    -- namespace_reflect()   given a registered object it returns the namespace path that was used to register it
-    function NamespaceRegistry:TryGetNamespaceIfClassProto(symbolProto)
+    function NamespaceRegistry:TryGetProtoTidbitsViaSymbolProto(symbolProto)
         _setfenv(1, self)
 
         if symbolProto == nil then
             return nil
         end
 
-        local entry = _reflection_registry[symbolProto]
-        if entry == nil or not entry:IsClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
-            return nil
-        end
-
-        return entry:GetNamespace() 
+        return _reflection_registry[symbolProto]
     end
     
     function NamespaceRegistry:PrintOut()

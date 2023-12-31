@@ -133,7 +133,12 @@ function Reflection.TryGetProtoViaClassNamespace(namespacePath)
 end
 
 function Reflection.TryGetNamespaceIfClassProto(value)
-    return Namespacer:TryGetNamespaceIfClassProto(value) -- keep it like this   dont try to inline this ala   Reflection.TryGetNamespaceIfClassProto = Namespacer.TryGetNamespaceIfClassProto!! 
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
+    if protoTidbits == nil or not protoTidbits:IsClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
+        return nil
+    end
+
+    return protoTidbits:GetNamespace()
 end
 
 function Reflection.TryGetProtoTidbitsViaNamespace(value)
