@@ -7,6 +7,7 @@ local RawTypeSystem = using "System.Language.RawTypeSystem"
 
 local Classify = using "[declare]" "System.Classes.Classify [Partial]"
 
+--
 -- Classify() calls go here
 --
 -- note that we are using debug.assert instead of guard.assert because this method is used even inside the
@@ -17,9 +18,9 @@ function Classify:__Call__(classProto, optionalClassFields)
     Validation.Assert(RawTypeSystem.IsNilOrTable(classProto), "optionalClassFields was expected to be either a table or nil")
 
     optionalClassFields = optionalClassFields or {}
-
+        
     MetaTable.Set(optionalClassFields, classProto)
-    classProto.__index = classProto
+    classProto.__index = classProto -- turned out that its vital to always set this
 
     return optionalClassFields
 end

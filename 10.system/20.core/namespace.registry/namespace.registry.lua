@@ -122,20 +122,16 @@ local function _nilCoalesce(value, defaultFallbackValue)
     return value
 end
 
-local StandardizedMetatables = {}
-StandardizedMetatables.For = {}
-StandardizedMetatables.For.Enums = {
-    __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
-        local value = _rawget(tableObject, key)
+local EnumsProtoFactory = {}
+do
+    function EnumsProtoFactory.Spawn()
+        local metaTable = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
+        local newEnumProto = { IsValid = EnumsProtoFactory.IsValidEnumValue_ }
 
-        if value == nil then
-            _throw_exception("Enum doesn't have a member named %q", key)
-        end
+        return _setmetatable(newEnumProto, metaTable)
+    end
 
-        return value
-    end,
-
-    IsValid = function(self, value)
+    function EnumsProtoFactory.IsValidEnumValue_(self, value)
         if _type(self) ~= "table" then
             _throw_exception("The IsValid() method must be called like :IsValid() instead of :IsValid()!")
         end
@@ -154,44 +150,65 @@ StandardizedMetatables.For.Enums = {
         end
 
         return false
-    end,
-}
-StandardizedMetatables.For.Enums.__index = StandardizedMetatables.For.Enums -- absolutely vital
+    end
 
-StandardizedMetatables.For.Classes = { -- add a shortcut to the default constructor on the class
-    __call = function(classProto, ...)
+    function EnumsProtoFactory.OnUnknownPropertyDetected_(_, key) -- if the __index method gets called its a sign that the enum doesnt have a member with the given name
+        _throw_exception("Enum doesn't have a member named %q", key)
+    end
+end
+
+local ClassProtoFactory = {}
+do
+    function ClassProtoFactory.Spawn()
+        local metaTable = { }
+        metaTable.__call = ClassProtoFactory.OnProtoCalledAsFunction_            
+        metaTable.__index = metaTable
+        -- metaTable.__tostring = todo
+
+        local newClassProto = { }
+
+        return _setmetatable(newClassProto, metaTable)
+    end
+
+    function ClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
         local hasConstructorFunction = _type(classProto.New) == "function"
         local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
         _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
 
-        if hasImplicitCallFunction then --00
-            return classProto:__Call__(_unpack(arg))
+        if hasImplicitCallFunction then
+            return classProto:__Call__(_unpack(arg)) -- 00
         end
 
         return classProto:New(_unpack(arg))
-    end,
 
-    __tostring = function(self)
-        if self and _type(self.ToString) == "function" then
-            return self:ToString()
+        --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+    end
+end
+
+local EManagedSymbolTypes = EnumsProtoFactory.Spawn()
+do
+    EManagedSymbolTypes.Enum = 0
+    EManagedSymbolTypes.Class = 1
+    EManagedSymbolTypes.Interface = 2
+    EManagedSymbolTypes.RawSymbol = 3 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+end
+
+local ProtosFactory = {}
+do
+    function ProtosFactory.Spawn(symbolType)
+        _setfenv(1, ProtosFactory)
+
+        if symbolType == EManagedSymbolTypes.Enum then
+            return EnumsProtoFactory.Spawn()
         end
 
-        return _stringify(self)
-    end,
+        if symbolType == EManagedSymbolTypes.Class then
+            return ClassProtoFactory.Spawn()
+        end
 
-    --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
-}
-StandardizedMetatables.For.Classes.__index = StandardizedMetatables.For.Classes -- nice to have
-
-local EManagedSymbolTypes = {
-    Enum = 0,
-    
-    Class = 1, --      for classes declared by this project
-    Interface = 2,
-    RawSymbol = 3, --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
-}
-
-_setmetatable(EManagedSymbolTypes, StandardizedMetatables.For.Enums) --vital
+        return {} -- interfaces
+    end
+end
 
 
 local Entry = {}
@@ -333,7 +350,7 @@ do
         
         local preExistingEntry = _namespaces_registry[sanitizedNamespacePath]
         if preExistingEntry == nil then -- insert new entry
-            local newSymbolProto = self.SpawnProperNewSymbol_(symbolType)
+            local newSymbolProto = ProtosFactory.Spawn(symbolType)
 
             local newEntry = Entry:New(symbolType, newSymbolProto, sanitizedNamespacePath, isForPartial)
 
@@ -371,20 +388,6 @@ do
         return sanitized, isForPartial
         
         -- 00  remove the [partial] postfix from the namespace string if it exists
-    end
-    
-    function NamespaceRegistry.SpawnProperNewSymbol_(symbolType)
-        _setfenv(1, NamespaceRegistry)
-
-        if symbolType == EManagedSymbolTypes.Enum then
-            return _setmetatable({}, StandardizedMetatables.For.Enums)
-        end
-        
-        if symbolType == EManagedSymbolTypes.Class then
-            return _setmetatable({}, StandardizedMetatables.For.Classes)
-        end
-        
-        return {} -- enums, interfaces
     end
 
     NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable = function(possiblePreexistingEntry, namespacePath)

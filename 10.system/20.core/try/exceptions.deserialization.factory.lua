@@ -13,6 +13,8 @@ local Class = using "[declare]" "System.Try.ExceptionsDeserializationFactory"
 Scopify(EScopes.Function, {})
 
 function Class:New()
+    Scopify(EScopes.Function, self)
+    
     return Classify(self)
 end
 
