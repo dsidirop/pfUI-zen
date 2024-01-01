@@ -126,7 +126,10 @@ local EnumsProtoFactory = {}
 do
     function EnumsProtoFactory.Spawn()
         local metaTable = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
-        local newEnumProto = { IsValid = EnumsProtoFactory.IsValidEnumValue_ }
+        
+        local newEnumProto = { }
+        newEnumProto.__index = newEnumProto
+        newEnumProto.IsValid = EnumsProtoFactory.IsValidEnumValue_
 
         return _setmetatable(newEnumProto, metaTable)
     end
@@ -166,6 +169,7 @@ do
         -- metaTable.__tostring = todo
 
         local newClassProto = { }
+        newClassProto.__index = newClassProto
 
         return _setmetatable(newClassProto, metaTable)
     end
