@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -13,12 +13,12 @@
     local _format = _assert(_g.string.format)
     local _strsub = _assert(_g.string.sub)
     local _strfind = _assert(_g.string.find)
-    local _tostring = _assert(_g.tostring)
+    local _stringify = _assert(_g.tostring)
     local _debugstack = _assert(_g.debugstack)
     local _getmetatable = _assert(_g.getmetatable)
     local _setmetatable = _assert(_g.setmetatable)
     
-    return _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _tostring, _setfenv, _debugstack, _getmetatable, _setmetatable
+    return _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -31,10 +31,10 @@ local function _throw_exception(format, ...)
     local variadicArguments = arg
 
     for i = 1, _getn(variadicArguments) do
-        variadicArguments[i] = _tostring(variadicArguments[i])
+        variadicArguments[i] = _stringify(variadicArguments[i])
     end
 
-    _assert(false, _format(format, _unpack(variadicArguments)) .. "\n\n---------------Stacktrace---------------" .. _debugstack(10) .. "\n---------------End Stacktrace---------------\n ")
+    _assert(false, _format(format, _unpack(variadicArguments)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
 end
 
 local function _strmatch(input, patternString, ...)
@@ -122,6 +122,67 @@ local function _nilCoalesce(value, defaultFallbackValue)
     return value
 end
 
+local StandardizedMetatables = {}
+StandardizedMetatables.For = {}
+StandardizedMetatables.For.Enums = {
+    __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
+        local value = _rawget(tableObject, key)
+
+        if value == nil then
+            _throw_exception("Enum doesn't have a member named %q", key)
+        end
+
+        return value
+    end,
+
+    IsValid = function(self, value)
+        if _type(self) ~= "table" then
+            _throw_exception("The IsValid() method must be called like :IsValid() instead of :IsValid()!")
+        end
+
+        _setfenv(1, self)
+
+        local typeOfValue = _type(value)
+        if typeOfValue ~= "string" and typeOfValue ~= "number" then
+            return false
+        end
+
+        for _, v in _pairs(self) do
+            if v == value then
+                return true
+            end
+        end
+
+        return false
+    end,
+}
+StandardizedMetatables.For.Enums.__index = StandardizedMetatables.For.Enums -- absolutely vital
+
+StandardizedMetatables.For.Classes = { -- add a shortcut to the default constructor on the class
+    __call = function(classProto, ...)
+        local hasConstructorFunction = _type(classProto.New) == "function"
+        local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
+        _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
+
+        if hasImplicitCallFunction then --00
+            return classProto:__Call__(_unpack(arg))
+        end
+
+        return classProto:New(_unpack(arg))
+    end,
+
+    __tostring = function(self)
+        if self and _type(self.ToString) == "function" then
+            return self:ToString()
+        end
+
+        return _stringify(self)
+    end,
+
+    --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+}
+StandardizedMetatables.For.Classes.__index = StandardizedMetatables.For.Classes -- nice to have
+
 local EManagedSymbolTypes = {
     Enum = 0,
     
@@ -130,31 +191,8 @@ local EManagedSymbolTypes = {
     RawSymbol = 3, --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
 }
 
-_setmetatable(EManagedSymbolTypes, {
-    __index = function(tableObject, key) -- we cant use getrawvalue here  we have to write the method ourselves
-        local value = _rawget(tableObject, key)
+_setmetatable(EManagedSymbolTypes, StandardizedMetatables.For.Enums) --vital
 
-        if value == nil then
-            _throw_exception("EManagedSymbolTypes enum doesn't have a member named %q", key)
-        end
-
-        return value
-    end
-})
-
-function EManagedSymbolTypes.IsMainstreamFlavour(value)
-    return value == EManagedSymbolTypes.Class
-            or value == EManagedSymbolTypes.Enum
-            or value == EManagedSymbolTypes.Interface
-end
-
-function EManagedSymbolTypes.IsValid(value)
-    if _type(value) ~= "number" then
-        return false
-    end
-
-    return value >= EManagedSymbolTypes.Enum and value <= EManagedSymbolTypes.RawSymbol
-end
 
 local Entry = {}
 do
@@ -163,7 +201,7 @@ do
 
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
-        _ = EManagedSymbolTypes.IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType)
+        _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType)
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
 
         local instance = {
@@ -244,7 +282,7 @@ do
     function Entry:ToString()
         _setfenv(1, self)
 
-        return "symbolType='" .. _tostring(_symbolType) .. "', symbolProto='" .. _tostring(_symbolProto) .. "', namespacePath='" .. _tostring(_namespacePath) .. "', isForPartial='" .. _tostring(_isForPartial) .. "'"
+        return "symbolType='" .. _stringify(_symbolType) .. "', symbolProto='" .. _stringify(_symbolProto) .. "', namespacePath='" .. _stringify(_namespacePath) .. "', isForPartial='" .. _stringify(_isForPartial) .. "'"
     end
     Entry.__tostring = Entry.ToString
 end
@@ -269,12 +307,14 @@ do
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath)
         _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end
-    NamespaceRegistry.Assert.SymbolTypeHasMainstreamFlavour = function(symbolType)
-        _ = EManagedSymbolTypes.IsMainstreamFlavour(symbolType) or _throw_exception("symbolType must be a mainstream flavour (got %q)", symbolType)
+    NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
+        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.Class or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
+
+        _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
-        _ = incomingSymbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot register namespace %q with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetManagedSymbolType()) -- 10
+        _ = incomingSymbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot re-register namespace %q with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetManagedSymbolType()) -- 10
     end
 
     NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial = function(isForPartial, preExistingEntry, sanitizedNamespacePath)
@@ -286,13 +326,13 @@ do
         _setfenv(1, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
-        NamespaceRegistry.Assert.SymbolTypeHasMainstreamFlavour(symbolType)
+        NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol(symbolType)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
         
         local preExistingEntry = _namespaces_registry[sanitizedNamespacePath]
         if preExistingEntry == nil then -- insert new entry
-            local newSymbolProto = self.SpawnNewSymbol_(symbolType)
+            local newSymbolProto = self.SpawnProperNewSymbol_(symbolType)
 
             local newEntry = Entry:New(symbolType, newSymbolProto, sanitizedNamespacePath, isForPartial)
 
@@ -331,29 +371,18 @@ do
         
         -- 00  remove the [partial] postfix from the namespace string if it exists
     end
-
-    NamespaceRegistry._StandardClassMetatable = { -- add a shortcut to the default constructor on the class
-        __call = function(classProto, ...)
-            local hasConstructorFunction = _type(classProto.New) == "function"
-            local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
-            _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
-            
-            if hasImplicitCallFunction then --00
-                return classProto:__Call__(_unpack(arg))
-            end
-
-            return classProto:New(_unpack(arg))
-        end
-        
-        --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
-    }
-    function NamespaceRegistry.SpawnNewSymbol_(symbolType)
+    
+    function NamespaceRegistry.SpawnProperNewSymbol_(symbolType)
         _setfenv(1, NamespaceRegistry)
+
+        if symbolType == EManagedSymbolTypes.Enum then
+            return _setmetatable({}, StandardizedMetatables.For.Enums)
+        end
         
         if symbolType == EManagedSymbolTypes.Class then
-            return _setmetatable({}, NamespaceRegistry._StandardClassMetatable)
+            return _setmetatable({}, StandardizedMetatables.For.Classes)
         end
-
+        
         return {} -- enums, interfaces
     end
 
@@ -443,12 +472,12 @@ do
 
         _g.print("** namespaces-registry **")
         for namespace, entry in _pairs(self._namespaces_registry) do
-            _g.print("**** namespace='" .. _tostring(namespace) .. "' ->  " .. entry:ToString())
+            _g.print("**** namespace='" .. _stringify(namespace) .. "' ->  " .. entry:ToString())
         end
 
         _g.print("** reflection-registry **")
         for symbolProto, entry in _pairs(self._reflection_registry) do
-            _g.print("**** symbolProto='" .. _tostring(symbolProto) .. "' ->  " .. entry:ToString())
+            _g.print("**** symbolProto='" .. _stringify(symbolProto) .. "' ->  " .. entry:ToString())
         end
 
         _g.print("\n\n")         
@@ -487,7 +516,11 @@ NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath)
 
 local AdvertisedEManagedSymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.EManagedSymbolTypes", EManagedSymbolTypes.Enum)
 for k, v in _pairs(EManagedSymbolTypes) do -- this is the only way to get the enum values to be advertised to the outside world
-    AdvertisedEManagedSymbolTypes[k] = v
+    if _type(v) == "number" then
+        AdvertisedEManagedSymbolTypes[k] = v
+    end    
 end
 
-_setmetatable(AdvertisedEManagedSymbolTypes, _getmetatable(EManagedSymbolTypes)) -- this is important too
+-- no need for this   the standardized enum metatable is already in place and it does the same job just fine
+--
+-- _setmetatable(AdvertisedEManagedSymbolTypes, _getmetatable(EManagedSymbolTypes))
