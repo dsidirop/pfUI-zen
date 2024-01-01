@@ -3,15 +3,16 @@
     <Include file="arrays.lua"/>
     <Include file="tables.lua"/>
     
-    <Include file="strings.find.lua"/>
-    <Include file="strings.isdudstring.lua"/>
-    <Include file="strings.stringify.lua"/>
-    <Include file="strings.length.lua"/>
-    <Include file="strings.format.lua"/>
     <Include file="strings.trim.lua"/>
+    <Include file="strings.find.lua"/>
     <Include file="strings.split.lua"/>
     <Include file="strings.match.lua"/>
+    <Include file="strings.length.lua"/>
+    <Include file="strings.format.lua"/>
+    <Include file="strings.stringify.lua"/>
+    <Include file="strings.isdudstring.lua"/>
     <Include file="strings.touppercase.lua"/>
+    <Include file="strings.substring.via.indeces.lua"/>
 
     <Include file="booleans.lua"/>
 </Ui>

@@ -2,4 +2,5 @@
     <Include file="strings.helper._.tests.lua"/>
     <Include file="strings.helper.split.tests.lua"/>
     <Include file="strings.helper.match.tests.lua"/>
+    <Include file="strings.helper.substring.via.indeces.tests.lua"/>
 </Ui>

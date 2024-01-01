@@ -134,6 +134,14 @@ do
         return value
     end
 
+    function Guard.Assert.IsNilOrInteger(value, optionalArgumentName)
+        if value == nil then
+            return nil
+        end
+        
+        return Guard.Assert.IsInteger(value, optionalArgumentName)
+    end
+
     function Guard.Assert.IsPositiveInteger(value, optionalArgumentName)
         Guard.Assert.IsInteger(value, optionalArgumentName)
         

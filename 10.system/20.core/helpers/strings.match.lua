@@ -24,9 +24,9 @@ local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Match(input, patternString, ...)
     local variadicsArray = arg
-    
+
     Scopify(EScopes.Function, StringsHelper)
-    
+
     Guard.Assert.IsString(input, "input")
     Guard.Assert.IsString(patternString, "patternString")
 
@@ -35,7 +35,7 @@ function StringsHelper.Match(input, patternString, ...)
     end
 
     local results = {StringsHelper.Find(input, patternString, TablesHelper.Unpack(variadicsArray))}
-    
+
     local startIndex = results[1]
     if startIndex == nil then
         -- no match
