@@ -15,7 +15,7 @@ local Classify = using "[declare]" "System.Classes.Classify [Partial]"
 --
 function Classify:__Call__(classProto, optionalClassFields)
     Validation.Assert(RawTypeSystem.IsTable(classProto), "classProto was expected to be a table")
-    Validation.Assert(RawTypeSystem.IsNilOrTable(classProto), "optionalClassFields was expected to be either a table or nil")
+    Validation.Assert(RawTypeSystem.IsNilOrTable(optionalClassFields), "optionalClassFields was expected to be either a table or nil")
 
     optionalClassFields = optionalClassFields or {}
         
