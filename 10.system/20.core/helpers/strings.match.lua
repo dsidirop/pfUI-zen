@@ -5,7 +5,6 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local TablesHelper = using "System.Helpers.Tables"
-local ArraysHelper = using "System.Helpers.Arrays"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
@@ -35,7 +34,5 @@ function StringsHelper.Match(input, patternString, ...)
         return StringsHelper.SubstringViaRange(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
-    ArraysHelper.PopFirst(results)
-    ArraysHelper.PopFirst(results)
-    return TablesHelper.Unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
+    return TablesHelper.UnpackRange(results, 3) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end

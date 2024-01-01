@@ -1,10 +1,11 @@
-﻿local _assert, _setfenv, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable = (function()
+﻿local _assert, _setfenv, _getn, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
 
     _setfenv(1, {})
 
+    local _getn = _assert(_g.getn)
     local _type = _assert(_g.type)
     local _next = _assert(_g.next)
     local _pairs = _assert(_g.pairs)
@@ -17,11 +18,12 @@
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _assert, _setfenv, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable
+    return _assert, _setfenv, _getn, _type, _next, _unpack, _pairs, _tableInsert, _rawget, _tostring, _importer, _namespacer, _setmetatable, _getmetatable
 end)()
 
 _setfenv(1, {})
 
+local Nils = _importer("System.Nils")
 local Guard = _importer("System.Guard")
 
 local Class = _namespacer("System.Helpers.Tables [Partial]")
@@ -34,14 +36,11 @@ function Class.Clear(tableObject)
     end
 end
 
-function Class.RawGetValue(table, key) -- 00
-    local value = _rawget(table, key)
-    
-    _assert(value ~= nil, "object doesn't contain any property named '" .. _tostring(key) .. "'", 2)
+function Class.RawGetValue(table, key)
+    Guard.Assert.IsTable(table)
+    Guard.Assert.IsNotNil(key)
 
-    return value
-    
-    -- 00  used primarily as the __index method in enums to ensure we dont try to access non-existent enum values
+    return _rawget(table, key)
 end
 
 function Class.Clone(tableObject, seen)
@@ -64,11 +63,11 @@ function Class.Clone(tableObject, seen)
     return res
 end
 
-function Class.Append(array, value)
-    Guard.Assert.IsTable(array)
+function Class.Append(table, value)
+    Guard.Assert.IsTable(table)
     Guard.Assert.IsNotNil(value)
 
-    return _tableInsert(array, value)
+    return _tableInsert(table, value)
 end
 
 function Class.AnyOrNil(tableObject)
@@ -87,8 +86,40 @@ function Class.GetKeyValuePairs(tableObject)
     return _pairs(tableObject)
 end
 
-function Class.Unpack(tableObject)
+function Class.Unpack(tableObject, ...)
     _assert(_type(tableObject) == 'table')
+    _assert(_getn(arg) == 0, "it seems you are attempting to use unpack(table, startIndex, endIndex) - use UnpackRange() for this kind of thing instead!")
 
     return _unpack(tableObject)
+end
+
+function Class.UnpackViaLength(tableObject, chunkStartIndex, chunkLength)
+    _assert(_type(tableObject) == 'table')
+    _assert(_type(chunkStartIndex) == 'number' and chunkStartIndex >= 1)
+    _assert(_type(chunkLength) == 'number' and chunkLength >= 0)
+
+    return Class.UnpackRange(tableObject, chunkStartIndex, chunkStartIndex + chunkLength - 1)
+end
+
+function Class.UnpackRange(tableObject, startIndex, optionalEndIndex)
+    _assert(_type(tableObject) == 'table')
+    _assert(_type(startIndex) == 'number' and startIndex >= 1)
+    _assert(optionalEndIndex == nil or (_type(optionalEndIndex) == 'number' and optionalEndIndex >= 1))
+    
+    local tableLength = _getn(tableObject)
+    if tableLength == 0 then
+        return -- nothing to unpack
+    end
+
+    optionalEndIndex = Nils.Coalesce(optionalEndIndex, tableLength)
+    if startIndex == 1 and optionalEndIndex == tableLength then
+        return _unpack(tableObject) -- optimization
+    end
+    
+    local results = {}
+    for i = startIndex, optionalEndIndex do
+        _tableInsert(results, tableObject[i])
+    end
+
+    return _unpack(results)
 end
