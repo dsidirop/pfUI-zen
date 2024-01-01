@@ -13,10 +13,12 @@ using "[declare]" "System.Time"
 using "[declare]" "System.Table"
 using "[declare]" "System.Guard"
 using "[declare]" "System.Event"
-using "[declare]" "System.Console"
 using "[declare]" "System.Iterators"
 using "[declare]" "System.Validation"
 using "[declare]" "System.Reflection"
+
+using "[declare]" "System.Console"
+using "[declare]" "System.Console.Writer"
 
 using "[declare]" "System.Classes.Classify"
 using "[declare]" "System.Classes.MetaTable"

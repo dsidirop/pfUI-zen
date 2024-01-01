@@ -12,9 +12,9 @@ local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
 local Console = using "[declare]" "System.Console [Partial]"
 
-Scopify(EScopes.Function, {})
+Console.Writer = using "[declare]" "System.Console.Writer [Partial]"
 
-Console.Writer = {}
+Scopify(EScopes.Function, {})
 
 function Console.Writer:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
