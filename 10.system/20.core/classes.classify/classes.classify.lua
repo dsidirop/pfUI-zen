@@ -20,7 +20,9 @@ function Classify:__Call__(classProto, optionalClassFields)
     optionalClassFields = optionalClassFields or {}
         
     MetaTable.Set(optionalClassFields, classProto)
-    classProto.__index = classProto -- turned out that its vital to always set this
+    if classProto.__index == nil then
+        classProto.__index = classProto
+    end
 
     return optionalClassFields
 end
