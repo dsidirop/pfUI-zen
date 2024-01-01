@@ -213,6 +213,7 @@ do
 
         _setmetatable(instance, self)
         self.__index = self
+        self.__tostring = self.ToString
 
         return instance
     end
@@ -284,7 +285,7 @@ do
 
         return "symbolType='" .. _stringify(_symbolType) .. "', symbolProto='" .. _stringify(_symbolProto) .. "', namespacePath='" .. _stringify(_namespacePath) .. "', isForPartial='" .. _stringify(_isForPartial) .. "'"
     end
-    Entry.__tostring = Entry.ToString
+
 end
 
 local NamespaceRegistry = {}
