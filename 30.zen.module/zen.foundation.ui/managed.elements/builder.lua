@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
@@ -39,7 +38,7 @@ function Class:New(other)
 
     other = other or {}
 
-    return Classify(self, {
+    return self:Instantiate({
         _elementType = other._elementType or SWoWElementType.Frame,
         
         _name = other._name,

@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Check = _importer("System.Guard.Assert")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
@@ -40,7 +39,7 @@ function Class:New(dbcontextReadonly)
 
     dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
 
-    return Classify(self, {
+    return self:Instantiate({
         _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
     })
 end

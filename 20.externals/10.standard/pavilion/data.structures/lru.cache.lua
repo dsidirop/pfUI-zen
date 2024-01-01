@@ -21,7 +21,6 @@ local Guard         = _importer("System.Guard")
 local Table         = _importer("System.Table")
 local Scopify       = _importer("System.Scopify")
 local EScopes       = _importer("System.EScopes")
-local Classify      = _importer("System.Classes.Classify")
 local TablesHelper  = _importer("System.Helpers.Tables")
 local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
 
@@ -48,7 +47,7 @@ function Class:New(options)
     Guard.Assert.IsNilOrPositiveInteger(options.MaxSize, "options.MaxSize")
     Guard.Assert.IsNilOrPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
 
-    return Classify(self, {
+    return self:Instantiate({
         _count = 0,
         _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,

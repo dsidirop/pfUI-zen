@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Schema = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1")
 local PfuiConfiguration = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration")
@@ -34,7 +33,7 @@ function Class:New()
     
     local rawAddonSettings = PfuiConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.v1"]
 
-    return Classify(self, { -- @formatter:off
+    return self:Instantiate({ -- @formatter:off
 
         Settings = { --        these are all public properties
             Logging = {

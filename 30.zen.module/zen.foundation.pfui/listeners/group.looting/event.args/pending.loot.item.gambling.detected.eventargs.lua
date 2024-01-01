@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
 
@@ -31,7 +30,7 @@ function Class:New(rollId)
     
     _assert(_type(rollId) == "number" and rollId >= 0, "rollId must be a positive number")
 
-    return Classify(self, {
+    return self:Instantiate({
         _rollId = rollId,
     })
 end

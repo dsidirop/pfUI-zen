@@ -25,7 +25,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Event = _importer("System.Event")
 local TablesHelper = _importer("System.Helpers.Tables")
@@ -40,7 +39,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdo
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _nativePfuiControl = nil,
 
         _caption = nil,

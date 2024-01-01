@@ -14,7 +14,7 @@
     <Include file="iterators\.xml"/>
     <Include file="default.chat.frame\.xml"/>
 
-    <Include file="classes.classify\.xml"/>
+    <Include file="classes.instantiator\.xml"/>
 
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>

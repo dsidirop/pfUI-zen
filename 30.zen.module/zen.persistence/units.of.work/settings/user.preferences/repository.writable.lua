@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
@@ -34,7 +33,7 @@ function Class:New(dbcontext)
 
     _assert(_type(dbcontext) == "table")
 
-    return Classify(self, {
+    return self:Instantiate({
         _hasChanges = false,
 
         _userPreferencesEntity = dbcontext.Settings.UserPreferences,

@@ -19,7 +19,6 @@ _setfenv(1, {}) -- @formatter:off
 
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Event                                             = _importer("System.Event")
 local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
@@ -37,7 +36,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 function Class:New(T, pfuiGui)
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _t = _assert(T),
         _pfuiGui = _assert(pfuiGui),
 

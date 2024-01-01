@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
@@ -30,7 +29,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Co
 function Class:New()
     Scopify(EScopes.Function, self)
     
-    return Classify(self, {
+    return self:Instantiate({
         _old = nil,
         _new = nil,
     })

@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Event = _importer("System.Event")
 local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
@@ -36,7 +35,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLoot
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _active = false,
         _hookApplied = false,
         _rollIdsEncounteredCache = LRUCache:New {

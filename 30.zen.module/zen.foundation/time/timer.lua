@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Event = _importer("System.Event")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
@@ -37,7 +36,7 @@ function Class:New(interval)
     local element = WoWCreateFrame("Frame") -- 00
     element:Hide() -- 10
 
-    return Classify(self, {
+    return self:Instantiate({
         _g = _g, -- 20
 
         _interval = interval,

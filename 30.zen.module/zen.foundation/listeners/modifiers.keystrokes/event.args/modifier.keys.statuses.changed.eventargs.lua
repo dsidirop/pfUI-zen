@@ -23,7 +23,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs")
 
@@ -34,7 +33,7 @@ function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
     _assert(_type(hasModifierShift) == "boolean")
     _assert(_type(hasModifierControl) == "boolean")
     
-    return Classify(self, {
+    return self:Instantiate({
         _stringified = nil,
         _hasModifierAlt = hasModifierAlt,
         _hasModifierShift = hasModifierShift,

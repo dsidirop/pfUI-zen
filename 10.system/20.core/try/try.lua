@@ -8,7 +8,6 @@ local Reflection         = using "System.Reflection"
 local Validation         = using "System.Validation"
 local ArraysHelper       = using "System.Helpers.Arrays"
 
-local Classify                         = using "System.Classes.Classify"
 local Rethrow                          = using "System.Exceptions.Rethrow"
 local Exception                        = using "System.Exceptions.Exception"
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
@@ -26,7 +25,7 @@ function Class:New(action, exceptionsDeserializationFactory)
     Guard.Assert.IsFunction(action, "action")
     Guard.Assert.IsNilOrInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
-    return Classify(self, {
+    return self:Instantiate({
         _action = action,
         _allExceptionHandlers = {},
         _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,

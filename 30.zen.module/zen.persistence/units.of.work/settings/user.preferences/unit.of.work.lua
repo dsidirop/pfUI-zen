@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
@@ -39,7 +38,7 @@ function Class:New(dbcontext, userPreferencesRepository)
     dbcontext = dbcontext or PfuiZenDbContext:New()
     userPreferencesRepository = userPreferencesRepository or UserPreferencesRepository:NewWithDBContext(dbcontext)
 
-    return Classify(self, {
+    return self:Instantiate({
         _dbcontext = dbcontext,
 
         _userPreferencesRepository = userPreferencesRepository,

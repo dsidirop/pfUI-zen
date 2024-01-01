@@ -3,7 +3,6 @@
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Classify = using "System.Classes.Classify"
 local TablesHelper = using "System.Helpers.Tables"
 
 local Class = using "[declare]" "System.Event [Partial]"
@@ -13,7 +12,7 @@ Scopify(EScopes.Function, {})
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _handlers = {},
         _handlersJustOnce = {}
     })

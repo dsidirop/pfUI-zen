@@ -3,7 +3,6 @@
 local Guard              = using "System.Guard" --                            @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
-local Classify           = using "System.Classes.Classify"
 local Reflection         = using "System.Reflection"
 local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
@@ -16,7 +15,7 @@ function Class:New(optionalArgumentName)
   
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return Classify(self, {
+    return self:Instantiate({
         _message = Class.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
 

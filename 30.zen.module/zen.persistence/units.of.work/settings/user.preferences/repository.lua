@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 local UserPreferencesRepositoryWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
@@ -46,7 +45,7 @@ function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepository
     _assert(_type(userPreferencesRepositoryQueryable) == "table")
     _assert(_type(userPreferencesRepositoryWriteable) == "table")
 
-    return Classify(self, {
+    return self:Instantiate({
         _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable,
         _userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable,
     })

@@ -4,7 +4,6 @@ local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 local Console      = using "System.Console"
-local Classify     = using "System.Classes.Classify"
 local TablesHelper = using "System.Helpers.Tables"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
@@ -28,7 +27,7 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelpe
     Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
 
-    return Classify(self, {
+    return self:Instantiate({
         _settings = nil,
 
         _isRunning = false,

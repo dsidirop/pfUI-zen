@@ -22,12 +22,11 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
 
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self)
+    return self:Instantiate()
 end

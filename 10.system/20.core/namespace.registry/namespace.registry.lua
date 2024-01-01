@@ -161,7 +161,7 @@ do
 end
 
 local ClassProtoFactory = {}
-do
+do    
     function ClassProtoFactory.Spawn()
         local metaTable = { }
         metaTable.__call = ClassProtoFactory.OnProtoCalledAsFunction_            
@@ -169,9 +169,12 @@ do
         -- metaTable.__tostring = todo
 
         local newClassProto = { }
-        newClassProto.__index = newClassProto
+        newClassProto.__index = newClassProto -- 00 vital
+        newClassProto.Instantiate = ClassProtoFactory.StandardInstantiator_
 
         return _setmetatable(newClassProto, metaTable)
+        
+        -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
 
     function ClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
@@ -185,7 +188,21 @@ do
 
         return classProto:New(_unpack(arg))
 
-        --00 if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+        -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+    end
+
+    function ClassProtoFactory.StandardInstantiator_(classProto, instanceSpecificFields)
+        _ = _type(classProto) == "table"                                                or _throw_exception("classProto was expected to be a table") --                             @formatter:off
+        _ = instanceSpecificFields == nil or _type(instanceSpecificFields) == "table"   or _throw_exception("instanceSpecificFields was expected to be either a table or nil") --   @formatter:on
+
+        instanceSpecificFields = instanceSpecificFields or {}
+
+        _setmetatable(instanceSpecificFields, classProto)
+        if classProto.__index == nil then
+            classProto.__index = classProto
+        end
+
+        return instanceSpecificFields
     end
 end
 

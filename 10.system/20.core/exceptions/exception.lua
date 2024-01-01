@@ -5,8 +5,6 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
 local Validation = using "System.Validation"
-
-local Classify = using "System.Classes.Classify"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
 local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
@@ -18,7 +16,7 @@ function Class:New(message)
    
     Guard.Assert.IsNilOrNonDudString(message, "message")
 
-    return Classify(self, {
+    return self:Instantiate({
         _message = nil,
         _stacktrace = "",
 

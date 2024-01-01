@@ -16,7 +16,6 @@ _setfenv(1, {}) --                                                              
 local Guard           = _importer("System.Guard")
 local Scopify         = _importer("System.Scopify")
 local EScopes         = _importer("System.EScopes")
-local Classify        = _importer("System.Classes.Classify")
 
 local StringsHelper   = _importer("System.Helpers.Strings")
 local BooleansHelper  = _importer("System.Helpers.Booleans")
@@ -49,7 +48,7 @@ function Class:New(options)
     Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20, "options.GreedInelligibilityReasonType") --           EWowLootingInelligibilityReasonType
     Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20, "options.DisenchantInelligibilityReasonType") -- EWowLootingInelligibilityReasonType
 
-    return Classify(self, { --@formatter:off
+    return self:Instantiate({ --@formatter:off
         _name            = StringsHelper.Trim(options.Name),
         _gamblingId      = options.GamblingId,
         _itemQuality     = options.ItemQuality,

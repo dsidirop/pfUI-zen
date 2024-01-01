@@ -3,7 +3,6 @@
 local Guard              = using "System.Guard" --                            @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
-local Classify           = using "System.Classes.Classify"
 local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
 local Class = using "[declare]" "System.Exceptions.ValueCannotBeNilException [Partial]"
@@ -15,7 +14,7 @@ function Class:New(optionalArgumentName)
 
     Guard.Check.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return Classify(self, {
+    return self:Instantiate({
         _message = Class.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
         
@@ -28,7 +27,7 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Check.IsNonDudString(customMessage, "customMessage")
 
-    return Classify(self, {
+    return self:Instantiate({
         _message = customMessage,
         _stacktrace = "",
 

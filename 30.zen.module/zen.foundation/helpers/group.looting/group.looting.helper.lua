@@ -15,7 +15,6 @@ _setfenv(1, {}) -- @formatter:off
 
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local Guard                  = _importer("System.Guard")
 local WoWRollOnLoot          = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot")
@@ -32,7 +31,7 @@ function Class:New(rollOnLoot, getLootRollItemInfo)
     Guard.Assert.IsNilOrFunction(rollOnLoot)
     Guard.Assert.IsNilOrFunction(getLootRollItemInfo)
 
-    return Classify(self, {
+    return self:Instantiate({
         RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
         GetLootRollItemInfo_ = getLootRollItemInfo or WoWGetLootRollItemInfo, -- to help unit testing
     })

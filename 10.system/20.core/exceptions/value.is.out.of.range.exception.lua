@@ -5,8 +5,6 @@ local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
 local StringsHelper      = using "System.Helpers.Strings"
-
-local Classify           = using "System.Classes.Classify"
 local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
 local Class = using "[declare]" "System.Exceptions.ValueIsOutOfRangeException [Partial]"
@@ -19,7 +17,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    return Classify(self, {
+    return self:Instantiate({
         _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 

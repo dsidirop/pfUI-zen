@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classes.Classify")
 
 local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
 
@@ -31,7 +30,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _settings = nil,
 
         _isRunning = false,
