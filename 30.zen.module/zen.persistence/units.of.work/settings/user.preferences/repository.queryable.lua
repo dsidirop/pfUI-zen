@@ -49,11 +49,11 @@ end
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local mode = SGreeniesGrouplootingAutomationMode.IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
+    local mode = SGreeniesGrouplootingAutomationMode:IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
             and _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode
             or SGreeniesGrouplootingAutomationMode.Greed
 
-    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
+    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind:IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
             and _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind
             or SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
 

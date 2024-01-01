@@ -35,7 +35,7 @@ function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, ev
     _assert(_type(hasModifierAlt) == "boolean")
     _assert(_type(hasModifierShift) == "boolean")
     _assert(_type(hasModifierControl) == "boolean")
-    _assert(EKeyEventType.IsValid(eventType))
+    _assert(EKeyEventType:IsValid(eventType))
 
     return Classify(self, {
         _key = key or "",

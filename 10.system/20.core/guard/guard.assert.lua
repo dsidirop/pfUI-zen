@@ -93,7 +93,7 @@ do
 
     -- ENUMS
     function Guard.Assert.IsEnumValue(enumType, value, optionalArgumentName)
-        if not enumType.IsValid(value) then
+        if not enumType:IsValid(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "enum value"))
         end
         

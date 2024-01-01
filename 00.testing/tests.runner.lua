@@ -15,9 +15,9 @@ _setfenv(1, {})
 if U then
 	_print("Running VWoWUnit tests...\n ")
 
-	-- U.TestsEngine:RunAllTestGroups()
+ 	U.TestsEngine:RunAllTestGroups()
 
-	U.TestsEngine:RunTestGroupsByTag("reflection")
+	-- U.TestsEngine:RunTestGroupsByTag("reflection")
 	
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 end

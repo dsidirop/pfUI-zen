@@ -1,29 +1,6 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
-
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
-
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
-
-_setfenv(1, {})
-
-local Reflection = _importer("System.Reflection")
-local TablesHelper = _importer("System.Helpers.Tables")
-
-local EWowItemQuality = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality") -- @formatter:off
+local EWowItemQuality = using "[declare:enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality" -- @formatter:off
 
 EWowItemQuality.Poor        = 0 --    grey      https://wowwiki-archive.fandom.com/wiki/API_ITEM_QUALITY_COLORS
 EWowItemQuality.Common      = 1 --    white
@@ -42,15 +19,3 @@ EWowItemQuality.Blue        = EWowItemQuality.Rare
 EWowItemQuality.Purple      = EWowItemQuality.Epic
 EWowItemQuality.Orange      = EWowItemQuality.Legendary
 EWowItemQuality.Gold        = EWowItemQuality.Artifact -- @formatter:on
-
-_setmetatable(EWowItemQuality, { __index = TablesHelper.RawGetValue })
-
-function EWowItemQuality.IsValid(value)
-    if not Reflection.IsNumber(value) then
-        return false
-    end
-
-    return value >= EWowItemQuality.Poor and value <= EWowItemQuality.Artifact
-
-    -- or value == EWowItemQuality.Heirloom  -- todo add support for this when we detect that the patch is wotlk 3.0.2 or higher
-end

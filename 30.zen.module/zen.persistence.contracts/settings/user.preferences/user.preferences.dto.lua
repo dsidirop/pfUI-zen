@@ -55,7 +55,7 @@ end
 function Class:ChainSetGreeniesGrouplootingAutomation_Mode(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
+    _assert(SGreeniesGrouplootingAutomationMode:IsValid(value))
 
     _greeniesGrouplootingAutomation.mode = value
 
@@ -65,7 +65,7 @@ end
 function Class:ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind:IsValid(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
 
     _greeniesGrouplootingAutomation.actOnKeybind = value
 

@@ -51,7 +51,7 @@ end
 function Class:ChainSetOld(old)
     Scopify(EScopes.Function, self)
 
-    _assert(old == nil or SGreeniesGrouplootingAutomationActOnKeybind.IsValid(old))
+    _assert(old == nil or SGreeniesGrouplootingAutomationActOnKeybind:IsValid(old))
 
     _old = old
 
@@ -61,7 +61,7 @@ end
 function Class:ChainSetNew(new)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(new))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind:IsValid(new))
 
     _new = new
 
