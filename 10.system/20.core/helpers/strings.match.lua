@@ -18,6 +18,7 @@ _setfenv(1, {})
 local Guard = _importer("System.Guard")
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
+local ArraysHelper = _importer("System.Helpers.Arrays")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
@@ -30,73 +31,24 @@ function StringsHelper.Match(input, patternString, ...)
     Guard.Assert.IsString(patternString, "patternString")
 
     if patternString == "" then
-        -- todo  test out these corner cases
         return nil
     end
 
-    local startIndex, endIndex,
-    match01,
-    match02,
-    match03,
-    match04,
-    match05,
-    match06,
-    match07,
-    match08,
-    match09,
-    match10,
-    match11,
-    match12,
-    match13,
-    match14,
-    match15,
-    match16,
-    match17,
-    match18,
-    match19,
-    match20,
-    match21,
-    match22,
-    match23,
-    match24,
-    match25 = _strfind(input, patternString, _unpack(variadicsArray))
-        
-    -- todo   refactor this mechanism to have it rely on    local results = {_strfind(input, patternString, _unpack(arg))}   instead of the above 
-
+    local results = {_strfind(input, patternString, _unpack(variadicsArray))}
+    
+    local startIndex = results[1]
     if startIndex == nil then
         -- no match
         return nil
     end
 
+    local match01 = results[3]
     if match01 == nil then
-        -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
-        return _strsub(input, startIndex, endIndex)
+        local endIndex = results[2]
+        return _strsub(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
-    return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
-    match01,
-    match02,
-    match03,
-    match04,
-    match05,
-    match06,
-    match07,
-    match08,
-    match09,
-    match10,
-    match11,
-    match12,
-    match13,
-    match14,
-    match15,
-    match16,
-    match17,
-    match18,
-    match19,
-    match20,
-    match21,
-    match22,
-    match23,
-    match24,
-    match25
+    ArraysHelper.PopFirst(results)
+    ArraysHelper.PopFirst(results)
+    return _unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end

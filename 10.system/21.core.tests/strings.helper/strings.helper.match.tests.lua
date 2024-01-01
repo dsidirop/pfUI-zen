@@ -18,7 +18,18 @@ local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.St
 
 TestsGroup:AddTheory("StringsHelper.Match.GivenGreenInput.ShouldMatchExpectedResults",
         {
+            -- ("ping   Foo 11 bar   pong"):match("Foo %d+ bar")
             ["SH.M.GGI.SMER.0000"] = {
+                Input = "ping   Foo 123 bar    pong",
+                Pattern = "Foo %d+ bar",
+                ExpectedChunks = { "Foo 123 bar" },
+            },
+            ["SH.M.GGI.SMER.0002"] = {
+                Input = "ping   Foo 123 bar    pong",
+                Pattern = "Foo (%d+) bar",
+                ExpectedChunks = { "123" },
+            },
+            ["SH.M.GGI.SMER.0005"] = {
                 Input = "Hello World\nOnce\nAgain",
                 Pattern = "([%w]+)%s([%w]+)%s([%w]+)%s([%w]+)",
                 ExpectedChunks = { "Hello", "World", "Once", "Again" },
