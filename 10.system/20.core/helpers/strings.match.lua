@@ -1,16 +1,14 @@
-local _unpack, _strsub, _strfind, _setfenv, _importer, _namespacer = (function()
+local _strsub, _setfenv, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
-    local _unpack = _assert(_g.unpack)
     local _strsub = _assert(_g.string.sub)
-    local _strfind = _assert(_g.string.find)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
 
-    return _unpack, _strsub, _strfind, _setfenv, _importer, _namespacer
+    return _strsub, _setfenv, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -18,6 +16,8 @@ _setfenv(1, {})
 local Guard = _importer("System.Guard")
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
+
+local TablesHelper = _importer("System.Helpers.Tables")
 local ArraysHelper = _importer("System.Helpers.Arrays")
 
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
@@ -34,7 +34,7 @@ function StringsHelper.Match(input, patternString, ...)
         return nil
     end
 
-    local results = {_strfind(input, patternString, _unpack(variadicsArray))}
+    local results = {StringsHelper.Find(input, patternString, TablesHelper.Unpack(variadicsArray))}
     
     local startIndex = results[1]
     if startIndex == nil then
@@ -50,5 +50,5 @@ function StringsHelper.Match(input, patternString, ...)
 
     ArraysHelper.PopFirst(results)
     ArraysHelper.PopFirst(results)
-    return _unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
+    return TablesHelper.Unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end
