@@ -10,17 +10,16 @@ local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
 local NativeSubstring = Validation.Assert(Global.string.sub)
 
-function StringsHelper.SubstringViaIndeces(input, startIndex, optionalEndingIndexInclusive)
+function StringsHelper.SubstringViaLength(input, chunkStartIndex, chunkLength)
     Scopify(EScopes.Function, StringsHelper)
 
     Guard.Assert.IsString(input, "input")
-    Guard.Assert.IsPositiveInteger(startIndex, "startIndex")
-    Guard.Assert.IsNilOrPositiveInteger(optionalEndingIndexInclusive, "optionalEndingIndexInclusive")
-    -- Guard.Assert.IsGreaterOrEqualToOptional(startIndex, optionalEndingIndex, "startIndex", "optionalEndingIndexInclusive") --dont   start > end is legit
+    Guard.Assert.IsPositiveInteger(chunkStartIndex, "chunkStartIndex")
+    Guard.Assert.IsPositiveIntegerOrZero(chunkLength, "chunkLength")
 
     if input == "" then
         return ""
     end
 
-    return NativeSubstring(input, startIndex, optionalEndingIndexInclusive)
+    return NativeSubstring(input, chunkStartIndex, chunkStartIndex + chunkLength - 1)
 end

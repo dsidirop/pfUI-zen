@@ -12,6 +12,7 @@
     <Include file="strings.stringify.lua"/>
     <Include file="strings.isdudstring.lua"/>
     <Include file="strings.touppercase.lua"/>
+    <Include file="strings.substring.via.length.lua"/>
     <Include file="strings.substring.via.indeces.lua"/>
 
     <Include file="booleans.lua"/>
