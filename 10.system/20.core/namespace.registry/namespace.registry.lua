@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -8,17 +8,17 @@
     local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
     local _pairs = _assert(_g.pairs)
-    local _rawget = _assert(_g.rawget)
     local _unpack = _assert(_g.unpack)
     local _format = _assert(_g.string.format)
     local _strsub = _assert(_g.string.sub)
     local _strfind = _assert(_g.string.find)
     local _stringify = _assert(_g.tostring)
     local _debugstack = _assert(_g.debugstack)
+    local _tableRemove = _assert(_g.table.remove)
     local _getmetatable = _assert(_g.getmetatable)
     local _setmetatable = _assert(_g.setmetatable)
     
-    return _g, _assert, _type, _getn, _gsub, _pairs, _rawget, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable
+    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -43,73 +43,26 @@ local function _strmatch(input, patternString, ...)
     _ = patternString ~= nil or _throw_exception("patternString must not be nil")
 
     if patternString == "" then
-        -- todo  test out these corner cases
         return nil
     end
 
-    local startIndex, endIndex,
-    match01,
-    match02,
-    match03,
-    match04,
-    match05,
-    match06,
-    match07,
-    match08,
-    match09,
-    match10,
-    match11,
-    match12,
-    match13,
-    match14,
-    match15,
-    match16,
-    match17,
-    match18,
-    match19,
-    match20,
-    match21,
-    match22,
-    match23,
-    match24,
-    match25 = _strfind(input, patternString, _unpack(variadicsArray))
+    local results = {_strfind(input, patternString, _unpack(variadicsArray))}
 
+    local startIndex = results[1]
     if startIndex == nil then
         -- no match
         return nil
     end
 
+    local match01 = results[3]
     if match01 == nil then
-        -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
-        return _strsub(input, startIndex, endIndex)
+        local endIndex = results[2]
+        return _strsub(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
-    return -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
-    match01,
-    match02,
-    match03,
-    match04,
-    match05,
-    match06,
-    match07,
-    match08,
-    match09,
-    match10,
-    match11,
-    match12,
-    match13,
-    match14,
-    match15,
-    match16,
-    match17,
-    match18,
-    match19,
-    match20,
-    match21,
-    match22,
-    match23,
-    match24,
-    match25
+    _tableRemove(results, 1) -- pop startIndex
+    _tableRemove(results, 1) -- pop endIndex
+    return _unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end
 
 local function _strtrim(input)
