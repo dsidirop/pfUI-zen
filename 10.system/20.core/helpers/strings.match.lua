@@ -1,26 +1,13 @@
-local _strsub, _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _strsub = _assert(_g.string.sub)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return _strsub, _setfenv, _importer, _namespacer
-end)()
+local TablesHelper = using "System.Helpers.Tables"
+local ArraysHelper = using "System.Helpers.Arrays"
 
-_setfenv(1, {})
-
-local Guard = _importer("System.Guard")
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local TablesHelper = _importer("System.Helpers.Tables")
-local ArraysHelper = _importer("System.Helpers.Arrays")
-
-local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
+local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Match(input, patternString, ...)
     local variadicsArray = arg
@@ -45,7 +32,7 @@ function StringsHelper.Match(input, patternString, ...)
     local match01 = results[3]
     if match01 == nil then
         local endIndex = results[2]
-        return _strsub(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+        return StringsHelper.SubstringViaIndeces(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
     ArraysHelper.PopFirst(results)
