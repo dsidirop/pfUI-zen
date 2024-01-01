@@ -22,10 +22,12 @@ local EScopes = _importer("System.EScopes")
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Find(input, patternString, ...)
+    local variadicsArray = arg
+    
     Scopify(EScopes.Function, StringsHelper)
 
     Guard.Assert.IsString(input, "input")
     Guard.Assert.IsString(patternString, "patternString")
     
-    return _strfind(input, patternString, _unpack(arg))
+    return _strfind(input, patternString, _unpack(variadicsArray))
 end

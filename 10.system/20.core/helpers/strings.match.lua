@@ -22,6 +22,8 @@ local EScopes = _importer("System.EScopes")
 local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
 
 function StringsHelper.Match(input, patternString, ...)
+    local variadicsArray = arg
+    
     Scopify(EScopes.Function, StringsHelper)
     
     Guard.Assert.IsString(input, "input")
@@ -57,7 +59,7 @@ function StringsHelper.Match(input, patternString, ...)
     match22,
     match23,
     match24,
-    match25 = _strfind(input, patternString, _unpack(arg))
+    match25 = _strfind(input, patternString, _unpack(variadicsArray))
         
     -- todo   refactor this mechanism to have it rely on    local results = {_strfind(input, patternString, _unpack(arg))}   instead of the above 
 

@@ -5,8 +5,9 @@ if load then
     return -- already loaded
 end
 
+local _unpack = assert(unpack or table.unpack)
 local _loadstring = assert(loadstring) -- vanilla wow lua does have loadstring on the global scope so we can use it here
 
 function load(script, ...)
-    return _loadstring(script, unpack(arg))
+    return _loadstring(script, _unpack(arg))
 end

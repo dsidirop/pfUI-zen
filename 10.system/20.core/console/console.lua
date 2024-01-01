@@ -26,16 +26,18 @@ function Console.Writer:New(nativeWriteCallback)
 end
 
 function Console.Writer:WriteFormatted(format, ...)
+    local variadicsArray = arg
+    
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsString(format, "format")
 
-    if TablesHelper.IsEmptyOrNil(arg) then --optimization
+    if TablesHelper.IsEmptyOrNil(variadicsArray) then --optimization
         _nativeWriteCallback(format)
         return
     end
 
-    _nativeWriteCallback(StringsHelper.Format(format, TablesHelper.Unpack(arg)))
+    _nativeWriteCallback(StringsHelper.Format(format, TablesHelper.Unpack(variadicsArray)))
 end
 
 function Console.Writer:Write(message)

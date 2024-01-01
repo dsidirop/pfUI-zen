@@ -17,9 +17,7 @@ function Validation.Stacktrace(optionalExtraStackframesToSkipping)
 end
 
 function Validation.FailFormatted(...)
-    local variadicsArray = arg
-    
-    Validation.Fail(StringsHelper.Format(TablesHelper.Unpack(variadicsArray)))
+    Validation.Fail(StringsHelper.Format(TablesHelper.Unpack(arg)))
 end
 
 function Validation.Fail(messageOrExceptionInstance)

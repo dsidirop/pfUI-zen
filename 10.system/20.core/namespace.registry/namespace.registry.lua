@@ -28,16 +28,18 @@ end
 _setfenv(1, {})
 
 local function _throw_exception(format, ...)
-    local variadicArguments = arg
+    local variadicsArray = arg
 
-    for i = 1, _getn(variadicArguments) do
-        variadicArguments[i] = _stringify(variadicArguments[i])
+    for i = 1, _getn(variadicsArray) do
+        variadicsArray[i] = _stringify(variadicsArray[i])
     end
 
-    _assert(false, _format(format, _unpack(variadicArguments)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
+    _assert(false, _format(format, _unpack(variadicsArray)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
 end
 
 local function _strmatch(input, patternString, ...)
+    local variadicsArray = arg
+    
     _ = patternString ~= nil or _throw_exception("patternString must not be nil")
 
     if patternString == "" then
@@ -70,7 +72,7 @@ local function _strmatch(input, patternString, ...)
     match22,
     match23,
     match24,
-    match25 = _strfind(input, patternString, _unpack(arg))
+    match25 = _strfind(input, patternString, _unpack(variadicsArray))
 
     if startIndex == nil then
         -- no match
@@ -178,15 +180,17 @@ do
     end
 
     function ClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
+        local variadicsArray = arg
+        
         local hasConstructorFunction = _type(classProto.New) == "function"
         local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
         _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
 
         if hasImplicitCallFunction then
-            return classProto:__Call__(_unpack(arg)) -- 00
+            return classProto:__Call__(_unpack(variadicsArray)) -- 00
         end
 
-        return classProto:New(_unpack(arg))
+        return classProto:New(_unpack(variadicsArray))
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end

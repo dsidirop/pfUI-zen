@@ -14,7 +14,7 @@ Scopify(EScopes.Function, {})
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Console.Tests",
     Tags = { "system", "output" },
-} --                                                         @formatter:on
+}
 
 TestsGroup:AddFact("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
