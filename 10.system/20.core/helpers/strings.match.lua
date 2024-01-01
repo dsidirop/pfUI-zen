@@ -32,7 +32,7 @@ function StringsHelper.Match(input, patternString, ...)
     local match01 = results[3]
     if match01 == nil then
         local endIndex = results[2]
-        return StringsHelper.SubstringViaIndeces(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
+        return StringsHelper.SubstringViaRange(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
     ArraysHelper.PopFirst(results)

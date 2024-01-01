@@ -8,35 +8,35 @@ local Validation = using "System.Validation"
 local StringsHelper = using "System.Helpers.Strings"
 
 local U = Validation.Assert(Global.VWoWUnit)
-local NativeSubstringViaIndeces = Validation.Assert(Global.string.sub)
+local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
 Scopify(EScopes.Function, {})
 
-TestsGroup:AddTheory("StringsHelper.SubstringViaIndeces.GivenGreenInput.ShouldMatchExpectedResults",
+TestsGroup:AddTheory("StringsHelper.SubstringViaRange.GivenGreenInput.ShouldMatchExpectedResults",
         {
-            ["SH.SVI.GGI.SMER.0000"] = {
+            ["SH.SVR.GGI.SMER.0000"] = {
                 Input = "",
                 StartIndex = 1,
                 EndingIndex = 2,
             },
-            ["SH.SVI.GGI.SMER.0010"] = {
+            ["SH.SVR.GGI.SMER.0010"] = {
                 Input = "123456",
                 StartIndex = 1,
                 EndingIndex = 2,
             },
-            ["SH.SVI.GGI.SMER.0020"] = {
+            ["SH.SVR.GGI.SMER.0020"] = {
                 Input = "123456",
                 StartIndex = 2,
                 EndingIndex = nil,
             },
-            ["SH.SVI.GGI.SMER.0030"] = {
+            ["SH.SVR.GGI.SMER.0030"] = {
                 Input = "123456",
                 StartIndex = 10,
                 EndingIndex = nil,
             },
-            ["SH.SVI.GGI.SMER.0040"] = {
+            ["SH.SVR.GGI.SMER.0040"] = {
                 Input = "123456",
                 StartIndex = 5,
                 EndingIndex = 2,
@@ -44,11 +44,11 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaIndeces.GivenGreenInput.ShouldMa
         },
         function(options)
             -- ARRANGE
-            local expectedResult = NativeSubstringViaIndeces(options.Input, options.StartIndex, options.EndingIndex)
+            local expectedResult = NativeSubstringViaRange(options.Input, options.StartIndex, options.EndingIndex)
 
             -- ACT
             local substring = U.Should.Not.Throw(function()
-                return StringsHelper.SubstringViaIndeces(options.Input, options.StartIndex, options.EndingIndex)
+                return StringsHelper.SubstringViaRange(options.Input, options.StartIndex, options.EndingIndex)
             end)
 
             -- ASSERT
@@ -56,34 +56,34 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaIndeces.GivenGreenInput.ShouldMa
         end
 )
 
-TestsGroup:AddTheory("StringsHelper.SubstringViaIndeces.GivenRedInput.ShouldErrorOut",
+TestsGroup:AddTheory("StringsHelper.SubstringViaRange.GivenRedInput.ShouldErrorOut",
         {
-            ["SH.SVI.GRI.SMER.0000"] = {
+            ["SH.SVR.GRI.SMER.0000"] = {
                 Input = nil,
                 StartIndex = nil,
             },
-            ["SH.SVI.GRI.SMER.0010"] = {
+            ["SH.SVR.GRI.SMER.0010"] = {
                 Input = "123456",
                 StartIndex = nil,
             },
-            ["SH.SVI.GRI.SMER.0020"] = {
+            ["SH.SVR.GRI.SMER.0020"] = {
                 Input = "123456",
                 StartIndex = -10,
             },
-            ["SH.SVI.GRI.SMER.0030"] = {
+            ["SH.SVR.GRI.SMER.0030"] = {
                 Input = "123456",
                 StartIndex = 0, -- must be >= 1
             },
-            ["SH.SVI.GRI.SMER.0040"] = {
+            ["SH.SVR.GRI.SMER.0040"] = {
                 Input = "123456",
                 StartIndex = -1, -- must be >= 1
             },
-            ["SH.SVI.GRI.SMER.0050"] = {
+            ["SH.SVR.GRI.SMER.0050"] = {
                 Input = "123456",
                 StartIndex = 1,
                 EndingIndex = 0, -- must be >= 1
             },
-            ["SH.SVI.GRI.SMER.0060"] = {
+            ["SH.SVR.GRI.SMER.0060"] = {
                 Input = "123456",
                 StartIndex = 1,
                 EndingIndex = -1, -- must be >= 1
@@ -92,7 +92,7 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaIndeces.GivenRedInput.ShouldErro
         function(options)
             -- ACT + ASSERT
             U.Should.Throw(function()
-                return StringsHelper.SubstringViaIndeces(options.Input, options.StartIndex, options.EndingIndex)
+                return StringsHelper.SubstringViaRange(options.Input, options.StartIndex, options.EndingIndex)
             end)
         end
 )

@@ -8,7 +8,7 @@ local Validation = using "System.Validation"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
-local NativeSubstring = Validation.Assert(Global.string.sub)
+local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
 function StringsHelper.SubstringViaLength(input, chunkStartIndex, chunkLength)
     Scopify(EScopes.Function, StringsHelper)
@@ -21,5 +21,5 @@ function StringsHelper.SubstringViaLength(input, chunkStartIndex, chunkLength)
         return ""
     end
 
-    return NativeSubstring(input, chunkStartIndex, chunkStartIndex + chunkLength - 1)
+    return NativeSubstringViaRange(input, chunkStartIndex, chunkStartIndex + chunkLength - 1)
 end

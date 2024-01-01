@@ -8,9 +8,9 @@ local Validation = using "System.Validation"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
-local NativeSubstring = Validation.Assert(Global.string.sub)
+local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
-function StringsHelper.SubstringViaIndeces(input, startIndex, optionalEndingIndexInclusive)
+function StringsHelper.SubstringViaRange(input, startIndex, optionalEndingIndexInclusive)
     Scopify(EScopes.Function, StringsHelper)
 
     Guard.Assert.IsString(input, "input")
@@ -22,5 +22,5 @@ function StringsHelper.SubstringViaIndeces(input, startIndex, optionalEndingInde
         return ""
     end
 
-    return NativeSubstring(input, startIndex, optionalEndingIndexInclusive)
+    return NativeSubstringViaRange(input, startIndex, optionalEndingIndexInclusive)
 end

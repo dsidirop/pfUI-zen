@@ -8,7 +8,7 @@ local Validation = using "System.Validation"
 local StringsHelper = using "System.Helpers.Strings"
 
 local U = Validation.Assert(Global.VWoWUnit)
-local NativeSubstringViaLength = Validation.Assert(Global.string.sub)
+local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 
@@ -34,7 +34,7 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaLength.GivenGreenInput.ShouldMat
         },
         function(options)
             -- ARRANGE
-            local expectedResult = NativeSubstringViaLength(options.Input, options.StartIndex, options.StartIndex + options.ChunkLength - 1)
+            local expectedResult = NativeSubstringViaRange(options.Input, options.StartIndex, options.StartIndex + options.ChunkLength - 1)
 
             -- ACT
             local substring = U.Should.Not.Throw(function()
