@@ -1,14 +1,12 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
+local NativeSubstringViaRange = using "[global]" "string.sub"
+
 local Guard = using "System.Guard"
-local Global = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Validation = using "System.Validation"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
-
-local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
 function StringsHelper.SubstringViaRange(input, startIndex, optionalEndingIndexInclusive)
     Scopify(EScopes.Function, StringsHelper)

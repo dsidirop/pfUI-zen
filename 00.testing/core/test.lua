@@ -74,7 +74,7 @@ function VWoWUnit.Test:Run()
 		return { possibleErrorMessage }
 	end
 
-	_print("**** Running sub-test-cases of " .. _testName)
+	_print("**** Running sub-test-cases of |cffbbbbbb " .. _testName)
 	
 	local allErrorMessages = {}
 	for subtestName, datum in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testData) do -- if testData actually has data
@@ -101,7 +101,7 @@ function VWoWUnit.Test:RunImpl_(testName, data)
 		return errorMessage
 	end
 
-	_print("****" .. testName .. " |cff00ff00[PASSED]")
+	-- _print("****" .. testName .. " |cff00ff00[PASSED]")
 
 	return nil
 end

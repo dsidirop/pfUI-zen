@@ -3,6 +3,7 @@
     <Include file="namespace.registry\.xml"/>
     <Include file="core.symbols.namespaces\.xml"/>
 
+    <Include file="using.global\.xml"/>
     <Include file="global.environment\.xml"/>
     <Include file="nils\.xml"/>
     <Include file="scopify\.xml"/>

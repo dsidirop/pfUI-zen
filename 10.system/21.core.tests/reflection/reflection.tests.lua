@@ -1,15 +1,13 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Global = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
-local Validation = using "System.Validation"
 
 local STypes = using "System.Reflection.STypes"
 local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
-local U = Validation.Assert(Global.VWoWUnit)
+local U = using "[global]" "VWoWUnit"
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Reflection",

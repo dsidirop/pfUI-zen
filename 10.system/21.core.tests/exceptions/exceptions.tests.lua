@@ -1,13 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Global = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Validation = using "System.Validation"
-
 local Exception = using "System.Exceptions.Exception"
 
-local U = Validation.Assert(Global.VWoWUnit)
+local U = using "[global]" "VWoWUnit"
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Exceptions",

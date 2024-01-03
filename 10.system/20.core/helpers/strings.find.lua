@@ -1,25 +1,13 @@
-local _setfenv, _strfind, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _strfind = _assert(_g.string.find)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Strfind = using "[global]" "strfind"
 
-    return _setfenv, _strfind, _importer, _namespacer
-end)()
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+local TablesHelper = using "System.Helpers.Tables"
 
-_setfenv(1, {})
-
-local Guard = _importer("System.Guard")
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local TablesHelper = _importer("System.Helpers.Tables")
-
-local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
+local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Find(input, patternString, ...)
     local variadicsArray = arg
@@ -29,5 +17,5 @@ function StringsHelper.Find(input, patternString, ...)
     Guard.Assert.IsString(input, "input")
     Guard.Assert.IsString(patternString, "patternString")
     
-    return _strfind(input, patternString, TablesHelper.Unpack(variadicsArray))
+    return Strfind(input, patternString, TablesHelper.Unpack(variadicsArray))
 end

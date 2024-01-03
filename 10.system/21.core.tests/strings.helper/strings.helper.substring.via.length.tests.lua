@@ -1,14 +1,11 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Global = using "System.Global"
+local U = using "[global]" "VWoWUnit"
+local NativeSubstringViaRange = using "[global]" "string.sub"
+
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Validation = using "System.Validation"
-
 local StringsHelper = using "System.Helpers.Strings"
-
-local U = Validation.Assert(Global.VWoWUnit)
-local NativeSubstringViaRange = Validation.Assert(Global.string.sub)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
 

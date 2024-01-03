@@ -1,11 +1,9 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Guard              = using "System.Guard" --                                                    @formatter:off
-local Global             = using "System.Global"
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
-local Validation         = using "System.Validation"
 local ArraysHelper       = using "System.Helpers.Arrays"
 
 local Rethrow                          = using "System.Exceptions.Rethrow"
@@ -14,9 +12,10 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 
 local Class = using "[declare]" "System.Try [Partial]"
 
+Class.ProtectedCall = using "[global]" "pcall"
+
 Scopify(EScopes.Function, {})
 
-Class.ProtectedCall = Validation.Assert(Global.pcall, "Debug.pcall() is undefined (how did this even happen?)")
 Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
 
 function Class:New(action, exceptionsDeserializationFactory)
