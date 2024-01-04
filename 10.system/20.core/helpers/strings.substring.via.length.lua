@@ -1,6 +1,8 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local NativeSubstringViaRange = using "[global]" "string.sub"
+local B = using "[built-ins]" [[
+    NativeSubstringViaRange = string.sub
+]]
 
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
@@ -19,5 +21,5 @@ function StringsHelper.SubstringViaLength(input, chunkStartIndex, chunkLength)
         return ""
     end
 
-    return NativeSubstringViaRange(input, chunkStartIndex, chunkStartIndex + chunkLength - 1)
+    return B.NativeSubstringViaRange(input, chunkStartIndex, chunkStartIndex + chunkLength - 1)
 end

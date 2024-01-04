@@ -2,5 +2,10 @@
 
 local Metatable = using "[declare]" "System.Classes.MetaTable [Partial]"
 
-Metatable.Set = using "[global]" "setmetatable"
-Metatable.Get = using "[global]" "getmetatable"
+local B = using "[built-ins]" [[
+    SetMetatable = setmetatable,
+    GetMetatable = getmetatable,
+]]
+
+Metatable.Set = B.SetMetatable
+Metatable.Get = B.GetMetatable

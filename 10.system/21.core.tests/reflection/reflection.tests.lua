@@ -7,7 +7,7 @@ local Reflection = using "System.Reflection"
 local STypes = using "System.Reflection.STypes"
 local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
-local U = using "[global]" "VWoWUnit"
+local U = using "[built-in]" "VWoWUnit"
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Reflection",

@@ -1,7 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "[global]" "VWoWUnit"
-local NativeSubstringViaRange = using "[global]" "string.sub"
+local U = using "[built-in]" "VWoWUnit"
+local B = using "[built-ins]" "NativeSubstringViaRange = string.sub"
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -41,7 +41,7 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaRange.GivenGreenInput.ShouldMatc
         },
         function(options)
             -- ARRANGE
-            local expectedResult = NativeSubstringViaRange(options.Input, options.StartIndex, options.EndingIndex)
+            local expectedResult = B.NativeSubstringViaRange(options.Input, options.StartIndex, options.EndingIndex)
 
             -- ACT
             local substring = U.Should.Not.Throw(function()

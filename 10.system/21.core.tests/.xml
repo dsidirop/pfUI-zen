@@ -5,6 +5,6 @@
     <Include file="console\.xml"/>
     <Include file="reflection\.xml"/>
     <Include file="exceptions\.xml"/>
-    <Include file="using.global\.xml"/>
     <Include file="strings.helper\.xml"/>    
+    <Include file="using.built.ins\.xml"/>
 </Ui>

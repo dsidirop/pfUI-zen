@@ -2,4 +2,4 @@
 
 local Iterators = using "[declare]" "System.Iterators [Partial]"
 
-Iterators.Next = using "[global]" "next"
+Iterators.Next = using "[built-in]" "next"

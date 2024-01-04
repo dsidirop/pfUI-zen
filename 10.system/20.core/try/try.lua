@@ -1,5 +1,9 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
+local B = using "[built-ins]" [[
+    ProtectedCall = pcall
+]]
+
 local Guard              = using "System.Guard" --                                                    @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
@@ -12,7 +16,8 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 
 local Class = using "[declare]" "System.Try [Partial]"
 
-Class.ProtectedCall = using "[global]" "pcall"
+
+Class.ProtectedCall = B.ProtectedCall
 
 Scopify(EScopes.Function, {})
 

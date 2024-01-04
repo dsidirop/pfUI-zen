@@ -1,12 +1,12 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local GetRawType = using "[global]" "type"
+local B = using "[built-ins]" [[ GetRawType = type ]]
 
 local SRawTypes = using "System.Language.SRawTypes"
 
 local RawTypeSystem = using "[declare]" "System.Language.RawTypeSystem [Partial]"
 
-RawTypeSystem.GetRawType = GetRawType 
+RawTypeSystem.GetRawType = B.GetRawType 
 
 function RawTypeSystem.IsNil(value)
     return value == nil -- should be faster than type(value) == "nil"

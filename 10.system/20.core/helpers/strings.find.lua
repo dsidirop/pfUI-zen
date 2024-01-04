@@ -1,6 +1,6 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Strfind = using "[global]" "strfind"
+local B = using "[built-ins]" "StringFind = strfind"
 
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
@@ -17,5 +17,5 @@ function StringsHelper.Find(input, patternString, ...)
     Guard.Assert.IsString(input, "input")
     Guard.Assert.IsString(patternString, "patternString")
     
-    return Strfind(input, patternString, TablesHelper.Unpack(variadicsArray))
+    return B.StringFind(input, patternString, TablesHelper.Unpack(variadicsArray))
 end

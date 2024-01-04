@@ -2,6 +2,12 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Table = using "[declare]" "System.Table [Partial]"
 
-Table.Sort = using "[global]" "table.sort"
-Table.Insert = using "[global]" "table.insert"
-Table.Remove = using "[global]" "table.remove"
+local B = using "[built-ins]" [[
+    TableSort   = table.sort,
+    TableInsert = table.insert,
+    TableRemove = table.remove,
+]]
+
+Table.Sort   = B.TableSort
+Table.Insert = B.TableInsert
+Table.Remove = B.TableRemove

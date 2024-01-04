@@ -4,7 +4,7 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Exception = using "System.Exceptions.Exception"
 
-local U = using "[global]" "VWoWUnit"
+local U = using "[built-in]" "VWoWUnit"
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Exceptions",

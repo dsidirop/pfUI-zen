@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "[global]" "VWoWUnit"
+local U = using "[built-in]" "VWoWUnit"
 
 local Time = using "System.Time"
 local Scopify = using "System.Scopify"

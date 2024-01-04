@@ -1,7 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "[global]" "VWoWUnit"
-local NativeSubstringViaRange = using "[global]" "string.sub"
+local U = using "[built-in]" "VWoWUnit"
+local B = using "[built-ins]" [[ NativeSubstringViaRange = string.sub ]]
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -31,7 +31,7 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaLength.GivenGreenInput.ShouldMat
         },
         function(options)
             -- ARRANGE
-            local expectedResult = NativeSubstringViaRange(options.Input, options.StartIndex, options.StartIndex + options.ChunkLength - 1)
+            local expectedResult = B.NativeSubstringViaRange(options.Input, options.StartIndex, options.StartIndex + options.ChunkLength - 1)
 
             -- ACT
             local substring = U.Should.Not.Throw(function()
