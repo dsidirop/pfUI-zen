@@ -7,9 +7,6 @@ local Validation = using "System.Validation"
 
 -- DO NOT EMPLOY   using "[built-in]"   HERE BECAUSE IT IS WHAT WE ARE ACTUALLY TESTING!!  
 local _unpack = Validation.Assert(Global.unpack)
-local _getfenv = Validation.Assert(Global.getfenv)
-local _tableSort = Validation.Assert(Global.table.sort)
-local _tableInsert = Validation.Assert(Global.table.insert)
 
 local U = Validation.Assert(Global.VWoWUnit)
 
@@ -20,48 +17,53 @@ local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
 
 Scopify(EScopes.Function, {})
 
-TestsGroup:AddTheory("Using.Builtins.GivenRedArguments.ShouldThrow",
+TestsGroup:AddTheory("Using.Builtins.GivenRedInput.ShouldThrow",
         {
-            ["UB.GRA.ST.0000"] = { Arguments = nil, },
-            ["UB.GRA.ST.0010"] = { Arguments = function() return 123; end, },
-            ["UB.GRA.ST.0020"] = { Arguments = 1 },
-            ["UB.GRA.ST.0030"] = { Arguments = {} },
-            ["UB.GRA.ST.0040"] = { Arguments = true },
+            ["UBINS.GRA.ST.0000"] = { String = nil },
+            ["UBINS.GRA.ST.0010"] = { String = function() return 123; end },
+            ["UBINS.GRA.ST.0020"] = { String = 1 },
+            ["UBINS.GRA.ST.0030"] = { String = {} },
+            ["UBINS.GRA.ST.0040"] = { String = true },
+            ["UBINS.GRA.ST.0045"] = { String = "  " },
+            ["UBINS.GRA.ST.0050"] = { String = "getfenv" },
+            ["UBINS.GRA.ST.0060"] = { String = "getfenv, unpack" },
+            ["UBINS.GRA.ST.0070"] = { String = "A = table.sort, table.insert" },
+            ["UBINS.GRA.ST.0080"] = { String = "table.sort, B = table.insert" },
+            ["UBINS.GRA.ST.0090"] = { String = "table.sort, B = table.insert == nil" },
+            ["UBINS.GRA.ST.0100"] = { String = "A = table.sort2" },
+            ["UBINS.GRA.ST.0110"] = { String = "A = table2.sort" },
         },
-        function()
+        function(options)
             -- ACT + ASSERT
-            U.Should.Throw(function(options)
-                using "[built-ins]" (options.Arguments)
+            U.Should.Throw(function()
+                using "[built-ins]" (options.String)
             end)
         end
 )
 
-TestsGroup:AddTheory("Using.Builtins.GivenGreenArguments.ShouldReturnExpectedGlobalSymbols",
-        {
-            ["UG.GGA.SREGS.0000"] = {
-                SymbolNames = { "getfenv" },
-                ExpectedResults = { _getfenv },
+TestsGroup:AddTheory("Using.Builtins.GivenGreenInput.ShouldReturnExpectedResults",
+        { --@formatter:off
+            ["UBINS.GGA.SRER.0000"] = {
+                String          = [[ A = getfenv        ]],
+                ExpectedResults =  { A = Global.getfenv },
             },
-            ["UG.GGA.SREGS.0010"] = {
-                SymbolNames = { "getfenv, unpack" },
-                ExpectedResults = { _getfenv, _unpack },
+            ["UBINS.GGA.SRER.0010"] = {
+                String          = [[ A = getfenv,        B = setfenv        ]],
+                ExpectedResults =  { A = Global.getfenv, B = Global.setfenv },
             },
-            ["UG.GGA.SREGS.0020"] = {
-                SymbolNames = { "table.sort, table.insert" },
-                ExpectedResults = { _tableSort, _tableInsert },
+            ["UBINS.GGA.SRER.0020"] = {
+                String          = [[ A = getfenv,        B = setfenv,       ]],
+                ExpectedResults =  { A = Global.getfenv, B = Global.setfenv },
             },
-            ["UG.GGA.SREGS.0030"] = {
-                SymbolNames = { "A = table.sort, B = table.insert" },
-                ExpectedResults = { A = _tableSort, B = _tableInsert },
+            ["UBINS.GGA.SRER.0030"] = {
+                String          = [[ A = getfenv,        B = setfenv2 or setfenv, ]],
+                ExpectedResults =  { A = Global.getfenv, B = Global.setfenv },
             },
-        },
+        }, --@formatter:on
         function(options)
-            -- ARRANGE
-            -- ...
-            
             -- ACT
             local results = U.Should.Not.Throw(function()
-                return using "[built-ins]" (_unpack(options.SymbolNames)) 
+                return using "[built-ins]" (options.String)
             end)
             
             -- ASSERT
@@ -69,18 +71,32 @@ TestsGroup:AddTheory("Using.Builtins.GivenGreenArguments.ShouldReturnExpectedGlo
         end
 )
 
-TestsGroup:AddTheory("Using.Builtins.GivenRedArguments.ShouldThrow",
-        {
-            ["UG.GRA.ST.0000"] = { SymbolNames = { "getfenv2" } },
-            -- ["UG.GRA.ST.0010"] = { SymbolNames = { "getfenv, unpack2" } }, -- no way to detect this sort of error unfortunately
-            -- ["UG.GRA.ST.0015"] = { SymbolNames = { "A = getfenv, B = unpack2" } }, -- no way to detect this sort of error unfortunately
-            ["UG.GRA.ST.0020"] = { SymbolNames = { "table2.sort" } },
-            ["UG.GRA.ST.0030"] = { SymbolNames = { "table.sort2" } },
-        },
+TestsGroup:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
+        { --@formatter:off
+            ["UBIN.GRI.ST.0000"] = { String = [[ getfenv2 ]] },
+        }, --@formatter:on
         function(options)
             -- ACT + ASSERT
             U.Should.Throw(function()
-                return using "[built-in]" (_unpack(options.SymbolNames))
+                using "[built-in]" (options.String)
             end)
+        end
+)
+
+TestsGroup:AddTheory("Using.Builtin.GivenGreenInput.ShouldReturnExpectedResults",
+        { --@formatter:off
+            ["UBIN.GGI.SRER.0000"] = {
+                String          = [[ getfenv ]],
+                ExpectedResults =  Global.getfenv,
+            },
+        }, --@formatter:on
+        function(options)
+            -- ACT
+            local results = U.Should.Not.Throw(function()
+                return using "[built-in]" (options.String)
+            end)
+
+            -- ASSERT
+            U.Should.Be.PlainlyEqual(results, options.ExpectedResults)
         end
 )
