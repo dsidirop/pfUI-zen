@@ -26,7 +26,10 @@
     <Include file="exceptions\.xml"/>
 
     <Include file="guard\.xml"/>
+    
     <Include file="helpers\.xml"/>
+    <Include file="helpers.strings\.xml"/>
+    
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>
 
