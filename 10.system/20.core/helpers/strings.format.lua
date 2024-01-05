@@ -1,26 +1,15 @@
-local _setfenv, _strformat, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _strformat = _assert(_g.string.format)
+local B = using "[built-ins]" [[   StringFormat = string.format   ]]
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return _setfenv, _strformat, _importer, _namespacer
-end)()
+local TablesHelper = using "System.Helpers.Tables"
+local ArraysHelper = using "System.Helpers.Arrays"
 
-_setfenv(1, {})
-
-local Guard = _importer("System.Guard")
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local TablesHelper = _importer("System.Helpers.Tables")
-local ArraysHelper = _importer("System.Helpers.Arrays")
-
-local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
+local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Format(format, ...)
     Scopify(EScopes.Function, StringsHelper)
@@ -35,43 +24,43 @@ function StringsHelper.Format(format, ...)
     end
     
     if argCount == 1 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]))
     end
 
     if argCount == 2 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]))
     end
 
     if argCount == 3 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]))
     end
 
     if argCount == 4 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]))
     end
 
     if argCount == 5 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]))
     end
 
     if argCount == 6 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]))
     end
 
     if argCount == 7 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]))
     end
 
     if argCount == 8 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]))
     end
 
     if argCount == 9 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]))
     end
 
     if argCount == 10 then
-        return _strformat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]), StringsHelper.Stringify(variadiacsArray[10]))
+        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]), StringsHelper.Stringify(variadiacsArray[10]))
     end
 
     local stringifiedArgs = {}
@@ -79,5 +68,5 @@ function StringsHelper.Format(format, ...)
         stringifiedArgs[i] = StringsHelper.Stringify(variadiacsArray[i])
     end
     
-    return _strformat(format, TablesHelper.Unpack(stringifiedArgs))
+    return B.StringFormat(format, TablesHelper.Unpack(stringifiedArgs))
 end
