@@ -1,25 +1,13 @@
-local _gsub, _format, _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _gsub = _assert(_g.string.gsub)
-    local _format = _assert(_g.string.format)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local B = using "[built-ins]" [[   StringSubstitute = string.gsub   ]]
 
-    return _gsub, _format, _setfenv, _importer, _namespacer
-end)()
+local Table = using "System.Table"
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-_setfenv(1, {})
-
-local Table = _importer("System.Table")
-local Guard = _importer("System.Guard")
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local StringsHelper = _namespacer("System.Helpers.Strings [Partial]")
+local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Scopify(EScopes.Function, StringsHelper)
@@ -28,14 +16,14 @@ function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Guard.Assert.IsNilOrString(optionalDelimiter, "optionalDelimiter")
     Guard.Assert.IsNilOrPositiveIntegerOrZero(optionalMaxChunksCount, "optionalMaxChunksCount")
     
-    if not input then
+    if input == "" then
         return {}
     end
 
-    local pattern = _format("([^%s]+)", optionalDelimiter or ",")
+    local pattern = "([^" .. (optionalDelimiter or ",") .. "]+)"
 
     local fields = {}
-    _gsub(
+    B.StringSubstitute(
             input,
             pattern,
             function(c)
