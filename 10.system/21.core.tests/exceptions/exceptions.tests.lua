@@ -20,9 +20,11 @@ TestsGroup:AddTheory("Exceptions.Exception.Constructor.GivenGreenInput.ShouldNot
         },
         function(options)
             -- ACT + ASSERT
-            U.Should.Not.Throw(function()
-                Exception:New(options.Message)
-            end)
+            --U.Should.Not.Throw(function()
+            --    Exception:New(options.Message)
+            --end)
+
+            Exception:New(options.Message)
         end
 )
 

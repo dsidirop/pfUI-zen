@@ -20,7 +20,7 @@ using "[declare]" "System.Reflection"
 using "[declare]" "System.Console"
 using "[declare]" "System.Console.Writer"
 
-using "[declare]" "System.Classes.MetaTable"
+using "[declare]" "System.Classes.Metatable"
 using "[declare]" "System.Classes.Instantiator"
 
 using "[declare]" "System.Helpers.Arrays"

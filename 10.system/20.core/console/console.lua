@@ -32,7 +32,7 @@ function Console.Writer:WriteFormatted(format, ...)
 
     Guard.Assert.IsString(format, "format")
 
-    if TablesHelper.IsEmptyOrNil(variadicsArray) then --optimization
+    if TablesHelper.IsNilOrEmpty(variadicsArray) then --optimization
         _nativeWriteCallback(format)
         return
     end

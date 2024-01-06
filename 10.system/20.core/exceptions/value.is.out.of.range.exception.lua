@@ -14,11 +14,24 @@ Scopify(EScopes.Function, {})
 function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
-    Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
+    --Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
+    --Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return self:Instantiate({
         _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _stacktrace = "",
+
+        _stringified = nil
+    })
+end
+
+function Class:NewWithMessage(customMessage)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNonDudString(customMessage, "customMessage")
+
+    return self:Instantiate({
+        _message = customMessage,
         _stacktrace = "",
 
         _stringified = nil

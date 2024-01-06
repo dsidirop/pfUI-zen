@@ -16,7 +16,7 @@ local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfIn
 
 local Guard = using "[declare]" "System.Guard [Partial]"
 
-Scopify(EScopes.Function, Guard)
+-- Scopify(EScopes.Function, {})
 
 do
     Guard.Assert = using "[declare]" "System.Guard.Assert"
@@ -257,7 +257,7 @@ do
         if not Reflection.IsString(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "string"))
         end
-        
+
         return value
     end
 

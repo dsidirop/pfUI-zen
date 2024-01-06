@@ -17,7 +17,7 @@ if U then
 
  	U.TestsEngine:RunAllTestGroups()
 
-	-- U.TestsEngine:RunTestGroupsByTag("built-ins")
+	-- U.TestsEngine:RunTestGroupsByTag("exceptions")
 	
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 end
