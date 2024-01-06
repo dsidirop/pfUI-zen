@@ -30,6 +30,7 @@
     <Include file="helpers\.xml"/>
     <Include file="helpers.tables\.xml"/>
     <Include file="helpers.strings\.xml"/>
+    <Include file="helpers.booleans\.xml"/>
     
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>

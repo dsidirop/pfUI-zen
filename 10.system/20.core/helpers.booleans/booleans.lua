@@ -1,23 +1,10 @@
-﻿local _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Guard = using "System.Guard"
+local Reflection = using "System.Reflection"
+local StringsHelper = using "System.Helpers.Strings"
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-
-    return _setfenv, _importer, _namespacer
-end)()
-
-_setfenv(1, {})
-
-local Guard = _importer("System.Guard")
-local Reflection = _importer("System.Reflection")
-local StringsHelper = _importer("System.Helpers.Strings")
-
-local Class = _namespacer("System.Helpers.Booleans [Partial]")
+local Class = using "[declare]" "System.Helpers.Booleans [Partial]"
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil
