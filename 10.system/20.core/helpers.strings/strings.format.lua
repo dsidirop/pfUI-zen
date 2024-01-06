@@ -15,8 +15,8 @@ function StringsHelper.Format(format, ...)
     Scopify(EScopes.Function, StringsHelper)
 
     local variadiacsArray = arg
-    Guard.Assert.IsString(format)
-    Guard.Assert.IsNonEmptyTable(variadiacsArray)
+    Guard.Assert.IsString(format, "format")
+    Guard.Assert.IsNonEmptyTable(variadiacsArray, "variadiacsArray")
 
     local argCount = ArraysHelper.Count(variadiacsArray)
     if argCount == 0 then

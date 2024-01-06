@@ -69,7 +69,7 @@ end
 function Class:Get(key)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNotNil(key)    
+    Guard.Assert.IsNotNil(key, "key")
 
     self:Cleanup()
     
@@ -120,7 +120,7 @@ end
 function Class:Upsert(key, valueOptional)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNotNil(key)
+    Guard.Assert.IsNotNil(key, "key")
 
     valueOptional = valueOptional == nil --00
             and true
@@ -147,7 +147,7 @@ end
 function Class:Remove(key)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNotNil(key)
+    Guard.Assert.IsNotNil(key, "key")
 
     _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
 

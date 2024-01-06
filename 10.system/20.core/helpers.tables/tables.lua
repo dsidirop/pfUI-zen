@@ -23,7 +23,7 @@ local TablesHelper = using "[declare]" "System.Helpers.Tables [Partial]"
 Scopify(EScopes.Function, { })
 
 function TablesHelper.Clear(tableInstance)
-    Guard.Assert.IsTable(tableInstance)
+    Guard.Assert.IsTable(tableInstance, "tableInstance")
 
     for k in B.GetTablePairs(tableInstance) do
         tableInstance[k] = nil
@@ -31,8 +31,8 @@ function TablesHelper.Clear(tableInstance)
 end
 
 function TablesHelper.RawGetValue(table, key)
-    Guard.Assert.IsTable(table)
-    Guard.Assert.IsNotNil(key)
+    Guard.Assert.IsTable(table, "table")
+    Guard.Assert.IsNotNil(key, "key")
 
     return B.RawGet(table, key)
 end

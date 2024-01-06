@@ -20,6 +20,7 @@ _setfenv(1, {}) -- @formatter:off
 local Scopify  = _importer("System.Scopify")
 local EScopes  = _importer("System.EScopes")
 
+local Guard                                             = _importer("System.Guard")
 local Event                                             = _importer("System.Event")
 
 local PfuiGui                                           = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
@@ -35,11 +36,13 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(T)
+function Class:New(translationService)
     Scopify(EScopes.Function, self)
+    
+    Guard.Assert.IsNilOrTable(translationService, "translationService")
 
     return self:Instantiate({
-        _t = _assert(T),
+        _t = translationService,
 
         _ui = {
             frmContainer = nil,

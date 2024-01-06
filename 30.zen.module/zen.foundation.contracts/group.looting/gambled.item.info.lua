@@ -27,7 +27,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Gro
 function Class:New(options)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsTable(options) -- todo   Guard.Assert.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
+    Guard.Assert.IsTable(options, "options") -- todo   Guard.Assert.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
 
     Guard.Assert.IsNonDudStringOfMaxLength(options.Name, 512, "options.Name")
    

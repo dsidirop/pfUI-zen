@@ -11,20 +11,20 @@ local Guard = using "System.Guard"
 local Class = using "[declare]" "System.Helpers.Arrays [Partial]"
 
 function Class.Count(array)
-    Guard.Assert.IsTable(array)
+    Guard.Assert.IsTable(array, "array")
 
     return B.Getn(array)
 end
 
 function Class.Append(array, value)
-    Guard.Assert.IsTable(array)
-    Guard.Assert.IsNotNil(value)
+    Guard.Assert.IsTable(array, "array")
+    Guard.Assert.IsNotNil(value, "value")
 
     return B.TableInsert(array, value)
 end
 
 function Class.PopFirst(array)
-    Guard.Assert.IsTable(array)
+    Guard.Assert.IsTable(array, "array")
 
     return B.TableRemove(array, 1) -- todo  table remove is known to be terribly inefficient  so we need to find something better
 end

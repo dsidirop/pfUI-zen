@@ -18,7 +18,7 @@ Scopify(EScopes.Function, {})
 function Console.Writer:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsFunction(nativeWriteCallback)
+    Guard.Assert.IsFunction(nativeWriteCallback, "nativeWriteCallback")
     
     return self:Instantiate({
         _nativeWriteCallback = nativeWriteCallback

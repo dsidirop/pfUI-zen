@@ -9,7 +9,7 @@ local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 function StringsHelper.IsDudString(value)
     Scopify(EScopes.Function, StringsHelper)
     
-    Guard.Assert.IsNilOrString(value)
+    Guard.Assert.IsNilOrString(value, "value")
     
     if value == nil then
         return true

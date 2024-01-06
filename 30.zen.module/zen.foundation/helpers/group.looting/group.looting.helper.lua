@@ -28,8 +28,8 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.Group
 function Class:New(rollOnLoot, getLootRollItemInfo)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrFunction(rollOnLoot)
-    Guard.Assert.IsNilOrFunction(getLootRollItemInfo)
+    Guard.Assert.IsNilOrFunction(rollOnLoot, "rollOnLoot")
+    Guard.Assert.IsNilOrFunction(getLootRollItemInfo, "getLootRollItemInfo")
 
     return self:Instantiate({
         RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
@@ -42,7 +42,7 @@ end -- @formatter:on
 function Class:GetGambledItemInfo(gamblingId)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsPositiveIntegerOrZero(gamblingId)
+    Guard.Assert.IsPositiveIntegerOrZero(gamblingId, "gamblingId")
 
     local
     textureFilepath,
@@ -83,8 +83,8 @@ end
 function Class:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode)
-    Guard.Assert.IsPositiveIntegerOrZero(rollId)
+    Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
+    Guard.Assert.IsPositiveIntegerOrZero(rollId, "rollId")
 
     self.RollOnLoot_(rollId, wowRollMode) --00
 
