@@ -3,4 +3,5 @@
     <Include file="helpers\.xml"/>
     <Include file="time\.xml"/>
     <Include file="listeners\.xml"/>
+    <Include file="internationalization\.xml"/>
 </Ui>

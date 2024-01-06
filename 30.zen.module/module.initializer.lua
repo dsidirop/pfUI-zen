@@ -11,11 +11,12 @@ local Exception = using "System.Exceptions.Exception"
 local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local Enumerable = using "Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable"
 
+local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
+
 local UserPreferencesForm = using "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 local UserPreferencesServiceQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable"
-
 
 -- inspired by pfUI-eliteOverlay.lua
 local function Main(_pfUI)
@@ -55,9 +56,11 @@ local function Main(_pfUI)
         if (not PfuiGui.CreateGUIEntry) then
             Throw(Exception:New(S.Format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors)))
         end
+        
+        local translationsService = TranslationsService:New()
 
         UserPreferencesForm -- @formatter:off
-                :New(_t)
+                :New(translationsService)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
                     ea.Response.UserPreferences = UserPreferencesServiceQueryable:New():GetAllUserPreferences()
                 end)

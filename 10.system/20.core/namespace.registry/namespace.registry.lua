@@ -126,6 +126,7 @@ do
         local newClassProto = { }
         newClassProto.__index = newClassProto -- 00 vital
         newClassProto.Instantiate = ClassProtoFactory.StandardInstantiator_
+        newClassProto.WithDefaultCall = ClassProtoFactory.StandardWithDefaultCall_
 
         return _setmetatable(newClassProto, metaTable)
         
@@ -146,6 +147,15 @@ do
         return classProto:New(_unpack(variadicsArray))
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+    end
+
+    function ClassProtoFactory.StandardWithDefaultCall_(classProto, defaultCallMethod)
+        _ = _type(classProto) == "table"             or _throw_exception("classProto was expected to be a table") --             @formatter:off
+        _ = _type(defaultCallMethod) == "function"   or _throw_exception("defaultCallMethod was expected to be a function") --   @formatter:on
+        
+        classProto.__call = defaultCallMethod
+        
+        return classProto
     end
 
     function ClassProtoFactory.StandardInstantiator_(classProto, instanceSpecificFields)

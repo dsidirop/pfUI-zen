@@ -26,7 +26,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 function Class:InitializeControls_()
     Scopify(EScopes.Function, self)
 
-    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
+    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t("Grouploot Automation"), nil, nil, "header")
     _ui.lblGrouplootSectionHeader:SetHeight(20)
 
     _ui.frmContainer = _ui.lblGrouplootSectionHeader:GetParent()
@@ -36,27 +36,27 @@ function Class:InitializeControls_()
     end)
 
     _ui.ddlGreeniesGrouplootingAutomation_mode = PfuiDropdownX:New() --@formatter:off
-                                                              :ChainSetCaption(_t["On |cFF228B22Greens|r"])
+                                                              :ChainSetCaption(_t("On |cFF228B22Greens|r"))
                                                               :ChainSetMenuItems({
-                                                                     SGreeniesGrouplootingAutomationMode.RollNeed .. ":" .. _t["Roll '|cFFFF4500Need|r'"],
-                                                                     SGreeniesGrouplootingAutomationMode.RollGreed .. ":" .. _t["Roll '|cFFFFD700Greed|r'"],
-                                                                     SGreeniesGrouplootingAutomationMode.JustPass .. ":" .. _t["Just '|cff888888Pass|r'"],
-                                                                     SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t["Let me handle it myself"],
+                                                                     SGreeniesGrouplootingAutomationMode.RollNeed .. ":" .. _t("Roll '|cFFFF4500Need|r'"),
+                                                                     SGreeniesGrouplootingAutomationMode.RollGreed .. ":" .. _t("Roll '|cFFFFD700Greed|r'"),
+                                                                     SGreeniesGrouplootingAutomationMode.JustPass .. ":" .. _t("Just '|cff888888Pass|r'"),
+                                                                     SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t("Let me handle it myself"),
                                                               })
                                                               :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationMode_SelectionChanged_, self)
                                                               :Initialize() --@formatter:on
 
     _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind = PfuiDropdownX:New() --@formatter:off
-                                                                      :ChainSetCaption(_t["Upon Pressing"])
+                                                                      :ChainSetCaption(_t("Upon Pressing"))
                                                                       :ChainSetMenuItems({
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Automatic .. ":" .. _t["|cff888888(No Need to Press Anything)|r"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Alt .. ":" .. _t["Alt"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Ctrl .. ":" .. _t["Ctrl"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Shift .. ":" .. _t["Shift"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt .. ":" .. _t["Ctrl + Alt"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift .. ":" .. _t["Ctrl + Shift"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.AltShift .. ":" .. _t["Alt + Shift"],
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t["Ctrl + Alt + Shift"],
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Automatic .. ":" .. _t("|cff888888(No Need to Press Anything)|r"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Alt .. ":" .. _t("Alt"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Ctrl .. ":" .. _t("Ctrl"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Shift .. ":" .. _t("Shift"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt .. ":" .. _t("Ctrl + Alt"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift .. ":" .. _t("Ctrl + Shift"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.AltShift .. ":" .. _t("Alt + Shift"),
+                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t("Ctrl + Alt + Shift"),
                                                                       })
                                                                       :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_, self)
                                                                       :Initialize() --@formatter:on

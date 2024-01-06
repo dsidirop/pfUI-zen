@@ -77,8 +77,8 @@ function Class:Initialize()
     Scopify(EScopes.Function, self)
 
     PfuiGui.CreateGUIEntry(-- 00
-            _t["Thirdparty"],
-            _t["|cFF7FFFD4Zen|r"],
+            _t("Thirdparty"),
+            _t("|cFF7FFFD4Zen|r"),
             function()
                 self:InitializeControls_() --                   order
                 self:OnRequestingCurrentUserPreferences_() --   order

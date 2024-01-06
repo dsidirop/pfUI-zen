@@ -1,10 +1,7 @@
-local _g = assert(_G or getfenv(0))
-local _setfenv = assert(_g.setfenv)
-local _namespacer_binder = assert(_g.pvl_namespacer_bind)
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local _pfuiConfiguration = assert(_g.pfUI.env.C)
+local B = using "[built-ins]" [[  PfuiConfiguration = pfUI.env.C  ]]
 
-_g = nil
-_setfenv(1, {})
+local Namespacer = using "System.Namespacer"
 
-_namespacer_binder("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration", _pfuiConfiguration)
+Namespacer:Bind("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration", B.PfuiConfiguration)
