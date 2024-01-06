@@ -1,28 +1,31 @@
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+
+local S = using "System.Helpers.Strings"
+
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+
+local Throw = using "System.Exceptions.Throw"
+local Exception = using "System.Exceptions.Exception"
+
+local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
+local Enumerable = using "Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable"
+
+local UserPreferencesForm = using "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
+local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
+local UserPreferencesServiceQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable"
+
+
 -- inspired by pfUI-eliteOverlay.lua
 local function Main(_pfUI)
     _pfUI:RegisterModule("Zen", "vanilla:tbc", function()
-        setfenv(1, {}) -- we deliberately disable any and all implicit access to global variables inside this function    
+        Scopify(EScopes.Function, {})
 
         local _g = _pfUI:GetEnvironment()
 
-        local _c = _g.assert(_g.pfUI.env.C) -- pfUI config
         local _t = _g.assert(_g.pfUI.env.T) -- pfUI translations
-        local _print = _g.assert(_g.print)
-        local _format = _g.assert(_g.string.format)
-        local _setfenv = _g.assert(_g.setfenv)
-        local _pfuiGui = _g.assert(_g.pfUI.gui)
-        local _tostring = _g.assert(_g.tostring)
-        local _importer = _g.assert(_g.pvl_namespacer_get)
-
         local _getAddOnInfo = _g.assert(_g.GetAddOnInfo) -- wow api   todo  put this in a custom class called Zen.AddonsHelpers or something
-
-        local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
-        local Enumerable = _importer("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable")
-        local UserPreferencesForm = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
-        local ModifierKeysListener = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
-        local StartZenEngineCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand")
-        local ZenEngineCommandHandlersService = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
-        local UserPreferencesServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
 
         local addon = {
             ownName = "Zen",
@@ -46,35 +49,21 @@ local function Main(_pfUI)
                             :FirstOrDefault() -- @formatter:on
 
         if (not addonPath) then
-            _g.assert(false, _format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors))
+            Throw(Exception:New(S.Format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
         end
 
-        if (not _pfuiGui.CreateGUIEntry) then
-            _g.assert(false, _format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors))
+        if (not PfuiGui.CreateGUIEntry) then
+            Throw(Exception:New(S.Format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors)))
         end
 
         UserPreferencesForm -- @formatter:off
-                :New(_t, _pfuiGui)
+                :New(_t)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
                     ea.Response.UserPreferences = UserPreferencesServiceQueryable:New():GetAllUserPreferences()
                 end)
                 :Initialize() -- @formatter:on
 
         ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
-
-        --local cache = LRUCache:New({ MaxSize = 0, MaxLifespanPerEntryInSeconds = 0 })
-        --
-        --ModifierKeysListener.I --@formatter:off
-        --                    :ChainSetPollingInterval(0.05)
-        --                    :EventModifierKeysStatesChanged_Subscribe(function(_, ea)
-        --                        _print("** ea:GetKey()=" .. ea:ToString())
-        --
-        --                        cache:Upsert(ea:ToString())
-        --    
-        --                        _print("** cache:Count()    = " .. cache:Count())
-        --                        _print("** cache:ToString() = " .. cache:ToString())
-        --                    end)
-        --                    :Start() --@formatter:on
     end)
 end
 

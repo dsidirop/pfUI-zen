@@ -57,14 +57,14 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnValuesTable = {Class.ProtectedCall(_action)}
+    local returnedValuesArray = { Class.ProtectedCall(_action) }
 
-    local success = ArraysHelper.PopFirst(returnValuesTable)
+    local success = ArraysHelper.PopFirst(returnedValuesArray)
     if success then
-        return ArraysHelper.Unpack(returnValuesTable)
+        return ArraysHelper.Unpack(returnedValuesArray)
     end
 
-    local exceptionMessage = ArraysHelper.PopFirst(returnValuesTable)
+    local exceptionMessage = ArraysHelper.PopFirst(returnedValuesArray)
     local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
     
     local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)

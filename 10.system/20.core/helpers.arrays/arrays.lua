@@ -1,40 +1,30 @@
-﻿local _setfenv, _getn, _importer, _namespacer, _tableInsert, _tableRemove = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local B = using "[built-ins]" [[
+    Getn        = table.getn,
+    TableInsert = table.insert,
+    TableRemove = table.remove,
+]]
 
-    local _getn = _assert(_g.table.getn)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _tableInsert = _assert(_g.table.insert)
-    local _tableRemove = _assert(_g.table.remove)
+local Guard = using "System.Guard"
 
-    return _setfenv, _getn, _importer, _namespacer, _tableInsert, _tableRemove
-end)()
-
-_setfenv(1, {})
-
-local Guard = _importer("System.Guard")
-
-local Class = _namespacer("System.Helpers.Arrays [Partial]")
+local Class = using "[declare]" "System.Helpers.Arrays [Partial]"
 
 function Class.Count(array)
     Guard.Assert.IsTable(array)
 
-    return _getn(array)
+    return B.Getn(array)
 end
 
 function Class.Append(array, value)
     Guard.Assert.IsTable(array)
     Guard.Assert.IsNotNil(value)
 
-    return _tableInsert(array, value)
+    return B.TableInsert(array, value)
 end
 
 function Class.PopFirst(array)
     Guard.Assert.IsTable(array)
 
-    return _tableRemove(array, 1)
+    return B.TableRemove(array, 1) -- todo  table remove is known to be terribly inefficient  so we need to find something better
 end

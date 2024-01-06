@@ -32,8 +32,9 @@ using "[declare]" "System.Language.RawTypeSystem"
 
 using "[declare]" "System.Exceptions.Throw"
 using "[declare]" "System.Exceptions.Rethrow"
-using "[declare]" "System.Exceptions.Exception"
 using "[declare]" "System.Exceptions.Utilities"
+
+using "[declare]" "System.Exceptions.Exception"
 using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"
 using "[declare]" "System.Exceptions.ValueIsOutOfRangeException"

@@ -16,6 +16,7 @@ _setfenv(1, {}) -- @formatter:off
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 
+local PfuiGui                                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local PfuiDropdownX                               = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
 local SGreeniesGrouplootingAutomationMode         = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind") -- @formatter:on
@@ -25,7 +26,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Form
 function Class:InitializeControls_()
     Scopify(EScopes.Function, self)
 
-    _ui.lblGrouplootSectionHeader = _pfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
+    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t["Grouploot Automation"], nil, nil, "header")
     _ui.lblGrouplootSectionHeader:SetHeight(20)
 
     _ui.frmContainer = _ui.lblGrouplootSectionHeader:GetParent()
