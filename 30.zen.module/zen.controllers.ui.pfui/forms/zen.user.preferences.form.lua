@@ -60,7 +60,7 @@ function Class:Initialize()
 
     PfuiGui.CreateGUIEntry(-- 00
             _t("Thirdparty"),
-            _t("|cFF7FFFD4Zen|r"),
+            _t("Zen", "|cFF7FFFD4"),
             function()
                 self:InitializeControls_() --                   order
                 self:OnRequestingCurrentUserPreferences_() --   order
