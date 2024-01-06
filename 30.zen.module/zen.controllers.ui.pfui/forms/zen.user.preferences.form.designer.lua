@@ -1,27 +1,14 @@
-﻿local _print, _setfenv, _tostring, _importer, _namespacer, _assert = (function()
-    local _g = assert(getfenv(0))
-    local _assert = assert(_g.assert)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _print = _assert(_g.print)
-    local _setfenv = _assert(_g.setfenv)
-    local _tostring = _assert(_g.tostring)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Scopify = using "System.Scopify" -- @formatter:off
+local EScopes = using "System.EScopes"
 
-    return _print, _setfenv, _tostring, _importer, _namespacer, _assert
-end)()
+local PfuiGui                                           = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
+local PfuiDropdownX                                     = using "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX"
+local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
+local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-_setfenv(1, {}) -- @formatter:off
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local PfuiGui                                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
-local PfuiDropdownX                               = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
-local SGreeniesGrouplootingAutomationMode         = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
-local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind") -- @formatter:on
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]")
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]"
 
 function Class:InitializeControls_()
     Scopify(EScopes.Function, self)
