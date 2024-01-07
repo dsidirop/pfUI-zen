@@ -3,7 +3,7 @@
     <Include file="localization\.xml"/>
     <Include file="create.frame\.xml"/>
     <Include file="roll.on.loot\.xml"/>
-    <Include file="get.loot.roll.item.info.loot\.xml"/>
+    <Include file="get.loot.roll.item.info\.xml"/>
 
     <Include file="is.alt.key.down\.xml"/>
     <Include file="is.shift.key.down\.xml"/>
