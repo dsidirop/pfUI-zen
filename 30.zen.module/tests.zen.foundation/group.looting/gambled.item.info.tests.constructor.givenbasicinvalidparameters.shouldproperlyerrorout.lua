@@ -15,8 +15,8 @@ local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
 
 local Try     = _importer("System.Try")
 
-local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
-local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
+local EWowItemQuality    = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality")
+local GambledItemInfoDto = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto")
 
 local ValueIsOutOfRangeException           = _importer("System.Exceptions.ValueIsOutOfRangeException")
 local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException")
@@ -109,7 +109,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
 
             -- ACT   todo  introduce fluent assertions
             local gambledItemInfo = Try(function() --@formatter:off
-                return GambledItemInfo:New(options)
+                return GambledItemInfoDto:New(options)
             end)
             :Catch(ValueIsOutOfRangeException, function(ex)
                 -- _importer("System.Console").Out:WriteFormatted("%s", ex)

@@ -15,9 +15,9 @@ local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
 
 local StringsHelper = _importer("System.Helpers.Strings")
 
-local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
-local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
-local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType")
+local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality")
+local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto")
+local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWoWLootingInelligibilityReasonType")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",

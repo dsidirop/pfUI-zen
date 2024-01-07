@@ -1,28 +1,17 @@
-﻿local _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Guard        = using "System.Guard" --@formatter:off
+local Scopify      = using "System.Scopify"
+local EScopes      = using "System.EScopes"
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local StringsHelper   = using "System.Helpers.Strings"
+local BooleansHelper  = using "System.Helpers.Booleans"
 
-    return _setfenv, _importer, _namespacer
-end)()
+local EWowItemQuality = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality" --  @formater:on
 
-_setfenv(1, {}) --                                                                                               @formater:off
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto"
 
-local Guard           = _importer("System.Guard")
-local Scopify         = _importer("System.Scopify")
-local EScopes         = _importer("System.EScopes")
-
-local StringsHelper   = _importer("System.Helpers.Strings")
-local BooleansHelper  = _importer("System.Helpers.Booleans")
-
-local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality") --  @formater:off
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
+Scopify(EScopes.Function, {})
 
 function Class:New(options)
     Scopify(EScopes.Function, self)

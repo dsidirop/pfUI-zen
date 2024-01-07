@@ -11,13 +11,13 @@ end)()
 
 _setfenv(1, {}) --                                                                                                           @formatter:off
 
-local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+local S                                   = _importer("System.Helpers.Strings")
 
-local StringsHelper = _importer("System.Helpers.Strings")
+local U                                   = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+local GambledItemInfoDto                  = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto")
 
-local EWowItemQuality = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowItemQuality")
-local GambledItemInfo = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo")
-local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWoWLootingInelligibilityReasonType")
+local EWowItemQuality                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality")
+local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWoWLootingInelligibilityReasonType")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
@@ -91,7 +91,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
             -- ...
 
             -- ACT
-            local gambledItemInfo = GambledItemInfo:New { -- we want to pass just the mandatory parameters to see if the rest are defaulted properly
+            local gambledItemInfo = GambledItemInfoDto:New { -- we want to pass just the mandatory parameters to see if the rest are defaulted properly
                 Name = options.Name,
                 GamblingId = options.GamblingId,
                 ItemQuality = options.ItemQuality,
@@ -99,7 +99,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
             }
 
             -- ASSERT
-            U.Should.Be.Equivalent(gambledItemInfo:GetName(), StringsHelper.Trim(options.Name))
+            U.Should.Be.Equivalent(gambledItemInfo:GetName(), S.Trim(options.Name))
             U.Should.Be.Equivalent(gambledItemInfo:GetGamblingId(), options.GamblingId)
             U.Should.Be.Equivalent(gambledItemInfo:GetItemQuality(), options.ItemQuality)
             U.Should.Be.Equivalent(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)

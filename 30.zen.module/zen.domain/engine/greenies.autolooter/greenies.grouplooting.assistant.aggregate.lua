@@ -8,11 +8,12 @@ local TablesHelper = using "System.Helpers.Tables"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
-local GroupLootingHelper       = using "Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper"
+local GroupLootGamblingService = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.GroupLootGamblingService"
+
 local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
 local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
-local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType"
+local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
@@ -20,12 +21,12 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.Gree
 
 Scopify(EScopes.Function, {})
 
-function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelper)
+function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(groupLootingHelper, GroupLootingHelper, "groupLootingHelper")
     Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
+    Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
 
     return self:Instantiate({
         _settings = nil,
@@ -36,9 +37,9 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootingHelpe
             MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
         },
 
-        _groupLootingHelper = groupLootingHelper or GroupLootingHelper:New(), --todo   refactor this later on so that this gets injected through DI
         _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
+        _groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New(), --todo   refactor this later on so that this gets injected through DI
     })
 end
 
@@ -157,7 +158,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return -- let the user choose
     end
 
-    local gambledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
+    local gambledItemInfo = _groupLootGamblingService:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
 
     Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
     if not gambledItemInfo:IsGreenQuality() then
@@ -174,7 +175,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     --end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        _groupLootingHelper:SubmitResponseToItemGamblingRequest(
+        _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
@@ -207,7 +208,7 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         _pendingLootGamblingRequests:Clear() --     order        
         for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do
             -- order
-            _groupLootingHelper:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
+            _groupLootGamblingService:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
         end
     end
 

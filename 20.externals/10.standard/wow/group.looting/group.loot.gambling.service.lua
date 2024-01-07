@@ -4,17 +4,17 @@ local Guard        = using "System.Guard" --@formatter:off
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
-local WoWRollOnLoot            = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.RollOnLoot"
-local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo"
+local WoWRollOnLoot            = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.BuiltIns.RollOnLoot"
+local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.BuiltIns.GetLootRollItemInfo"
 
-local GambledItemInfo          = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo"
-local EWowGamblingResponseType = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType" -- @formatter:off
+local GambledItemInfoDto       = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto"
+local EWowGamblingResponseType = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowGamblingResponseType" -- @formatter:on
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper"
+local Service = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.GroupLootGamblingService"
 
 Scopify(EScopes.Function, {})
 
-function Class:New(rollOnLoot, getLootRollItemInfo)
+function Service:New(rollOnLoot, getLootRollItemInfo)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNilOrFunction(rollOnLoot, "rollOnLoot")
@@ -28,7 +28,7 @@ end -- @formatter:on
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
 -- https://vanilla-wow-archive.fandom.com/wiki/API_GetLootRollItemInfo
-function Class:GetGambledItemInfo(gamblingId)
+function Service:GetGambledItemInfo(gamblingId)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveIntegerOrZero(gamblingId, "gamblingId")
@@ -48,7 +48,7 @@ function Class:GetGambledItemInfo(gamblingId)
     enchantingLevelRequiredToDEItem,
     isTransmogrifiable = self.GetLootRollItemInfo_(gamblingId)
 
-    return GambledItemInfo:New {
+    return GambledItemInfoDto:New {
         Name = name,
         GamblingId = gamblingId,
         ItemQuality = itemQuality,
@@ -69,7 +69,7 @@ function Class:GetGambledItemInfo(gamblingId)
     }
 end
 
-function Class:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)
+function Service:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
