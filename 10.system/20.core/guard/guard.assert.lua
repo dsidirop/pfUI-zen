@@ -16,7 +16,7 @@ local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfIn
 
 local Guard = using "[declare]" "System.Guard [Partial]"
 
--- Scopify(EScopes.Function, {})
+Scopify(EScopes.Function, {})
 
 do
     Guard.Assert = using "[declare]" "System.Guard.Assert"
