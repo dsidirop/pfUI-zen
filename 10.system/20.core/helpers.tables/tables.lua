@@ -4,7 +4,9 @@ local B = using "[built-ins]" [[
     Next = next,
     Unpack = unpack,
     RawGet = rawget,
+
     GetTablePairs = pairs,
+    GetArrayIndecesAndValues = ipairs,
 
     TableCount = table.getn,
     TableInsert = table.insert,
@@ -21,6 +23,9 @@ local Metatable = using "System.Classes.Metatable"
 local TablesHelper = using "[declare]" "System.Helpers.Tables [Partial]"
 
 Scopify(EScopes.Function, { })
+
+TablesHelper.GetKeyValuePairs = B.GetTablePairs
+TablesHelper.GetArrayIndecesAndValues = B.GetArrayIndecesAndValues
 
 function TablesHelper.Clear(tableInstance)
     Guard.Assert.IsTable(tableInstance, "tableInstance")
@@ -72,12 +77,6 @@ function TablesHelper.IsNilOrEmpty(tableInstance)
     Guard.Assert.IsNilOrTable(tableInstance)
 
     return tableInstance == nil or B.Next(tableInstance) == nil
-end
-
-function TablesHelper.GetKeyValuePairs(tableInstance)
-    Guard.Assert.IsTable(tableInstance)
-
-    return B.GetTablePairs(tableInstance)
 end
 
 function TablesHelper.Unpack(tableInstance, ...)

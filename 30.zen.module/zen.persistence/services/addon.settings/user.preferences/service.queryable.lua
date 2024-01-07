@@ -24,7 +24,7 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
+local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService")
 
 function Class:New(userPreferencesRepositoryQueryable)
     Scopify(EScopes.Function, self)

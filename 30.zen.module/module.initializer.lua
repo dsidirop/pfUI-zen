@@ -1,7 +1,5 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local B = using "[built-ins]" [[  GetAddOnInfo = GetAddOnInfo  ]] -- todo  consolidate this
-
 local S = using "System.Helpers.Strings"
 
 local Scopify = using "System.Scopify"
@@ -14,12 +12,13 @@ local Pfui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui"
 local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local Enumerable = using "Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable"
 
+local AddonsService = using "Pavilion.Warcraft.Addons.AddonsService"
 local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
+local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local UserPreferencesForm = using "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
-local UserPreferencesServiceQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()
     Scopify(EScopes.Function, {})
@@ -34,15 +33,14 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
 
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
     }
+    
+    local addonsService = AddonsService:New()
 
-    local addonPath = Enumerable -- @formatter:off   detect current addon path
+    local addonPath = Enumerable -- @formatter:off   detect current addon path   todo  consolidate this into the healthcheck-service
                             .FromList({ "", "-dev", "-master", "-tbc", "-wotlk" })
-                            :Select(function (postfix)
-                                local name, _, _, enabled = B.GetAddOnInfo(addon.folderName .. postfix)
-                                return { path = name, enabled = enabled or 0 }
-                            end)
-                            :Where(function (x) return x.enabled == 1 end)
-                            :Select(function (x) return x.path end)
+                            :Select(function (postfix) return addonsService:TryGetAddonInfoByFolderName(addon.folderName .. postfix) end)
+                            :Where(function (addonInfo) return addonInfo and addonInfo:IsLoaded() end)
+                            :Select(function (addonInfo) return addonInfo:GetFolderName() end)
                             :FirstOrDefault() -- @formatter:on
 
     if (not addonPath) then
@@ -56,7 +54,7 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
     UserPreferencesForm -- @formatter:off
                 :New(TranslationsService:New())
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
-                    ea.Response.UserPreferences = UserPreferencesServiceQueryable:New():GetAllUserPreferences()
+                    ea.Response.UserPreferences = UserPreferencesQueryableService:New():GetAllUserPreferences()
                 end)
                 :Initialize() -- @formatter:on
 
