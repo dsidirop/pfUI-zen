@@ -24,8 +24,8 @@ local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 
 local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
-local ServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
-local ServiceWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceWriteable")
+local QueryableService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService")
+local WriteableService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.WriteableService")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
 local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
 
@@ -39,8 +39,8 @@ function Class:NewWithDBContext(dbcontext)
     dbcontext = dbcontext or DBContext:New()
 
     return self:New(
-            ServiceQueryable:New(UserPreferencesRepositoryQueryable:New(dbcontext)),
-            ServiceWriteable:New(UserPreferencesUnitOfWork:New(dbcontext))
+            QueryableService:New(UserPreferencesRepositoryQueryable:New(dbcontext)),
+            WriteableService:New(UserPreferencesUnitOfWork:New(dbcontext))
     )
 end
 
