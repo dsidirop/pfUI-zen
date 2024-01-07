@@ -4,7 +4,6 @@ local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 local Console      = using "System.Console"
-local TablesHelper = using "System.Helpers.Tables"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
@@ -199,17 +198,15 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         return
     end
 
-    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic or ea:ToString() == _settings:GetActOnKeybind() then
-        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital    
+    if      _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic       --@formatter:off
+        or  _settings:GetActOnKeybind() == ea:ToString()                                          then --@formatter:on
 
-        local requests = _pendingLootGamblingRequests:GetKeys() --                                                                         order
-        local wowNativeGamblingResponseType = self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour) --   order
+        _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital
 
-        _pendingLootGamblingRequests:Clear() --     order        
-        for _, gamblingId in TablesHelper.GetKeyValuePairs(requests) do
-            -- order
-            _groupLootGamblingService:SubmitResponseToItemGamblingRequest(gamblingId, wowNativeGamblingResponseType)
-        end
+        _groupLootGamblingService:SubmitResponseToItemGamblingRequests(
+                _pendingLootGamblingRequests:PopKeysArray(),
+                self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
+        )
     end
 
     --00  we need to always keep in mind that the user might change the settings while item-gambling is in progress

@@ -82,7 +82,16 @@ function Class:Get(key)
     return entry.Value
 end
 
-function Class:GetKeys()
+function Class:PopKeysArray()
+    Scopify(EScopes.Function, self)
+
+    local keysArray = self:GetKeysArray()
+    self:Clear()
+
+    return keysArray
+end
+
+function Class:GetKeysArray()
     Scopify(EScopes.Function, self)
 
     local now = Time.Now()

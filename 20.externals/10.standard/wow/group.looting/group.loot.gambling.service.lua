@@ -1,6 +1,8 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard        = using "System.Guard" --@formatter:off
+local T = using "System.Helpers.Tables" --@formatter:off
+
+local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
@@ -69,13 +71,24 @@ function Service:GetGambledItemInfo(gamblingId)
     }
 end
 
-function Service:SubmitResponseToItemGamblingRequest(rollId, wowRollMode)
+function Service:SubmitResponseToItemGamblingRequests(gamblingRequestIdsArray, wowRollMode)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsTable(gamblingRequestIdsArray, "gamblingRequestIdsArray")
+    Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
+    
+    for _, gamblingRequestId in T.GetArrayIndecesAndValues(gamblingRequestIdsArray) do
+        self.RollOnLoot_(gamblingRequestId, wowRollMode)
+    end
+end
+
+function Service:SubmitResponseToItemGamblingRequest(gamblingRequestId, wowRollMode)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
-    Guard.Assert.IsPositiveIntegerOrZero(rollId, "rollId")
+    Guard.Assert.IsPositiveIntegerOrZero(gamblingRequestId, "gamblingRequestId")
 
-    self.RollOnLoot_(rollId, wowRollMode) --00
+    self.RollOnLoot_(gamblingRequestId, wowRollMode) --00
 
     -- 00 https://wowpedia.fandom.com/wiki/API_RollOnLoot   the rollid number increases with every
     --    roll you have in a party till how high it counts   is currently unknown   blizzard uses
