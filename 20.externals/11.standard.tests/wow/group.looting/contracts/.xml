@@ -1,0 +1,5 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    <Include file="gambled.item.info.tests.constructor.givenfullvalidparameters.shouldconstructsuccessfully.lua"/>
+    <Include file="gambled.item.info.tests.constructor.givenbasicvalidparameters.shouldconstructsuccessfully.lua"/>
+    <Include file="gambled.item.info.tests.constructor.givenbasicinvalidparameters.shouldproperlyerrorout.lua"/>
+</Ui>

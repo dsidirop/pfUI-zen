@@ -7,9 +7,9 @@ local EScopes      = using "System.EScopes"
 local StringsHelper   = using "System.Helpers.Strings"
 local BooleansHelper  = using "System.Helpers.Booleans"
 
-local EWowItemQuality = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality" --  @formater:on
+local EWowItemQuality = using "Pavilion.Warcraft.Enums.EWowItemQuality" --  @formater:on
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto"
+local Class = using "[declare]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
 
 Scopify(EScopes.Function, {})
 

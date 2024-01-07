@@ -4,4 +4,4 @@ local B = using "[built-ins]" [[  RollOnLoot = RollOnLoot  ]]
 
 local Namespacer = using "System.Namespacer"
 
-Namespacer:Bind("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.BuiltIns.RollOnLoot", B.RollOnLoot)
+Namespacer:Bind("Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot", B.RollOnLoot)

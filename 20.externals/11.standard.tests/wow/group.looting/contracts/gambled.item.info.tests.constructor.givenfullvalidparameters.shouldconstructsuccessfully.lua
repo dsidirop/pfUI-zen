@@ -14,20 +14,20 @@ _setfenv(1, {}) --                                                              
 local S                                   = _importer("System.Helpers.Strings")
 
 local U                                   = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
-local GambledItemInfoDto                  = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto")
+local GambledItemInfoDto                  = _importer("Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto")
 
-local EWowItemQuality                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality")
-local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWoWLootingInelligibilityReasonType")
+local EWowItemQuality                     = _importer("Pavilion.Warcraft.Enums.EWowItemQuality")
+local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Enums.EWoWLootingInelligibilityReasonType")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
+    Name = "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
 
-TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParameters.ShouldConstructSuccessfully",
+TestsGroup:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
         function()
             return {
-                ["GII.CTOR.GBVP.SCS.010"] = {
+                ["GII.CTOR.GFVP.SCS.010"] = {
                     Name = "Foobar",
                     GamblingId = 123,
                     ItemQuality = EWowItemQuality.Green,
@@ -39,17 +39,17 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
                     IsTransmogrifiable = true,
 
                     Count = 1,
-                    TextureFilepath = "",
+                    TextureFilepath = "abc/def/ghi",
                     EnchantingLevelRequiredToDEItem = 0,
 
                     NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
                     GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
                     DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
                 },
-                ["GII.CTOR.GBVP.SCS.020"] = {
+                ["GII.CTOR.GFVP.SCS.020"] = {
                     Name = " Foobar ",
                     GamblingId = 456,
-                    ItemQuality = EWowItemQuality.Blue,
+                    ItemQuality = 14, --  <-- this should pass because we are sensibly future-leaning when it comes to additions to the enum
                     IsBindOnPickUp = true,
 
                     IsNeedable = true,
@@ -57,32 +57,13 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
                     IsDisenchantable = true,
                     IsTransmogrifiable = true,
 
-                    Count = 1,
-                    TextureFilepath = "",
-                    EnchantingLevelRequiredToDEItem = 0,
+                    Count = 3,
+                    TextureFilepath = "abc/def/ghi",
+                    EnchantingLevelRequiredToDEItem = 999, -- <-- this should pass fine too
 
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                },
-                ["GII.CTOR.GBVP.SCS.030"] = {
-                    Name = " Foobar ",
-                    GamblingId = 456,
-                    ItemQuality = 14,
-                    IsBindOnPickUp = true,
-
-                    IsNeedable = true,
-                    IsGreedable = true,
-                    IsDisenchantable = true,
-                    IsTransmogrifiable = true,
-
-                    Count = 1,
-                    TextureFilepath = "",
-                    EnchantingLevelRequiredToDEItem = 0,
-
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    NeedInelligibilityReasonType = 14, --  <-- these should pass because we are sensibly future-leaning when it comes to additions to the enum
+                    GreedInelligibilityReasonType = 14,
+                    DisenchantInelligibilityReasonType = 14,
                 },
             }
         end,
@@ -91,12 +72,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
             -- ...
 
             -- ACT
-            local gambledItemInfo = GambledItemInfoDto:New { -- we want to pass just the mandatory parameters to see if the rest are defaulted properly
-                Name = options.Name,
-                GamblingId = options.GamblingId,
-                ItemQuality = options.ItemQuality,
-                IsBindOnPickUp = options.IsBindOnPickUp,
-            }
+            local gambledItemInfo = GambledItemInfoDto:New(options)
 
             -- ASSERT
             U.Should.Be.Equivalent(gambledItemInfo:GetName(), S.Trim(options.Name))
@@ -123,7 +99,7 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicValidParamete
             U.Should.Be.Equivalent(gambledItemInfo:IsGreenQuality(), options.ItemQuality == EWowItemQuality.Green)
             U.Should.Be.Equivalent(gambledItemInfo:IsPurpleQuality(), options.ItemQuality == EWowItemQuality.Purple)
             U.Should.Be.Equivalent(gambledItemInfo:IsOrangeQuality(), options.ItemQuality == EWowItemQuality.Orange)
-            
+
             U.Should.Be.Equivalent(gambledItemInfo:IsArtifactQuality(), options.ItemQuality == EWowItemQuality.Artifact)
             U.Should.Be.Equivalent(gambledItemInfo:IsLegendaryQuality(), options.ItemQuality == EWowItemQuality.Legendary)
         end

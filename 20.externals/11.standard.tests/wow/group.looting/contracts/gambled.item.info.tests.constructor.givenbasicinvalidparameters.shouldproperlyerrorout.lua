@@ -11,22 +11,22 @@ end)()
 
 _setfenv(1, {}) --                                                                                                           @formatter:off
 
-local U = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+local Try                                   = _importer("System.Try")
 
-local Try     = _importer("System.Try")
+local U                                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
+local GambledItemInfoDto                    = _importer("Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto")
 
-local EWowItemQuality    = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowItemQuality")
-local GambledItemInfoDto = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto")
+local EWowItemQuality                       = _importer("Pavilion.Warcraft.Enums.EWowItemQuality")
 
-local ValueIsOutOfRangeException           = _importer("System.Exceptions.ValueIsOutOfRangeException")
+local ValueIsOutOfRangeException            = _importer("System.Exceptions.ValueIsOutOfRangeException")
 local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException")
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "Pavilion.Warcraft.Addons.Zen.Foundation.GroupLooting.GambledItemInfo.Tests",
+    Name = "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests",
     Tags = { "pavilion", "grouplooting" },
 } --                                                                                                                         @formatter:on
 
-TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
+TestsGroup:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
         function()
             return {
                 ["GII.CTOR.GBIP.SPEO.010"] = {
@@ -111,12 +111,12 @@ TestsGroup:AddDynamicTheory("GambledItemInfo.Constructor.GivenBasicInvalidParame
             local gambledItemInfo = Try(function() --@formatter:off
                 return GambledItemInfoDto:New(options)
             end)
-            :Catch(ValueIsOutOfRangeException, function(ex)
+            :Catch(ValueIsOutOfRangeException, function()
                 -- _importer("System.Console").Out:WriteFormatted("%s", ex)
                 
                 properExceptionThrown = true
             end)
-            :Catch(ArgumentHasInappropriateTypeException, function(ex)
+            :Catch(ArgumentHasInappropriateTypeException, function()
                 -- _importer("System.Console").Out:WriteFormatted("%s", ex)
                 
                 properExceptionThrown = true

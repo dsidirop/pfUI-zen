@@ -4,13 +4,13 @@ local Guard        = using "System.Guard" --@formatter:off
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
-local WoWRollOnLoot            = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.BuiltIns.RollOnLoot"
-local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.BuiltIns.GetLootRollItemInfo"
+local WoWRollOnLoot            = using "Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot"
+local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo"
 
-local GambledItemInfoDto       = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.Contracts.GambledItemInfoDto"
-local EWowGamblingResponseType = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowGamblingResponseType" -- @formatter:on
+local GambledItemInfoDto       = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
+local EWowGamblingResponseType = using "Pavilion.Warcraft.Enums.EWowGamblingResponseType" -- @formatter:on
 
-local Service = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.GroupLootGamblingService"
+local Service = using "[declare]" "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
 
 Scopify(EScopes.Function, {})
 

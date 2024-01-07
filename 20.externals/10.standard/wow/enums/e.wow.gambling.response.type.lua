@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local EWowGamblingResponseType = using "[declare:enum]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowGamblingResponseType" -- aka roll-mode
+local EWowGamblingResponseType = using "[declare:enum]" "Pavilion.Warcraft.Enums.EWowGamblingResponseType" -- aka roll-mode
 
 EWowGamblingResponseType.Pass = 0
 EWowGamblingResponseType.Need = 1

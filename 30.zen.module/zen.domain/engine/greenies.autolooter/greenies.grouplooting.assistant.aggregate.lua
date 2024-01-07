@@ -8,12 +8,12 @@ local TablesHelper = using "System.Helpers.Tables"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
-local GroupLootGamblingService = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GroupLooting.GroupLootGamblingService"
+local GroupLootGamblingService = using "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
 
 local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
 local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
-local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Enums.EWowGamblingResponseType"
+local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
