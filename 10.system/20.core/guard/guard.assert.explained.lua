@@ -32,4 +32,12 @@ do
 
         return value
     end
+
+    function Guard.Assert.Explained.IsFalse(value, customMessage)
+        if not Reflection.IsBoolean(value) or value then
+            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+        end
+
+        return value
+    end
 end

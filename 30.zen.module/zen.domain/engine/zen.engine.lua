@@ -1,31 +1,13 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Guard = using "System.Guard"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local GreeniesAutolooterAggregate = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
 
-_setfenv(1, {})
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local GreeniesAutolooterAggregate = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)
@@ -48,9 +30,9 @@ end
 -- settings is expected to be Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings
 function Class:SetSettings(settings) -- todo   partial classes
     Scopify(EScopes.Function, self)
-
-    _assert(_type(settings) == "table", "settings parameter is expected to be an object")
-    _assert(not _isRunning, "cannot change settings while engine is running - stop the engine first")
+    
+    Guard.Assert.IsTable(settings, "settings")
+    Guard.Assert.Explained.IsFalse(_isRunning, "cannot change settings while engine is running - stop the engine first")
     
     if settings == _settings then
         return self -- nothing to do
