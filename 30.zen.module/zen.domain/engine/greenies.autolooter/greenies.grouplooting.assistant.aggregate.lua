@@ -152,26 +152,9 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    local desiredLootGamblingBehaviour = _settings:GetMode()
-    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
-        return -- let the user choose
-    end
-
-    local gambledItemInfo = _groupLootGamblingService:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
-
-    Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
-    if not gambledItemInfo:IsGreenQuality() then
+    if not self:IsEligibleForAutoGamble(gamblingId) then
         return
     end
-
-    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not gambledItemInfo:IsNeedable() then
-        return
-    end
-
-    --if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
-    --    Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
-    --    return
-    --end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
         _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
@@ -186,6 +169,33 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
+end
+
+function Class:IsEligibleForAutoGamble(gamblingId)
+    Scopify(EScopes.Function, self)
+
+    local desiredLootGamblingBehaviour = _settings:GetMode()
+    if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
+        return false -- let the user choose
+    end
+
+    local gambledItemInfo = _groupLootGamblingService:GetGambledItemInfo(gamblingId) -- rollid essentially
+
+    -- Console.Out:WriteFormatted("[GLL.PLIGD010] ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
+    if not gambledItemInfo:IsGreenQuality() then
+        return false
+    end
+
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not gambledItemInfo:IsNeedable() then
+        return false
+    end
+
+    if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
+        -- Console.Out:WriteFormatted("[GLL.PLIGD080] it's not greedable ...")
+        return false
+    end
+    
+    return true
 end
 
 function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
