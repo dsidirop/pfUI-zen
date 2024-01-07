@@ -1,52 +1,43 @@
-﻿local _setfenv, _print, _tostring, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _print = _assert(_g.print)
-    local _tostring = _assert(_g.tostring)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return _setfenv, _print, _tostring, _importer, _namespacer
-end)()
+local TablesHelper = using "System.Helpers.Tables"
+local StringsHelper = using "System.Helpers.Strings"
 
-_setfenv(1, {})
+local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
-local Guard               = _importer("System.Guard") --                              @formatter:off
-local Scopify             = _importer("System.Scopify")
-local EScopes             = _importer("System.EScopes")
-local Classify            = _importer("System.Classify")
-local TablesHelper        = _importer("System.Helpers.Tables")
-local StringsHelper       = _importer("System.Helpers.Strings")
-local WoWDefaultChatFrame = _importer("System.Externals.WoW.DefaultChatFrame") --     @formatter:on
+local Console = using "[declare]" "System.Console [Partial]"
 
-local Console = _namespacer("System.Console")
+Console.Writer = using "[declare]" "System.Console.Writer [Partial]"
 
-Console.Writer = {}
+Scopify(EScopes.Function, {})
 
 function Console.Writer:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsFunction(nativeWriteCallback)
-
-    return Classify(self, {
+    Guard.Assert.IsFunction(nativeWriteCallback, "nativeWriteCallback")
+    
+    return self:Instantiate({
         _nativeWriteCallback = nativeWriteCallback
     })
 end
 
 function Console.Writer:WriteFormatted(format, ...)
+    local variadicsArray = arg
+    
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsString(format, "format")
 
-    if TablesHelper.IsEmptyOrNil(arg) then --optimization
+    if TablesHelper.IsNilOrEmpty(variadicsArray) then --optimization
         _nativeWriteCallback(format)
         return
     end
 
-    _nativeWriteCallback(StringsHelper.Format(format, TablesHelper.Unpack(arg)))
+    _nativeWriteCallback(StringsHelper.Format(format, TablesHelper.Unpack(variadicsArray)))
 end
 
 function Console.Writer:Write(message)
@@ -66,6 +57,6 @@ function Console.Writer:WriteLine(message)
 end
 
 -- @formatter:off
-Console.Out   = Console.Writer:New(function(message) WoWDefaultChatFrame:AddMessage(StringsHelper.Format("|cffffff55%s", message)) end)
-Console.Error = Console.Writer:New(function(message) WoWDefaultChatFrame:AddMessage(StringsHelper.Format("|cffff5555%s", message)) end)
+Console.Out   = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(StringsHelper.Format("|cffffff55%s", message)) end)
+Console.Error = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(StringsHelper.Format("|cffff5555%s", message)) end)
 -- @formatter:on

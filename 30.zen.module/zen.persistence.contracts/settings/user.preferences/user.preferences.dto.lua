@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
@@ -32,7 +31,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Se
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _greeniesGrouplootingAutomation = {
             mode = nil,
             actOnKeybind = nil,
@@ -55,7 +54,7 @@ end
 function Class:ChainSetGreeniesGrouplootingAutomation_Mode(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
+    _assert(SGreeniesGrouplootingAutomationMode:IsValid(value))
 
     _greeniesGrouplootingAutomation.mode = value
 
@@ -65,7 +64,7 @@ end
 function Class:ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind:IsValid(value), "value must be one of SGreeniesGrouplootingAutomationActOnKeybind (value=" .. (value or "nil") .. ")")
 
     _greeniesGrouplootingAutomation.actOnKeybind = value
 

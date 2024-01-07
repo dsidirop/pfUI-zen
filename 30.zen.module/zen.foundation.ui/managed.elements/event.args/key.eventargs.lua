@@ -23,7 +23,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
@@ -35,9 +34,9 @@ function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, ev
     _assert(_type(hasModifierAlt) == "boolean")
     _assert(_type(hasModifierShift) == "boolean")
     _assert(_type(hasModifierControl) == "boolean")
-    _assert(EKeyEventType.IsValid(eventType))
+    _assert(EKeyEventType:IsValid(eventType))
 
-    return Classify(self, {
+    return self:Instantiate({
         _key = key or "",
         _eventType = eventType,
         _hasModifierAlt = hasModifierAlt,
@@ -79,10 +78,6 @@ function Class:HasModifierControl()
 end
 
 function Class:ToString()
-    return self:__tostring()
-end
-
-function Class:__tostring()
     Scopify(EScopes.Function, self)
     
     if _stringified then
@@ -116,3 +111,5 @@ function Class:__tostring()
     _stringified = result
     return result
 end
+Class.__tostring = Class.ToString
+

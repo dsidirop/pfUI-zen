@@ -1,43 +1,22 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Guard = using "System.Guard" --@formatter:off
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
-_setfenv(1, {})
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs")
-
-function Class:New(rollId)
+function Class:New(gamblingRequestId)
     Scopify(EScopes.Function, self)
     
-    _assert(_type(rollId) == "number" and rollId >= 0, "rollId must be a positive number")
+    Guard.Assert.IsPositiveIntegerOrZero(gamblingRequestId, "gamblingRequestId")
 
-    return Classify(self, {
-        _rollId = rollId,
+    return self:Instantiate({
+        _gamblingRequestId = gamblingRequestId,
     })
 end
 
 function Class:GetGamblingId()
-    Scopify(EScopes.Function, self)
-
-    return _rollId
+    return self._gamblingRequestId
 end

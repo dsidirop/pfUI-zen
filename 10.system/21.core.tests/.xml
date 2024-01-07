@@ -1,5 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../Ui.xsd">
+    <Include file="nils\.xml"/>
+    <Include file="time\.xml"/>
     <Include file="guard\.xml"/>
-    <Include file="console.tests\.xml"/>
-    <Include file="strings.helper.tests\.xml"/>    
+    <Include file="console\.xml"/>
+    <Include file="reflection\.xml"/>
+    <Include file="exceptions\.xml"/>
+    <Include file="strings.helper\.xml"/>    
+    <Include file="using.built.ins\.xml"/>
 </Ui>

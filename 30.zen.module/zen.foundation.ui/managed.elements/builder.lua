@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
 local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
@@ -39,7 +38,7 @@ function Class:New(other)
 
     other = other or {}
 
-    return Classify(self, {
+    return self:Instantiate({
         _elementType = other._elementType or SWoWElementType.Frame,
         
         _name = other._name,
@@ -92,7 +91,7 @@ end
 function Class:WithType(frameType)
     Scopify(EScopes.Function, self)
 
-    _assert(SWoWElementType.IsValid(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
+    _assert(SWoWElementType:IsValid(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
     
     local clone = Class:New(self)
     clone._elementType = frameType

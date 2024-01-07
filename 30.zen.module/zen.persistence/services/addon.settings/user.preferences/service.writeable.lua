@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
@@ -36,7 +35,7 @@ function Class:New(userPreferencesUnitOfWork)
 
     _assert(userPreferencesUnitOfWork == nil or _type(userPreferencesUnitOfWork) == "table")
 
-    return Classify(self, {
+    return self:Instantiate({
         _userPreferencesUnitOfWork = userPreferencesUnitOfWork or UserPreferencesUnitOfWork:New(PfuiZenDbContext:New()), --todo   refactor this later on so that this gets injected through DI
     })
 end
@@ -44,7 +43,7 @@ end
 function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.IsValid(value))
+    _assert(SGreeniesGrouplootingAutomationMode:IsValid(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
                               :GreeniesGrouplootingAutomation_ChainUpdateMode(value)
@@ -55,7 +54,7 @@ end
 function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind.IsValid(value))
+    _assert(SGreeniesGrouplootingAutomationActOnKeybind:IsValid(value))
 
     _userPreferencesUnitOfWork:GetUserPreferencesRepository()
                               :GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)

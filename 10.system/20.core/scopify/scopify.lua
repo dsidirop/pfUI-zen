@@ -1,17 +1,11 @@
-﻿local _setfenv, _namespacer_bind = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
-    
-    return _setfenv, _namespacer_bind
-end)()
+local B = using "[built-ins]" [[ Setfenv = setfenv ]]
 
-_namespacer_bind("System.EScopes", {
-    EGlobal = 0,
-    EFunction = 1,
-})
+local Namespacer = using "System.Namespacer"
 
-_namespacer_bind("System.Scopify", _setfenv)
+-- its preferable to use the binder to register the function itself because
+-- if we register it as a class:__Call__() it wont be as performant in practice
+
+Namespacer:Bind("System.Scopify", B.Setfenv) -- no need to assert here   its done internally
+Namespacer:Bind("System.EScopes", { EGlobal = 0, EFunction = 1 })

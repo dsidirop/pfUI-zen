@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
 local ServiceQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.ServiceQueryable")
@@ -51,7 +50,7 @@ function Class:New(serviceQueryable, serviceWriteable)
     _assert(_type(serviceQueryable) == "table")
     _assert(_type(serviceWriteable) == "table")
 
-    return Classify(self, {
+    return self:Instantiate({
         _serviceQueryable = serviceQueryable,
         _serviceWriteable = serviceWriteable,
     })

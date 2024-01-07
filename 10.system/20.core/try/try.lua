@@ -1,45 +1,38 @@
-﻿local _setfenv, _pcall, _importer, _namespacer_bind = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _pcall = _assert(_g.pcall)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer_bind = _assert(_g.pvl_namespacer_bind)
+local B = using "[built-ins]" [[
+    ProtectedCall = pcall
+]]
 
-    return _setfenv, _pcall, _importer, _namespacer_bind
-end)()
+local Guard              = using "System.Guard" --                                                    @formatter:off
+local Scopify            = using "System.Scopify"
+local EScopes            = using "System.EScopes"
+local Reflection         = using "System.Reflection"
+local ArraysHelper       = using "System.Helpers.Arrays"
 
-_setfenv(1, {}) --                                                                                         @formatter:off
+local Rethrow                          = using "System.Exceptions.Rethrow"
+local Exception                        = using "System.Exceptions.Exception"
+local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
-local Guard              = _importer("System.Guard")
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
-local Reflection         = _importer("System.Reflection")
+local Class = using "[declare]" "System.Try [Partial]"
 
-local Rethrow                          = _importer("System.Exceptions.Rethrow")
-local Exception                        = _importer("System.Exceptions.Exception")
-local ExceptionsDeserializationFactory = _importer("System.Try.ExceptionsDeserializationFactory") --       @formatter:on
 
-local Class = {}
-local ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
+Class.ProtectedCall = B.ProtectedCall
 
-_namespacer_bind("System.Try", function(action)
-    return Class:New(action, ExceptionsDeserializationFactorySingleton)
-end)
+Scopify(EScopes.Function, {})
+
+Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
 
 function Class:New(action, exceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
-    Guard.Assert.IsInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsNilOrInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
-    return Classify(self, {
+    return self:Instantiate({
         _action = action,
         _allExceptionHandlers = {},
-        _exceptionsDeserializationFactory = exceptionsDeserializationFactory,
+        _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,
     })
 end
 
@@ -48,11 +41,11 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Assert.IsNamespaceStringOrRegisteredType(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionType")
+    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.GetNamespaceOfType(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceIfClassProto(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -64,12 +57,15 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local success, result = _pcall(_action)
+    local returnedValuesArray = { Class.ProtectedCall(_action) }
+
+    local success = ArraysHelper.PopFirst(returnedValuesArray)
     if success then
-        return result
+        return ArraysHelper.Unpack(returnedValuesArray)
     end
 
-    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(result)
+    local exceptionMessage = ArraysHelper.PopFirst(returnedValuesArray)
+    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
     
     local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)
     if properExceptionHandler ~= nil then
@@ -82,11 +78,11 @@ function Class:Run()
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.GetNamespaceOfType(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfClassProto(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 
-    local fullNamespaceOfException = Reflection.GetNamespaceOfInstance(exception)
+    local fullNamespaceOfException = Reflection.TryGetNamespaceIfClassInstance(exception)
     local specificExceptionHandler = _allExceptionHandlers[fullNamespaceOfException]
     if specificExceptionHandler ~= nil then
         return specificExceptionHandler

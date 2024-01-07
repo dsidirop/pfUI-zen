@@ -1,34 +1,18 @@
-﻿local _assert, _setfenv, _type, _pairs, _print, _importer, _debugstack, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _type = _assert(_g.type)
-    local _pairs = _assert(_g.pairs)
-    local _print = _assert(_g.print)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _debugstack = _assert(_g.debugstack)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
-    
-    return _assert, _setfenv, _type, _pairs, _print, _importer, _debugstack, _namespacer, _setmetatable
-end)()
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+local TablesHelper = using "System.Helpers.Tables"
 
-_setfenv(1, {})
+local Class = using "[declare]" "System.Event [Partial]"
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
-
-local TablesHelper = _importer("System.Helpers.Tables")
-
-local Class = _namespacer("System.Event")
+Scopify(EScopes.Function, {})
 
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _handlers = {},
         _handlersJustOnce = {}
     })
@@ -38,8 +22,8 @@ local NoOwner = {}
 function Class:Subscribe(handler, owner)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(handler) == "function")
-    _assert(owner == nil or _type(owner) == "table")
+    Guard.Assert.IsFunction(handler, "handler")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     _handlers[handler] = owner or NoOwner -- we prevent double-subscriptions by using the handler itself as the key
     
@@ -48,8 +32,9 @@ end
 
 function Class:SubscribeOnce(handler, owner)
     Scopify(EScopes.Function, self)
-    _assert(_type(handler) == "function")
-    _assert(owner == nil or _type(owner) == "table")
+
+    Guard.Assert.IsFunction(handler, "handler")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     self:Subscribe(handler, owner)
     self:SubscribeOnceImpl_(handler, owner)
@@ -66,8 +51,8 @@ end
 function Class:SubscribeOnceImpl_(handler, owner)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(handler) == "function")
-    _assert(owner == nil or _type(owner) == "table")
+    Guard.Assert.IsFunction(handler, "handler")
+    Guard.Assert.IsNilOrTable(owner, "owner")
 
     _handlersJustOnce[handler] = owner or NoOwner
 
@@ -77,7 +62,7 @@ end
 function Class:Unsubscribe(handler)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(handler) == "function", _debugstack())
+    Guard.Assert.IsFunction(handler, "handler")
 
     _handlers[handler] = nil
     _handlersJustOnce[handler] = nil
@@ -97,8 +82,8 @@ end
 function Class:Fire(sender, eventArgs)
     Scopify(EScopes.Function, self)
 
-    _assert(sender)
-    _assert(eventArgs)
+    Guard.Assert.IsTable(sender, "sender")
+    Guard.Assert.IsTable(eventArgs, "eventArgs")
 
     self:Raise(sender, eventArgs)
 
@@ -111,8 +96,8 @@ end
 function Class:Raise(sender, eventArgs)
     Scopify(EScopes.Function, self)
 
-    _assert(sender)
-    _assert(eventArgs)
+    Guard.Assert.IsTable(sender, "sender")
+    Guard.Assert.IsTable(eventArgs, "eventArgs")
 
     for k, v in TablesHelper.GetKeyValuePairs(_handlers) do
         if v and v ~= NoOwner then -- v is the owning class-instance of the handler

@@ -1,32 +1,22 @@
-﻿local _setfenv, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    
-    return _setfenv, _importer, _namespacer
-end)()
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+local Reflection = using "System.Reflection"
+local Validation = using "System.Validation"
+local ExceptionUtilities = using "System.Exceptions.Utilities"
 
-_setfenv(1, {}) --                                                                 @formatter:off
+local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
 
-local Debug              = _importer("System.Debug")
-local Scopify            = _importer("System.Scopify")
-local EScopes            = _importer("System.EScopes")
-local Classify           = _importer("System.Classify")
-local Reflection         = _importer("System.Reflection")
-local ExceptionUtilities = _importer("System.Exceptions.Utilities") --             @formatter:on
-
-local Class = _namespacer("System.Exceptions.Exception")
+Scopify(EScopes.Function, {})
 
 function Class:New(message)
     Scopify(EScopes.Function, self)
+   
+    Guard.Assert.IsNilOrNonDudString(message, "message")
 
-    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
-
-    return Classify(self, {
+    return self:Instantiate({
         _message = nil,
         _stacktrace = "",
 
@@ -50,7 +40,7 @@ end
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(message), "message must be a string or nil")
+    Validation.Assert(Reflection.IsNilOrString(message), "message must be a string or nil")
 
     _message = message or "(exception message not available)"
     _stringified = nil
@@ -62,7 +52,7 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Debug.Assert(Reflection.IsOptionallyString(stacktrace), "stacktrace must be a string or nil")
+    Validation.Assert(Reflection.IsNilOrString(stacktrace), "stacktrace must be a string or nil")
 
     _stacktrace = stacktrace or ""
     _stringified = nil
@@ -73,13 +63,6 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
 
-    return self:__tostring()
-end
-
--- private space
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
-
     if _stringified ~= nil then
         return _stringified
     end
@@ -87,3 +70,4 @@ function Class:__tostring()
     _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
     return _stringified
 end
+Class.__tostring = Class.ToString

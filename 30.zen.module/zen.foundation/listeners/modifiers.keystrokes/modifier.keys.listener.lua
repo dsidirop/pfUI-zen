@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
 local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
@@ -37,7 +36,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.Mod
 function Class:New(timer)
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _timer = timer or Timer:New(0.1), -- todo di this as a singleton when di comes to town
 
         _wantedActive = false,

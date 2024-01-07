@@ -1,24 +1,16 @@
-﻿local U, _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local U = _assert(_g.VWoWUnit)
-    local _importer = _assert(_g.pvl_namespacer_get)
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    return U, _setfenv, _importer
-end)()
+local U = using "[built-in]" "VWoWUnit"
 
-_setfenv(1, {})
-
-local Try = _importer("System.Try")
-local Guard = _importer("System.Guard")
-local Exception = _importer("System.Exceptions.Exception")
+Scopify(EScopes.Function, {})
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Guard.Assert.IsBooleanizable",
-    Tags = { "guard", "guard-check", "guard-check-booleanizables" }
+    Tags = { "system", "guard", "guard-check", "guard-check-booleanizables" }
 }
 
 TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",
@@ -27,40 +19,30 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThro
             ["GRD.SRT.IB.GGI.SNT.0010"] = { Value = 1 },
             ["GRD.SRT.IB.GGI.SNT.0020"] = { Value = -1 },
 
-            ["GRD.SRT.IB.GGI.SNT.0020"] = { Value = true },
-            ["GRD.SRT.IB.GGI.SNT.0020"] = { Value = false },
+            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = true },
+            ["GRD.SRT.IB.GGI.SNT.0040"] = { Value = false },
 
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "y" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "Y" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "Yes" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "YES" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "T" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "True" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "TRUE" },
+            ["GRD.SRT.IB.GGI.SNT.0050"] = { Value = "y" },
+            ["GRD.SRT.IB.GGI.SNT.0060"] = { Value = "Y" },
+            ["GRD.SRT.IB.GGI.SNT.0070"] = { Value = "Yes" },
+            ["GRD.SRT.IB.GGI.SNT.0080"] = { Value = "YES" },
+            ["GRD.SRT.IB.GGI.SNT.0090"] = { Value = "T" },
+            ["GRD.SRT.IB.GGI.SNT.0100"] = { Value = "True" },
+            ["GRD.SRT.IB.GGI.SNT.0110"] = { Value = "TRUE" },
 
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "n" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "N" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "No" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "NO" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "F" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "False" },
-            ["GRD.SRT.IB.GGI.SNT.0030"] = { Value = "FALSE" },
+            ["GRD.SRT.IB.GGI.SNT.0120"] = { Value = "n" },
+            ["GRD.SRT.IB.GGI.SNT.0130"] = { Value = "N" },
+            ["GRD.SRT.IB.GGI.SNT.0140"] = { Value = "No" },
+            ["GRD.SRT.IB.GGI.SNT.0150"] = { Value = "NO" },
+            ["GRD.SRT.IB.GGI.SNT.0160"] = { Value = "F" },
+            ["GRD.SRT.IB.GGI.SNT.0170"] = { Value = "False" },
+            ["GRD.SRT.IB.GGI.SNT.0180"] = { Value = "FALSE" },
         },
         function(options)
-            -- ARRANGE
-            local gotException = false
-
-            -- ACT
-            Try(function() --@formatter:off
+            -- ACT + ASSERT
+            U.Should.Not.Throw(function()
                 Guard.Assert.IsBooleanizable(options.Value, "options.Value")
             end)
-            :Catch(Exception, function()
-                gotException = true
-            end)
-            :Run() --@formatter:on
-
-            -- ASSERT
-            U.Should.Be.Falsy(gotException, options.GuardShouldThrowException)
         end
 )
 
@@ -77,19 +59,9 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
             end },
         },
         function(options)
-            -- ARRANGE
-            local gotException = false
-
-            -- ACT
-            Try(function() --@formatter:off
+            -- ACT + ASSERT
+            U.Should.Throw(function()
                 Guard.Assert.IsBooleanizable(options.Value, "options.Value")
             end)
-            :Catch(Exception, function()
-                gotException = true
-            end)
-            :Run() --@formatter:on
-
-            -- ASSERT
-            U.Should.Be.Truthy(gotException)
         end
 )

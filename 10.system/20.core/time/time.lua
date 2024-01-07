@@ -1,19 +1,9 @@
-﻿local _time, _setfenv, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _time = _assert(_g.time)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    
-    return _time, _setfenv, _namespacer
-end)()
+local B = using "[built-ins]" [[ Time = time ]]
 
-_setfenv(1, {})
-
-local Class = _namespacer("System.Time")
+local Class = using "[declare]" "System.Time [Partial]"
 
 function Class.Now()
-    return _time()
+    return B.Time()
 end

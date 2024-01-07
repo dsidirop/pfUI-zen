@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
@@ -30,7 +29,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Co
 function Class:New()
     Scopify(EScopes.Function, self)
     
-    return Classify(self, {
+    return self:Instantiate({
         _old = nil,
         _new = nil,
     })
@@ -51,7 +50,7 @@ end
 function Class:ChainSetOld(old)
     Scopify(EScopes.Function, self)
 
-    _assert(old == nil or SGreeniesGrouplootingAutomationMode.IsValid(old))
+    _assert(old == nil or SGreeniesGrouplootingAutomationMode:IsValid(old))
 
     _old = old
 
@@ -61,7 +60,7 @@ end
 function Class:ChainSetNew(new)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationMode.IsValid(new))
+    _assert(SGreeniesGrouplootingAutomationMode:IsValid(new))
 
     _new = new
 

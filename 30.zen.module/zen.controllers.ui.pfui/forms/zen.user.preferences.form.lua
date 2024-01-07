@@ -1,45 +1,31 @@
-﻿local _assert, _setfenv, _type, _error, _print, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Scopify  = using "System.Scopify" -- @formatter:off
+local EScopes  = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Guard                                             = using "System.Guard"
+local Event                                             = using "System.Event"
 
-    return _assert, _setfenv, _type, _error, _print, _importer, _namespacer, _setmetatable
-end)()
+local PfuiGui                                           = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
+local ZenEngineCommandHandlersService                   = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 
-_setfenv(1, {}) -- @formatter:off
+local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
+local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Scopify  = _importer("System.Scopify")
-local EScopes  = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
+local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
+local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
-local Event                                             = _importer("System.Event")
-local ZenEngineCommandHandlersService                   = _importer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
-
-local SGreeniesGrouplootingAutomationMode               = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
-local SGreeniesGrouplootingAutomationActOnKeybind       = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
-
-local GreeniesGrouplootingAutomationApplyNewModeCommand         = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand")
-local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = _importer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand") -- @formatter:on
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm")
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(T, pfuiGui)
+function Class:New(translationService)
     Scopify(EScopes.Function, self)
+    
+    Guard.Assert.IsNilOrTable(translationService, "translationService")
 
-    return Classify(self, {
-        _t = _assert(T),
-        _pfuiGui = _assert(pfuiGui),
+    return self:Instantiate({
+        _t = translationService,
 
         _ui = {
             frmContainer = nil,
@@ -48,9 +34,8 @@ function Class:New(T, pfuiGui)
             ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
         },
 
-        _eventRequestingCurrentUserPreferences = Event:New(),
-
         _commandsEnabled = false,
+        _eventRequestingCurrentUserPreferences = Event:New(),
     })
 end
 
@@ -73,9 +58,9 @@ end
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
-    _pfuiGui.CreateGUIEntry(-- 00
-            _t["Thirdparty"],
-            _t["|cFF7FFFD4Zen|r"],
+    PfuiGui.CreateGUIEntry(-- 00
+            _t("Thirdparty"),
+            _t("Zen", "|cFF7FFFD4"),
             function()
                 self:InitializeControls_() --                   order
                 self:OnRequestingCurrentUserPreferences_() --   order
@@ -105,10 +90,7 @@ function Class:OnRequestingCurrentUserPreferences_()
             })
             .Response -- @formatter:on
 
-    if not response.UserPreferences then
-        _error("[ZUPF.OCUPR.010] failed to retrieve user-preferences")
-        return nil
-    end
+    Guard.Assert.Explained.IsNotNil(response ~= nil and response.UserPreferences ~= nil, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
 
     _commandsEnabled = false --00
 
@@ -133,9 +115,6 @@ end
 function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, ea)
     Scopify(EScopes.Function, self)
 
-    _assert(sender)
-    _assert(_type(ea) == "table")
-
     _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
 
     if _commandsEnabled then
@@ -147,11 +126,8 @@ function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, e
     end
 end
 
-function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(sender, ea)
+function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
-
-    _assert(sender)
-    _assert(_type(ea) == "table")
 
     if _commandsEnabled then
         ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(

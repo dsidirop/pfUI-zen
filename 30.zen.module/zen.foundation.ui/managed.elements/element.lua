@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
 local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
@@ -39,7 +38,7 @@ function Class:New(nativeElement)
     
     _assert(_type(nativeElement) == "table", "nativeElement must be a table")
 
-    return Classify(self, {
+    return self:Instantiate({
         _nativeElement = nativeElement,
 
         _eventKeyDown = Event:New(),

@@ -1,16 +1,18 @@
-local _g, _pcall, _assert, _format, _setfenv, _tostring, _strsub, _debugstack = (function()
+local _g, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
 	local _pcall = _assert(_g.pcall)
+	local _unpack = _assert(_g.unpack)
 	local _strsub = _assert(_g.string.sub)
 	local _format = _assert(_g.string.format)
 	local _tostring = _assert(_g.tostring)
 	local _debugstack = _assert(_g.debugstack)
+	local _tableRemove = _assert(_g.table.remove)
 
-	return _g, _pcall, _assert, _format, _setfenv, _tostring, _strsub, _debugstack
+	return _g, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove
 end)()
 
 local VWoWUnit = _g.VWoWUnit or {}
@@ -21,29 +23,42 @@ _setfenv(1, {})
 
 VWoWUnit.Should = {}
 VWoWUnit.Should.Be = {}
+VWoWUnit.Should.Not = {}
 
 function VWoWUnit.Should.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
 
-	local success, result = _pcall(action)
+	local success = _pcall(action)
 
 	if success then
 		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
 	end
-
-	return result
 end
 
-function VWoWUnit.Should.NotThrow(action)
+function VWoWUnit.Should.Not.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
 	
-	local success, result = _pcall(action)
-
+	local returnValuesTable = {_pcall(action)}
+	
+	local success = returnValuesTable[1]
+	_tableRemove(returnValuesTable, 1)
+	
 	if not success then
-		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.NotThrow()] Was not expecting an exception to be thrown but got this one:\n\n%s ", result))
+		local errorMessage = returnValuesTable[1]
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s", _tostring(errorMessage)))
 	end
 	
-	return result
+	return _unpack(returnValuesTable)
+end
+
+function VWoWUnit.Should.Be.PlainlyEqual(a, b)
+	_setfenv(1, VWoWUnit.Should)
+
+	if a == b then
+		return
+	end
+
+	VWoWUnit.Raise_(_format("[Should.Be.PlainlyEqual()] Expected the two values to be plainly-equal but they're not (got %q which is not equal to %q)", _tostring(a), _tostring(b)))
 end
 
 function VWoWUnit.Should.Be.Equivalent(a, b)

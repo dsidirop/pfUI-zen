@@ -21,7 +21,6 @@ local Guard         = _importer("System.Guard")
 local Table         = _importer("System.Table")
 local Scopify       = _importer("System.Scopify")
 local EScopes       = _importer("System.EScopes")
-local Classify      = _importer("System.Classify")
 local TablesHelper  = _importer("System.Helpers.Tables")
 local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
 
@@ -44,11 +43,11 @@ function Class:New(options)
                 or  options
 
     Guard.Assert.IsTable(options, "options")
-                .IsOptionallyRatioNumber(options.TrimRatio, "options.TrimRatio")
-                .IsOptionallyPositiveInteger(options.MaxSize, "options.MaxSize")
-                .IsOptionallyPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
+    Guard.Assert.IsNilOrRatioNumber(options.TrimRatio, "options.TrimRatio")
+    Guard.Assert.IsNilOrPositiveInteger(options.MaxSize, "options.MaxSize")
+    Guard.Assert.IsNilOrPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
 
-    return Classify(self, {
+    return self:Instantiate({
         _count = 0,
         _entries = {},
         _timestampOfLastDeadlinesCleanup = -1,
@@ -70,7 +69,7 @@ end
 function Class:Get(key)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNotNil(key)    
+    Guard.Assert.IsNotNil(key, "key")
 
     self:Cleanup()
     
@@ -83,7 +82,16 @@ function Class:Get(key)
     return entry.Value
 end
 
-function Class:GetKeys()
+function Class:PopKeysArray()
+    Scopify(EScopes.Function, self)
+
+    local keysArray = self:GetKeysArray()
+    self:Clear()
+
+    return keysArray
+end
+
+function Class:GetKeysArray()
     Scopify(EScopes.Function, self)
 
     local now = Time.Now()
@@ -121,7 +129,7 @@ end
 function Class:Upsert(key, valueOptional)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNotNil(key)
+    Guard.Assert.IsNotNil(key, "key")
 
     valueOptional = valueOptional == nil --00
             and true
@@ -148,7 +156,7 @@ end
 function Class:Remove(key)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNotNil(key)
+    Guard.Assert.IsNotNil(key, "key")
 
     _count = _count - (_entries[key] ~= nil and 1 or 0) -- order
 
@@ -164,8 +172,16 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
 
-    return self:__tostring()
+    local s = "{ "
+    local sep = ""
+    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
+        sep = ", "
+    end
+
+    return s .. " }"
 end
+Class.__tostring = Class.ToString
 
 function Class:Cleanup()
     Scopify(EScopes.Function, self)
@@ -232,19 +248,6 @@ function Class:Sort_(t)
     end)
 
     return array
-end
-
-function Class:__tostring()
-    Scopify(EScopes.Function, self)
-
-    local s = "{ "
-    local sep = ""
-    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
-        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
-        sep = ", "
-    end
-
-    return s .. " }"
 end
 
 function Class:__len()

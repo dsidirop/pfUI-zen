@@ -1,20 +1,37 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../Ui.xsd">
     <!-- order  -->
-    <Include file="namespacer\.xml"/>
+    <Include file="namespace.registry\.xml"/>
+    <Include file="core.symbols.namespaces\.xml"/>
 
+    <Include file="using.built.ins\.xml"/>
+    
+    <Include file="global.environment\.xml"/>
+    <Include file="nils\.xml"/>
+    <Include file="scopify\.xml"/>
+    <Include file="validation\.xml"/>
+    
+    <Include file="classes.metatable\.xml"/>
+    <Include file="language.raw.type.system\.xml"/>
+    
+    <Include file="iterators\.xml"/>
     <Include file="default.chat.frame\.xml"/>
+
+    <Include file="classes.instantiator\.xml"/>
 
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>
     <Include file="table\.xml"/>
-    <Include file="scopify\.xml"/>
-    <Include file="classify\.xml"/>
-    <Include file="debug\.xml"/>
+    
     <Include file="reflection\.xml"/>
     <Include file="exceptions\.xml"/>
 
     <Include file="guard\.xml"/>
-    <Include file="helpers\.xml"/>
+    
+    <Include file="helpers.arrays\.xml"/>
+    <Include file="helpers.tables\.xml"/>
+    <Include file="helpers.strings\.xml"/>
+    <Include file="helpers.booleans\.xml"/>
+    
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>
 

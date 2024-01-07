@@ -22,7 +22,6 @@ _setfenv(1, {})
 
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
-local Classify = _importer("System.Classify")
 
 local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
 local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
@@ -33,7 +32,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingService
 function Class:New(userPreferencesService)
     Scopify(EScopes.Function, self)
 
-    return Classify(self, {
+    return self:Instantiate({
         _zenEngineSingleton = ZenEngine.I, --todo   refactor this later on so that this gets injected through DI        
         _userPreferencesService = userPreferencesService or UserPreferencesService:NewWithDBContext(),
     })
