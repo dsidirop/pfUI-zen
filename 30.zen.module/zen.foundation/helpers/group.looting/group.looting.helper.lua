@@ -1,6 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard        = using "System.Guard"
+local Guard        = using "System.Guard" --@formatter:off
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
@@ -8,7 +8,7 @@ local WoWRollOnLoot            = using "Pavilion.Warcraft.Addons.Zen.Externals.W
 local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.GetLootRollItemInfo"
 
 local GambledItemInfo          = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.GroupLooting.GambledItemInfo"
-local EWowGamblingResponseType = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType"
+local EWowGamblingResponseType = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Enums.EWowGamblingResponseType" -- @formatter:off
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Helpers.GroupLooting.Helper"
 
@@ -20,7 +20,7 @@ function Class:New(rollOnLoot, getLootRollItemInfo)
     Guard.Assert.IsNilOrFunction(rollOnLoot, "rollOnLoot")
     Guard.Assert.IsNilOrFunction(getLootRollItemInfo, "getLootRollItemInfo")
 
-    return self:Instantiate({
+    return self:Instantiate({ -- @formatter:off
         RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
         GetLootRollItemInfo_ = getLootRollItemInfo or WoWGetLootRollItemInfo, -- to help unit testing
     })
