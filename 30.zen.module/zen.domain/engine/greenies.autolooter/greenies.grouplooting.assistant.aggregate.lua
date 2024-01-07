@@ -152,36 +152,28 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s", ea:GetGamblingId(), _settings:GetMode())
-
     local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
-        Console.Out:WriteFormatted("** GLL.PLIGD020")
         return -- let the user choose
     end
 
     local gambledItemInfo = _groupLootingHelper:GetGambledItemInfo(ea:GetGamblingId()) -- rollid essentially
-    Console.Out:WriteFormatted("** GLL.PLIGD030 rolledItemInfo: %s", gambledItemInfo)
+
+    Console.Out:WriteFormatted("** GLL.PLIGD010 ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
     if not gambledItemInfo:IsGreenQuality() then
-        Console.Out:WriteFormatted("** GLL.PLIGD040 it's not green ...")
         return
     end
 
-    Console.Out:WriteFormatted("** GLL.PLIGD050")
     if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollNeed and not gambledItemInfo:IsNeedable() then
-        Console.Out:WriteFormatted("** GLL.PLIGD060 it's not needable ...")
         return
     end
 
-    Console.Out:WriteFormatted("** GLL.PLIGD070")
     --if desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.RollGreed and not gambledItemInfo:IsGreedable() then
     --    Console.Out:WriteFormatted("** GLL.PLIGD080 it's not greedable ...")
     --    return
     --end
 
-    Console.Out:WriteFormatted("** GLL.PLIGD090")
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        Console.Out:WriteFormatted("** GLL.PLIGD100 submitting response ...")
         _groupLootingHelper:SubmitResponseToItemGamblingRequest(
                 ea:GetGamblingId(),
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
@@ -189,19 +181,11 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    Console.Out:WriteFormatted("** GLL.PLIGD110 waiting for keybind press ...")
     _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
     _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
-    --
-    -- todo   ensure that pfUI reacts accordingly to this by hiding the green item roll frame
-    --
-    -- todo   consolidate this into a console write or something
-    --
-    -- local _, _, _, _greeniesQualityHex = _getItemQualityColor(QUALITY_GREEN)
-    -- DEFAULT_CHAT_FRAME:AddMessage("[pfUI.Zen] " .. _greeniesQualityHex .. wowRollMode .. "|cffffffff Roll " .. _getLootRollItemLink(frame.rollID))
 end
 
 function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
