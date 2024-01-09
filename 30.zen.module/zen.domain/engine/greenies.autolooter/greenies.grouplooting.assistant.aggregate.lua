@@ -152,7 +152,7 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    if not self:IsEligibleForAutoGamble(gamblingId) then
+    if not self:IsEligibleForAutoGamble(ea:GetGamblingId()) then
         return
     end
 
