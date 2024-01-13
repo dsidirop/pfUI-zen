@@ -38,17 +38,17 @@ TG:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
 
 TG:AddTheory("LRUCache.Constructor.GivenRedInput.ShouldThrowGuardException",
         {
-            ["LRUC.CTOR.GRI.STGE.0000"] = { MaxSize = -1, },
-            ["LRUC.CTOR.GRI.STGE.0010"] = { TrimRatio = -1, },
-            ["LRUC.CTOR.GRI.STGE.0020"] = { TrimRatio = 1.1, },
-            ["LRUC.CTOR.GRI.STGE.0030"] = { MaxLifespanPerEntryInSeconds = -1, },
+            ["LRUC.CTOR.GRI.STGE.0000"] = { MaxSize = -1 },
+            ["LRUC.CTOR.GRI.STGE.0010"] = { TrimRatio = -1 },
+            ["LRUC.CTOR.GRI.STGE.0020"] = { TrimRatio = 1.1 },
+            ["LRUC.CTOR.GRI.STGE.0030"] = { MaxLifespanPerEntryInSeconds = -1 },
         },
         function(options)
             -- ARRANGE
 
             -- ACT + ASSERT
             U.Should.Throw(function()
-                return LRUCache:New(options)
+                LRUCache:New(options)
             end)
         end
 )
