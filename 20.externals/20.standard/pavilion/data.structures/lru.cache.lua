@@ -5,12 +5,13 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Time         = using "System.Time" --                @formatter:off
+local Nils         = using "System.Nils"
 local Guard        = using "System.Guard"
 local Table        = using "System.Table"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
-local TablesHelper    = using "System.Helpers.Tables"
+local T    = using "System.Helpers.Tables"
 local StringsHelper   = using "System.Helpers.Strings" --  @formater:on
 
 local Class = using "[declare]" "Pavilion.DataStructures.LRUCache"
@@ -79,6 +80,23 @@ function Class:PopKeysArray()
     return keysArray
 end
 
+function Class:GetAll()
+    Scopify(EScopes.Function, self)
+
+    local now = Time.Now()
+
+    self:Cleanup()
+
+    local entries = {}
+    for key, value in T.GetKeyValuePairs(_entries) do
+        entries[key] = value.Value
+
+        _entries[key].Timestamp = now
+    end
+
+    return entries
+end
+
 function Class:GetKeysArray()
     Scopify(EScopes.Function, self)
 
@@ -87,7 +105,7 @@ function Class:GetKeysArray()
     self:Cleanup()
 
     local keys = {}
-    for key in TablesHelper.GetKeyValuePairs(_entries) do
+    for key in T.GetKeyValuePairs(_entries) do
         Table.Insert(keys, key)
 
         _entries[key].Timestamp = now
@@ -96,7 +114,7 @@ function Class:GetKeysArray()
     return keys
 end
 
-function Class:RawGetValues()
+function Class:GetValuesArray()
     Scopify(EScopes.Function, self)
 
     local now = Time.Now()
@@ -104,7 +122,7 @@ function Class:RawGetValues()
     self:Cleanup()
 
     local values = {}
-    for k, v in TablesHelper.GetKeyValuePairs(_entries) do
+    for k, v in T.GetKeyValuePairs(_entries) do
         Table.Insert(values, v.Value)
 
         _entries[k].Timestamp = now
@@ -119,11 +137,9 @@ function Class:Upsert(key, valueOptional)
 
     Guard.Assert.IsNotNil(key, "key")
 
-    valueOptional = valueOptional == nil --00
-            and true
-            or valueOptional 
-
     local t = Time.Now()
+
+    valueOptional = Nils.Coalesce(valueOptional, true) --00
 
     _count = _count + (_entries[key] == nil and 1 or 0) -- order
     
@@ -162,7 +178,7 @@ function Class:ToString()
 
     local s = "{ "
     local sep = ""
-    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+    for key, value in T.GetKeyValuePairs(_entries) do
         s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
         sep = ", "
     end
@@ -174,15 +190,15 @@ Class.__tostring = Class.ToString
 function Class:Cleanup()
     Scopify(EScopes.Function, self)
 
-    self:RemoveExpiredEntries_()
-    self:RemoveSuperfluousEntries_()
+    self:TrimExpiredEntries_()
+    self:TrimOldestEntries_()
     
     return self
 end
 
 -- private space
 
-function Class:RemoveExpiredEntries_()
+function Class:TrimExpiredEntries_()
     Scopify(EScopes.Function, self)
 
     if _maxLifespanPerEntryInSeconds <= 0 then
@@ -195,14 +211,14 @@ function Class:RemoveExpiredEntries_()
     end
 
     _timestampOfLastDeadlinesCleanup = now
-    for key, value in TablesHelper.GetKeyValuePairs(_entries) do
+    for key, value in T.GetKeyValuePairs(_entries) do
         if now >= value.Deadline then
             self:Remove(key)
         end
     end
 end
 
-function Class:RemoveSuperfluousEntries_()
+function Class:TrimOldestEntries_()
     Scopify(EScopes.Function, self)
 
     if _maxSize <= 0 then
@@ -216,7 +232,8 @@ function Class:RemoveSuperfluousEntries_()
     local sortedArrayOldestToNewest = self:Sort_(_entries) -- remove the least recently used entries
 
     local desiredEventualSize = _maxSize * (1 - _trimRatio)
-    local numberOfItemsToDelete = currentLength - desiredEventualSize
+    local numberOfItemsToDelete = _count - desiredEventualSize
+
     for i = 1, numberOfItemsToDelete, 1
     do
         self:Remove(sortedArrayOldestToNewest[i].key)
@@ -227,7 +244,7 @@ function Class:Sort_(t)
     Scopify(EScopes.Function, self)
 
     local array = {}
-    for key, value in TablesHelper.GetKeyValuePairs(t) do
+    for key, value in T.GetKeyValuePairs(t) do
         Table.Insert(array, { key = key, access = value.Timestamp })
     end
 
