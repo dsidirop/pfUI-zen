@@ -1,5 +1,7 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
+local Time     = using "System.Time"
+
 local T        = using "System.Helpers.Tables"
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
@@ -106,7 +108,7 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
             },
             ["LRUC.UP.GGI.SUS.0060"] = (function()
                 local fooFunction = function()  end
-                
+
                 return {
                     PreArranged = {
                         ["foo"] = { Value = fooFunction },
@@ -116,18 +118,51 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
                     },
                 }
             end)(),
-            ["LRUC.UP.GGI.SUS.0070"] = {
-                CacheSettings = {
-                    MaxSize = 1
-                },
-                PreArranged = {
-                    ["foo"] = { Value = 1 },
-                    ["bar"] = { Value = 2 },
-                },
-                Expected = {
-                    ["bar"] = 2,
-                },
-            }
+            ["LRUC.UP.GGI.SUS.0070"] = (function()
+                local now = Time.Now()
+                return {
+                    CacheSettings = {
+                        MaxSize = 1,
+                        TrimRatio = 0.1
+                    },
+                    PreArranged = {
+                        ["foo01"] = { Value = 01, Timestamp = now + 1 },
+                        ["foo02"] = { Value = 02, Timestamp = now + 2 },
+                    },
+                    Expected = {
+                        ["foo02"] = 02,
+                    },
+                }
+            end)(),
+            ["LRUC.UP.GGI.SUS.0080"] = (function()
+                local now = Time.Now()
+                return {
+                    CacheSettings = {
+                        MaxSize = 10,
+                        TrimRatio = 0.5
+                    },
+                    PreArranged = {
+                        ["foo01"] = { Value = 01, Timestamp = now + 1 },
+                        ["foo02"] = { Value = 02, Timestamp = now + 2 },
+                        ["foo03"] = { Value = 03, Timestamp = now + 3 },
+                        ["foo04"] = { Value = 04, Timestamp = now + 4 },
+                        ["foo05"] = { Value = 05, Timestamp = now + 5 },
+                        ["foo06"] = { Value = 06, Timestamp = now + 6 },
+                        ["foo07"] = { Value = 07, Timestamp = now + 7 },
+                        ["foo08"] = { Value = 08, Timestamp = now + 8 },
+                        ["foo09"] = { Value = 09, Timestamp = now + 9 },
+                        ["foo10"] = { Value = 10, Timestamp = now + 10 },
+                        ["foo11"] = { Value = 11, Timestamp = now + 11 },
+                    },
+                    Expected = {
+                        ["foo11"] = 11,
+                        ["foo10"] = 10,
+                        ["foo09"] = 09,
+                        ["foo08"] = 08,
+                        ["foo07"] = 07,
+                    },
+                }
+            end)()
         },
         function(options)
             -- ARRANGE
@@ -138,7 +173,7 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
                 local cache = LRUCache:New(options.CacheSettings)
                 
                 for key, value in T.GetKeyValuePairs(options.PreArranged) do
-                    cache:Upsert(key, value.Value)
+                    cache:Upsert(key, value.Value, value.Timestamp)
                 end
                 
                 -- unfortunately in wow lua its extremely hard to simulate time delays ala 'await Task.Delay(x)'
