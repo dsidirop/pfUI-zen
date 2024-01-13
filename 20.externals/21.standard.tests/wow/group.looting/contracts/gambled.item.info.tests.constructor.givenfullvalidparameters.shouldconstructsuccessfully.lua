@@ -1,30 +1,13 @@
-﻿local _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _importer = _assert(_g.pvl_namespacer_get)
+local S                                      = using "System.Helpers.Strings" --                                                               @formatter:off
+local EWowItemQuality                        = using "Pavilion.Warcraft.Enums.EWowItemQuality"
+local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
+local EWoWLootingInelligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingInelligibilityReasonType"
 
-    return _setfenv, _importer
-end)()
+local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
-_setfenv(1, {}) --                                                                                                           @formatter:off
-
-local S                                   = _importer("System.Helpers.Strings")
-
-local U                                   = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
-local GambledItemInfoDto                  = _importer("Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto")
-
-local EWowItemQuality                     = _importer("Pavilion.Warcraft.Enums.EWowItemQuality")
-local EWoWLootingInelligibilityReasonType = _importer("Pavilion.Warcraft.Enums.EWoWLootingInelligibilityReasonType")
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests",
-    Tags = { "pavilion", "grouplooting" },
-} --                                                                                                                         @formatter:on
-
-TestsGroup:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
+TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
         function()
             return {
                 ["GII.CTOR.GFVP.SCS.010"] = {
