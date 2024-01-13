@@ -74,7 +74,7 @@ function TablesHelper.AnyOrNil(tableInstance)
 end
 
 function TablesHelper.IsNilOrEmpty(tableInstance)
-    Guard.Assert.IsNilOrTable(tableInstance)
+    Guard.Assert.IsNilOrTable(tableInstance, "tableInstance")
 
     return tableInstance == nil or B.Next(tableInstance) == nil
 end

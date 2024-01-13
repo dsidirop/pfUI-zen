@@ -3,7 +3,7 @@
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
-local Console      = using "System.Console"
+-- local Console      = using "System.Console"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 

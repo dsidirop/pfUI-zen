@@ -38,11 +38,8 @@ Class.DefaultOptions_ = {
 function Class:New(options)
     Scopify(EScopes.Function, self)
 
-    options = options == nil --@formatter:off
-                and Class.DefaultOptions_
-                or  options
+    options = Guard.Assert.IsNilOrTable(options, "options") or Class.DefaultOptions_ --@formatter:off
 
-    Guard.Assert.IsTable(options, "options")
     Guard.Assert.IsNilOrRatioNumber(options.TrimRatio, "options.TrimRatio")
     Guard.Assert.IsNilOrPositiveInteger(options.MaxSize, "options.MaxSize")
     Guard.Assert.IsNilOrPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")

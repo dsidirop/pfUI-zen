@@ -23,7 +23,7 @@ _setfenv(1, {})
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 
-local Check = _importer("System.Guard.Assert")
+local Guard = _importer("System.Guard")
 local SGreeniesGrouplootingAutomationMode = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode")
 local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
 
@@ -35,9 +35,7 @@ local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.Use
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    Check.IsNilOrTable(dbcontextReadonly)
-
-    dbcontextReadonly = dbcontextReadonly or DBContext:New() -- todo  remove this later on in favour of DI
+    dbcontextReadonly = Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") or DBContext:New() -- todo  remove this later on in favour of DI
 
     return self:Instantiate({
         _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
