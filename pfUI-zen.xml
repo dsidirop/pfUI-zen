@@ -6,7 +6,7 @@
     <Include file="30.zen.module\.xml"/>
     
     <!-- tests -->
-    <Include file="20.externals\11.standard.tests\.xml"/>
+    <Include file="20.externals\21.standard.tests\.xml"/>
     
     <!-- keep last -->
     <Include file="00.testing\tests.runner.lua"/>    

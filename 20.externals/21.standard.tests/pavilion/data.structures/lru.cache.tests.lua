@@ -1,18 +1,13 @@
-local U, _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local U = _assert(_g.VWoWUnit)
-    local _importer = _assert(_g.pvl_namespacer_get)
+local U = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit"
 
-    return U, _setfenv, _importer
-end)()
+local Scopify = using "System.Scopify" --@formatter:off
+local EScopes = using "System.EScopes"
 
-_setfenv(1, {})
+local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
-local LRUCache = _importer("Pavilion.DataStructures.LRUCache")
+Scopify(EScopes.Function, {}) --@formatter:on
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "Pavilion.DataStructures.LRUCache", Tags = { "data-structures", "lru-cache" } }
 
