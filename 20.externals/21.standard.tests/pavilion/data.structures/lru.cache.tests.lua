@@ -1,17 +1,10 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit"
+local LRUCache = using "Pavilion.DataStructures.LRUCache" --@formatter:off
 
-local Scopify = using "System.Scopify" --@formatter:off
-local EScopes = using "System.EScopes"
+local TG, U = using "[testgroup.tagged]" "Pavilion.DataStructures.LRUCache" { "data-structures", "lru-cache" } --@formatter:on
 
-local LRUCache = using "Pavilion.DataStructures.LRUCache"
-
-Scopify(EScopes.Function, {}) --@formatter:on
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "Pavilion.DataStructures.LRUCache", Tags = { "data-structures", "lru-cache" } }
-
-TestsGroup:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
+TG:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
         {
             ["LRUC.CTOR.GGI.SC.0000"] = nil, -- default options
             ["LRUC.CTOR.GGI.SC.0010"] = {
@@ -43,7 +36,7 @@ TestsGroup:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
         end
 )
 
-TestsGroup:AddTheory("LRUCache.Constructor.GivenRedInput.ShouldThrowGuardException",
+TG:AddTheory("LRUCache.Constructor.GivenRedInput.ShouldThrowGuardException",
         {
             ["LRUC.CTOR.GRI.STGE.0000"] = { MaxSize = -1, },
             ["LRUC.CTOR.GRI.STGE.0010"] = { TrimRatio = -1, },
