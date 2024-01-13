@@ -1,10 +1,13 @@
-local _g = assert(_G or getfenv(0))
-local _setfenv = assert(_g.setfenv)
-local _namespacer_binder = assert(_g.pvl_namespacer_bind)
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local _VWoWUnit = assert(_g.VWoWUnit)
+local B = using "[built-ins]" [[ VWoWUnit = VWoWUnit ]]
 
-_g = nil
-_setfenv(1, {})
+local Namespacer = using "System.Namespacer"
 
-_namespacer_binder("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit", _VWoWUnit)
+Namespacer:Bind("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit", B.VWoWUnit)
+
+Namespacer:Bind("[testgroup]", function(name)
+    local testGroup = B.VWoWUnit.TestsEngine:CreateOrUpdateGroup { Name = name }
+    
+    return testGroup, B.VWoWUnit
+end)

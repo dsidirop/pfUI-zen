@@ -76,18 +76,8 @@ function _Engine:CreateOrUpdateGroup(options)
 	_assert(_type(options.Tags) == "table" or options.Tags == nil)
 	_assert(_type(options.Name) == "string" and options.Name ~= "")
 
-	options.Tags = options.Tags or {}
-	
-	local group = self:GetGroup(options.Name)
-	if group == nil then
-		group = VWoWUnit.TestsGroup:New(options.Name)
-		_testGroups[options.Name] = group
-	end
-
-	local tagsCount = _tableGetn(options.Tags) 
-	for i = 1, tagsCount do
-		self:AssociateWithTestTag(group, options.Tags[i])
-	end
+	local group = self:GetsertGroup_(options.Name)
+	self:AssociateTestGroupWithTags(group, options.Tags or {})
 
 	return group
 end
@@ -98,15 +88,37 @@ function _Engine:GetGroup(name)
 	return _testGroups[name]
 end
 
-function _Engine:AssociateWithTestTag(group, tag)
+function _Engine:AssociateTestGroupWithTags(group, tags)
 	_setfenv(1, self)
 
-	_testTags[tag] = _testTags[tag] or {}
+	_assert(_type(tags) == "table")
 
-	_testTags[tag][group:GetName()] = group
+	local tagsCount = _tableGetn(tags)
+	for i = 1, tagsCount do
+		local tag  = tags[i]
+
+		_testTags[tag] = _testTags[tag] or {}
+		_testTags[tag][group:GetName()] = group
+	end
+	
+	return self
 end
 
 -- private space
+
+function _Engine:GetsertGroup_(name)
+	_setfenv(1, self)
+
+	_assert(_type(name) == "string" and name ~= "")
+
+	local group = self:GetGroup(name)
+	if group == nil then
+		group = VWoWUnit.TestsGroup:New(name)
+		_testGroups[name] = group
+	end
+
+	return group
+end
 
 function _Engine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
 	_setfenv(1, _Engine)
