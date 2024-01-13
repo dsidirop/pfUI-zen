@@ -1,30 +1,21 @@
--- lru cache  with a fixed maximum size    when the cache is full it discards the least recently used items first
---
--- inspired by https://github.com/kenshinx/Lua-LRU-Cache
+---- lru cache  with a fixed maximum size    when the cache is full it discards the least recently used items first
+----
+---- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local _importer, _setfenv, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local Time         = using "System.Time" --                @formatter:off
+local Guard        = using "System.Guard"
+local Table        = using "System.Table"
+local Scopify      = using "System.Scopify"
+local EScopes      = using "System.EScopes"
 
-    return _importer, _setfenv, _namespacer
-end)()
+local TablesHelper    = using "System.Helpers.Tables"
+local StringsHelper   = using "System.Helpers.Strings" --  @formater:on
 
-_setfenv(1, {})                                           --@formatter:off
+local Class = using "[declare]" "Pavilion.DataStructures.LRUCache"
 
-local Time          = _importer("System.Time")
-local Guard         = _importer("System.Guard")
-local Table         = _importer("System.Table")
-local Scopify       = _importer("System.Scopify")
-local EScopes       = _importer("System.EScopes")
-local TablesHelper  = _importer("System.Helpers.Tables")
-local StringsHelper = _importer("System.Helpers.Strings") --@formatter:on 
-
-local Class = _namespacer("Pavilion.DataStructures.LRUCache")
+Scopify(EScopes.Function, {})
 
 Class.DefaultOptions_ = {
     MaxSize = 100,
