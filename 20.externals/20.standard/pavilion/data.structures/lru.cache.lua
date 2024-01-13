@@ -132,12 +132,13 @@ function Class:GetValuesArray()
 end
 
 -- insert or update if the key already exists
-function Class:Upsert(key, valueOptional)
+function Class:Upsert(key, valueOptional, timestampOptional)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNotNil(key, "key")
+    Guard.Assert.IsNilOrPositiveInteger(timestampOptional, "timestampOptional")
 
-    local t = Time.Now()
+    local t = timestampOptional or Time.Now()
 
     valueOptional = Nils.Coalesce(valueOptional, true) --00
 
