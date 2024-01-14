@@ -43,7 +43,7 @@ end
 function Class:ChainSetPollingInterval(interval)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsPositiveInteger(interval, "interval")
+    Guard.Assert.IsPositiveNumber(interval, "interval")
 
     _timer:ChainSetInterval(interval)
 
