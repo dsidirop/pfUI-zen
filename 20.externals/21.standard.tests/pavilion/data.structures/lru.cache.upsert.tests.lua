@@ -5,7 +5,7 @@ local Time     = using "System.Time"
 local T        = using "System.Helpers.Tables"
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.DataStructures.LRUCache.Tests" { "data-structures", "lru-cache" } --@formatter:on
+local TG, U = using "[testgroup]" "Pavilion.DataStructures.LRUCache.Tests" --@formatter:on
 
 TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
         {

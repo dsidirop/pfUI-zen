@@ -2,7 +2,7 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:o
 
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.DataStructures.LRUCache.Tests" { "data-structures", "lru-cache" } --@formatter:on
+local TG, U = using "[testgroup]" "Pavilion.DataStructures.LRUCache.Tests" --@formatter:on
 
 TG:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
         {
@@ -35,7 +35,6 @@ TG:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
             end)
         end
 )
-
 
 TG:AddTheory("LRUCache.Constructor.GivenRedInput.ShouldThrowGuardException",
         {
