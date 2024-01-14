@@ -1,10 +1,9 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard        = using "System.Guard" -- @formatter:off
-local Scopify      = using "System.Scopify"
-local EScopes      = using "System.EScopes"
-
-local SPopupWarningItemWillBindToYouAutohandlingMode = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SPopupWarningItemWillBindToYouAutohandlingMode" --@formatter:on
+local Guard             = using "System.Guard" -- @formatter:off
+local Scopify           = using "System.Scopify"
+local EScopes           = using "System.EScopes"
+local SAutohandlingMode = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SLootConfirmationPopupsAutohandlingMode" --@formatter:on
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.PopupWarningItemBindAutohandling.AutohandlerAggregateSettings"
 
@@ -27,7 +26,7 @@ end
 function Class:ChainSetMode(value)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsEnumValue(SPopupWarningItemWillBindToYouAutohandlingMode, value, "value")
+    Guard.Assert.IsEnumValue(SAutohandlingMode, value, "value")
 
     _mode = value
 

@@ -1,23 +1,33 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-local Guard        = using "System.Guard"
-local Scopify      = using "System.Scopify"
-local EScopes      = using "System.EScopes"
-local SMode        = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SPopupWarningItemWillBindToYouAutohandlingMode" -- @formatter:on
+local Guard                        = using "System.Guard"
+local Scopify                      = using "System.Scopify"
+local EScopes                      = using "System.EScopes"
+
+local PopupsHandlingService        = using "Pavilion.Warcraft.Popups.PopupsHandlingService"
+local ConfirmationPopupsListener   = using "Pavilion.Warcraft.Popups.ConfirmationPopupsListener"
+
+local SAutohandlingMode            = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SLootConfirmationPopupsAutohandlingMode"
+local AutohandlerAggregateSettings = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.PopupWarningItemBindAutohandling.AutohandlerAggregateSettings"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGroupAutolooting.AssistantAggregate"
 
 Scopify(EScopes.Function, {})
 
-function Class:New()
+function Class:New(confirmationPopupsListener, popupsHandlingService)
     Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNilOrInstanceOf(popupsHandlingService,      PopupsHandlingService,      "popupsHandlingService")
+    Guard.Assert.IsNilOrInstanceOf(confirmationPopupsListener, ConfirmationPopupsListener, "confirmationPopupsListener")
 
     return self:Instantiate({
         _settings = nil,
-
         _isRunning = false,
+
+        _popupsHandlingService      = popupsHandlingService      or PopupsHandlingService:New(), --       todo   refactor this later on so that this gets injected through DI
+        _confirmationPopupsListener = confirmationPopupsListener or ConfirmationPopupsListener:New(), --  todo   refactor this later on so that this gets injected through DI
     })
-end
+end -- @formatter:on
 
 function Class:IsRunning()
     Scopify(EScopes.Function, self)
@@ -25,9 +35,10 @@ function Class:IsRunning()
     return _isRunning
 end
 
--- settings is expected to be AggregateSettings
 function Class:SetSettings(settings)
     Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsInstanceOf(settings, AutohandlerAggregateSettings, "settings")
 
     _settings = settings
 end
@@ -44,13 +55,13 @@ function Class:Start()
 
     Guard.Assert.IsNotNil(_settings, "Self.Settings")
 
-    if _isRunning then
+    if _isRunning or _settings:GetMode() == SAutohandlingMode.LetUserChoose then
         return self -- nothing to do
     end
 
-    if _settings:GetMode() == SMode.LetUserChoose then
-        return self -- nothing to do
-    end
+    _confirmationPopupsListener
+            :StartListening()
+            :EventNeedRollConfirmationRequested_Subscribe(ConfirmationPopupListener_NeedRollConfirmationRequested_, self)
 
     _isRunning = true
 
@@ -64,6 +75,10 @@ function Class:Stop()
         return self -- nothing to do
     end
 
+    _confirmationPopupsListener
+            :StopListening()
+            :EventNeedRollConfirmationRequested_Unsubscribe(ConfirmationPopupListener_NeedRollConfirmationRequested_)
+
     _isRunning = false
 
     return self
@@ -72,7 +87,7 @@ end
 function Class:SwitchMode(value)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsEnumValue(SMode, value, "value")
+    Guard.Assert.IsEnumValue(SAutohandlingMode, value, "value")
 
     if _settings:GetMode() == value then
         return self -- nothing to do
@@ -80,7 +95,7 @@ function Class:SwitchMode(value)
 
     _settings:ChainSetMode(value) --00 slight hack
 
-    if value == SMode.LetUserChoose then
+    if value == SAutohandlingMode.LetUserChoose then
         self:Stop() -- special case
         return self
     end
@@ -89,34 +104,21 @@ function Class:SwitchMode(value)
 
     return self
 
-    --00 this is a bit of a hack   normally we should deep clone the settings and then change the mode
-    --   on the clone and perform validation there   but for such a simple case it would be an overkill
+    -- 00  this is a bit of a hack   normally we should deep clone the settings and then change the mode
+    --     on the clone and perform validation there   but for such a simple case it would be an overkill
 end
+
 
 -- private space
 
--- https://wowpedia.fandom.com/wiki/API_ConfirmLootRoll
 function Class:ConfirmationPopupListener_NeedRollConfirmationRequested_(_, ea) -- 00
-    Scopify(EScopes.Function, self)
+    self._popupsHandlingService:HandlePopupGamblingIntent(ea:GetGamblingId(), ea:GetIntendedGamblingType())
 
-    if _settings:GetMode() == SMode.LetUserChoose then
-        return
-    end
-
-    _groupLootGamblingService:SubmitGamblingIntentConfirmation(ea:GetGamblingId(), ea:GetIntendedGamblingType())
-
-    -- 00  for needing items
+    -- 00  for needing items   https://wowpedia.fandom.com/wiki/API_ConfirmLootRoll
 end
 
--- https://wowpedia.fandom.com/wiki/API_ConfirmLootSlot
 function Class:ConfirmationPopupListener_ItemWillBindToYouConfirmationRequested_(_, ea) -- 00
-    Scopify(EScopes.Function, self)
-
-    if _settings:GetMode() == SMode.LetUserChoose then
-        return
-    end
-
-    _groupLootGamblingService:SubmitItemWillBindToYouConfirmation(ea:GetGamblingId(), ea:GetIntendedGamblingType())
+    self._popupsHandlingService:HandlePopupItemWillBindToYou(ea:GetGamblingId(), ea:GetIntendedGamblingType())
     
-    -- 00  for bind-on-pickup items
+    -- 00  for bind-on-pickup items   https://wowpedia.fandom.com/wiki/API_ConfirmLootSlot
 end
