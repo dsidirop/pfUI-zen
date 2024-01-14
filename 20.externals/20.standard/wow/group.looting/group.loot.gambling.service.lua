@@ -77,7 +77,7 @@ function Service:SubmitResponseToItemGamblingRequests(gamblingRequestIdsArray, w
     Guard.Assert.IsTable(gamblingRequestIdsArray, "gamblingRequestIdsArray")
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
     
-    for _, gamblingRequestId in T.GetArrayIndecesAndValues(gamblingRequestIdsArray) do
+    for _, gamblingRequestId in T.GetIndexedPairs(gamblingRequestIdsArray) do
         self.RollOnLoot_(gamblingRequestId, wowRollMode)
     end
 end

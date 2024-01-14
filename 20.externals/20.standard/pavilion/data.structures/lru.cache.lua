@@ -88,7 +88,7 @@ function Class:GetAll()
     self:Cleanup()
 
     local entries = {}
-    for key, value in T.GetKeyValuePairs(_entries) do
+    for key, value in T.GetPairs(_entries) do
         entries[key] = value.Value
 
         _entries[key].Timestamp = now
@@ -105,7 +105,7 @@ function Class:GetKeysArray()
     self:Cleanup()
 
     local keys = {}
-    for key in T.GetKeyValuePairs(_entries) do
+    for key in T.GetPairs(_entries) do
         Table.Insert(keys, key)
 
         _entries[key].Timestamp = now
@@ -122,7 +122,7 @@ function Class:GetValuesArray()
     self:Cleanup()
 
     local values = {}
-    for k, v in T.GetKeyValuePairs(_entries) do
+    for k, v in T.GetPairs(_entries) do
         Table.Insert(values, v.Value)
 
         _entries[k].Timestamp = now
@@ -179,7 +179,7 @@ function Class:ToString()
 
     local s = "{ "
     local sep = ""
-    for key, value in T.GetKeyValuePairs(_entries) do
+    for key, value in T.GetPairs(_entries) do
         s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
         sep = ", "
     end
@@ -212,7 +212,7 @@ function Class:TrimExpiredEntries_()
     end
 
     _timestampOfLastDeadlinesCleanup = now
-    for key, value in T.GetKeyValuePairs(_entries) do
+    for key, value in T.GetPairs(_entries) do
         if now >= value.Deadline then
             self:Remove(key)
         end
@@ -245,7 +245,7 @@ function Class:Sort_(t)
     Scopify(EScopes.Function, self)
 
     local array = {}
-    for key, value in T.GetKeyValuePairs(t) do
+    for key, value in T.GetPairs(t) do
         Table.Insert(array, { key = key, access = value.Timestamp })
     end
 

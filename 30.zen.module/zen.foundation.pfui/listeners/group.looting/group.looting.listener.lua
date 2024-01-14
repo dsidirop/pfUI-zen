@@ -72,7 +72,7 @@ end
 function Class:EvaluatePossibleItemRollFramesThatMayCurrentlyBeDisplayed_()
     Scopify(EScopes.Function, self)
 
-    for rollFrameIndex in T.GetKeyValuePairs(PfuiRoll.frames) do
+    for rollFrameIndex in T.GetPairs(PfuiRoll.frames) do
         self:EvaluateItemRollFrameAndReportIfNew_(PfuiRoll, rollFrameIndex)
     end
 

@@ -30,9 +30,11 @@ TG:AddTheory("LRUCache.Constructor.GivenGreenInput.ShouldConstruct",
             -- ARRANGE
 
             -- ACT + ASSERT
-            U.Should.Not.Throw(function()
-                LRUCache:New(options)
+            local cache = U.Should.Not.Throw(function()
+                return LRUCache:New(options)
             end)
+
+            U.Should.Be.PlainlyEqual(cache:Count(), 0)
         end
 )
 

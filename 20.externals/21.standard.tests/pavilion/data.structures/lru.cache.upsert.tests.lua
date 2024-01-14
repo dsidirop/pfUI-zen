@@ -167,7 +167,7 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
             local cache = U.Should.Not.Throw(function()
                 local cache = LRUCache:New(options.CacheSettings)
                 
-                for key, value in T.GetKeyValuePairs(options.PreArranged) do
+                for key, value in T.GetPairs(options.PreArranged) do
                     cache:Upsert(key, value.Value, value.Timestamp)
                 end
                 
@@ -179,5 +179,6 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
 
             -- ASSERT
             U.Should.Be.Equivalent(cache:GetAll(), options.Expected)
+            U.Should.Be.PlainlyEqual(cache:Count(), T.Count(options.Expected))
         end
 )

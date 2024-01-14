@@ -99,7 +99,7 @@ function Class:Raise(sender, eventArgs)
     Guard.Assert.IsTable(sender, "sender")
     Guard.Assert.IsTable(eventArgs, "eventArgs")
 
-    for k, v in TablesHelper.GetKeyValuePairs(_handlers) do
+    for k, v in TablesHelper.GetPairs(_handlers) do
         if v and v ~= NoOwner then -- v is the owning class-instance of the handler
             k(v, sender, eventArgs)
         else
@@ -107,7 +107,7 @@ function Class:Raise(sender, eventArgs)
         end
     end
 
-    for _, v in TablesHelper.GetKeyValuePairs(_handlersJustOnce) do
+    for _, v in TablesHelper.GetPairs(_handlersJustOnce) do
         _handlers[v] = nil -- rip off the handler
     end
 

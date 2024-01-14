@@ -7,9 +7,9 @@ local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
 local TG, U = using "[testgroup]" "Pavilion.DataStructures.LRUCache.Tests" --@formatter:on
 
-TG:AddTheory("LRUCache.Remove.GivenGreenInput.ShouldRemoveSuccessfully",
+TG:AddTheory("LRUCache.Clear.GivenGreenInput.ShouldClearSuccessfully",
         {
-            ["LRUC.CL.GGI.SRS.0000"] = (function()
+            ["LRUC.CL.GGI.SCS.0000"] = (function()
                 local now = Time.Now()
                 return {
                     CacheSettings = {
@@ -20,27 +20,7 @@ TG:AddTheory("LRUCache.Remove.GivenGreenInput.ShouldRemoveSuccessfully",
                         ["foo01"] = { Value = 01, Timestamp = now + 1 },
                         ["foo02"] = { Value = 02, Timestamp = now + 2 },
                     },
-                    ToRemove = "foo01",
                     Expected = {
-                        ["foo02"] = 02,
-                    },
-                }
-            end)(),
-            ["LRUC.CL.GGI.SRS.0010"] = (function()
-                local now = Time.Now()
-                return {
-                    CacheSettings = {
-                        MaxSize = 10,
-                        TrimRatio = 0.1
-                    },
-                    PreArranged = {
-                        ["foo01"] = { Value = 01, Timestamp = now + 1 },
-                        ["foo02"] = { Value = 02, Timestamp = now + 2 },
-                    },
-                    ToRemove = "foobar",
-                    Expected = {
-                        ["foo01"] = 01,
-                        ["foo02"] = 02,
                     },
                 }
             end)(),
@@ -57,7 +37,7 @@ TG:AddTheory("LRUCache.Remove.GivenGreenInput.ShouldRemoveSuccessfully",
                     cache:Upsert(key, value.Value, value.Timestamp)
                 end
 
-                cache:Remove(options.ToRemove)
+                cache:Clear()
                 
                 return cache
             end)
