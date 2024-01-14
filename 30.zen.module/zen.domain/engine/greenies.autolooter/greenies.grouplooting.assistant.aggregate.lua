@@ -152,13 +152,15 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    if not self:IsEligibleForAutoGamble(ea:GetGamblingId()) then
+    local gamblingId = ea:GetGamblingId()
+    local desiredLootGamblingBehaviour = _settings:GetMode()
+    if not self:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour) then
         return
     end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
         _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
-                ea:GetGamblingId(),
+                gamblingId,
                 self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
         )
         return
@@ -171,10 +173,9 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
 end
 
-function Class:IsEligibleForAutoGamble(gamblingId)
+function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
-    local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         return false -- let the user choose
     end
