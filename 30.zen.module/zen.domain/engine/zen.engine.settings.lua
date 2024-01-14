@@ -3,7 +3,7 @@
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local GreeniesAutolooterAggregateSettings = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.AggregateSettings"
+local GreeniesAutolooterAggregateSettings = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGroupAutolooting.AssistantAggregateSettings"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings"
 
