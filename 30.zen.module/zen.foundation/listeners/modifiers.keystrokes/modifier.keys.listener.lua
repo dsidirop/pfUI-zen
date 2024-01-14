@@ -1,37 +1,20 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard   = using "System.Guard"
+local Event   = using "System.Event"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
+local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
+local IsControlKeyDown = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local Timer = using "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer"
+local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" -- @formatter:on
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
-local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
-local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
-
-local Event = _importer("System.Event")
-local Timer = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer")
-local ModifierKeysStatusesChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener")
+Scopify(EScopes.Function, {})
 
 function Class:New(timer)
     Scopify(EScopes.Function, self)
@@ -49,8 +32,8 @@ end
 
 function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
     Scopify(EScopes.Function, self)
-
-    _assert(_type(mustEmitOnFreshStart) == "boolean", "expected a boolean")
+    
+    Guard.Assert.IsBoolean(mustEmitOnFreshStart, "mustEmitOnFreshStart")
 
     _mustEmitOnFreshStart = mustEmitOnFreshStart
 
@@ -59,8 +42,8 @@ end
 
 function Class:ChainSetPollingInterval(interval)
     Scopify(EScopes.Function, self)
-
-    _assert(_type(interval) == "number" and interval > 0, "interval must be a positive number")
+    
+    Guard.Assert.IsPositiveInteger(interval, "interval")
 
     _timer:ChainSetInterval(interval)
 
@@ -143,7 +126,7 @@ function Class:OnSettingsChanged_()
 
         if _mustEmitOnFreshStart then
             self:Timer_Elapsed_(nil, nil)
-        end        
+        end
         return
     end
 
