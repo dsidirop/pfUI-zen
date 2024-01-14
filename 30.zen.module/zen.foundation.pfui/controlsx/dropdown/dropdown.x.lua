@@ -1,34 +1,20 @@
-﻿-- the main reason we introduce this class is to be able to set the selected option by nickname  on top of that
--- the original pfui dropdown control has a counter-intuitive api surface that is not fluent enough for day to day use 
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local _assert, _setfenv, _type, _importer, _namespacer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    _setfenv(1, {})
+local Event = using "System.Event"
+local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
+local SelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
 
-    local _type = _assert(_g.type)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
+local A = using "System.Helpers.Arrays"
+local T = using "System.Helpers.Tables"
+local S = using "System.Helpers.Strings"
 
-    return _assert, _setfenv, _type, _importer, _namespacer
-end)()
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX"
 
-_setfenv(1, {})
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local A = _importer("System.Helpers.Arrays")
-local T = _importer("System.Helpers.Tables")
-local S = _importer("System.Helpers.Strings")
-
-local Event = _importer("System.Event")
-local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
-local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.DropdownX")
+Scopify(EScopes.Function, {})
 
 function Class:New()
     Scopify(EScopes.Function, self)
@@ -51,8 +37,8 @@ end
 
 function Class:ChainSetCaption(caption)
     Scopify(EScopes.Function, self)
-
-    _assert(_type(caption) == "string")
+    
+    Guard.Assert.IsString(caption, "caption")
 
     _caption = caption
 
@@ -62,11 +48,12 @@ end
 function Class:ChainSetMenuItems(menuItems)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(menuItems) == "table")
+    Guard.Assert.IsTable(menuItems, "menuItems")
 
     _menuItems = menuItems
     _menuEntryValuesToIndexes, _menuIndexesToMenuValuesArray = self:ParseMenuItems_(menuItems)
-    _assert(_menuEntryValuesToIndexes ~= nil, "menuItems contains duplicate values which is not allowed")
+
+    Guard.Assert.Explained.IsNotNil(_menuEntryValuesToIndexes, "menuItems contains duplicate values which is not allowed")
 
     return self
 end
@@ -74,8 +61,8 @@ end
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
-    _assert(_type(_caption) == "string")
-    _assert(_type(_menuItems) == "table")
+    Guard.Assert.IsTable(_menuItems, "_menuItems")
+    Guard.Assert.IsString(_caption, "_caption")
 
     _nativePfuiControl = PfuiGui.CreateConfig(
             function()
@@ -98,8 +85,8 @@ end
 function Class:TrySetSelectedOptionByValue(optionValue)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(optionValue) == "string")
-    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
+    Guard.Assert.IsString(optionValue, "optionValue")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
 
     local index = _menuEntryValuesToIndexes[optionValue]
     if index == nil then
@@ -107,7 +94,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
     end
 
     local success = self:TrySetSelectedOptionByIndex(index)
-    _assert(success, "failed to set the selection to option '" .. optionValue .. "' (index=" .. index .. " - but how did this happen?)")
+    Guard.Assert.Explained.IsTrue(success, "failed to set the selection to option '" .. optionValue .. "' (index=" .. index .. " - but how did this happen?)")
 
     return true
 end
@@ -115,8 +102,8 @@ end
 function Class:TrySetSelectedOptionByIndex(index)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
-    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
+    Guard.Assert.IsPositiveInteger(index, "index")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
 
     if index > A.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
@@ -132,7 +119,8 @@ function Class:TrySetSelectedOptionByIndex(index)
 
     _singlevalue[_valuekeyname] = newValue --             order
     _nativePfuiControl.input:SetSelection(index) --       order
-    _assert(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
+
+    Guard.Assert.Explained.IsTrue(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
     self:OnSelectionChanged_(
             SelectionChangedEventArgs:New() -- 00
@@ -160,8 +148,8 @@ end
 function Class:Show()
     Scopify(EScopes.Function, self)
 
-    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
-
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
+    
     _nativePfuiControl:Show()
 
     return self
@@ -169,7 +157,8 @@ end
 
 function Class:Hide()
     Scopify(EScopes.Function, self)
-    _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
+
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
 
     _nativePfuiControl:Hide()
 
@@ -196,7 +185,7 @@ end
 function Class:OnSelectionChanged_(ea)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(ea) == "table", "event-args is not an object")
+    Guard.Assert.IsTable(ea, "ea")
 
     _oldValue = ea:GetNewValue()
     _eventSelectionChanged:Raise(self, ea)
@@ -205,7 +194,7 @@ end
 function Class:ParseMenuItems_(menuItemsArray)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(menuItemsArray) == "table")
+    Guard.Assert.IsTable(menuItemsArray, "menuItemsArray")
 
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
