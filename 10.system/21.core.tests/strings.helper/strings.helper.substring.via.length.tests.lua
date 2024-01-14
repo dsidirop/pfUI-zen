@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "[built-in]" "VWoWUnit"
+local U = using "[built-in]" [[ VWoWUnit ]]
 local B = using "[built-ins]" [[ NativeSubstringViaRange = string.sub ]]
 
 local Scopify = using "System.Scopify"

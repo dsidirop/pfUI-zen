@@ -4,7 +4,7 @@ local Nils = using "System.Nils"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local U = using "[built-in]" "VWoWUnit"
+local U = using "[built-in]" [[ VWoWUnit ]]
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Name = "System.Nils",
