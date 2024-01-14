@@ -38,6 +38,15 @@ do
     end
 
     -- TABLES
+    function Guard.Assert.IsArray(value, optionalArgumentName)
+        if not Reflection.IsTable(value) then -- todo improve the heuristic to check the first index for 1
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table-array"))
+        end
+
+        return value
+    end
+
+    -- TABLES
     function Guard.Assert.IsTable(value, optionalArgumentName)
         if not Reflection.IsTable(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table"))

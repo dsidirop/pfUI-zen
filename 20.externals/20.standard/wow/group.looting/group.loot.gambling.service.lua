@@ -71,7 +71,7 @@ function Service:GetGambledItemInfo(gamblingId)
     }
 end
 
-function Service:SubmitResponseToItemGamblingRequests(gamblingRequestIdsArray, wowRollMode)
+function Service:SubmitSameResponseToAllItemGamblingRequests(gamblingRequestIdsArray, wowRollMode)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(gamblingRequestIdsArray, "gamblingRequestIdsArray")
