@@ -126,6 +126,14 @@ do
         return value
     end
 
+    function Guard.Assert.IsPositiveNumber(value, optionalArgumentName)
+        if not Reflection.IsNumber(value) or value <= 0 then
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "number"))
+        end
+
+        return value
+    end
+
     function Guard.Assert.IsNilOrNumber(value, optionalArgumentName)
         if value == nil then
             return nil
@@ -245,6 +253,14 @@ do
     end
     
     -- BOOLEANS
+    function Guard.Assert.IsBoolean(value, optionalArgumentName)
+        if not Reflection.IsBoolean(value) then
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "boolean"))
+        end
+
+        return value
+    end
+    
     function Guard.Assert.IsBooleanizable(value, optionalArgumentName)
         if not GuardUtilities.IsBooleanizable(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "booleanizable value"))
