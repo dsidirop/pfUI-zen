@@ -162,6 +162,50 @@ TG:AddTheory("LRUCache.Upsert.GivenGreenInput.ShouldUpsertSuccessfully",
                         ["foo07"] = 07,
                     },
                 }
+            end)(),
+            ["LRUC.UP.GGI.SUS.0090"] = (function()
+                local now = Time.Now()
+                return {
+                    CacheSettings = {
+                        MaxSize = 10,
+                        TrimRatio = 1
+                    },
+                    PreArranged = {
+                        ["foo01"] = { Value = 01, Timestamp = now + 1 },
+                        ["foo02"] = { Value = 02, Timestamp = now + 2 },
+                        ["foo03"] = { Value = 03, Timestamp = now + 3 },
+                        ["foo04"] = { Value = 04, Timestamp = now + 4 },
+                        ["foo05"] = { Value = 05, Timestamp = now + 5 },
+                        ["foo06"] = { Value = 06, Timestamp = now + 6 },
+                        ["foo07"] = { Value = 07, Timestamp = now + 7 },
+                        ["foo08"] = { Value = 08, Timestamp = now + 8 },
+                        ["foo09"] = { Value = 09, Timestamp = now + 9 },
+                        ["foo10"] = { Value = 10, Timestamp = now + 10 },
+                        ["foo11"] = { Value = 11, Timestamp = now + 11 },
+                    },
+                    Expected = {
+                        -- empty
+                    },
+                }
+            end)(),
+            ["LRUC.UP.GGI.SUS.0100"] = (function()
+                local now = Time.Now()
+                return {
+                    CacheSettings = {
+                        MaxSize = 3,
+                        TrimRatio = 1
+                    },
+                    PreArranged = {
+                        ["foo01"] = { Value = 01, Timestamp = now + 1 },
+                        ["foo02"] = { Value = 02, Timestamp = now + 2 },
+                        ["foo03"] = { Value = 03, Timestamp = now + 3 },
+                    },
+                    Expected = {
+                        ["foo01"] = 01,
+                        ["foo02"] = 02,
+                        ["foo03"] = 03,
+                    },
+                }
             end)()
         },
         function(options)
