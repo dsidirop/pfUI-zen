@@ -8,7 +8,8 @@ local Guard              = using "System.Guard" --                              
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
-local ArraysHelper       = using "System.Helpers.Arrays"
+
+local A                  = using "System.Helpers.Arrays"
 
 local Rethrow                          = using "System.Exceptions.Rethrow"
 local Exception                        = using "System.Exceptions.Exception"
@@ -59,12 +60,12 @@ function Class:Run()
 
     local returnedValuesArray = { Class.ProtectedCall(_action) }
 
-    local success = ArraysHelper.PopFirst(returnedValuesArray)
+    local success = A.PopFirst(returnedValuesArray)
     if success then
-        return ArraysHelper.Unpack(returnedValuesArray)
+        return A.Unpack(returnedValuesArray)
     end
 
-    local exceptionMessage = ArraysHelper.PopFirst(returnedValuesArray)
+    local exceptionMessage = A.PopFirst(returnedValuesArray)
     local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
     
     local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)

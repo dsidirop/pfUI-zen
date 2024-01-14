@@ -1,7 +1,7 @@
 ﻿-- the main reason we introduce this class is to be able to set the selected option by nickname  on top of that
 -- the original pfui dropdown control has a counter-intuitive api surface that is not fluent enough for day to day use 
 
-local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+local _assert, _setfenv, _type, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -9,16 +9,10 @@ local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namesp
     _setfenv(1, {})
 
     local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
+    return _assert, _setfenv, _type, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -26,11 +20,11 @@ _setfenv(1, {})
 local Scopify = _importer("System.Scopify")
 local EScopes = _importer("System.EScopes")
 
-local Event = _importer("System.Event")
-local TablesHelper = _importer("System.Helpers.Tables")
-local ArraysHelper = _importer("System.Helpers.Arrays")
-local StringsHelper = _importer("System.Helpers.Strings")
+local A = _importer("System.Helpers.Arrays")
+local T = _importer("System.Helpers.Tables")
+local S = _importer("System.Helpers.Strings")
 
+local Event = _importer("System.Event")
 local PfuiGui = _importer("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui")
 local SelectionChangedEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs")
 
@@ -124,7 +118,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _assert(_type(index) == "number" and index >= 1, "index must be a number >= 1")
     _assert(_nativePfuiControl ~= nil, "control is not initialized - call Initialize() first")
 
-    if index > ArraysHelper.Count(_menuIndexesToMenuValuesArray) then
+    if index > A.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end
@@ -215,8 +209,8 @@ function Class:ParseMenuItems_(menuItemsArray)
 
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
-    for i, k in TablesHelper.GetPairs(menuItemsArray) do
-        local value, _ = TablesHelper.Unpack(StringsHelper.Split(k, ":", 2))
+    for i, k in T.GetPairs(menuItemsArray) do
+        local value, _ = A.Unpack(S.Split(k, ":", 2))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then
