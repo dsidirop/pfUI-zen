@@ -5,7 +5,7 @@ local EScopes = using "System.EScopes"
 local Console = using "System.Console"
 local ArraysHelper = using "System.Helpers.Arrays"
 
-local U = using "[built-in]" "VWoWUnit"
+local U = using "[built-in]" [[ VWoWUnit ]]
 
 Scopify(EScopes.Function, {})
 

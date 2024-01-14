@@ -4,7 +4,7 @@ local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local TablesHelper = using "System.Helpers.Tables"
+local A = using "System.Helpers.Arrays"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
@@ -20,7 +20,7 @@ function StringsHelper.Match(input, patternString, ...)
         return nil
     end
 
-    local results = {StringsHelper.Find(input, patternString, TablesHelper.Unpack(variadicsArray))}
+    local results = { StringsHelper.Find(input, patternString, A.Unpack(variadicsArray)) }
 
     local startIndex = results[1]
     if startIndex == nil then
@@ -34,5 +34,5 @@ function StringsHelper.Match(input, patternString, ...)
         return StringsHelper.SubstringViaRange(input, startIndex, endIndex) -- matched but without using captures   ("Foo 11 bar   ping pong"):match("Foo %d+ bar")
     end
 
-    return TablesHelper.UnpackRange(results, 3) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
+    return A.UnpackRange(results, 3) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end

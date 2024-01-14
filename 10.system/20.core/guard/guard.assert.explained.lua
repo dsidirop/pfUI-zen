@@ -16,6 +16,14 @@ Scopify(EScopes.Function, {})
 
 do
     Guard.Assert.Explained = using "[declare]" "System.Guard.Assert.Explained"
+    
+    function Guard.Assert.Explained.IsString(value, customMessage)
+        if not Reflection.IsString(value) then
+            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+        end
+        
+        return value
+    end
 
     function Guard.Assert.Explained.IsNotNil(value, customMessage)
         if value == nil then
@@ -35,6 +43,14 @@ do
 
     function Guard.Assert.Explained.IsFalse(value, customMessage)
         if not Reflection.IsBoolean(value) or value then
+            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+        end
+
+        return value
+    end
+
+    function Guard.Assert.Explained.IsTrue(value, customMessage)
+        if not Reflection.IsBoolean(value) or not value then
             Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
         end
 

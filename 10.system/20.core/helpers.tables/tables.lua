@@ -1,14 +1,14 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local B = using "[built-ins]" [[
-    Next = next,
-    Unpack = unpack,
-    RawGet = rawget,
+    Next     = next,
+    Unpack   = unpack,
+    RawGet   = rawget,
+    
+    GetPairs        = pairs,
+    GetIndexedPairs = ipairs,
 
-    GetTablePairs = pairs,
-    GetArrayIndecesAndValues = ipairs,
-
-    TableCount = table.getn,
+    TableCount  = table.getn,
     TableInsert = table.insert,
 ]]
 
@@ -24,8 +24,8 @@ local TablesHelper = using "[declare]" "System.Helpers.Tables [Partial]"
 
 Scopify(EScopes.Function, { })
 
-TablesHelper.GetKeyValuePairs = B.GetTablePairs
-TablesHelper.GetArrayIndecesAndValues = B.GetArrayIndecesAndValues
+TablesHelper.GetPairs = B.GetPairs
+TablesHelper.GetIndexedPairs = B.GetIndexedPairs
 
 function TablesHelper.Clear(tableInstance)
     Guard.Assert.IsTable(tableInstance, "tableInstance")
@@ -55,7 +55,7 @@ function TablesHelper.Clone(tableInstance, seen)
     local result = Metatable.Set({}, Metatable.Get(tableInstance))
 
     s[tableInstance] = result
-    for k, v in TablesHelper.GetKeyValuePairs(tableInstance) do
+    for k, v in TablesHelper.GetPairs(tableInstance) do
         result[TablesHelper.Clone(k, s)] = TablesHelper.Clone(v, s)
     end
 
@@ -74,47 +74,18 @@ function TablesHelper.AnyOrNil(tableInstance)
 end
 
 function TablesHelper.IsNilOrEmpty(tableInstance)
-    Guard.Assert.IsNilOrTable(tableInstance)
+    Guard.Assert.IsNilOrTable(tableInstance, "tableInstance")
 
     return tableInstance == nil or B.Next(tableInstance) == nil
 end
 
-function TablesHelper.Unpack(tableInstance, ...)
-    local variadicArguments = arg
-
-    Guard.Assert.IsTable(tableInstance)
-    Guard.Assert.Explained.IsNilOrEmptyTable(variadicArguments, "it seems you are attempting to use unpack(table, startIndex, endIndex) - use UnpackRange() for this kind of thing instead!")
-
-    return B.Unpack(tableInstance)
-end
-
-function TablesHelper.UnpackViaLength(tableInstance, chunkStartIndex, chunkLength)
-    Guard.Assert.IsTable(tableInstance)
-    Guard.Assert.IsPositiveInteger(chunkStartIndex)
-    Guard.Assert.IsPositiveIntegerOrZero(chunkLength)
-
-    return TablesHelper.UnpackRange(tableInstance, chunkStartIndex, chunkStartIndex + chunkLength - 1)
-end
-
-function TablesHelper.UnpackRange(tableInstance, startIndex, optionalEndIndex)
-    Guard.Assert.IsTable(tableInstance)
-    Guard.Assert.IsPositiveInteger(startIndex)
-    Guard.Assert.IsNilOrPositiveInteger(optionalEndIndex)
-
-    local tableLength = B.TableCount(tableInstance)
-    if tableLength == 0 then
-        return -- nothing to unpack
+function TablesHelper.Count(tableInstance)
+    Guard.Assert.IsTable(tableInstance, "tableInstance")
+    
+    local i = 0;
+    for _ in TablesHelper.GetPairs(tableInstance) do
+        i = i + 1
     end
-
-    optionalEndIndex = Nils.Coalesce(optionalEndIndex, tableLength)
-    if startIndex == 1 and optionalEndIndex == tableLength then
-        return B.Unpack(tableInstance) -- optimization
-    end
-
-    local results = {}
-    for i = startIndex, optionalEndIndex do
-        B.TableInsert(results, tableInstance[i])
-    end
-
-    return B.Unpack(results)
+    
+    return i
 end

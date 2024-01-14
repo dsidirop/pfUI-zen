@@ -6,8 +6,7 @@ local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local TablesHelper = using "System.Helpers.Tables"
-local ArraysHelper = using "System.Helpers.Arrays"
+local A = using "System.Helpers.Arrays"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
@@ -18,7 +17,7 @@ function StringsHelper.Format(format, ...)
     Guard.Assert.IsString(format, "format")
     Guard.Assert.IsNonEmptyTable(variadiacsArray, "variadiacsArray")
 
-    local argCount = ArraysHelper.Count(variadiacsArray)
+    local argCount = A.Count(variadiacsArray)
     if argCount == 0 then
         return format
     end
@@ -68,5 +67,5 @@ function StringsHelper.Format(format, ...)
         stringifiedArgs[i] = StringsHelper.Stringify(variadiacsArray[i])
     end
     
-    return B.StringFormat(format, TablesHelper.Unpack(stringifiedArgs))
+    return B.StringFormat(format, A.Unpack(stringifiedArgs))
 end

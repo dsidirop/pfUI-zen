@@ -3,7 +3,7 @@
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
-local Console      = using "System.Console"
+-- local Console      = using "System.Console"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
@@ -140,11 +140,11 @@ function Class:SwitchActOnKeybind(value)
 
     return self
 
-    --00  this is a bit of a hack   normally we should deep clone the settings and then change the mode
-    --    on the clone and perform validation there   but for such a simple case it would be an overkill
+    -- 00  this is a bit of a hack   normally we should deep clone the settings and then change the mode
+    --     on the clone and perform validation there   but for such a simple case it would be an overkill
     --
-    --10  the keybind interceptor should never be getting launched here   it should be getting launched on
-    --    demand if and only if loot gambling is detected
+    -- 10  the keybind interceptor should never be getting launched here   it should be getting launched on
+    --     demand if and only if loot gambling is detected
 end
 
 -- private space
@@ -152,29 +152,27 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    if not self:IsEligibleForAutoGamble(gamblingId) then
+    local gamblingId = ea:GetGamblingId()
+    local desiredLootGamblingBehaviour = _settings:GetMode()
+    if not self:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour) then
         return
     end
 
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
-                ea:GetGamblingId(),
-                self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
-        )
+        self:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
         return
     end
 
-    _pendingLootGamblingRequests:Upsert(ea:GetGamblingId()) --                                                                  order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --    order
+    _pendingLootGamblingRequests:Upsert(gamblingId) --                                                                        order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --  order
     _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
 end
 
-function Class:IsEligibleForAutoGamble(gamblingId)
+function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
-    local desiredLootGamblingBehaviour = _settings:GetMode()
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
         return false -- let the user choose
     end
@@ -208,15 +206,13 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         return
     end
 
-    if      _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic       --@formatter:off
-        or  _settings:GetActOnKeybind() == ea:ToString()                                          then --@formatter:on
+    local actOnKeybindSetting = _settings:GetActOnKeybind() 
+    if      actOnKeybindSetting == SGreeniesGrouplootingAutomationActOnKeybind.Automatic       --@formatter:off
+        or  actOnKeybindSetting == ea:ToString()                                          then --@formatter:on
 
         _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital
 
-        _groupLootGamblingService:SubmitResponseToItemGamblingRequests(
-                _pendingLootGamblingRequests:PopKeysArray(),
-                self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
-        )
+        self:SubmitSameResponseToAllItemGamblingRequests_(_pendingLootGamblingRequests:PopKeysArray(), desiredLootGamblingBehaviour)
     end
 
     --00  we need to always keep in mind that the user might change the settings while item-gambling is in progress
@@ -238,4 +234,29 @@ function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAuto
     end
 
     return nil -- SGreeniesGrouplootingAutomationMode.LetUserChoose
+end
+
+
+function Class:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsPositiveIntegerOrZero(gamblingId, "gamblingId")
+    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
+
+    _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
+            gamblingId,
+            self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
+    )
+end
+
+function Class:SubmitSameResponseToAllItemGamblingRequests_(gamblingIds, desiredLootGamblingBehaviour)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsArray(gamblingIds, "gamblingIds")
+    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
+
+    _groupLootGamblingService:SubmitSameResponseToAllItemGamblingRequests(
+            gamblingIds,
+            self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
+    )
 end

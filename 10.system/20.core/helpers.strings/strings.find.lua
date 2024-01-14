@@ -5,7 +5,8 @@ local B = using "[built-ins]" "StringFind = strfind"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local TablesHelper = using "System.Helpers.Tables"
+
+local A = using "System.Helpers.Arrays"
 
 local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
 
@@ -17,5 +18,5 @@ function StringsHelper.Find(input, patternString, ...)
     Guard.Assert.IsString(input, "input")
     Guard.Assert.IsString(patternString, "patternString")
     
-    return B.StringFind(input, patternString, TablesHelper.Unpack(variadicsArray))
+    return B.StringFind(input, patternString, A.Unpack(variadicsArray))
 end

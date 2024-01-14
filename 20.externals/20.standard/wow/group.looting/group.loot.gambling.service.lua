@@ -71,13 +71,13 @@ function Service:GetGambledItemInfo(gamblingId)
     }
 end
 
-function Service:SubmitResponseToItemGamblingRequests(gamblingRequestIdsArray, wowRollMode)
+function Service:SubmitSameResponseToAllItemGamblingRequests(gamblingRequestIdsArray, wowRollMode)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(gamblingRequestIdsArray, "gamblingRequestIdsArray")
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
     
-    for _, gamblingRequestId in T.GetArrayIndecesAndValues(gamblingRequestIdsArray) do
+    for _, gamblingRequestId in T.GetIndexedPairs(gamblingRequestIdsArray) do
         self.RollOnLoot_(gamblingRequestId, wowRollMode)
     end
 end

@@ -4,7 +4,7 @@ local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local U = using "[built-in]" "VWoWUnit"
+local U = using "[built-in]" [[ VWoWUnit ]]
 
 Scopify(EScopes.Function, {})
 

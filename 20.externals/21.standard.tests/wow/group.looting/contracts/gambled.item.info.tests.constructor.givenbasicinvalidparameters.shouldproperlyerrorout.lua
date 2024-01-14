@@ -1,32 +1,15 @@
-﻿local _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local _importer = _assert(_g.pvl_namespacer_get)
+local Try                                    = using "System.Try" --                                                                          @formatter:off
+local EWowItemQuality                        = using "Pavilion.Warcraft.Enums.EWowItemQuality"
+local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
 
-    return _setfenv, _importer
-end)()
+local ValueIsOutOfRangeException             = using "System.Exceptions.ValueIsOutOfRangeException"
+local ArgumentHasInappropriateTypeException  = using "System.Exceptions.ValueIsOfInappropriateTypeException"
 
-_setfenv(1, {}) --                                                                                                           @formatter:off
+local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
-local Try                                   = _importer("System.Try")
-
-local U                                     = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.VWoWUnit")
-local GambledItemInfoDto                    = _importer("Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto")
-
-local EWowItemQuality                       = _importer("Pavilion.Warcraft.Enums.EWowItemQuality")
-
-local ValueIsOutOfRangeException            = _importer("System.Exceptions.ValueIsOutOfRangeException")
-local ArgumentHasInappropriateTypeException = _importer("System.Exceptions.ValueIsOfInappropriateTypeException")
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests",
-    Tags = { "pavilion", "grouplooting" },
-} --                                                                                                                         @formatter:on
-
-TestsGroup:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
+TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
         function()
             return {
                 ["GII.CTOR.GBIP.SPEO.010"] = {
@@ -112,12 +95,12 @@ TestsGroup:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidPar
                 return GambledItemInfoDto:New(options)
             end)
             :Catch(ValueIsOutOfRangeException, function()
-                -- _importer("System.Console").Out:WriteFormatted("%s", ex)
+                -- using "System.Console").Out:WriteFormatted("%s", ex)
                 
                 properExceptionThrown = true
             end)
             :Catch(ArgumentHasInappropriateTypeException, function()
-                -- _importer("System.Console").Out:WriteFormatted("%s", ex)
+                -- using "System.Console").Out:WriteFormatted("%s", ex)
                 
                 properExceptionThrown = true
             end)
