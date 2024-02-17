@@ -39,7 +39,7 @@ function Service:HandlePopupGamblingIntent(gamblingRequestId, intendedGamblingTy
     end
 end
 
-function Service:HandlePopupItemWillBindToYou(lootSlotIndex, intendedGamblingType)
+function Service:HandlePopupItemWillBindToYou(lootSlotIndex)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveIntegerOrZero(lootSlotIndex, "gamblingRequestId")

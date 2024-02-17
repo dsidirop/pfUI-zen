@@ -161,13 +161,13 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
-    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        self:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
+    _pendingLootGamblingRequests:Upsert(gamblingId) -- order
+    if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then -- order
+        self:SubmitSameResponseToAllItemGamblingRequests_(_pendingLootGamblingRequests:PopKeysArray(), desiredLootGamblingBehaviour)
         return
     end
-
-    _pendingLootGamblingRequests:Upsert(gamblingId) --                                                                        order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --  order
+    
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self)
     _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
