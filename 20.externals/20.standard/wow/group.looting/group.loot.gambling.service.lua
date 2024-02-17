@@ -6,6 +6,8 @@ local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
+local PopupsHandlingService    = using "Pavilion.Warcraft.Popups.PopupsHandlingService"
+
 local WoWRollOnLoot            = using "Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot"
 local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo"
 
@@ -16,15 +18,18 @@ local Service = using "[declare]" "Pavilion.Warcraft.GroupLooting.GroupLootGambl
 
 Scopify(EScopes.Function, {})
 
-function Service:New(rollOnLoot, getLootRollItemInfo)
+function Service:New(rollOnLoot, getLootRollItemInfo, popupsHandlingService)
     Scopify(EScopes.Function, self)
 
+    Guard.Assert.IsNilOrTable(popupsHandlingService, "popupsHandlingService")
     Guard.Assert.IsNilOrFunction(rollOnLoot, "rollOnLoot")
     Guard.Assert.IsNilOrFunction(getLootRollItemInfo, "getLootRollItemInfo")
 
     return self:Instantiate({ -- @formatter:off
-        RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
-        GetLootRollItemInfo_ = getLootRollItemInfo or WoWGetLootRollItemInfo, -- to help unit testing
+        RollOnLoot_             = rollOnLoot            or WoWRollOnLoot, --               to help unit testing
+        GetLootRollItemInfo_    = getLootRollItemInfo   or WoWGetLootRollItemInfo, --      to help unit testing
+
+        _popupsHandlingService  = popupsHandlingService or PopupsHandlingService:New(), -- to help unit testing
     })
 end -- @formatter:on
 
@@ -79,6 +84,8 @@ function Service:SubmitSameResponseToAllItemGamblingRequests(gamblingRequestIdsA
     
     for _, gamblingRequestId in T.GetIndexedPairs(gamblingRequestIdsArray) do
         self.RollOnLoot_(gamblingRequestId, wowRollMode)
+
+        _popupsHandlingService:HandlePopupGamblingIntent(gamblingRequestId, wowRollMode)        
     end
 end
 
@@ -89,6 +96,8 @@ function Service:SubmitResponseToItemGamblingRequest(gamblingRequestId, wowRollM
     Guard.Assert.IsPositiveIntegerOrZero(gamblingRequestId, "gamblingRequestId")
 
     self.RollOnLoot_(gamblingRequestId, wowRollMode) --00
+    
+    _popupsHandlingService:HandlePopupGamblingIntent(gamblingRequestId, wowRollMode)
 
     -- 00 https://wowpedia.fandom.com/wiki/API_RollOnLoot   the rollid number increases with every
     --    roll you have in a party till how high it counts   is currently unknown   blizzard uses

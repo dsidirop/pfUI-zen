@@ -239,19 +239,6 @@ function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAuto
     return nil -- SGreeniesGrouplootingAutomationMode.LetUserChoose
 end
 
-
-function Class:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsPositiveIntegerOrZero(gamblingId, "gamblingId")
-    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
-
-    _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
-            gamblingId,
-            self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
-    )
-end
-
 function Class:SubmitSameResponseToAllItemGamblingRequests_(gamblingIds, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
