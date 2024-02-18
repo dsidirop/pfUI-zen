@@ -1,4 +1,4 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
+﻿local _assert, _setfenv, _type, _importer, _namespacer = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -6,16 +6,10 @@
     _setfenv(1, {})
 
     local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
     local _importer = _assert(_g.pvl_namespacer_get)
     local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
+    return _assert, _setfenv, _type, _importer, _namespacer
 end)()
 
 _setfenv(1, {})
@@ -28,6 +22,7 @@ local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsS
 local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
 
 local Event = _importer("System.Event")
+local OnEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.OnEventArgs")
 local KeyEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
 local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
 
@@ -44,6 +39,14 @@ function Class:New(nativeElement)
         _eventKeyDown = Event:New(),
         _eventOnEvent = Event:New(),
     })
+end
+
+function Class:Hide()
+    Scopify(EScopes.Function, self)
+
+    _nativeElement:Hide()
+
+    return self
 end
 
 function Class:ChainSetPropagateKeyboardInput(value)
@@ -125,6 +128,7 @@ function Class:EventKeyDown_Unsubscribe(handler)
     return self
 end
 
+
 -- private space
 
 function Class:EnsureNativeOnKeyDownListenerIsRegistered_()
@@ -162,8 +166,8 @@ function Class:EnsureNativeOnEventListenerIsRegistered_()
         return self
     end
 
-    _nativeElement:SetScript("OnEvent", function(_, ea)
-        _eventOnEvent:Raise(self, ea)
+    _nativeElement:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
+        _eventOnEvent:Raise(self, OnEventArgs:New(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10))
     end)
 
     return self

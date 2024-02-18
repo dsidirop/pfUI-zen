@@ -17,9 +17,6 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 
 local Class = using "[declare]" "System.Try [Partial]"
 
-
-Class.ProtectedCall = B.ProtectedCall
-
 Scopify(EScopes.Function, {})
 
 Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
@@ -32,6 +29,7 @@ function Class:New(action, exceptionsDeserializationFactory)
 
     return self:Instantiate({
         _action = action,
+        _finallyHandler = nil,
         _allExceptionHandlers = {},
         _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,
     })
@@ -55,10 +53,20 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     return self
 end
 
+function Class:Finally(finallyHandler)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsFunction(finallyHandler, "finallyHandler")
+    
+    _finallyHandler = finallyHandler
+    
+    return self
+end
+
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnedValuesArray = { Class.ProtectedCall(_action) }
+    local returnedValuesArray = { B.ProtectedCall(_action) }
 
     local success = A.PopFirst(returnedValuesArray)
     if success then
@@ -70,7 +78,30 @@ function Class:Run()
     
     local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)
     if properExceptionHandler ~= nil then
-        return properExceptionHandler(exception)
+        local returnedValuesArray2 = {
+            B.ProtectedCall(function()
+                properExceptionHandler(exception)
+            end)
+        }
+
+        if _finallyHandler ~= nil then
+            _finallyHandler()
+        end
+        
+        local success2 = A.PopFirst(returnedValuesArray2)
+        if success2 then
+            return A.Unpack(returnedValuesArray2)
+        end
+
+        local exceptionMessage2 = A.PopFirst(returnedValuesArray2)
+        local exception2 = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage2)
+
+        Rethrow(exception2)
+        return
+    end
+
+    if _finallyHandler ~= nil then
+        _finallyHandler()
     end
 
     Rethrow(exception) -- 10

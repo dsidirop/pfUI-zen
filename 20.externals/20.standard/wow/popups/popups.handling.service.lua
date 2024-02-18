@@ -42,7 +42,7 @@ end
 function Service:HandlePopupItemWillBindToYou(lootSlotIndex)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsPositiveIntegerOrZero(lootSlotIndex, "gamblingRequestId")
+    Guard.Assert.IsPositiveIntegerOrZero(lootSlotIndex, "lootSlotIndex")
 
     -- todo   refactor this drawing inspiration from pfui to have it work with wow 1.12
     if self.ConfirmLootSlot_(lootSlotIndex) ~= false then -- 00

@@ -1,4 +1,4 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
-    <Include file="on.event.args.lua"/>
-    <Include file="key.eventargs.lua"/>
+    <Include file="event.args\.xml"/>
+    <Include file="loot.bind.confirm.popups.listener.lua"/>
 </Ui>
