@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: |cff33ffccpf|cffffffffUI|cffaaaaaa [|cFF7FFFD4Zen|r]
+## Title: |cff33ffccpf|cffffffffUI|cffaaaaaa |cff00FF98[Zen]|r
 ## Version: 0.0.1
 ## Notes: Type '/pfUI zen' the first time you use this addon in order to set it up in a way that suits you: This addon is meant to give the game sane(r) defaults and place certain tasks on autopilot boosting your in-game Zen ;) 
 ## Author: dsidirop

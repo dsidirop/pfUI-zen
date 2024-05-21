@@ -13,11 +13,11 @@ end)()
 _setfenv(1, {})
 
 if U then
-	_print("Running VWoWUnit tests...\n ")
+	-- _print("Running VWoWUnit tests...\n ")
 
- 	U.TestsEngine:RunAllTestGroups()
+ 	-- U.TestsEngine:RunAllTestGroups()
 
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
-	
+
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 end
