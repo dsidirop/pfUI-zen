@@ -1,31 +1,43 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
+local B = using "[built-ins]" [[
+    GetNumRaidMembers = GetNumRaidMembers,
+    GetNumPartyMembers = GetNumPartyMembers,
+
+    LootSlot = LootSlot,
+    StaticPopup1Button1 = StaticPopup1Button1,
+]]
+
+local Try          = using "System.Try"
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
--- local Console      = using "System.Console"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
 local GroupLootGamblingService = using "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
 
-local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
-local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
+local ModifierKeysListener          = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
+local PfuiGroupLootingListener      = using "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
+local LootBindConfirmPopupsListener = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.Listeners.LootBindConfirmPopups.LootBindConfirmPopupsListener"
 
 local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
-local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
+local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
+local AssistantAggregateSettings = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGroupAutolooting.AssistantAggregateSettings"
+
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGroupAutolooting.AssistantAggregate"
 
 Scopify(EScopes.Function, {})
 
-function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
+function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService, lootBindConfirmPopupsListener)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
-    Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
-    Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
+    Guard.Assert.IsNilOrInstanceOf(modifierKeysListener,          ModifierKeysListener,          "modifierKeysListener")
+    Guard.Assert.IsNilOrInstanceOf(groupLootingListener,          PfuiGroupLootingListener,      "groupLootingListener")
+    Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService,      GroupLootGamblingService,      "groupLootGamblingService")
+    Guard.Assert.IsNilOrInstanceOf(lootBindConfirmPopupsListener, LootBindConfirmPopupsListener, "lootBindConfirmPopupsListener")
 
     return self:Instantiate({
         _settings = nil,
@@ -36,11 +48,13 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
             MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
         },
 
-        _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
-        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
-        _groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New(), --todo   refactor this later on so that this gets injected through DI
+        _modifierKeysListener           = modifierKeysListener          or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
+        _groupLootingListener           = groupLootingListener          or PfuiGroupLootingListener:New(),
+        _lootBindConfirmPopupsListener  = lootBindConfirmPopupsListener or LootBindConfirmPopupsListener:New(),
+
+        _groupLootGamblingService       = groupLootGamblingService      or GroupLootGamblingService:New(),
     })
-end
+end --@formatter:on
 
 function Class:IsRunning()
     Scopify(EScopes.Function, self)
@@ -48,9 +62,10 @@ function Class:IsRunning()
     return _isRunning
 end
 
--- settings is expected to be AggregateSettings
 function Class:SetSettings(settings)
     Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsInstanceOf(settings, AssistantAggregateSettings, "settings")
 
     _settings = settings
 end
@@ -158,13 +173,14 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
         return
     end
 
+    _pendingLootGamblingRequests:Upsert(gamblingId) -- order
     if _settings:GetActOnKeybind() == SGreeniesGrouplootingAutomationActOnKeybind.Automatic then
-        self:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
+        -- order
+        self:SubmitSameResponseToAllItemGamblingRequests_(_pendingLootGamblingRequests:PopKeysArray(), desiredLootGamblingBehaviour)
         return
     end
 
-    _pendingLootGamblingRequests:Upsert(gamblingId) --                                                                        order
-    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --  order
+    _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self)
     _modifierKeysListener:Start()
 
     -- todo   add take into account CANCEL_LOOT_ROLL event at some point
@@ -192,7 +208,7 @@ function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
         -- Console.Out:WriteFormatted("[GLL.PLIGD080] it's not greedable ...")
         return false
     end
-    
+
     return true
 end
 
@@ -206,9 +222,10 @@ function Class:ModifierKeysListener_ModifierKeysStatesChanged_(_, ea)
         return
     end
 
-    local actOnKeybindSetting = _settings:GetActOnKeybind() 
-    if      actOnKeybindSetting == SGreeniesGrouplootingAutomationActOnKeybind.Automatic       --@formatter:off
-        or  actOnKeybindSetting == ea:ToString()                                          then --@formatter:on
+    local actOnKeybindSetting = _settings:GetActOnKeybind()
+    if     actOnKeybindSetting == SGreeniesGrouplootingAutomationActOnKeybind.Automatic       --@formatter:off
+        or actOnKeybindSetting == ea:ToString() then
+        --@formatter:on
 
         _modifierKeysListener:EventModifierKeysStatesChanged_Unsubscribe(ModifierKeysListener_ModifierKeysStatesChanged_) -- vital
 
@@ -236,27 +253,34 @@ function Class:TranslateModeSettingToWoWNativeGamblingResponseType_(greeniesAuto
     return nil -- SGreeniesGrouplootingAutomationMode.LetUserChoose
 end
 
-
-function Class:SubmitResponseToItemGamblingRequest_(gamblingId, desiredLootGamblingBehaviour)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsPositiveIntegerOrZero(gamblingId, "gamblingId")
-    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
-
-    _groupLootGamblingService:SubmitResponseToItemGamblingRequest(
-            gamblingId,
-            self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
-    )
-end
-
 function Class:SubmitSameResponseToAllItemGamblingRequests_(gamblingIds, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
-
+    
     Guard.Assert.IsArray(gamblingIds, "gamblingIds")
     Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
 
-    _groupLootGamblingService:SubmitSameResponseToAllItemGamblingRequests(
+    Try(function() -- @formatter:off
+        _lootBindConfirmPopupsListener:EventLootBindConfirmPoppedUp_Subscribe(LootBindConfirmPoppedUp_LootBindConfirmPoppedUp_, self)
+
+        _groupLootGamblingService:SubmitSameResponseToAllItemGamblingRequests(
             gamblingIds,
             self:TranslateModeSettingToWoWNativeGamblingResponseType_(desiredLootGamblingBehaviour)
-    )
+        )
+    end)
+    :Finally(function()
+        _lootBindConfirmPopupsListener:EventLootBindConfirmPoppedUp_Unsubscribe(LootBindConfirmPoppedUp_LootBindConfirmPoppedUp_)
+    end)
+    :Run() -- @formatter:on
+end
+
+function Class:LootBindConfirmPoppedUp_LootBindConfirmPoppedUp_(_, ea)
+    Scopify(EScopes.Function, self)
+
+    local isSolo = B.GetNumPartyMembers() == 0 and B.GetNumRaidMembers() == 0
+    if isSolo then
+        return -- this scenario is handled by pfui itself so no need for us to do anything
+    end
+
+    B.LootSlot(ea:GetLootSlotIndex())
+    B.StaticPopup1Button1:Click()
 end

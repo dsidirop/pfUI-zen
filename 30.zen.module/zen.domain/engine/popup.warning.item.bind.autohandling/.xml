@@ -1,4 +1,4 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
-    <Include file="on.event.args.lua"/>
-    <Include file="key.eventargs.lua"/>
+    <Include file="popup.item.bind.warning.autohandler.aggregate.settings.lua"/>
+    <Include file="popup.warning.item.bind.autohandler.aggregate.lua"/>
 </Ui>

@@ -1,6 +1,3 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
-    <Include file="greenies.group.autolooting\.xml"/>
-
-    <Include file="zen.engine.settings.lua"/>
-    <Include file="zen.engine.lua"/>
+    <Include file="loot.bind.confirm.popups\.xml"/>
 </Ui>

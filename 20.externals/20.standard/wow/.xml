@@ -1,11 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
     <Include file="enums\.xml"/>
     <Include file="strenums\.xml"/>
+    
     <Include file="ui.parent\.xml"/>
     <Include file="localization\.xml"/>
     <Include file="create.frame\.xml"/>
 
     <Include file="addons\.xml"/>
+    <Include file="popups\.xml"/>
     <Include file="group.looting\.xml"/>
 
     <Include file="is.alt.key.down\.xml"/>

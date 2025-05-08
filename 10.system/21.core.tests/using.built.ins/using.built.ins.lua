@@ -6,8 +6,6 @@ local EScopes = using "System.EScopes"
 local Validation = using "System.Validation"
 
 -- DO NOT EMPLOY   using "[built-in]"   HERE BECAUSE IT IS WHAT WE ARE ACTUALLY TESTING!!  
-local _unpack = Validation.Assert(Global.unpack)
-
 local U = Validation.Assert(Global.VWoWUnit)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
