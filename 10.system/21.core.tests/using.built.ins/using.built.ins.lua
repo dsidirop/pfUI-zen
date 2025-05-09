@@ -6,8 +6,6 @@ local EScopes = using "System.EScopes"
 local Validation = using "System.Validation"
 
 -- DO NOT EMPLOY   using "[built-in]"   HERE BECAUSE IT IS WHAT WE ARE ACTUALLY TESTING!!  
-local _unpack = Validation.Assert(Global.unpack)
-
 local U = Validation.Assert(Global.VWoWUnit)
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
@@ -73,7 +71,7 @@ TestsGroup:AddTheory("Using.Builtins.GivenGreenInput.ShouldReturnExpectedResults
 
 TestsGroup:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
         { --@formatter:off
-            ["UBIN.GRI.ST.0000"] = { String = [[ getfenv2 ]] },
+            ["UBINS.GRI.ST.0000"] = { String = [[ getfenv2 ]] },
         }, --@formatter:on
         function(options)
             -- ACT + ASSERT
@@ -85,7 +83,7 @@ TestsGroup:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
 
 TestsGroup:AddTheory("Using.Builtin.GivenGreenInput.ShouldReturnExpectedResults",
         { --@formatter:off
-            ["UBIN.GGI.SRER.0000"] = {
+            ["UBINS.GGI.SRER.0000"] = {
                 String          = [[ getfenv ]],
                 ExpectedResults =  Global.getfenv,
             },
