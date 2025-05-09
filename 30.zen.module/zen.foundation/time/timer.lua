@@ -1,43 +1,27 @@
-﻿local _g, _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard   = using "System.Guard"
+local Global  = using "System.Global"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Event          = using("System.Event")
+local WoWCreateFrame = using("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
-    return _g, _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer" -- @formatter:on
 
-_setfenv(1, {})
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local Event = _importer("System.Event")
-local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer")
+Scopify(EScopes.Function, {})
 
 function Class:New(interval)
     Scopify(EScopes.Function, self)
-    
-    _assert(_type(interval) == "number" and interval > 0, "interval must be a positive number")
+
+    Guard.Assert.IsPositiveNumber(interval, "interval")
 
     local element = WoWCreateFrame("Frame") -- 00
     element:Hide() -- 10
 
     return self:Instantiate({
-        _g = _g, -- 20
+        _global = Global, -- 20
 
         _interval = interval,
         _wantedActive = false,
@@ -46,10 +30,10 @@ function Class:New(interval)
         _eventElapsed = Event:New(),
         _elapsedTimeSinceLastFiring = 0,
     })
-    
+
     -- 00  dont even bother using strenums here
     -- 10  we need to hide the frame because its important to ensure that the timer is not running when we create it
-    -- 20  this is vital in order for us to have access to _g.arg1 inside the onupdate handler
+    -- 20  this is vital in order for us to have access to _global.arg1 inside the onupdate handler
 end
 
 function Class:GetInterval()
@@ -61,7 +45,7 @@ end
 function Class:ChainSetInterval(newInterval)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(newInterval) == "number" and newInterval > 0, "interval must be a positive number")
+    Guard.Assert.IsPositiveNumber(newInterval, "newInterval")
 
     _interval = newInterval
 
@@ -88,7 +72,7 @@ function Class:Stop()
 
     _wantedActive = false
     self:OnSettingsChanged_()
-    
+
     return self
 end
 
@@ -141,7 +125,7 @@ end
 function Class:StopImpl_()
     Scopify(EScopes.Function, self)
 
-    _element:Hide()    
+    _element:Hide()
     _elapsedTimeSinceLastFiring = 0
 
     return self
@@ -155,11 +139,11 @@ function Class:EnsureInitializedOnlyOnce_()
     end
 
     _element:SetScript("OnUpdate", function()
-        _elapsedTimeSinceLastFiring = _elapsedTimeSinceLastFiring + _g.arg1 -- 00
+        _elapsedTimeSinceLastFiring = _elapsedTimeSinceLastFiring + _global.arg1 -- 00
         if _elapsedTimeSinceLastFiring < _interval then
             return
         end
-        
+
         -- _elapsedTimeSinceLastFiring >= _interval   its important to trim down the excess
         -- time as much as it is necessary to ensure it goes beneath the interval threshold
         repeat
@@ -171,7 +155,7 @@ function Class:EnsureInitializedOnlyOnce_()
             self:OnSettingsChanged_()
         end
     end)
-    
+
     -- 00  arg1 is the elapsed time since the previous callback invocation   there is no other way to get this value
     --     other than grabbing it from the global environment like we do here   very strange but true
 end
