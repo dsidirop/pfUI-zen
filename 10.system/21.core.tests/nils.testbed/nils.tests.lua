@@ -38,7 +38,7 @@ TestsGroup:AddTheory("Nils.Coalesce.GivenGreenInput.ShouldReturnExpectedValues",
             
             -- ACT
             returnedValue = U.Should.Not.Throw(function()
-                return Nils.Coalesce(options.Value, options.FallbackValue)
+                return Nils.Coalesce(options.Value, options.FallbackValue) -- options.Value ?? options.FallbackValue
             end)
             
             -- ASSERT

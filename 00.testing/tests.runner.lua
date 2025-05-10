@@ -19,5 +19,5 @@ if U then
 
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 	
-	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
+	U.TestsEngine:RunTestGroupsByTag("inheritance")
 end
