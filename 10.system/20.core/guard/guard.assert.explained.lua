@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify = using "System.Scopify" --                                                               @formatter:off
+local Scopify = using "System.Scopify" --@formatter:off
 local EScopes = using "System.EScopes"
 
 local Reflection   = using "System.Reflection"
@@ -8,7 +8,8 @@ local TablesHelper = using "System.Helpers.Tables"
 
 local Throw                               = using("System.Exceptions.Throw")
 local ValueCannotBeNilException           = using("System.Exceptions.ValueCannotBeNilException")
-local ValueIsOutOfRangeException          = using("System.Exceptions.ValueIsOutOfRangeException") --    @formatter:on
+local ValueIsOutOfRangeException          = using("System.Exceptions.ValueIsOutOfRangeException")
+local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfInappropriateTypeException") --@formatter:on
 
 local Guard = using "[declare]" "System.Guard [Partial]"
 
@@ -52,6 +53,19 @@ do
     function Guard.Assert.Explained.IsTrue(value, customMessage)
         if not Reflection.IsBoolean(value) or not value then
             Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+        end
+
+        return value
+    end
+
+    function Guard.Assert.Explained.IsInstanceOf(value, desiredClassProto, customMessage, optionalArgumentName)
+        if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(
+                    value,
+                    customMessage,
+                    optionalArgumentName,
+                    "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")
+            ))
         end
 
         return value

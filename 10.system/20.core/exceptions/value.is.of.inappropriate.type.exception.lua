@@ -25,6 +25,21 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     })
 end
 
+function Class:NewWithMessage(value, customMessage, optionalArgumentName, optionalExpectationOrExpectedType)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNonDudString(customMessage, "customMessage")
+    Guard.Assert.IsNilOrString(optionalArgumentName, "optionalArgumentName")
+    Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
+
+    return self:Instantiate({
+        _message = customMessage .. " because " .. Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _stacktrace = "",
+
+        _stringified = nil
+    })
+end
+
 function Class:GetMessage()
     Scopify(EScopes.Function, self)
 
@@ -83,9 +98,9 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
 
     local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
-        message = StringsHelpers.Format("%s (expected %s - got %q)", message, expectationString, Reflection.TryGetNamespaceWithFallbackToRawType(value)) 
+        message = StringsHelpers.Format("%s (expected %s - got %s)", message, expectationString, Reflection.TryGetNamespaceWithFallbackToRawType(value)) 
     else
-        message = StringsHelpers.Format("%s (its type is %q)", message, Reflection.TryGetNamespaceWithFallbackToRawType(value))
+        message = StringsHelpers.Format("%s (its type is %s)", message, Reflection.TryGetNamespaceWithFallbackToRawType(value))
     end
     
     return message

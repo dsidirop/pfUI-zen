@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -15,10 +15,9 @@
     local _stringify = _assert(_g.tostring)
     local _debugstack = _assert(_g.debugstack)
     local _tableRemove = _assert(_g.table.remove)
-    local _getmetatable = _assert(_g.getmetatable)
     local _setmetatable = _assert(_g.setmetatable)
-    
-    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _getmetatable, _setmetatable
+
+    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable
 end)()
 
 if _g.pvl_namespacer_add then
@@ -39,7 +38,7 @@ end
 
 local function _strmatch(input, patternString, ...)
     local variadicsArray = arg
-    
+
     _ = patternString ~= nil or _throw_exception("patternString must not be nil")
 
     if patternString == "" then
@@ -81,7 +80,7 @@ local EnumsProtoFactory = {}
 do
     function EnumsProtoFactory.Spawn()
         local metaTable = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
-        
+
         local newEnumProto = { }
         newEnumProto.__index = newEnumProto
         newEnumProto.IsValid = EnumsProtoFactory.IsValidEnumValue_
@@ -116,10 +115,10 @@ do
 end
 
 local ClassProtoFactory = {}
-do    
+do
     function ClassProtoFactory.Spawn()
         local metaTable = { }
-        metaTable.__call = ClassProtoFactory.OnProtoCalledAsFunction_            
+        metaTable.__call = ClassProtoFactory.OnProtoCalledAsFunction_
         metaTable.__index = metaTable
         -- metaTable.__tostring = todo
 
@@ -129,13 +128,13 @@ do
         newClassProto.WithDefaultCall = ClassProtoFactory.StandardWithDefaultCall_
 
         return _setmetatable(newClassProto, metaTable)
-        
+
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
 
     function ClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
         local variadicsArray = arg
-        
+
         local hasConstructorFunction = _type(classProto.New) == "function"
         local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
         _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
@@ -152,9 +151,9 @@ do
     function ClassProtoFactory.StandardWithDefaultCall_(classProto, defaultCallMethod)
         _ = _type(classProto) == "table"             or _throw_exception("classProto was expected to be a table") --             @formatter:off
         _ = _type(defaultCallMethod) == "function"   or _throw_exception("defaultCallMethod was expected to be a function") --   @formatter:on
-        
+
         classProto.__call = defaultCallMethod
-        
+
         return classProto
     end
 
@@ -222,13 +221,13 @@ do
 
         return instance
     end
-    
+
     function Entry:UnsetPartiality()
         _setfenv(1, self)
 
-        _isForPartial = false        
+        _isForPartial = false
     end
-    
+
     function Entry:GetNamespace()
         _setfenv(1, self)
 
@@ -308,7 +307,7 @@ do
 
         return instance
     end
-    
+
     NamespaceRegistry.Assert = {}
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath)
         _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
@@ -335,7 +334,7 @@ do
         NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol(symbolType)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
-        
+
         local preExistingEntry = _namespaces_registry[sanitizedNamespacePath]
         if preExistingEntry == nil then -- insert new entry
             local newSymbolProto = ProtosFactory.Spawn(symbolType)
@@ -355,7 +354,7 @@ do
         if not isForPartial then -- 20
             preExistingEntry:UnsetPartiality()
         end
-        
+
         return preExistingEntry:GetSymbolProto()
 
         -- 10  notice that if the intention is to declare an extension-class then we dont care if the class already exists
@@ -370,18 +369,18 @@ do
 
         local sanitized = _gsub(namespacePath, NamespaceRegistry.PatternToDetectPartialKeywordPostfix, "") --00
         local isForPartial = sanitized ~= namespacePath
-        
+
         -- sanitized = _strtrim(sanitized) noneed
-        
+
         return sanitized, isForPartial
-        
+
         -- 00  remove the [partial] postfix from the namespace string if it exists
     end
 
     NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable = function(possiblePreexistingEntry, namespacePath)
         _ = possiblePreexistingEntry == nil or _throw_exception("namespace %q has already been assigned to another symbol", namespacePath)
     end
-    
+
     NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil = function(rawSymbolProto)
         _ = rawSymbolProto ~= nil or _throw_exception("rawSymbolProto must not be nil")
     end
@@ -410,10 +409,10 @@ do
 
     function NamespaceRegistry:TryGetProtoTidbitsViaNamespace(namespacePath)
         _setfenv(1, self)
-        
+
         -- we intentionally omit validating the namespacepath in terms of whitespaces etc
         -- thats because this method is meant to be used by the reflection.* family of methods
-        
+
         if namespacePath == nil then -- we dont want to error out in this case   this is a try-method
             return nil, nil
         end
@@ -422,10 +421,10 @@ do
         if entry == nil then
             return nil, nil
         end
-        
+
         return entry:GetSymbolProto(), entry:GetManagedSymbolType()
     end
-    
+
     -- importer()
     function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
         _setfenv(1, self)
@@ -440,12 +439,12 @@ do
 
             _throw_exception("namespace %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
-        
+
         if entry:IsPartialEntry() then
             -- dont turn this into an debug.assertion   we want to know about this in production builds too
             _throw_exception("namespace %q holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
         end
-        
+
         return entry:GetSymbolProto()
     end
 
@@ -458,7 +457,7 @@ do
 
         return _reflection_registry[symbolProto]
     end
-    
+
     function NamespaceRegistry:PrintOut()
         _setfenv(1, self)
 
@@ -472,7 +471,7 @@ do
             _g.print("**** symbolProto='" .. _stringify(symbolProto) .. "' ->  " .. entry:ToString())
         end
 
-        _g.print("\n\n")         
+        _g.print("\n\n")
     end
 end
 
@@ -483,8 +482,6 @@ do
         --    todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__<some_guid_here>__get
         return NamespaceRegistrySingleton:Get(namespacePath)
     end
-
-    -- todo   remove these functions below once we migrate our codebase over to the using() scheme
 
     -- using "[declare]" "x.y.z"
     _g.pvl_namespacer_add = function(namespacePath)
@@ -510,7 +507,7 @@ local AdvertisedEManagedSymbolTypes = NamespaceRegistrySingleton:UpsertSymbolPro
 for k, v in _pairs(EManagedSymbolTypes) do -- this is the only way to get the enum values to be advertised to the outside world
     if _type(v) == "number" then
         AdvertisedEManagedSymbolTypes[k] = v
-    end    
+    end
 end
 
 -- no need for this   the standardized enum metatable is already in place and it does the same job just fine

@@ -358,8 +358,13 @@ do
     end
 
     -- ISA
+    --
+    -- local Foobar = using "Some.Class.Foobar"
+    --
+    -- Guard.Assert.IsInstanceOf(someInstance, Foobar, "someInstance")
+    --
     function Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
-        if not Reflection.IsInstanceOf(value, desiredClassProto) then
+        if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
         

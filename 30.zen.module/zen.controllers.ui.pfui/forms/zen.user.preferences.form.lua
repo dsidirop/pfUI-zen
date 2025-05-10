@@ -3,22 +3,23 @@
 local Scopify  = using "System.Scopify" -- @formatter:off
 local EScopes  = using "System.EScopes"
 
-local Guard                                             = using "System.Guard"
-local Event                                             = using "System.Event"
+local Guard = using "System.Guard"
+local Event = using "System.Event"
 
-local PfuiGui                                           = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
-local ZenEngineCommandHandlersService                   = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
+local PfuiGui                         = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 
-local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
-local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
+local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
+local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
+local UserPreferencesDto                                        = using "Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
 -- this only gets called once during a user session the very first time that the user explicitly
--- navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
+-- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
 function Class:New(translationService)
     Scopify(EScopes.Function, self)
     
@@ -68,7 +69,7 @@ function Class:Initialize()
     )
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
-    --     navigates to the "thirtparty" section and clicks on the "zen" tab   otherwise it never gets called
+    --     navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
 end
 
 -- privates
@@ -81,30 +82,47 @@ end
 function Class:OnRequestingCurrentUserPreferences_()
     Scopify(EScopes.Function, self)
 
-    local response = _eventRequestingCurrentUserPreferences:Raise( -- @formatter:off todo    RequestingCurrentUserPreferencesEventArgs:New()
-            self,
-            { 
-                 Response = {
-                     UserPreferences = nil -- type UserPreferencesDto
-                 }
-            })
-            .Response -- @formatter:on
+    local newUserPreferences = self:OnRequestingCurrentUserPreferencesImpl_()
 
-    Guard.Assert.Explained.IsNotNil(response ~= nil and response.UserPreferences ~= nil, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
+    return self:ApplyNewUserPreferences_(newUserPreferences)
+end
+
+function Class:OnRequestingCurrentUserPreferencesImpl_()
+    Scopify(EScopes.Function, self)
+
+    local ea_ = { -- todo    RequestingCurrentUserPreferencesEventArgs:New()
+        Response = {
+            UserPreferences = nil -- type: UserPreferencesDto
+        }
+    }
+
+    _eventRequestingCurrentUserPreferences:Raise(self, ea_)
+
+    Guard.Assert.Explained.IsNotNil(ea_.Response ~= nil, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
+    Guard.Assert.Explained.IsNotNil(ea_.Response.UserPreferences ~= nil, "[ZUPF.OCUPR.020] failed to retrieve user-preferences")
+    Guard.Assert.Explained.IsInstanceOf(ea_.Response.UserPreferences, UserPreferencesDto, "[ZUPF.OCUPR.030] failed to retrieve user-preferences", "ea_.Response.UserPreferences")
+
+    return ea_.Response.UserPreferences
+end
+
+function Class:ApplyNewUserPreferences_(newUserPreferences)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsInstanceOf(newUserPreferences, UserPreferencesDto, "newUserPreferences")
 
     _commandsEnabled = false --00
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesGrouplootingAutomation_Mode()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:GetGreeniesGrouplootingAutomation_Mode()) then
         _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(response.UserPreferences:GetGreeniesGrouplootingAutomation_ActOnKeybind()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:GetGreeniesGrouplootingAutomation_ActOnKeybind()) then
         _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 
     _commandsEnabled = true
 
-    return response
+    return newUserPreferences
 
     --00  we dont want these change-events to be advertised to the outside world when we are simply updating the
     --    controls to reflect the current user-preferences
@@ -112,7 +130,7 @@ function Class:OnRequestingCurrentUserPreferences_()
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(sender, ea)
+function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
     _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
