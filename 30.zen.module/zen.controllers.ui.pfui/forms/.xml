@@ -1,4 +1,6 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+    <Include file="events\.xml"/>
+    
     <Include file="zen.user.preferences.form.lua"/>
     <Include file="zen.user.preferences.form.designer.lua"/>
 </Ui>

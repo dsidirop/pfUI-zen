@@ -2,6 +2,7 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local S = using "System.Helpers.Strings"
 
+local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
@@ -24,16 +25,15 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
     Scopify(EScopes.Function, {})
 
     local addon = {
-        ownName = "Zen",
-        fullName = "pfUI [Zen]",
         folderName = "pfUI-Zen",
-
-        ownNameColored = "|cFF7FFFD4Zen|r",
-        fullNameColored = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r",
-
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
+
+        -- ownName = "Zen",
+        -- fullName = "pfUI [Zen]",
+        -- ownNameColored = "|cFF7FFFD4Zen|r",
+        -- fullNameColored = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r",
     }
-    
+
     local addonsService = AddonsService:New()
 
     local addonPath = Enumerable -- @formatter:off   detect current addon path   todo  consolidate this into the healthcheck-service
@@ -51,10 +51,13 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
         Throw(Exception:New(S.Format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors)))
     end
 
-    UserPreferencesForm -- @formatter:off
+    UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
                 :New(TranslationsService:New())
-                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea)
-                    ea.Response.UserPreferences = UserPreferencesQueryableService:New():GetAllUserPreferences()
+                :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
+                    Guard.Assert.IsNotNil(ea_, "ea")
+                    Guard.Assert.IsNotNil(ea_.Response, "ea.Response")
+
+                    ea_.Response.UserPreferences = UserPreferencesQueryableService:New():GetAllUserPreferences()
                 end)
                 :Initialize() -- @formatter:on
 

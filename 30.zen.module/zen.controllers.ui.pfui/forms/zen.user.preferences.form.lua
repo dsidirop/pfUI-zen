@@ -13,6 +13,8 @@ local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Add
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
 local UserPreferencesDto                                        = using "Pavilion.Warcraft.Addons.Zen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
+
+local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
@@ -90,19 +92,12 @@ end
 function Class:OnRequestingCurrentUserPreferencesImpl_()
     Scopify(EScopes.Function, self)
 
-    local ea_ = { -- todo    RequestingCurrentUserPreferencesEventArgs:New()
-        Response = {
-            UserPreferences = nil -- type: UserPreferencesDto
-        }
-    }
+    local response = _eventRequestingCurrentUserPreferences:Raise(self, RequestingCurrentUserPreferencesEventArgs:New()).Response
 
-    _eventRequestingCurrentUserPreferences:Raise(self, ea_)
+    Guard.Assert.Explained.IsNotNil(response.UserPreferences, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
+    Guard.Assert.Explained.IsInstanceOf(response.UserPreferences, UserPreferencesDto, "[ZUPF.OCUPR.020] failed to retrieve user-preferences", "ea.Response.UserPreferences")
 
-    Guard.Assert.Explained.IsNotNil(ea_.Response ~= nil, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
-    Guard.Assert.Explained.IsNotNil(ea_.Response.UserPreferences ~= nil, "[ZUPF.OCUPR.020] failed to retrieve user-preferences")
-    Guard.Assert.Explained.IsInstanceOf(ea_.Response.UserPreferences, UserPreferencesDto, "[ZUPF.OCUPR.030] failed to retrieve user-preferences", "ea_.Response.UserPreferences")
-
-    return ea_.Response.UserPreferences
+    return response.UserPreferences
 end
 
 function Class:ApplyNewUserPreferences_(newUserPreferences)
