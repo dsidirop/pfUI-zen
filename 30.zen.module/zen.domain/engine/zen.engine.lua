@@ -19,6 +19,7 @@ function Class:New(greeniesAutolooterAggregate)
         _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(), -- todo  use di
     })
 end
+
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place
 
 function Class:IsRunning() -- todo   partial classes

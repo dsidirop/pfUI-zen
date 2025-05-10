@@ -1,33 +1,19 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard    = using "System.Guard" 
+local Scopify  = using "System.Scopify"
+local EScopes  = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local ZenEngine              = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
+local ZenEngineSettings      = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings"
+local UserPreferencesService = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
+local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService" -- @formatter:on
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local ZenEngine = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine")
-local ZenEngineSettings = _importer("Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings")
-local UserPreferencesService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService")
+Scopify(EScopes.Function, {})
 
 function Class:New(userPreferencesService)
     Scopify(EScopes.Function, self)
@@ -43,11 +29,13 @@ function Class:Handle_RestartEngineCommand(_)
 
     local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
 
-    local zenEngineSettings = ZenEngineSettings:New() -- todo  automapper
+    local zenEngineSettings = ZenEngineSettings:New()
 
     zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
                      :ChainSetMode(userPreferencesDto:GetGreeniesGrouplootingAutomation_Mode())
                      :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesGrouplootingAutomation_ActOnKeybind())
+    
+    -- todo   add more settings-sections here
 
     _zenEngineSingleton:Stop()
                        :SetSettings(zenEngineSettings)
@@ -59,7 +47,7 @@ end
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(command) == "table", "command parameter is expected to be an object")
+    Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewModeCommand, "command")
 
     _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) --                     order
 
@@ -74,7 +62,7 @@ end
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(command)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(command) == "table", "command parameter is expected to be an object")
+    Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand, "command")
 
     _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
 
