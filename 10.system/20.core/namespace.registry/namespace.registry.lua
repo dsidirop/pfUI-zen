@@ -1,4 +1,4 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -7,6 +7,7 @@
     local _type = _assert(_g.type)
     local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
+    local _next = _assert(_g.next)
     local _pairs = _assert(_g.pairs)
     local _unpack = _assert(_g.unpack)
     local _format = _assert(_g.string.format)
@@ -18,7 +19,7 @@
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable
+    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g.pvl_namespacer_add then
@@ -412,7 +413,7 @@ do
         _setfenv(1, self)
 
         -- we intentionally omit validating the namespacepath in terms of whitespaces etc
-        -- thats because this method is meant to be used by the reflection.* family of methods
+        -- that is because this method is meant to be used by the reflection.* family of methods
 
         if namespacePath == nil then -- we dont want to error out in this case   this is a try-method
             return nil, nil
@@ -459,6 +460,66 @@ do
         return _reflection_registry[symbolProto]
     end
 
+    function NamespaceRegistry.BlendMixins(target, namedMixins)
+        -- NamespaceRegistry:TryGetProtoTidbitsViaSymbolProto(symbolProto) or _throw_exception("target is not a symbol-proto") -- nah dont   we want to be able to use utility even in adhoc mode
+        _ = _type(target) == "table" or _throw_exception("target must be a table")
+        _ = _type(namedMixins) == "table" or _throw_exception("namedMixins must be a table")
+        _ = _next(namedMixins) ~= nil or _throw_exception("namedMixins must not be empty")
+        
+        local targetBlendxin = target.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin method closures
+        local targetAsBlendxin = target.asBlendxin or {}
+
+        target.blendxin = targetBlendxin
+        target.asBlendxin = targetAsBlendxin
+
+        local target_mt = _getmetatable(target) or {}
+        local targetBlendxin_mt = _getmetatable(targetBlendxin) or {} -- for the blendxin
+
+        target_mt.__index = target_mt.__index or {}
+        targetBlendxin_mt.__index = targetBlendxin_mt.__index or {}
+
+        -- for each named mixin, create a table with closures that bind the target as self
+        for mixinNickname, mixinSpecs in _pairs(namedMixins) do
+            _ = _type(mixinSpecs) == "table" or _throw_exception("named mixin %q is of type %q which isn't a table", mixinNickname, _type(mixinSpecs))
+            _ = _next(mixinSpecs) ~= nil or _throw_exception("named mixin %q has dud specs", mixinNickname)
+
+            local currentAsBlendxin
+            local isNamelessMixin = mixinNickname == ""
+            if not isNamelessMixin then
+                currentAsBlendxin = targetAsBlendxin[mixinNickname] or {} -- completely overwrite any previous asBlendxin[name]
+                targetAsBlendxin[mixinNickname] = currentAsBlendxin
+            end            
+
+            for mixinMemberName, mixinMember in _pairs(mixinSpecs) do
+                target_mt.__index[mixinMemberName] = mixinMember -- combine all mixin methods into __index     later mixins override earlier ones
+
+                if _type(mixinMember) == "function" then
+                    local snapshotOfMixinFunction = mixinMember -- absolutely vital to snapshot locally   we create a closure that ignores the first argument and uses target as self
+                    function closure(_, ...)
+                        return snapshotOfMixinFunction(target, _unpack(arg))
+                    end
+
+                    targetBlendxin_mt.__index[mixinMemberName] = closure
+                    
+                    if not isNamelessMixin then
+                        currentAsBlendxin[mixinMemberName] = closure
+                    end                    
+                else
+                    targetBlendxin_mt.__index[mixinMemberName] = mixinMember -- data field
+
+                    if not isNamelessMixin then
+                        currentAsBlendxin[mixinMemberName] = mixinMember -- data field
+                    end
+                end
+            end
+        end
+
+        _setmetatable(target, target_mt)
+        _setmetatable(targetBlendxin, targetBlendxin_mt)
+
+        return target
+    end
+
     function NamespaceRegistry:PrintOut()
         _setfenv(1, self)
 
@@ -490,9 +551,12 @@ do
     end
 
     -- namespacer_binder()
-    _g.pvl_namespacer_bind = function(namespacePath, symbol)
-        return NamespaceRegistrySingleton:Bind(namespacePath, symbol)
+    _g.pvl_namespacer_bind = function(namespacePath, specificSymbolType)
+        return NamespaceRegistrySingleton:Bind(namespacePath, specificSymbolType)
     end
+
+    -- must be exported because it is absolutely needed by "System.Classes.Mixins.MixinsBlender"
+    _g.pvl_namespacer_blendMixins = NamespaceRegistrySingleton.BlendMixins
 end
 
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
@@ -502,6 +566,25 @@ NamespaceRegistrySingleton:Bind("[declare]",             function(namespacePath)
 NamespaceRegistrySingleton:Bind("[declare:enum]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum     ) end)
 NamespaceRegistrySingleton:Bind("[declare:class]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Class    ) end)
 NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Interface) end)
+
+local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
+    local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
+
+    return function(namedMixinsToAdd) return NamespaceRegistrySingleton.BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
+end
+
+NamespaceRegistrySingleton:Bind("[declare][blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
+NamespaceRegistrySingleton:Bind("[declare] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
+
+NamespaceRegistrySingleton:Bind("[declare:enum][blend]",       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum       ) end)
+NamespaceRegistrySingleton:Bind("[declare:enum] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum       ) end)
+
+NamespaceRegistrySingleton:Bind("[declare:class][blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
+NamespaceRegistrySingleton:Bind("[declare:class] [blend]",     function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
+
+NamespaceRegistrySingleton:Bind("[declare:interface][blend]",  function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface  ) end)
+NamespaceRegistrySingleton:Bind("[declare:interface] [blend]", function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface  ) end)
+
 -- @formatter:on
 
 local AdvertisedEManagedSymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.EManagedSymbolTypes", EManagedSymbolTypes.Enum)

@@ -22,6 +22,7 @@ using "[declare]" "System.Console.Writer"
 
 using "[declare]" "System.Classes.Metatable"
 using "[declare]" "System.Classes.Instantiator"
+using "[declare]" "System.Classes.Mixins.MixinsBlender"
 
 using "[declare]" "System.Helpers.Arrays"
 using "[declare]" "System.Helpers.Tables"
