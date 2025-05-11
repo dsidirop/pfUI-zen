@@ -10,13 +10,16 @@
     <Include file="scopify\.xml"/>
     <Include file="validation\.xml"/>
     
+    <!-- keep classes.metatable this here -->
     <Include file="classes.metatable\.xml"/>
+    
     <Include file="language.raw.type.system\.xml"/>
     
     <Include file="iterators\.xml"/>
     <Include file="default.chat.frame\.xml"/>
 
     <Include file="classes.instantiator\.xml"/>
+    <Include file="classes.mixins.mixinsblender\.xml"/>
 
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>

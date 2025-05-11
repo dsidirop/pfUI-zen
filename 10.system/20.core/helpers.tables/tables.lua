@@ -4,12 +4,12 @@ local B = using "[built-ins]" [[
     Next     = next,
     Unpack   = unpack,
     RawGet   = rawget,
-    
-    GetPairs        = pairs,
-    GetIndexedPairs = ipairs,
 
     TableCount  = table.getn,
     TableInsert = table.insert,
+
+    GetPairs        = pairs,
+    GetIndexedPairs = ipairs,
 ]]
 
 local Guard = using "System.Guard"

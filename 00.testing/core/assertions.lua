@@ -22,6 +22,7 @@ _setfenv(1, {})
 VWoWUnit.Should = {}
 VWoWUnit.Should.Be = {}
 VWoWUnit.Should.Not = {}
+VWoWUnit.Should.Not.Be = {}
 
 function VWoWUnit.Should.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
@@ -31,6 +32,38 @@ function VWoWUnit.Should.Throw(action)
 	if success then
 		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
 	end
+end
+
+function VWoWUnit.Should.Not.Be.Nil(value)
+    _setfenv(1, VWoWUnit.Should)
+
+    if value ~= nil then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Not.Be.Nil()] Expected a non-nil value but got %q", _tostring(value)))
+end
+
+function VWoWUnit.Should.Not.Be.PlainlyEqual(a, b)
+    _setfenv(1, VWoWUnit.Should)
+
+    if a ~= b then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Not.Be.PlainlyEqual()] Expected the two values to not be plainly-equal but they are (got %q which is equal to %q)", _tostring(a), _tostring(b)))
+end
+
+
+function VWoWUnit.Should.Not.ReachHere(explanation)
+    _setfenv(1, VWoWUnit.Should)
+
+    local message = "[Should.Not.ReachHere()] This code should not be reached"
+    if explanation ~= nil then
+        message = _format("%s: %s", message, _tostring(explanation))
+    end
+
+    VWoWUnit.RaiseWithoutStacktrace_(message)
 end
 
 function VWoWUnit.Should.Not.Throw(action)
@@ -69,7 +102,7 @@ function VWoWUnit.Should.Be.Equivalent(a, b)
 
 	local message = _format("[Should.Be.Equivalent()] Expected %q, got %q", _tostring(bb), _tostring(aa))
 	if path ~= nil and path ~= "" then
-		message = _format("tables differ at %q - %s", _strsub(path, 2), message)
+		message = _format("%s - tables differ at %q", message, _strsub(path, 2))
 	end
 
 	VWoWUnit.Raise_(message)
