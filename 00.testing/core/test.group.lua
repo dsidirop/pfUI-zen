@@ -1,20 +1,18 @@
-local _g, _assert, _type, _pairs, _setfenv, _tableInsert, _setmetatable = (function()
+local VWoWUnit, _assert, _type, _pairs, _setfenv, _tableInsert, _setmetatable = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
+
+    _g.VWoWUnit = _g.VWoWUnit or {}
 
     local _type = _assert(_g.type)
     local _pairs = _assert(_g.pairs)
     local _tableInsert = _assert(_g.table.insert)
     local _setmetatable = _assert(_g.setmetatable)
 
-    return _g, _assert, _type, _pairs, _setfenv, _tableInsert, _setmetatable
+    return _g.VWoWUnit, _assert, _type, _pairs, _setfenv, _tableInsert, _setmetatable
 end)()
-
-local VWoWUnit = _g.VWoWUnit or {}
-_g.VWoWUnit = VWoWUnit
-_g = nil
 
 _setfenv(1, {})
 

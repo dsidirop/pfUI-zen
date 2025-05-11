@@ -1,20 +1,18 @@
-local _g, _pairs, _type, _setfenv, _tableSort, _tableInsert = (function()
+local VWoWUnit, _pairs, _type, _setfenv, _tableSort, _tableInsert = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	_g.VWoWUnit = _g.VWoWUnit or {}
+	
 	local _type = _assert(_g.type)
 	local _pairs = _assert(_g.pairs)
 	local _tableSort = _assert(_g.table.sort)
 	local _tableInsert = _assert(_g.table.insert)
 
-	return _g, _pairs, _type, _setfenv, _tableSort, _tableInsert
+	return _g.VWoWUnit, _pairs, _type, _setfenv, _tableSort, _tableInsert
 end)()
-
-local VWoWUnit = _g.VWoWUnit or {}
-_g.VWoWUnit = VWoWUnit
-_g = nil
 
 _setfenv(1, {})
 

@@ -1,9 +1,11 @@
-local _g, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove = (function()
+local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	_g.VWoWUnit = _g.VWoWUnit or {}
+	
 	local _pcall = _assert(_g.pcall)
 	local _unpack = _assert(_g.unpack)
 	local _strsub = _assert(_g.string.sub)
@@ -12,12 +14,8 @@ local _g, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debu
 	local _debugstack = _assert(_g.debugstack)
 	local _tableRemove = _assert(_g.table.remove)
 
-	return _g, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove
+	return _g.VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove
 end)()
-
-local VWoWUnit = _g.VWoWUnit or {}
-_g.VWoWUnit = VWoWUnit
-_g = nil
 
 _setfenv(1, {})
 

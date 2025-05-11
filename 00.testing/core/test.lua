@@ -1,23 +1,20 @@
-local _g, _assert, _type, _print, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable = (function()
+local VWoWUnit, _assert, _type, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	_g.VWoWUnit = _g.VWoWUnit or {}
+
 	local _next = _assert(_g.next)
 	local _type = _assert(_g.type)
-	local _print = _assert(_g.print)
-	local _pcall = _assert(_g.pcall)	
+	local _pcall = _assert(_g.pcall)
 	local _tostring = _assert(_g.tostring)
 	local _tableInsert = _assert(_g.table.insert)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g, _assert, _type, _print, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable
+	return _g.VWoWUnit, _assert, _type, _pcall, _tostring, _setfenv, _next, _tableInsert, _setmetatable
 end)()
-
-local VWoWUnit = _g.VWoWUnit or {}
-_g.VWoWUnit = VWoWUnit
-_g = nil
 
 _setfenv(1, {})
 
@@ -54,6 +51,7 @@ function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunctio
 	_assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
 
 	local test = {
+		_logger = VWoWUnit.DefaultLogger,
 		_testName = testName,
 		_testFunction = testFunction,
 		_dynamicDataGeneratorCallback = dynamicDataGeneratorCallback,
@@ -74,8 +72,8 @@ function VWoWUnit.Test:Run()
 		return { possibleErrorMessage }
 	end
 
-	_print("**** Running sub-test-cases of |cffbbbbbb " .. _testName)
-	
+	_logger:LogInfo("**** Running sub-test-cases of |cffbbbbbb " .. _testName)
+
 	local allErrorMessages = {}
 	for subtestName, datum in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testData) do -- if testData actually has data
 		local possibleErrorMessage = self:RunImpl_("** " .. subtestName, datum)
@@ -93,15 +91,15 @@ function VWoWUnit.Test:RunImpl_(testName, data)
 	_assert(_type(data) == "table", "test data must be a table")
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
 
-	-- _print("****" .. testName .. " starting ... ")
+	-- _print("****" .. testName .. " starting ... ") --dont
 
 	local success, errorMessage = _pcall(_testFunction, data)
 	if success == nil or success == false or errorMessage ~= nil then
-		_print("****" .. testName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		_logger:LogError("****" .. testName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
 		return errorMessage
 	end
 
-	_print("****" .. testName .. " |cff00ff00[PASSED]")
+	_logger:LogInfo("****" .. testName .. " |cff00ff00[PASSED]")
 
 	return nil
 end
