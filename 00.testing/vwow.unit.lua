@@ -20,12 +20,16 @@ local VWoWUnit = _g.VWoWUnit or {}
 _g.VWoWUnit = VWoWUnit
 _g = nil
 
-local _Engine = {} -- local to this file only and instantiated only once at the bottom of this file
+local TestsRunnerEngine = {} -- local to this file only and instantiated only once at the bottom of this file
 
-function _Engine:New()
+function TestsRunnerEngine:New()
 	local instance = {
 		_testTags = {},
 		_testGroups = {},
+
+		_options = {
+			verbosity = "normal", -- minimal, normal, verbose
+		}
 	}
 
 	_setmetatable(instance, self)
@@ -34,21 +38,34 @@ function _Engine:New()
 	return instance
 end
 
---[[ Run ]]--
+--[[ Options ]]--
 
-function _Engine:RunAllTestGroups()
+function TestsRunnerEngine:ChainSetOptionVerbosity(newLevel)
 	_setfenv(1, self)
 
-	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
-		_print("** Running test-group " .. group:GetName())
+	_assert(_type(newLevel) == "string", "verbosity must be a string")
+	_assert(newLevel == "minimal" or newLevel == "normal" or newLevel == "verbose", "verbosity must be one of: minimal, normal, verbose")
+
+	_options.verbosity = newLevel
+	
+	return self
+end
+
+--[[ Run ]]--
+
+function TestsRunnerEngine:RunAllTestGroups()
+	_setfenv(1, self)
+
+	for _, group in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+		self:PrintNormal_("** Running test-group " .. group:GetName())
 		group:Run()
-		_print("")
+		self:PrintNormal_("")
 	end
 	
 	-- 00  we want to ensure that tests with short names like system.exceptions to be run before tests with long names like pavilion.xyz.foo.bar 
 end
 
-function _Engine:RunTestGroup(testGroupName)
+function TestsRunnerEngine:RunTestGroup(testGroupName)
 	_setfenv(1, self)
 	
 	local group = _testGroups[testGroupName]
@@ -59,17 +76,17 @@ function _Engine:RunTestGroup(testGroupName)
 	group:Run()
 end
 
-function _Engine:RunTestGroupsByTag(tagName)
+function TestsRunnerEngine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
-	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
+	for _, group in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
 end
 
 --[[ Registry ]]--
 
-function _Engine:CreateOrUpdateGroup(options)
+function TestsRunnerEngine:CreateOrUpdateGroup(options)
 	_setfenv(1, self)
 	
 	_assert(_type(options) == "table")
@@ -82,13 +99,13 @@ function _Engine:CreateOrUpdateGroup(options)
 	return group
 end
 
-function _Engine:GetGroup(name)
+function TestsRunnerEngine:GetGroup(name)
 	_setfenv(1, self)
 	
 	return _testGroups[name]
 end
 
-function _Engine:AssociateTestGroupWithTags(group, tags)
+function TestsRunnerEngine:AssociateTestGroupWithTags(group, tags)
 	_setfenv(1, self)
 
 	_assert(_type(tags) == "table")
@@ -106,7 +123,7 @@ end
 
 -- private space
 
-function _Engine:GetsertGroup_(name)
+function TestsRunnerEngine:GetsertGroup_(name)
 	_setfenv(1, self)
 
 	_assert(_type(name) == "string" and name ~= "")
@@ -120,8 +137,32 @@ function _Engine:GetsertGroup_(name)
 	return group
 end
 
-function _Engine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
-	_setfenv(1, _Engine)
+function TestsRunnerEngine:PrintNormal_(message) -- todo   turn this into a separate logger
+	_setfenv(1, self)
+
+	if _options.verbosity == "normal" or _options.verbosity == "verbose" then
+		_print(message)
+	end
+end
+
+function TestsRunnerEngine:PrintVerbose_(message)
+	_setfenv(1, self)
+
+	if _options.verbosity == "verbose" then
+		_print(message)
+	end
+end
+
+function TestsRunnerEngine:PrintMinimal_(message)
+	_setfenv(1, self)
+
+	if _options.verbosity == "minimal" then
+		_print(message)
+	end
+end
+
+function TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
+	_setfenv(1, TestsRunnerEngine)
 
 	if testGroups == nil then
 		return {}
@@ -135,4 +176,4 @@ function _Engine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
 	end)
 end
 
-VWoWUnit.TestsEngine = _Engine:New()
+VWoWUnit.TestsEngine = TestsRunnerEngine:New() -- single instance

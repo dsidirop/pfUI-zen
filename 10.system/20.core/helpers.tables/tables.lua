@@ -12,7 +12,6 @@ local B = using "[built-ins]" [[
     TableInsert = table.insert,
 ]]
 
-local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"

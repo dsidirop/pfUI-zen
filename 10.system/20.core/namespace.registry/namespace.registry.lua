@@ -16,6 +16,7 @@
     local _debugstack = _assert(_g.debugstack)
     local _tableRemove = _assert(_g.table.remove)
     local _setmetatable = _assert(_g.setmetatable)
+    local _getmetatable = _assert(_g.getmetatable)
 
     return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable
 end)()

@@ -101,7 +101,7 @@ function VWoWUnit.Test:RunImpl_(testName, data)
 		return errorMessage
 	end
 
-	-- _print("****" .. testName .. " |cff00ff00[PASSED]")
+	_print("****" .. testName .. " |cff00ff00[PASSED]")
 
 	return nil
 end

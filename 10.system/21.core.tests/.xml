@@ -5,6 +5,7 @@
     <Include file="console.testbed\.xml"/>
     <Include file="reflection.testbed\.xml"/>
     <Include file="exceptions.testbed\.xml"/>
+    <Include file="inheritance.testbed\.xml"/>
     <Include file="strings.helper.testbed\.xml"/>    
     <Include file="using.built.ins.testbed\.xml"/>
 </Ui>

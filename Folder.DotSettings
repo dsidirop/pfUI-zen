@@ -6,11 +6,13 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=blendxin/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=booleanizable/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=cffaaaaaa/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=cffbbbbbb/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=cffff/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=cffffffff/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=debugstack/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=ffccpf/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=getn/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=getsert/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=givenbasicinvalidparameters/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=givenbasicvalidparameters/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=givenfullvalidparameters/@EntryIndexedValue">True</s:Boolean>
