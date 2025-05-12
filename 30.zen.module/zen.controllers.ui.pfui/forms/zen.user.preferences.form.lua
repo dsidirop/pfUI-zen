@@ -62,8 +62,8 @@ function Class:Initialize()
     Scopify(EScopes.Function, self)
 
     PfuiGui.CreateGUIEntry(-- 00
-            _t("Thirdparty"),
-            _t("Zen", "|cFF7FFFD4"),
+            _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
+            _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
             function()
                 self:InitializeControls_() --                   order
                 self:OnRequestingCurrentUserPreferences_() --   order
