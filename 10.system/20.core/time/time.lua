@@ -4,6 +4,4 @@ local B = using "[built-ins]" [[ Time = time ]]
 
 local Class = using "[declare]" "System.Time [Partial]"
 
-function Class.Now()
-    return B.Time()
-end
+Class.Now = B.Time
