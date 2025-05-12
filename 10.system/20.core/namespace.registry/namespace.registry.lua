@@ -1,17 +1,18 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next = (function()
+﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
     _setfenv(1, {})
 
+    local _next = _assert(_g.next)
     local _type = _assert(_g.type)
     local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
-    local _next = _assert(_g.next)
     local _pairs = _assert(_g.pairs)
     local _unpack = _assert(_g.unpack)
-    local _format = _assert(_g.string.format)
+    local _strlen = _assert(_g.string.len)
     local _strsub = _assert(_g.string.sub)
+    local _format = _assert(_g.string.format)
     local _strfind = _assert(_g.string.find)
     local _stringify = _assert(_g.tostring)
     local _debugstack = _assert(_g.debugstack)
@@ -19,7 +20,7 @@
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g.pvl_namespacer_add then
@@ -36,6 +37,36 @@ local function _throw_exception(format, ...)
     end
 
     _assert(false, _format(format, _unpack(variadicsArray)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
+end
+
+local function _stringStartsWith(input, desiredPrefix)
+    _ = _type(input) == "string" or _throw_exception("input must be a string")
+    _ = _type(desiredPrefix) == "string" or _throw_exception("desiredPrefix must be a string")
+    
+    if desiredPrefix == "" then
+        return true
+    end
+
+    if input == "" then
+        return false
+    end
+
+    local desiredPrefixLength = _strlen(desiredPrefix)
+    if _strlen(input) < desiredPrefixLength then
+        return false
+    end
+    
+    if input == desiredPrefix then
+        return true
+    end
+
+    if desiredPrefixLength == 1 then
+        -- optimization for 1-char-prefixes because for the runtime those 1-char-prefixes are very efficiently cached via string-interning
+        return _strsub(input, 1, 1) == desiredPrefix
+    end
+
+    local startIndex = _strfind(input, desiredPrefix, --[[startindex:]] 1, --[[plainsearch:]] true)
+    return startIndex == 1
 end
 
 local function _strmatch(input, patternString, ...)
@@ -176,10 +207,11 @@ end
 
 local EManagedSymbolTypes = EnumsProtoFactory.Spawn()
 do
-    EManagedSymbolTypes.Enum = 0
-    EManagedSymbolTypes.Class = 1
-    EManagedSymbolTypes.Interface = 2
-    EManagedSymbolTypes.RawSymbol = 3 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+    EManagedSymbolTypes.Enum = 1
+    EManagedSymbolTypes.Class = 2
+    EManagedSymbolTypes.Interface = 3
+    EManagedSymbolTypes.RawSymbol = 4 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+    EManagedSymbolTypes.Keyword = 5 -- [declare] and friends
 end
 
 local ProtosFactory = {}
@@ -207,7 +239,7 @@ do
 
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
-        _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType)
+        -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
 
         local instance = {
@@ -283,7 +315,13 @@ do
     function Entry:IsRawSymbol()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.RawSymbol
+        return _symbolType == EManagedSymbolTypes.RawSymbol -- external symbols from 3rd party libs etc
+    end
+
+    function Entry:IsKeyword()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolTypes.Keyword -- [declare] and friends
     end
 
     function Entry:ToString()
@@ -312,7 +350,7 @@ do
 
     NamespaceRegistry.Assert = {}
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath)
-        _ = _type(namespacePath) == "string" and _strtrim(namespacePath) ~= "" and namespacePath == _strtrim(namespacePath) or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        _ = _type(namespacePath) == "string" and namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == EManagedSymbolTypes.Class or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
@@ -389,24 +427,33 @@ do
 
     -- used for binding external libs to a local namespace
     --
-    --     _namespacer_bind("Foo.Bar", function(x, y) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
+    --     _namespacer_bind("Foo.Bar",         function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
+    --     _namespacer_bind("[declare:class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
-    function NamespaceRegistry:Bind(namespacePath, rawSymbolProto)
+    function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol)
         _setfenv(1, self)
 
-        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
-        NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbolProto)
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(keywordOrNamespacePath)
+        NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbol)
 
-        local possiblePreexistingEntry = _namespaces_registry[namespacePath]
+        local possiblePreexistingEntry = _namespaces_registry[keywordOrNamespacePath]
 
-        NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable(possiblePreexistingEntry, namespacePath)
+        NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable(possiblePreexistingEntry, keywordOrNamespacePath)
 
-        local newEntry = Entry:New(EManagedSymbolTypes.RawSymbol, rawSymbolProto, namespacePath)
+        local properSymbolType = _stringStartsWith(keywordOrNamespacePath, "[")
+                and EManagedSymbolTypes.Keyword -- [declare] and friends
+                or EManagedSymbolTypes.RawSymbol
 
-        _namespaces_registry[namespacePath] = newEntry
-        _reflection_registry[rawSymbolProto] = newEntry
+        local newFormalSymbolProtoEntry = Entry:New(properSymbolType, rawSymbol, keywordOrNamespacePath)
+
+        _namespaces_registry[keywordOrNamespacePath] = newFormalSymbolProtoEntry
+
+        if properSymbolType == EManagedSymbolTypes.RawSymbol then
+            -- no point to include [declare] and other keywords in the registry
+            _reflection_registry[rawSymbol] = newFormalSymbolProtoEntry
+        end
     end
 
     function NamespaceRegistry:TryGetProtoTidbitsViaNamespace(namespacePath)
@@ -439,7 +486,7 @@ do
                 return nil
             end
 
-            _throw_exception("namespace %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
+            _throw_exception("namespace/keyword %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
 
         if entry:IsPartialEntry() then

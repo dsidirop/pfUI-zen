@@ -1,4 +1,4 @@
-local VWoWUnit, ELogLevels, _assert, _type, _print, _setfenv, _setmetatable = (function()
+local VWoWUnit, ELogLevels, _assert, _type, _print, _tostring, _setfenv, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -9,9 +9,10 @@ local VWoWUnit, ELogLevels, _assert, _type, _print, _setfenv, _setmetatable = (f
 
 	local _type = _assert(_g.type)
 	local _print = _assert(_g.print)
+    local _tostring = _assert(_g.tostring)
 	local _setmetatable = _assert(_g.setmetatable)
-
-	return _g.VWoWUnit, _ELogLevels, _assert, _type, _print, _setfenv, _setmetatable
+    
+	return _g.VWoWUnit, _ELogLevels, _assert, _type, _print, _tostring, _setfenv, _setmetatable
 end)()
 
 _setfenv(1, {})
