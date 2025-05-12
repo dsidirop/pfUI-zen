@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local SGreeniesGrouplootingAutomationActOnKeybind = using "[declare:enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
+local SGreeniesGrouplootingAutomationActOnKeybind = using "[declare] [enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
 -- dont change the casing lightheartedly from "Alt" to "alt" here   it affects settings persistence and it must also match the casing of
 --

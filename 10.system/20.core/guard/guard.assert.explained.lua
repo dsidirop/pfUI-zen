@@ -64,7 +64,7 @@ do
                     value,
                     customMessage,
                     optionalArgumentName,
-                    "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")
+                    "to be of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")
             ))
         end
 

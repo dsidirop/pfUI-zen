@@ -208,7 +208,8 @@ end
 local EManagedSymbolTypes = EnumsProtoFactory.Spawn()
 do
     EManagedSymbolTypes.Enum = 1
-    EManagedSymbolTypes.Class = 2
+    EManagedSymbolTypes.NonStaticClass = 2
+    EManagedSymbolTypes.StaticClass = 3
     EManagedSymbolTypes.Interface = 3
     EManagedSymbolTypes.RawSymbol = 4 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
     EManagedSymbolTypes.Keyword = 5 -- [declare] and friends
@@ -223,7 +224,7 @@ do
             return EnumsProtoFactory.Spawn()
         end
 
-        if symbolType == EManagedSymbolTypes.Class then
+        if symbolType == EManagedSymbolTypes.NonStaticClass then
             return ClassProtoFactory.Spawn()
         end
 
@@ -242,7 +243,7 @@ do
         -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
 
-        if symbolType == EManagedSymbolTypes.Class then
+        if symbolType == EManagedSymbolTypes.NonStaticClass then
             symbolProto._ = symbolProto._ or {} --  by convention static-utility-methods of classes are to be hosted under 'Class._.*'
         end
         
@@ -301,7 +302,19 @@ do
     function Entry:IsClassEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Class
+        return _symbolType == EManagedSymbolTypes.NonStaticClass or _symbolType == EManagedSymbolTypes.StaticClass
+    end
+    
+    function Entry:IsStaticClassEntry()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolTypes.StaticClass
+    end
+
+    function Entry:IsNonStaticClassEntry()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolTypes.NonStaticClass
     end
 
     function Entry:IsEnumEntry()
@@ -357,7 +370,7 @@ do
         _ = _type(namespacePath) == "string" and namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
-        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.Class or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
+        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.NonStaticClass or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
 
         _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
@@ -432,7 +445,7 @@ do
     -- used for binding external libs to a local namespace
     --
     --     _namespacer_bind("Foo.Bar",         function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
-    --     _namespacer_bind("[declare:class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
+    --     _namespacer_bind("[declare] [class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
@@ -598,7 +611,7 @@ do
 
     -- using "[declare]" "x.y.z"
     _g.pvl_namespacer_add = function(namespacePath)
-        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Class)
+        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass)
     end
 
     -- namespacer_binder()
@@ -613,10 +626,11 @@ end
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
 -- @formatter:off   todo   also introduce [declare partial] [declare partial:enum] [declare:testbed] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
-NamespaceRegistrySingleton:Bind("[declare]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Class    ) end)
-NamespaceRegistrySingleton:Bind("[declare:enum]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum     ) end)
-NamespaceRegistrySingleton:Bind("[declare:class]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Class    ) end)
-NamespaceRegistrySingleton:Bind("[declare:interface]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Interface) end)
+NamespaceRegistrySingleton:Bind("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 
 local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
@@ -624,17 +638,11 @@ local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     return function(namedMixinsToAdd) return NamespaceRegistrySingleton.BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
 end
 
-NamespaceRegistrySingleton:Bind("[declare][blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
-NamespaceRegistrySingleton:Bind("[declare] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
-
-NamespaceRegistrySingleton:Bind("[declare:enum][blend]",       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum       ) end)
-NamespaceRegistrySingleton:Bind("[declare:enum] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum       ) end)
-
-NamespaceRegistrySingleton:Bind("[declare:class][blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
-NamespaceRegistrySingleton:Bind("[declare:class] [blend]",     function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Class      ) end)
-
-NamespaceRegistrySingleton:Bind("[declare:interface][blend]",  function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface  ) end)
-NamespaceRegistrySingleton:Bind("[declare:interface] [blend]", function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface  ) end)
+NamespaceRegistrySingleton:Bind("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:Bind("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 
 -- @formatter:on
 

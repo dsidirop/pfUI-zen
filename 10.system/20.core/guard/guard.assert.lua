@@ -348,9 +348,9 @@ do
     end
 
     -- NAMESPACES
-    function Guard.Assert.IsNamespaceStringOrRegisteredClassProto(value, optionalArgumentName)
-        local isNamespaceStringOrRegisteredClassProto = Reflection.IsString(value) or Reflection.TryGetNamespaceIfClassProto(value) ~= nil
-        if not isNamespaceStringOrRegisteredClassProto then
+    function Guard.Assert.IsNamespaceStringOrRegisteredNonStaticClassProto(value, optionalArgumentName)
+        local IsNamespaceStringOrRegisteredNonStaticClassProto = Reflection.IsString(value) or Reflection.TryGetNamespaceIfNonStaticClassProto(value) ~= nil
+        if not IsNamespaceStringOrRegisteredNonStaticClassProto then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered proto"))
         end
         
@@ -365,7 +365,7 @@ do
     --
     function Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
         if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
-            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")))
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
         
         return value 

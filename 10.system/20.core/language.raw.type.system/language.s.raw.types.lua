@@ -1,6 +1,6 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local SRawTypes = using "[declare:enum]" "System.Language.SRawTypes [Partial]"
+local SRawTypes = using "[declare] [enum]" "System.Language.SRawTypes [Partial]"
 
 SRawTypes.Nil        =   "nil" --                                 @formatter:off
 SRawTypes.Table      =   "table"

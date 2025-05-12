@@ -26,7 +26,7 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
--- returns   { STypes (strenum), Namespace (string) }
+-- returns   { System.Reflection.STypes, namespace-string }
 function Reflection.GetInfo(valueOrClassInstanceOrProto)
     if valueOrClassInstanceOrProto == nil then
         return STypes.Nil, nil
@@ -54,12 +54,21 @@ function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOr
         return STypes.Enum
     end
     
-    if managedSymbolType == EManagedSymbolTypes.Class then
-        return STypes.Class
+    if managedSymbolType == EManagedSymbolTypes.NonStaticClass then
+        return STypes.NonStaticClass
+    end
+
+    if managedSymbolType == EManagedSymbolTypes.StaticClass then
+        return STypes.StaticClass
     end
 
     if managedSymbolType == EManagedSymbolTypes.Interface then
         return STypes.Interface
+    end
+
+    if managedSymbolType == EManagedSymbolTypes.Keyword then
+        -- this should never happen but just in case
+        return STypes.Keyword
     end
     
     if managedSymbolType == EManagedSymbolTypes.RawSymbol then
@@ -143,7 +152,7 @@ function Reflection.IsNilOrTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredClassProto)
-    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceIfClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
+    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
 
     if object == nil then
         return false
@@ -168,6 +177,7 @@ function Reflection.TryGetNamespaceWithFallbackToRawType(object) --00
     --         nil
     --         a class-instance
     --         a class-proto
+    --         a static-class-proto
     --         or just a mere raw type (number, string, boolean, function, table)
     --
 end
@@ -176,8 +186,8 @@ function Reflection.IsClassInstance(object)
     return Reflection.TryGetNamespaceIfClassInstance(object) ~= nil
 end
 
-function Reflection.IsClassProto(object)
-    return Reflection.TryGetNamespaceIfClassProto(object) ~= nil
+function Reflection.IsNonStaticClassProto(object)
+    return Reflection.TryGetNamespaceIfNonStaticClassProto(object) ~= nil
 end
 
 function Reflection.TryGetNamespaceIfClassInstance(object)
@@ -185,21 +195,34 @@ function Reflection.TryGetNamespaceIfClassInstance(object)
         return nil
     end
     
-    return Reflection.TryGetNamespaceIfClassProto(object.__index)
+    return Reflection.TryGetNamespaceIfNonStaticClassProto(object.__index)
 end
 
 function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     local symbolProto, symbolType = Reflection.TryGetProtoTidbitsViaNamespace(namespacePath)
-    if symbolProto == nil or symbolType == nil or symbolType ~= EManagedSymbolTypes.Class then
+    if symbolProto == nil
+            or symbolType == nil
+            or (symbolType ~= EManagedSymbolTypes.StaticClass and symbolType ~= EManagedSymbolTypes.NonStaticClass) then
         return nil
     end
-    
+
     return symbolProto
 end
 
+-- covers both non-static-classes and static-classes
 function Reflection.TryGetNamespaceIfClassProto(value)
     local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
     if protoTidbits == nil or not protoTidbits:IsClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
+        return nil
+    end
+
+    return protoTidbits:GetNamespace()
+end
+
+-- covers only non-static-classes
+function Reflection.TryGetNamespaceIfNonStaticClassProto(value)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
+    if protoTidbits == nil or not protoTidbits:IsNonStaticClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
         return nil
     end
 

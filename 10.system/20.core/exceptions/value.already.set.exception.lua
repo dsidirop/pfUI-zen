@@ -83,22 +83,4 @@ function Class._.FormulateMessage_(optionalArgumentName)
     return message
 end
 
-function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
-    Scopify(EScopes.Function, Class)
-
-    if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then
-        return nil
-    end
-
-    if Reflection.IsString(optionalExpectationOrExpectedType) then
-        return optionalExpectationOrExpectedType
-    end
-
-    local namespace = Reflection.TryGetNamespaceIfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
-    if namespace ~= nil then
-        return namespace
-    end
-
-    return optionalExpectationOrExpectedType
-end
 

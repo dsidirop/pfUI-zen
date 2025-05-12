@@ -37,11 +37,11 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
+    Guard.Assert.IsNamespaceStringOrRegisteredNonStaticClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.TryGetNamespaceIfClassProto(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceIfNonStaticClassProto(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -74,7 +74,7 @@ function Class:Run()
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfClassProto(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfNonStaticClassProto(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 

@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local SWoWElementType = using "[declare:enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType"
+local SWoWElementType = using "[declare] [enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType"
 
 SWoWElementType.Model                    = "Model" --@formatter:off
 SWoWElementType.Frame                    = "Frame"
