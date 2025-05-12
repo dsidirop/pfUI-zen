@@ -54,7 +54,7 @@ function Logger:Log(message, atLevel)
 	_assert(_type(atLevel) == "number", "level must be a number")
 	
 	if atLevel >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -62,7 +62,7 @@ function Logger:LogTrace(message)
 	_setfenv(1, self)
 
 	if ELogLevels.Trace >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -70,7 +70,7 @@ function Logger:LogDebug(message)
 	_setfenv(1, self)
 
 	if ELogLevels.Debug >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -78,7 +78,7 @@ function Logger:LogInfo(message)
 	_setfenv(1, self)
 	
 	if ELogLevels.Info >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -86,7 +86,7 @@ function Logger:LogWarn(message)
 	_setfenv(1, self)
 
 	if ELogLevels.Warn >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -94,7 +94,7 @@ function Logger:LogError(message) -- when tests fail
 	_setfenv(1, self)
 
 	if ELogLevels.Error >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 
@@ -103,7 +103,7 @@ function Logger:LogFatal(message)
 	_setfenv(1, self)
 
 	if ELogLevels.Fatal >= _options.minLogLevel then
-		_print(message)
+		_print(_tostring(message))
 	end
 end
 

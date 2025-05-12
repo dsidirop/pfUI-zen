@@ -38,9 +38,9 @@ end
 function TestsRunnerEngine:RunAllTestGroups()
 	_setfenv(1, self)
 
-	for _, group in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
-		_logger:LogInfo("** Running test-group " .. group:GetName())
-		group:Run()
+	for _, testsGroup in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+		_logger:LogInfo("** Running test-group " .. testsGroup:GetName())
+        testsGroup:Run()
 		_logger:LogInfo("")
 	end
 	

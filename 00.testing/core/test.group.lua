@@ -22,44 +22,44 @@ VWoWUnit.TestsGroup = {}
 
 function VWoWUnit.TestsGroup:New(name)
     local instance = {
-        _name = name,
+        _name  = name,
         _tests = {},
     }
-    
+
     _setmetatable(instance, self)
     self.__index = self
-    
+
     return instance
 end
 
 function VWoWUnit.TestsGroup:GetName()
     _setfenv(1, self)
-    
+
     return _name
 end
 
 function VWoWUnit.TestsGroup:Run()
     _setfenv(1, self)
 
-    local failedTests = {}
+    local nonSuccessfulTests = {}
     for _, test in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(_tests) do
         local possibleErrorMessages = test:Run()
         if possibleErrorMessages then
             for _, errorMessage in _pairs(possibleErrorMessages) do
-                _tableInsert(failedTests, {
-                    TestName = _name,
+                _tableInsert(nonSuccessfulTests, {
+                    TestName     = _name,
                     ErrorMessage = errorMessage
                 })
-            end            
+            end
         end
     end
-    
-    return failedTests
+
+    return nonSuccessfulTests
 end
 
 function VWoWUnit.TestsGroup:AddFact(testName, testFunction)
     _setfenv(1, self)
-    
+
     _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
     _assert(_type(testFunction) == "function", "test function must be a function")
 
@@ -82,7 +82,7 @@ function VWoWUnit.TestsGroup:AddDynamicTheory(testName, dynamicDataGeneratorCall
     _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
     _assert(_type(testFunction) == "function", "test function must be a function")
     _assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
-    
+
     _tableInsert(_tests, VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback))
 end
 
@@ -90,6 +90,6 @@ end
 
 function VWoWUnit.TestsGroup.__lt(other)
     _setfenv(1, self)
-    
+
     return _name < other._name
 end
