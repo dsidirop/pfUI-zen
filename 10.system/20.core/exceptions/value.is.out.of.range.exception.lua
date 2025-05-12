@@ -18,7 +18,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     --Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return self:Instantiate({
-        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -87,14 +87,14 @@ end
 Class.__tostring = Class.ToString
 
 -- private space
-function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
             and "Value out of range"
             or "Value of '" .. optionalArgumentName .. "' is out of range"
 
-    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    local expectationString = Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
         StringsHelper.Format("%s (expected %s - got %q)", message, expectationString, value)
     else
@@ -104,7 +104,7 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
     return message
 end
 
-function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then

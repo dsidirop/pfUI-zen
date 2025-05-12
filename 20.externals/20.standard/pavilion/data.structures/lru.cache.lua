@@ -11,8 +11,8 @@ local Table        = using "System.Table"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
-local T    = using "System.Helpers.Tables"
-local StringsHelper   = using "System.Helpers.Strings" --  @formater:on
+local T            = using "System.Helpers.Tables"
+local S            = using "System.Helpers.Strings" --  @formater:on
 
 local Class = using "[declare]" "Pavilion.DataStructures.LRUCache"
 
@@ -180,7 +180,7 @@ function Class:ToString()
     local s = "{ "
     local sep = ""
     for key, value in T.GetPairs(_entries) do
-        s = s .. sep .. StringsHelper.Format("%q=%q", key, value.Value)
+        s = s .. sep .. S.Format("%q=%q", key, value.Value)
         sep = ", "
     end
 

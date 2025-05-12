@@ -18,7 +18,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return self:Instantiate({
-        _message = Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -33,7 +33,7 @@ function Class:NewWithMessage(value, customMessage, optionalArgumentName, option
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
     return self:Instantiate({
-        _message = customMessage .. " because " .. Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
+        _message = customMessage .. " because " .. Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
         _stacktrace = "",
 
         _stringified = nil
@@ -89,14 +89,14 @@ end
 Class.__tostring = Class.ToString
 
 -- private space
-function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil
             and "Value is of inappropriate type"
             or "'" .. optionalArgumentName .. "' is of inappropriate type"
 
-    local expectationString = Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    local expectationString = Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
         message = StringsHelpers.Format("%s (expected %s - got %s)", message, expectationString, Reflection.TryGetNamespaceWithFallbackToRawType(value)) 
     else
@@ -106,7 +106,7 @@ function Class.FormulateMessage_(value, optionalArgumentName, optionalExpectatio
     return message
 end
 
-function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
+function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
     if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then

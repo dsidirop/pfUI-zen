@@ -15,23 +15,20 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 
 local Class = using "[declare]" "System.Try [Partial]"
 
-
-Class.ProtectedCall = B.ProtectedCall
-
 Scopify(EScopes.Function, {})
 
-Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
+Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
-function Class:New(action, exceptionsDeserializationFactory)
+function Class:New(action, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
-    Guard.Assert.IsNilOrInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
     return self:Instantiate({
         _action = action,
         _allExceptionHandlers = {},
-        _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,
+        _exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or Class.DefaultExceptionsDeserializationFactory,
     })
 end
 
@@ -56,7 +53,7 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnedValuesArray = { Class.ProtectedCall(_action) }
+    local returnedValuesArray = { B.ProtectedCall(_action) }
 
     local success = A.PopFirst(returnedValuesArray)
     if success then

@@ -15,7 +15,7 @@ function Class:New(optionalArgumentName)
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
     return self:Instantiate({
-        _message = Class.FormulateMessage_(optionalArgumentName),
+        _message = Class._.FormulateMessage_(optionalArgumentName),
         _stacktrace = "",
         
         _stringified = nil
@@ -84,7 +84,7 @@ end
 Class.__tostring = Class.ToString
 
 -- private space
-function Class.FormulateMessage_(optionalArgumentName)
+function Class._.FormulateMessage_(optionalArgumentName)
     Scopify(EScopes.Function, Class)
 
     local message = optionalArgumentName == nil

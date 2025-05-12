@@ -242,6 +242,10 @@ do
         -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
 
+        if symbolType == EManagedSymbolTypes.Class then
+            symbolProto._ = symbolProto._ or {} --  by convention static-utility-methods of classes are to be hosted under 'Class._.*'
+        end
+        
         local instance = {
             _symbolType = symbolType,
             _symbolProto = symbolProto,

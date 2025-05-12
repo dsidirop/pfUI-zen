@@ -18,6 +18,7 @@ Scopify(EScopes.Function, {})
 -- todo                    thus enabling us to treat static classes specially when blending them!
 -- todo   co-store the actual symbol-protos inside the .asBlendxin table!
 -- todo   add support and tests for .CastAs(), .IsCastableAs(), .TryCastAs()
+-- todo   figure out what to do with the inheritance of the __tostring() method from the base class (is it a static method or what?) 
 -- todo   support passing arrays too for the mixins (as nameless mixins)
 
 TG:AddFact("T005.Inheritance.NamespaceBlending.GivenStraightForwardBlending.ShouldWork",

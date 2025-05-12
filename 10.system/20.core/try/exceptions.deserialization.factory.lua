@@ -30,8 +30,8 @@ function Class:DeserializeFromRawExceptionMessage(rawExceptionMessage)
 
     rawExceptionMessage = StringsHelper.Trim(rawExceptionMessage)
     
-    local stacktrace = self.ParseStacktraceString_(rawExceptionMessage)
-    local message, exceptionType = self.ParseExceptionMessageHeader_(rawExceptionMessage)
+    local stacktrace = _.ParseStacktraceString_(rawExceptionMessage)
+    local message, exceptionType = _.ParseExceptionMessageHeader_(rawExceptionMessage)
     
     return exceptionType:New()
                         :ChainSetMessage(message)
@@ -39,7 +39,7 @@ function Class:DeserializeFromRawExceptionMessage(rawExceptionMessage)
 end
 
 -- private space
-function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
+function Class._.ParseExceptionMessageHeader_(rawExceptionMessage)
     Scopify(EScopes.Function, Class)
 
     local firstLine = StringsHelper.Split(rawExceptionMessage, "\n", 1)[1]
@@ -58,7 +58,7 @@ function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
     -- 20   [Some.Namespace.To.XYZException] Blah blah exception message                      -> Blah blah exception message 
 end
 
-function Class.ParseStacktraceString_(rawExceptionMessage)
+function Class._.ParseStacktraceString_(rawExceptionMessage)
     Scopify(EScopes.Function, Class)
 
     rawExceptionMessage = StringsHelper.Trim(rawExceptionMessage)
