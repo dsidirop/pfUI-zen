@@ -13,6 +13,8 @@ local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
+Scopify(EScopes.Function, {})
+
 function Class:New()
     Scopify(EScopes.Function, self)
 

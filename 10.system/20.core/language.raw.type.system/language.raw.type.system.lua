@@ -4,7 +4,7 @@ local B = using "[built-ins]" [[ GetRawType = type ]]
 
 local SRawTypes = using "System.Language.SRawTypes"
 
-local RawTypeSystem = using "[declare]" "System.Language.RawTypeSystem [Partial]"
+local RawTypeSystem = using "[declare] [static]" "System.Language.RawTypeSystem [Partial]"
 
 RawTypeSystem.GetRawType = B.GetRawType 
 

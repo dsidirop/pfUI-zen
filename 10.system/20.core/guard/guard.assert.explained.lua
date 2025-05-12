@@ -11,12 +11,12 @@ local ValueCannotBeNilException           = using("System.Exceptions.ValueCannot
 local ValueIsOutOfRangeException          = using("System.Exceptions.ValueIsOutOfRangeException")
 local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfInappropriateTypeException") --@formatter:on
 
-local Guard = using "[declare]" "System.Guard [Partial]"
+local Guard = using "[declare] [static]" "System.Guard [Partial]"
 
 Scopify(EScopes.Function, {})
 
 do
-    Guard.Assert.Explained = using "[declare]" "System.Guard.Assert.Explained"
+    Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained"
     
     function Guard.Assert.Explained.IsString(value, customMessage)
         if not Reflection.IsString(value) then

@@ -5,7 +5,7 @@ local B = using "[built-ins]" [[ GetLocale = GetLocale ]]
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local Localization = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
+local Localization = using "[declare] [static]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
 
 Scopify(EScopes.Function, {})
 

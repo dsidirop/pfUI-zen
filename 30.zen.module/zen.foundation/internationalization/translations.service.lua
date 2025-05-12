@@ -17,7 +17,7 @@ function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator")
     Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
-    return self:WithDefaultCall(self.Translate):Instantiate({ --@formatter:off
+    return self:ChainSetDefaultCall(self.Translate):Instantiate({ --@formatter:off
         _zenAddonTranslator        = zenAddonTranslator       or ZenAddonTranslator:NewForActiveUILanguage(),  -- todo   get this from di
         _pfuiTranslatorAsFallback  = pfuiTranslatorAsFallback or PfuiTranslator.I,                             -- todo   get this from di
     }) --@formatter:on

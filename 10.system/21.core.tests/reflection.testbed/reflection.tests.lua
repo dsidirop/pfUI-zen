@@ -2,6 +2,8 @@
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Event      = using "System.Event"
 local Reflection = using "System.Reflection"
 
 local STypes = using "System.Reflection.STypes"
@@ -24,18 +26,18 @@ TestsGroup:AddTheory("Reflection.GetInfo.GivenVariousGreenValues.ShouldReturnCor
             ["REF.GI.GVGV.SRCT.0030"] = {   Value = {},                    Expected = { SymbolType = STypes.Table,           SymbolNamespace = nil                                     }   },
             ["REF.GI.GVGV.SRCT.0040"] = {   Value = function() end,        Expected = { SymbolType = STypes.Function,        SymbolNamespace = nil                                     }   },
             ["REF.GI.GVGV.SRCT.0050"] = {   Value = true,                  Expected = { SymbolType = STypes.Boolean,         SymbolNamespace = nil                                     }   },
-            -- ["REF.GI.GVGV.SRCT.0060"] = {   Value = Reflection,            Expected = { SymbolType = STypes.StaticClass,     SymbolNamespace = "System.Reflection"                  }   },
-            ["REF.GI.GVGV.SRCT.0065"] = {   Value = Reflection,            Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Reflection"                     }   },
+            ["REF.GI.GVGV.SRCT.0060"] = {   Value = Reflection,            Expected = { SymbolType = STypes.StaticClass,     SymbolNamespace = "System.Reflection"                     }   },
+            ["REF.GI.GVGV.SRCT.0065"] = {   Value = Event,                 Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Event"                          }   },
             ["REF.GI.GVGV.SRCT.0070"] = {   Value = EManagedSymbolTypes,   Expected = { SymbolType = STypes.Enum,            SymbolNamespace = "System.Namespacer.EManagedSymbolTypes" }   },
         }, -- @formatter:off
         function(options)
             -- ARRANGE
-            
+
             -- ACT
             local symbolType, symbolNamespace = U.Should.Not.Throw(function()
                 return Reflection.GetInfo(options.Value)
             end)
-            
+
             -- ASSERT
             U.Should.Be.PlainlyEqual(symbolType, options.Expected.SymbolType)
             U.Should.Be.PlainlyEqual(symbolNamespace, options.Expected.SymbolNamespace)

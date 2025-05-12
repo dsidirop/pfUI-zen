@@ -6,7 +6,7 @@ local EScopes = using "System.EScopes"
 
 local A = using "System.Helpers.Arrays"
 
-local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
+local StringsHelper = using "[declare] [static]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Match(input, patternString, ...)
     local variadicsArray = arg

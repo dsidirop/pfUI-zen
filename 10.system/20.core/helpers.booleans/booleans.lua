@@ -4,7 +4,7 @@ local Guard = using "System.Guard"
 local Reflection = using "System.Reflection"
 local StringsHelper = using "System.Helpers.Strings"
 
-local Class = using "[declare]" "System.Helpers.Booleans [Partial]"
+local Class = using "[declare] [static]" "System.Helpers.Booleans [Partial]"
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil

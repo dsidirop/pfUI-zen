@@ -1,9 +1,8 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Validation = using "System.Validation"
-local StringsHelper = using "System.Helpers.Strings"
 
-local Throw = using "[declare]" "System.Exceptions.Throw [Partial]"
+local Throw = using "[declare] [static]" "System.Exceptions.Throw [Partial]"
 
 function Throw:__Call__(exception)
     if exception.ChainSetStacktrace ~= nil then

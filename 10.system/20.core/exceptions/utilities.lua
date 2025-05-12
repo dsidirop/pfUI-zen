@@ -4,7 +4,7 @@ local Scopify    = using "System.Scopify" --           @formatter:off
 local EScopes    = using "System.EScopes"
 local Reflection = using "System.Reflection" --        @formatter:on
 
-local Utilities = using "[declare]" "System.Exceptions.Utilities [Partial]"
+local Utilities = using "[declare] [static]" "System.Exceptions.Utilities [Partial]"
 
 function Utilities.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Utilities)

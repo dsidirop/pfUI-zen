@@ -147,25 +147,54 @@ do
     end
 end
 
-local ClassProtoFactory = {}
+local StaticClassProtoFactory = {}
 do
-    function ClassProtoFactory.Spawn()
+    function StaticClassProtoFactory.Spawn()
         local metaTable = { }
-        metaTable.__call = ClassProtoFactory.OnProtoCalledAsFunction_
+        metaTable.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Rethrow() so as for them to work properly
+        metaTable.__index = metaTable
+        -- metaTable.__tostring = todo
+
+        local newStaticClassProto = { }
+        newStaticClassProto.__index = newStaticClassProto -- 00 vital
+        -- newClassProto.Instantiate = StaticClassProtoFactory.StandardInstantiator_ --                      no point for static-classes
+        -- newStaticClassProto.ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_ -- no point for static-classes
+
+        return _setmetatable(newStaticClassProto, metaTable)
+
+        -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
+    end
+
+    function StaticClassProtoFactory.OnProtoCalledAsFunction_(staticClassProto, ...)
+        local variadicsArray = arg
+
+        _ = _type(staticClassProto.__Call__) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
+
+        return staticClassProto:__Call__(_unpack(variadicsArray)) -- 00
+
+        -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+    end
+end
+
+local NonStaticClassProtoFactory = {}
+do
+    function NonStaticClassProtoFactory.Spawn()
+        local metaTable = { }
+        metaTable.__call = NonStaticClassProtoFactory.OnProtoCalledAsFunction_
         metaTable.__index = metaTable
         -- metaTable.__tostring = todo
 
         local newClassProto = { }
         newClassProto.__index = newClassProto -- 00 vital
-        newClassProto.Instantiate = ClassProtoFactory.StandardInstantiator_
-        newClassProto.WithDefaultCall = ClassProtoFactory.StandardWithDefaultCall_
+        newClassProto.Instantiate = NonStaticClassProtoFactory.StandardInstantiator_
+        newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
 
         return _setmetatable(newClassProto, metaTable)
 
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
 
-    function ClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
+    function NonStaticClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
         local variadicsArray = arg
 
         local hasConstructorFunction = _type(classProto.New) == "function"
@@ -181,7 +210,7 @@ do
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end
 
-    function ClassProtoFactory.StandardWithDefaultCall_(classProto, defaultCallMethod)
+    function NonStaticClassProtoFactory.StandardChainSetDefaultCall_(classProto, defaultCallMethod)
         _ = _type(classProto) == "table"             or _throw_exception("classProto was expected to be a table") --             @formatter:off
         _ = _type(defaultCallMethod) == "function"   or _throw_exception("defaultCallMethod was expected to be a function") --   @formatter:on
 
@@ -190,7 +219,7 @@ do
         return classProto
     end
 
-    function ClassProtoFactory.StandardInstantiator_(classProto, instanceSpecificFields)
+    function NonStaticClassProtoFactory.StandardInstantiator_(classProto, instanceSpecificFields)
         _ = _type(classProto) == "table"                                                or _throw_exception("classProto was expected to be a table") --                             @formatter:off
         _ = instanceSpecificFields == nil or _type(instanceSpecificFields) == "table"   or _throw_exception("instanceSpecificFields was expected to be either a table or nil") --   @formatter:on
 
@@ -224,11 +253,15 @@ do
             return EnumsProtoFactory.Spawn()
         end
 
-        if symbolType == EManagedSymbolTypes.NonStaticClass then
-            return ClassProtoFactory.Spawn()
+        if symbolType == EManagedSymbolTypes.StaticClass then
+            return StaticClassProtoFactory.Spawn()
         end
 
-        return {} -- interfaces
+        if symbolType == EManagedSymbolTypes.NonStaticClass then
+            return NonStaticClassProtoFactory.Spawn()
+        end
+
+        return {} -- todo  interfaces
     end
 end
 
@@ -630,6 +663,8 @@ NamespaceRegistrySingleton:Bind("[declare]",                   function(namespac
 NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum                 ) end)
 NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
 NamespaceRegistrySingleton:Bind("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Interface            ) end)
+
+NamespaceRegistrySingleton:Bind("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 
 local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
@@ -642,6 +677,8 @@ NamespaceRegistrySingleton:Bind("[declare] [blend]",                       funct
 NamespaceRegistrySingleton:Bind("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum                 ) end)
 NamespaceRegistrySingleton:Bind("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
 NamespaceRegistrySingleton:Bind("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface            ) end)
+
+NamespaceRegistrySingleton:Bind("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 NamespaceRegistrySingleton:Bind("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
 
 -- @formatter:on

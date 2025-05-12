@@ -7,6 +7,8 @@ local EScopes = using "System.EScopes"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
+Scopify(EScopes.Function, {})
+
 function Class:New(gamblingRequestId)
     Scopify(EScopes.Function, self)
     

@@ -10,7 +10,7 @@ local S = using "System.Helpers.Strings"
 
 local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
-local Console = using "[declare]" "System.Console [Partial]"
+local Console = using "[declare] [static]" "System.Console [Partial]"
 
 Console.Writer = using "[declare]" "System.Console.Writer [Partial]"
 

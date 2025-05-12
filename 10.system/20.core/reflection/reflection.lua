@@ -14,7 +14,7 @@ local RawTypeSystem = using "System.Language.RawTypeSystem"
 
 local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
-local Reflection = using "[declare]" "System.Reflection [Partial]"
+local Reflection = using "[declare] [static]" "System.Reflection [Partial]"
 
 Scopify(EScopes.Function, {})
 

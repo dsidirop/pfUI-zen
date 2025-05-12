@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Instantiator = using "[declare]" "System.Classes.Instantiator [Partial]"
+local Instantiator = using "[declare] [static]" "System.Classes.Instantiator [Partial]"
 
 --
 -- note that this utility class is meant to be used in private utility-classes which are not meant to be registered

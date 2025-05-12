@@ -3,7 +3,6 @@
 local Guard              = using "System.Guard" --                            @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
-local Reflection         = using "System.Reflection"
 local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
 
 local Class = using "[declare]" "System.Exceptions.ValueAlreadySetException [Partial]"

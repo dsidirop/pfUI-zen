@@ -9,6 +9,8 @@ local GreeniesAutolooterAggregate = using "Pavilion.Warcraft.Addons.Zen.Domain.E
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 
+Scopify(EScopes.Function, {})
+
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)
 

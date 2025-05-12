@@ -8,7 +8,7 @@ local B = using "[built-ins]" [[
 local A = using "System.Helpers.Arrays"
 local S = using "System.Helpers.Strings"
 
-local Validation = using "[declare]" "System.Validation [Partial]"
+local Validation = using "[declare] [static]" "System.Validation [Partial]"
 
 Validation.Assert = B.Assert
 Validation.Debugstack = B.Bebugstack

@@ -19,7 +19,7 @@ local Reflection = using "System.Reflection"
 
 local Metatable = using "System.Classes.Metatable"
 
-local TablesHelper = using "[declare]" "System.Helpers.Tables [Partial]"
+local TablesHelper = using "[declare] [static]" "System.Helpers.Tables [Partial]"
 
 Scopify(EScopes.Function, { })
 

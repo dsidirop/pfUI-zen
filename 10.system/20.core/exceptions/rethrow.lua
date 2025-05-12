@@ -2,7 +2,7 @@
 
 local Validation = using "System.Validation"
 
-local Rethrow = using "[declare]" "System.Exceptions.Rethrow [Partial]"
+local Rethrow = using "[declare] [static]" "System.Exceptions.Rethrow [Partial]"
 
 function Rethrow:__Call__(exception)
     Validation.Fail(exception) -- 00

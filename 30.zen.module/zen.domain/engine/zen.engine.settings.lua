@@ -7,6 +7,7 @@ local GreeniesAutolooterAggregateSettings = using "Pavilion.Warcraft.Addons.Zen.
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings"
 
+Scopify(EScopes.Function, {})
 
 function Class:New()
     Scopify(EScopes.Function, self)
