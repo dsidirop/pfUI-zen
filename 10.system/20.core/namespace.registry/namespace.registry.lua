@@ -557,64 +557,110 @@ do
         return _reflection_registry[symbolProto]
     end
 
-    function NamespaceRegistry.BlendMixins(target, namedMixins)
-        -- NamespaceRegistry:TryGetProtoTidbitsViaSymbolProto(symbolProto) or _throw_exception("target is not a symbol-proto") -- nah dont   we want to be able to use utility even in adhoc mode
-        _ = _type(target) == "table" or _throw_exception("target must be a table")
+    function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
+        _setfenv(1, self)
+        
+        local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
+        _ = protoTidbits ~= nil or _throw_exception("targetSymbolProto is not a symbol-proto")
+        
+        local targetIsEnum = protoTidbits:IsEnumEntry()
+        local targetIsInterface = protoTidbits:IsInterfaceEntry()
+        local targetIsStaticClass = protoTidbits:IsStaticClassEntry()
+        local targetIsNonStaticClass = protoTidbits:IsNonStaticClassEntry()
+        _ = (targetIsEnum or targetIsInterface or targetIsStaticClass or targetIsNonStaticClass) or _throw_exception("targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetManagedSymbolType())
+
         _ = _type(namedMixins) == "table" or _throw_exception("namedMixins must be a table")
         _ = _next(namedMixins) ~= nil or _throw_exception("namedMixins must not be empty")
-        
-        local targetBlendxin = target.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin method closures
-        local targetAsBlendxin = target.asBlendxin or {}
 
-        target.blendxin = targetBlendxin
-        target.asBlendxin = targetAsBlendxin
+        local blendxinProp = targetSymbolProto.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin method closures
+        local asBlendxin = targetSymbolProto.asBlendxin or {}
 
-        local target_mt = _getmetatable(target) or {}
-        local targetBlendxin_mt = _getmetatable(targetBlendxin) or {} -- for the blendxin
+        targetSymbolProto.blendxin = blendxinProp
+        targetSymbolProto.asBlendxin = asBlendxin
+
+        local target_mt = _getmetatable(targetSymbolProto) or {}
+        local blendxinProp_mt = _getmetatable(blendxinProp) or {} -- for the blendxin
 
         target_mt.__index = target_mt.__index or {}
-        targetBlendxin_mt.__index = targetBlendxin_mt.__index or {}
+        blendxinProp_mt.__index = blendxinProp_mt.__index or {}
 
         -- for each named mixin, create a table with closures that bind the target as self
-        for mixinNickname, mixinSpecs in _pairs(namedMixins) do
-            _ = _type(mixinSpecs) == "table" or _throw_exception("named mixin %q is of type %q which isn't a table", mixinNickname, _type(mixinSpecs))
-            _ = _next(mixinSpecs) ~= nil or _throw_exception("named mixin %q has dud specs", mixinNickname)
+        for mixinNickname, mixinProtoSymbol in _pairs(namedMixins) do
+            local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(mixinProtoSymbol)
 
-            local currentAsBlendxin
+            _ = mixinProtoTidbits       ~= nil or _throw_exception("named mixin %q is not a known type (class/interface/enum ...)", mixinNickname) --@formatter:off
+            _ = _next(mixinProtoSymbol) ~= nil or _throw_exception("named mixin %q has dud specs", mixinNickname)
+            
+            local mixinIsEnum = mixinProtoTidbits:IsEnumEntry()
+            local mixinIsInterface = mixinProtoTidbits:IsInterfaceEntry()
+            local mixinIsStaticClass = mixinProtoTidbits:IsStaticClassEntry()
+            local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
+            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("named mixin %q (type=%s) is not an enum or a static-class - cannot mix it into an enum", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("named mixin %q (type=%s) is not an interface - cannot mix it into an interface", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("named mixin %q (type=%s) is not a static-class or an interface - cannot mix it into a static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("named mixin %q (type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
+
+            local asBlendxinProp -- .asBlendxin.<mixin-nickname>.<mixin-member-name> = <mixin-member>
             local isNamelessMixin = mixinNickname == ""
             if not isNamelessMixin then
-                currentAsBlendxin = targetAsBlendxin[mixinNickname] or {} -- completely overwrite any previous asBlendxin[name]
-                targetAsBlendxin[mixinNickname] = currentAsBlendxin
+                asBlendxinProp = asBlendxin[mixinNickname] or {}
+                asBlendxin[mixinNickname] = asBlendxinProp -- completely overwrite any previous asBlendxin[name]
             end            
 
-            for mixinMemberName, mixinMember in _pairs(mixinSpecs) do
-                target_mt.__index[mixinMemberName] = mixinMember -- combine all mixin methods into __index     later mixins override earlier ones
+            for mixinMemberName, mixinMember in _pairs(mixinProtoSymbol) do
+                _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(mixinMemberName) .. "'")
+                
+                _ = _type(mixinMemberName) == "string" or _throw_exception("mixin-name is not a string - its type is %q", _type(mixinMemberName))
+                _ = (mixinMemberName ~= nil and mixinMemberName ~= "") or _throw_exception("mixin named %q has a member with a dud name - this is not allowed", mixinNickname)
+                
+                if mixinMemberName == "_" then
+                    -- blend-in all the statics from all the mixins in a single _ table
+                    for _staticMemberName, _staticMember in _pairs(mixinMember) do
+                        _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
+                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", mixinNickname)
 
-                if _type(mixinMember) == "function" then
-                    local snapshotOfMixinFunction = mixinMember -- absolutely vital to snapshot locally   we create a closure that ignores the first argument and uses target as self
-                    function closure(_, ...)
-                        return snapshotOfMixinFunction(target, _unpack(arg))
+                        targetSymbolProto._[_staticMemberName] = _staticMember -- static field
+                    end
+                else
+                    local isFunction = _type(mixinMember) == "function"
+                    local hasBlendxinRelatedName = mixinMemberName == "blendxin" or mixinMemberName == "asBlendxin"
+                    local hasBlacklistedNameForBase = hasBlendxinRelatedName or mixinMemberName == "__index"
+                    _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", mixinMemberName)
+                    
+                    if not hasBlacklistedNameForBase then
+                        target_mt.__index[mixinMemberName] = mixinMember -- combine all mixin methods into __index     later mixins override earlier ones    
                     end
 
-                    targetBlendxin_mt.__index[mixinMemberName] = closure
-                    
-                    if not isNamelessMixin then
-                        currentAsBlendxin[mixinMemberName] = closure
-                    end                    
-                else
-                    targetBlendxin_mt.__index[mixinMemberName] = mixinMember -- data field
+                    if isFunction then
+                        local snapshotOfMixinFunction = mixinMember -- absolutely vital to snapshot locally   we create a closure that ignores the first argument and uses target as self
+                        function closure(_, ...)
+                            return snapshotOfMixinFunction(targetSymbolProto, _unpack(arg))
+                        end
 
-                    if not isNamelessMixin then
-                        currentAsBlendxin[mixinMemberName] = mixinMember -- data field
+                        blendxinProp_mt.__index[mixinMemberName] = closure
+
+                        if not isNamelessMixin then
+                            asBlendxinProp[mixinMemberName] = closure
+                        end
+                    else
+                        if not hasBlacklistedNameForBase then
+                            -- we dont want the .blendxin/.asBlendxin/.__index to be plugged-in here
+                            blendxinProp_mt.__index[mixinMemberName] = mixinMember -- data field    .blendxin.<mixin-member-name> = <mixin-member>
+                        end
+
+                        if not isNamelessMixin then
+                            -- we do want the .blendxin/.asBlendxin/.__index to be plugged-in here
+                            asBlendxinProp[mixinMemberName] = mixinMember -- data field    .asBlendxin.<mixin-nickname>.<mixin-member-name> = <mixin-member>
+                        end
                     end
                 end
             end
         end
 
-        _setmetatable(target, target_mt)
-        _setmetatable(targetBlendxin, targetBlendxin_mt)
+        _setmetatable(targetSymbolProto, target_mt)
+        _setmetatable(blendxinProp, blendxinProp_mt)
 
-        return target
+        return targetSymbolProto
     end
 
     function NamespaceRegistry:PrintOut()
@@ -651,9 +697,6 @@ do
     _g.pvl_namespacer_bind = function(namespacePath, specificSymbolType)
         return NamespaceRegistrySingleton:Bind(namespacePath, specificSymbolType)
     end
-
-    -- must be exported because it is absolutely needed by "System.Classes.Mixins.MixinsBlender"
-    _g.pvl_namespacer_blendMixins = NamespaceRegistrySingleton.BlendMixins
 end
 
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
@@ -670,7 +713,7 @@ NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespac
 local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
 
-    return function(namedMixinsToAdd) return NamespaceRegistrySingleton.BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
+    return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
 end
 
 NamespaceRegistrySingleton:Bind("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)

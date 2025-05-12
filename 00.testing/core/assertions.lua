@@ -82,6 +82,16 @@ function VWoWUnit.Should.Not.Throw(action)
 	return _unpack(returnValuesTable)
 end
 
+function VWoWUnit.Should.Be.Nil(value)
+    _setfenv(1, VWoWUnit.Should)
+
+    if value == nil then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Be.Nil()] Expected a nil value but got %q", _tostring(value)))
+end
+
 function VWoWUnit.Should.Be.PlainlyEqual(a, b)
 	_setfenv(1, VWoWUnit.Should)
 
