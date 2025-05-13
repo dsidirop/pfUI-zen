@@ -147,16 +147,35 @@ do
     end
 end
 
+local InterfacesProtoFactory = {}
+do
+    function InterfacesProtoFactory.Spawn()
+        local metaTable = { }
+        metaTable.__index = metaTable
+        -- metaTable.__call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
+
+        local newClassProto = { }
+        newClassProto.__index = newClassProto -- 00 vital
+        newClassProto.ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_
+        -- newClassProto.Instantiate = InterfacesProtoFactory.StandardInstantiator_
+        -- newClassProto.__tostring = todo
+
+        return _setmetatable(newClassProto, metaTable)
+
+        -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
+    end
+end
+
 local StaticClassProtoFactory = {}
 do
     function StaticClassProtoFactory.Spawn()
         local metaTable = { }
-        metaTable.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Rethrow() so as for them to work properly
+        metaTable.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
         metaTable.__index = metaTable
-        -- metaTable.__tostring = todo
 
         local newStaticClassProto = { }
         newStaticClassProto.__index = newStaticClassProto -- 00 vital
+        -- newStaticClassProto.__tostring = todo
         -- newClassProto.Instantiate = StaticClassProtoFactory.StandardInstantiator_ --                      no point for static-classes
         -- newStaticClassProto.ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_ -- no point for static-classes
 
@@ -167,12 +186,14 @@ do
 
     function StaticClassProtoFactory.OnProtoCalledAsFunction_(staticClassProto, ...)
         local variadicsArray = arg
+        local ownCallFuncSnapshot = staticClassProto.__Call__ --   static classes are expected to define it as :__Call__()
 
-        _ = _type(staticClassProto.__Call__) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
+        _ = _type(ownCallFuncSnapshot) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
 
-        return staticClassProto:__Call__(_unpack(variadicsArray)) -- 00
-
-        -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+        return ownCallFuncSnapshot(
+                staticClassProto, --          vital to pass the static-class-proto to the call-function to ensure proper parameter order
+                _unpack(variadicsArray) --    considering that static-classes are supposed to define this as :__Call__() ( not as .__Call__()! )
+        )
     end
 end
 
@@ -180,32 +201,41 @@ local NonStaticClassProtoFactory = {}
 do
     function NonStaticClassProtoFactory.Spawn()
         local metaTable = { }
-        metaTable.__call = NonStaticClassProtoFactory.OnProtoCalledAsFunction_
+        metaTable.__call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
         metaTable.__index = metaTable
-        -- metaTable.__tostring = todo
 
         local newClassProto = { }
         newClassProto.__index = newClassProto -- 00 vital
         newClassProto.Instantiate = NonStaticClassProtoFactory.StandardInstantiator_
         newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
+        -- newClassProto.__tostring = todo
 
         return _setmetatable(newClassProto, metaTable)
 
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
 
-    function NonStaticClassProtoFactory.OnProtoCalledAsFunction_(classProto, ...)
+    function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
         local variadicsArray = arg
+        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes are expected to define these as :New() and :__Call__()
+        local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   respectively  ( not as .New() or .__Call__()! )
 
-        local hasConstructorFunction = _type(classProto.New) == "function"
-        local hasImplicitCallFunction = _type(classProto.__Call__) == "function"
+        local hasConstructorFunction = _type(ownNewFuncSnapshot) == "function"
+        local hasImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
         _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
 
         if hasImplicitCallFunction then
-            return classProto:__Call__(_unpack(variadicsArray)) -- 00
+            -- has priority over :new()
+            return ownCallFuncSnapshot(-- 00
+                    classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
+                    _unpack(variadicsArray)
+            )
         end
 
-        return classProto:New(_unpack(variadicsArray))
+        return ownNewFuncSnapshot(
+                classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
+                _unpack(variadicsArray)
+        )
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end
@@ -224,12 +254,13 @@ do
         _ = instanceSpecificFields == nil or _type(instanceSpecificFields) == "table"   or _throw_exception("instanceSpecificFields was expected to be either a table or nil") --   @formatter:on
 
         instanceSpecificFields = instanceSpecificFields or {}
-
         _setmetatable(instanceSpecificFields, classProto)
         if classProto.__index == nil then
+            -- todo  examine under which conditions the __index is null - normally it should be impossible
+            
             classProto.__index = classProto
         end
-
+        
         return instanceSpecificFields
     end
 end
@@ -245,7 +276,7 @@ do
 end
 
 local ProtosFactory = {}
-do
+do    
     function ProtosFactory.Spawn(symbolType)
         _setfenv(1, ProtosFactory)
 
@@ -261,7 +292,11 @@ do
             return NonStaticClassProtoFactory.Spawn()
         end
 
-        return {} -- todo  interfaces
+        if symbolType == EManagedSymbolTypes.Interface then
+            return InterfacesProtoFactory.Spawn()
+        end
+
+        return {} -- raw-3rd-party-symbols and keywords
     end
 end
 
@@ -275,9 +310,26 @@ do
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
         -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
-
+        
         if symbolType == EManagedSymbolTypes.NonStaticClass then
             symbolProto._ = symbolProto._ or {} --  by convention static-utility-methods of classes are to be hosted under 'Class._.*'
+            
+            local symbolProtoSnapshot = symbolProto
+            symbolProto._.EnrichNakedInstanceWithFields = function(instance)
+                _setfenv(1, symbolProtoSnapshot)
+
+                instance = instance or {}
+
+                if symbolProtoSnapshot.asBlendxin ~= nil then
+                    for _, mixinProto in _pairs(symbolProtoSnapshot.asBlendxin) do
+                        if mixinProto._.EnrichNakedInstanceWithFields ~= nil and _reflection_registry[mixinProto] ~= nil then
+                            instance = mixinProto._.EnrichNakedInstanceWithFields(instance)
+                        end
+                    end
+                end
+
+                return instance
+            end
         end
         
         local instance = {
@@ -372,6 +424,76 @@ do
         _setfenv(1, self)
 
         return _symbolType == EManagedSymbolTypes.Keyword -- [declare] and friends
+    end
+
+    local Enums_SystemReservedMemberNames_ForDirectMembers = {
+        ["IsValid"]          = "IsValid",
+
+        ["__call"]           = "__call",
+        ["__index"]          = "__index",
+        ["blendxin"]         = "blendxin",
+        ["asBlendxin"]       = "asBlendxin",
+    }
+    local Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
+        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+    }
+
+    local StaticClasses_SystemReservedMemberNames_ForDirectMembers = {
+        ["__call"]              = "__call",
+        ["__index"]             = "__index",
+        ["blendxin"]            = "blendxin",
+        ["asBlendxin"]          = "asBlendxin",
+        -- ["Instantiate"]         = "Instantiate",
+        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
+    }
+    local StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
+        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+    }
+
+    local NonStaticClasses_SystemReservedMemberNames_ForDirectMembers = {
+        ["__call"]              = "__call",
+        ["__index"]             = "__index",
+        ["blendxin"]            = "blendxin",
+        ["asBlendxin"]          = "asBlendxin",
+        ["Instantiate"]         = "Instantiate",
+        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
+    }
+    local NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
+        ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+    }
+
+    local Interface_SystemReservedMemberNames_ForDirectMembers = {
+        ["__call"]              = "__call",
+        ["__index"]             = "__index",
+        ["blendxin"]            = "blendxin",
+        ["asBlendxin"]          = "asBlendxin",
+        -- ["Instantiate"]         = "Instantiate",
+        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
+    }
+    local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
+        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+    }
+
+    function Entry:GetSpecialReservedNames()
+        _setfenv(1, self)
+        
+        if _symbolType == EManagedSymbolTypes.Enum then
+            return Enums_SystemReservedMemberNames_ForDirectMembers, Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore
+        end
+
+        if _symbolType == EManagedSymbolTypes.StaticClass then
+            return StaticClasses_SystemReservedMemberNames_ForDirectMembers, StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore
+        end
+
+        if _symbolType == EManagedSymbolTypes.NonStaticClass then
+            return NonStaticClasses_SystemReservedMemberNames_ForDirectMembers, NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore
+        end
+
+        if _symbolType == EManagedSymbolTypes.Interface then
+            return Interface_SystemReservedMemberNames_ForDirectMembers, Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore
+        end
+
+        _throw_exception("GetSpecialReservedNames() is not implemented for symbol-type %q (how did this even happen btw?)", _symbolType)
     end
 
     function Entry:ToString()
@@ -572,93 +694,81 @@ do
         _ = _type(namedMixins) == "table" or _throw_exception("namedMixins must be a table")
         _ = _next(namedMixins) ~= nil or _throw_exception("namedMixins must not be empty")
 
-        local blendxinProp = targetSymbolProto.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin method closures
-        local asBlendxin = targetSymbolProto.asBlendxin or {}
+        local targetSymbolProto_BlendxinProp = targetSymbolProto.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin fields/methods
+        local targetSymbolProto_asBlendxinProp = targetSymbolProto.asBlendxin or {}
 
-        targetSymbolProto.blendxin = blendxinProp
-        targetSymbolProto.asBlendxin = asBlendxin
+        targetSymbolProto.blendxin = targetSymbolProto_BlendxinProp
+        targetSymbolProto.asBlendxin = targetSymbolProto_asBlendxinProp
 
-        local target_mt = _getmetatable(targetSymbolProto) or {}
-        local blendxinProp_mt = _getmetatable(blendxinProp) or {} -- for the blendxin
+        local mt = _getmetatable(targetSymbolProto) or {}
+        local targetSymbolProto_BlendxinProp_mt = _getmetatable(targetSymbolProto_BlendxinProp) or {} -- for the blendxin
 
-        target_mt.__index = target_mt.__index or {}
-        blendxinProp_mt.__index = blendxinProp_mt.__index or {}
+        mt.__index = mt.__index or {}
+        targetSymbolProto_BlendxinProp_mt.__index = targetSymbolProto_BlendxinProp_mt.__index or {}
 
         -- for each named mixin, create a table with closures that bind the target as self
-        for mixinNickname, mixinProtoSymbol in _pairs(namedMixins) do
-            local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(mixinProtoSymbol)
+        local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
+        for mixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
+            local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol)
 
-            _ = mixinProtoTidbits       ~= nil or _throw_exception("named mixin %q is not a known type (class/interface/enum ...)", mixinNickname) --@formatter:off
-            _ = _next(mixinProtoSymbol) ~= nil or _throw_exception("named mixin %q has dud specs", mixinNickname)
+            _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q is not a known type (class/interface/enum ...)", mixinNickname) --@formatter:off
+            _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("mixin nicknamed %q has dud specs", mixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[mixinNickname]             == nil or _throw_exception("mixin nicknamed %q cannot be added because another mixin has registered this nickname", mixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("mixin nicknamed %q has already been added to the target under a different nickname", mixinNickname)
             
-            local mixinIsEnum = mixinProtoTidbits:IsEnumEntry()
-            local mixinIsInterface = mixinProtoTidbits:IsInterfaceEntry()
-            local mixinIsStaticClass = mixinProtoTidbits:IsStaticClassEntry()
+            local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
+            local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
+            local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()
             local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
-            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("named mixin %q (type=%s) is not an enum or a static-class - cannot mix it into an enum", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("named mixin %q (type=%s) is not an interface - cannot mix it into an interface", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("named mixin %q (type=%s) is not a static-class or an interface - cannot mix it into a static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("named mixin %q (type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
+            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("mixin nicknamed %q (type=%s) is not an enum or a static-class - cannot mix it into an enum", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("mixin nicknamed %q (type=%s) is not an interface - cannot mix it into an interface", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (type=%s) is not a static-class or an interface - cannot mix it into a static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
+            
+            targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
 
-            local asBlendxinProp -- .asBlendxin.<mixin-nickname>.<mixin-member-name> = <mixin-member>
             local isNamelessMixin = mixinNickname == ""
             if not isNamelessMixin then
-                asBlendxinProp = asBlendxin[mixinNickname] or {}
-                asBlendxin[mixinNickname] = asBlendxinProp -- completely overwrite any previous asBlendxin[name]
-            end            
+                targetSymbolProto_asBlendxinProp[mixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
+            end
 
-            for mixinMemberName, mixinMember in _pairs(mixinProtoSymbol) do
-                _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(mixinMemberName) .. "'")
-                
-                _ = _type(mixinMemberName) == "string" or _throw_exception("mixin-name is not a string - its type is %q", _type(mixinMemberName))
-                _ = (mixinMemberName ~= nil and mixinMemberName ~= "") or _throw_exception("mixin named %q has a member with a dud name - this is not allowed", mixinNickname)
-                
-                if mixinMemberName == "_" then
-                    -- blend-in all the statics from all the mixins in a single _ table
-                    for _staticMemberName, _staticMember in _pairs(mixinMember) do
+            for specific_MixinMemberName, specific_MixinMember in _pairs(specific_MixinProtoSymbol) do
+                -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+
+                _ = _type(specific_MixinMemberName) == "string" or _throw_exception("mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
+                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", mixinNickname)
+
+                if specific_MixinMemberName == "_" then
+                    -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
+                    for _staticMemberName, _staticMember in _pairs(specific_MixinMember) do
                         _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
                         _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", mixinNickname)
 
-                        targetSymbolProto._[_staticMemberName] = _staticMember -- static field
+                        -- must not let the mixins overwrite the default .EnrichNakedInstanceWithFields()
+                        local hasBlacklistedNameForStatics = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] ~= nil -- _staticMemberName ~= "EnrichNakedInstanceWithFields"
+                        if hasBlacklistedNameForStatics then
+                            targetSymbolProto._[_staticMemberName] = _staticMember -- static member
+                        end
                     end
                 else
-                    local isFunction = _type(mixinMember) == "function"
-                    local hasBlendxinRelatedName = mixinMemberName == "blendxin" or mixinMemberName == "asBlendxin"
-                    local hasBlacklistedNameForBase = hasBlendxinRelatedName or mixinMemberName == "__index"
-                    _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", mixinMemberName)
-                    
+                    -- blend-in all whitelisted non-statics-methods and static-fields from every mixin both directly under targetSymbolProto.* and under target.blendxin.*
+
+                    local isFunction = _type(specific_MixinMember) == "function"
+                    local hasBlendxinRelatedName = specific_MixinMemberName == "blendxin" or specific_MixinMemberName == "asBlendxin"
+                    _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", specific_MixinMemberName)
+
+                    local hasBlacklistedNameForBase = systemReservedMemberNames_forDirectMembers[specific_MixinMember] ~= nil
                     if not hasBlacklistedNameForBase then
-                        target_mt.__index[mixinMemberName] = mixinMember -- combine all mixin methods into __index     later mixins override earlier ones    
-                    end
+                        mt.__index[specific_MixinMemberName] = specific_MixinMember -- combine all members/methods provided by mixins into __index     later mixins override earlier ones    
 
-                    if isFunction then
-                        local snapshotOfMixinFunction = mixinMember -- absolutely vital to snapshot locally   we create a closure that ignores the first argument and uses target as self
-                        function closure(_, ...)
-                            return snapshotOfMixinFunction(targetSymbolProto, _unpack(arg))
-                        end
-
-                        blendxinProp_mt.__index[mixinMemberName] = closure
-
-                        if not isNamelessMixin then
-                            asBlendxinProp[mixinMemberName] = closure
-                        end
-                    else
-                        if not hasBlacklistedNameForBase then
-                            -- we dont want the .blendxin/.asBlendxin/.__index to be plugged-in here
-                            blendxinProp_mt.__index[mixinMemberName] = mixinMember -- data field    .blendxin.<mixin-member-name> = <mixin-member>
-                        end
-
-                        if not isNamelessMixin then
-                            -- we do want the .blendxin/.asBlendxin/.__index to be plugged-in here
-                            asBlendxinProp[mixinMemberName] = mixinMember -- data field    .asBlendxin.<mixin-nickname>.<mixin-member-name> = <mixin-member>
-                        end
+                        targetSymbolProto_BlendxinProp_mt.__index[specific_MixinMemberName] = specific_MixinMember
                     end
                 end
             end
         end
 
-        _setmetatable(targetSymbolProto, target_mt)
-        _setmetatable(blendxinProp, blendxinProp_mt)
+        _setmetatable(targetSymbolProto, mt)
+        _setmetatable(targetSymbolProto_BlendxinProp, targetSymbolProto_BlendxinProp_mt)
 
         return targetSymbolProto
     end

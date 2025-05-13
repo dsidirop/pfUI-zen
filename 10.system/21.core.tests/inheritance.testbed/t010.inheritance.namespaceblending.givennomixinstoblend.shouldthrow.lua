@@ -43,59 +43,102 @@ TG:AddFact("T005.Inheritance.NamespaceBlending.GivenRawRogueObjectToBlend.Should
         end
 )
 
-TG:AddFact("T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork",
+TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()
             -- ARRANGE
             local FoobarInstance
 
             -- ACT
             function action()
-                local Zong = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork.Zong"
+                -------
 
-                function Zong:New()
-                    Scopify(EScopes.Function, self)
-
-                    return self:Instantiate({
-                        a = 1,
-                        b = 2,
-                    })
-                end
-
-                function Zong:Zang()
-                    return true
+                do
+                    local _ = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                 end
                 
-                local IPingTagInterface = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.IPingTagInterface"
+                -------
 
-                local Foobar = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.Foobar" {
-                    ["Zong"]              = Zong,
-                    ["IPingTagInterface"] = IPingTagInterface,
-                }
+                do
+                    local Class = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
 
-                function Foobar:New()
-                    Scopify(EScopes.Function, self)
+                    function Class:New()
+                        Scopify(EScopes.Function, self)
 
-                    return self.asBlendxin.Zong:New():Instantiate({
-                        b = 10,
-                    })
+                        return self:Instantiate(Class._.EnrichNakedInstanceWithFields())
+                    end
+
+                    local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
+                    function Class._.EnrichNakedInstanceWithFields(allocatedInstance)
+                        allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance)
+
+                        allocatedInstance._a = 1
+                        allocatedInstance._b = 2
+                        
+                        return allocatedInstance
+                    end
+
+                    function Class:Zang()
+                        return true
+                    end
                 end
 
-                FoobarInstance = Foobar:New()
+                -------
+
+                do
+                    local Zong = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local IPing = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    
+                    local Class = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
+                        ["IPing"] = IPing,
+                        ["Zong"]  = Zong,
+                    }
+
+                    function Class:New()
+                        Scopify(EScopes.Function, self)
+
+                        return self:Instantiate(self._.EnrichNakedInstanceWithFields())
+                    end
+
+                    -- local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
+                    function Class._.EnrichNakedInstanceWithFields(allocatedInstance)
+                        Scopify(EScopes.Function, Class)
+
+                        -- allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance) -- todo try this approach as well
+
+                        allocatedInstance = Class.asBlendxin.Zong._.EnrichNakedInstanceWithFields(allocatedInstance) -- order
+                        -- allocatedInstance = Foobar.asBlendxin.Kramp._.EnrichNakedInstanceWithFields(allocatedInstance)
+                        -- allocatedInstance = Foobar.asBlendxin.Dromp._.EnrichNakedInstanceWithFields(allocatedInstance)
+
+                        allocatedInstance._b = 10 -- order
+
+                        return allocatedInstance
+                    end
+                end
+                
+                ------
+
+                do
+                    local Foobar = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
+                    
+                    FoobarInstance = Foobar:New()    
+                end                
             end
 
             -- ASSERT
             U.Should.Not.Throw(action)
 
-            U.Should.Be.PlainlyEqual(FoobarInstance.a, 1)
-            U.Should.Be.PlainlyEqual(FoobarInstance.b, 10) -- should be unaffected
+            U.Should.Be.PlainlyEqual(FoobarInstance._a, 1)
+            U.Should.Be.PlainlyEqual(FoobarInstance._b, 10) -- should be unaffected
 
             U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
 
+            U.Should.Be.Nil(FoobarInstance.asBlendxin.Zong._a) -- these members should never be
+            U.Should.Be.Nil(FoobarInstance.asBlendxin.Zong._b) -- initialized at the proto level
+
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong)
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong.Zang)
-            -- U.Should.Be.PlainlyEqual(FoobarInstance.asBlendxin.Zong.b, 2)
-            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPingTagInterface)
+            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPing)
         end
 )
 
