@@ -61,14 +61,13 @@ function Class:Run()
     end
 
     local exceptionMessage = A.PopFirst(returnedValuesArray)
-    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
-    
-    local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)
+    local deserializedException = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
+    local properExceptionHandler = self:GetAppropriateExceptionHandler_(deserializedException)
     if properExceptionHandler ~= nil then
-        return properExceptionHandler(exception)
+        return properExceptionHandler(deserializedException)
     end
 
-    Rethrow(exception) -- 10
+    Rethrow(deserializedException) -- 10
 
     -- 00  raw errors also fall through here   by raw errors we mean errors like calling a non existent function or dividing by zero etc
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
