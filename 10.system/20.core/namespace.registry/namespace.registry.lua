@@ -251,18 +251,19 @@ do
 
     function NonStaticClassProtoFactory.StandardInstantiator_(classProto, instance)  -- @formatter:off
         _ = _type(classProto) == "table"                  or _throw_exception("classProto was expected to be a table")
+        _ = classProto.__index ~= "nil"                   or _throw_exception("classProto.__index is nil - how did this happen?")
         _ = instance == nil or _type(instance) == "table" or _throw_exception("instanceSpecificFields was expected to be either a table or nil") -- @formatter:on
+        
 
         -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
         
         instance = instance or {}
         _setmetatable(instance, classProto)
-        if classProto.__index == nil then
-            -- todo  examine under which conditions the __index is null - normally it should be impossible
-            
-            classProto.__index = classProto
-        end
+        
+        --if classProto.__index == nil then -- noneed
+        --    classProto.__index = classProto
+        --end
         
         return instance
     end
