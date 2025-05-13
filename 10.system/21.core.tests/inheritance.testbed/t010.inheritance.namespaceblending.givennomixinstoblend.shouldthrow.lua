@@ -46,21 +46,36 @@ TG:AddFact("T005.Inheritance.NamespaceBlending.GivenRawRogueObjectToBlend.Should
 TG:AddFact("T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork",
         function()
             -- ARRANGE
-            local Foobar
             local FoobarInstance
 
             -- ACT
             function action()
-                local IPingInterface = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.IPingInterface"
+                local Zong = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork.Zong"
+
+                function Zong:New()
+                    Scopify(EScopes.Function, self)
+
+                    return self:Instantiate({
+                        a = 1,
+                        b = 2,
+                    })
+                end
+
+                function Zong:Zang()
+                    return true
+                end
                 
-                Foobar = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.Foobar" {
-                    ["IPingInterface"] = IPingInterface,
+                local IPingTagInterface = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.IPingTagInterface"
+
+                local Foobar = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWork.Foobar" {
+                    ["Zong"]              = Zong,
+                    ["IPingTagInterface"] = IPingTagInterface,
                 }
 
                 function Foobar:New()
                     Scopify(EScopes.Function, self)
 
-                    return self:Instantiate({
+                    return self.asBlendxin.Zong:New():Instantiate({
                         b = 10,
                     })
                 end
@@ -70,42 +85,87 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlend.ShouldWo
 
             -- ASSERT
             U.Should.Not.Throw(action)
-            
+
+            U.Should.Be.PlainlyEqual(FoobarInstance.a, 1)
             U.Should.Be.PlainlyEqual(FoobarInstance.b, 10) -- should be unaffected
-            
+
             U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
+
+            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong)
+            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong.Zang)
+            -- U.Should.Be.PlainlyEqual(FoobarInstance.asBlendxin.Zong.b, 2)
+            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPingTagInterface)
         end
 )
 
---TG:AddFact("T006.Inheritance.NamespaceBlending.GivenBlendingInTwoSeparateSteps.ShouldWork",
+-- todo   disabled for now because we need to figure out how to blend-in the base constructor
+--TG:AddFact("T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork",
 --        function()
 --            -- ARRANGE
---            local Foobar
+--            local FoobarInstance
 --
 --            -- ACT
 --            function action()
---                local FoobarBlender = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenBlendingInTwoSeparateSteps.ShouldWork"
+--                local MixinsBlender = using "System.Classes.Mixins.MixinsBlender"
 --
---                Foobar = FoobarBlender {
---                    ["IBar"] = {
---                        a = 1,
---                    },
---                }
+--                local Zong = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork.Zong"
+--
+--                function Zong:New()
+--                    Scopify(EScopes.Function, self)
+--
+--                    return self:Instantiate({
+--                        b = 2,
+--                    })
+--                end
+--                
+--                function Zong:Zang()
+--                    return true
+--                end
+--                
+--                local IPingTagInterface = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork.IPingTagInterface"
+--
+--                local Foobar = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenTagInterfaceToBlendDynamicallyAtRuntime.ShouldWork.Foobar"
+--
+--                function Foobar:New()
+--                    Scopify(EScopes.Function, self)
+--                    
+--                    -- todo  figure out a way to call the base constructor(s) here
+--                    -- todo  self.asBlendxin.Zong:New()
+--
+--                    return self:Instantiate({
+--                        b = 10,
+--                    })
+--                end
+--                
+--                -- todo   this needs more thought because we now try to blend-in late and we overwrite the :New() constructor of the child-class causing bugs!! 
+--                function Foobar._.BlendAtRuntime()
+--                    return MixinsBlender.Blend(Foobar, {
+--                        ["Zong"] = Zong,
+--                        ["IPingTagInterface"] = IPingTagInterface,
+--                    })
+--                end
+--
+--                Foobar._.BlendAtRuntime() --order
+--
+--                FoobarInstance = Foobar:New() --order
 --            end
 --
 --            -- ASSERT
 --            U.Should.Not.Throw(action)
 --
---            U.Should.Not.Be.Nil(Foobar.blendxin)
---            U.Should.Not.Be.Nil(Foobar.asBlendxin)
+--            U.Should.Be.PlainlyEqual(FoobarInstance.b, 10) -- should be unaffected
 --
---            U.Should.Be.PlainlyEqual(Foobar.a, 1)
---            U.Should.Be.PlainlyEqual(Foobar.blendxin.a, 1)
---            U.Should.Be.PlainlyEqual(Foobar.asBlendxin.IBar.a, 1)
+--            U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
+--            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
+--            
+--            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong)
+--            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong.Zang)
+--            U.Should.Be.PlainlyEqual(FoobarInstance.asBlendxin.Zong.b, 2)
+--            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPingTagInterface)
 --        end
 --)
---
+
 --TG:AddFact("T006.Inheritance.NamespaceBlending.GivenNamelessBlending.ShouldWork",
 --        function()
 --            -- ARRANGE
