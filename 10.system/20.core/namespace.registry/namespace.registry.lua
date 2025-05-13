@@ -240,28 +240,31 @@ do
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end
 
-    function NonStaticClassProtoFactory.StandardChainSetDefaultCall_(classProto, defaultCallMethod)
-        _ = _type(classProto) == "table"             or _throw_exception("classProto was expected to be a table") --             @formatter:off
-        _ = _type(defaultCallMethod) == "function"   or _throw_exception("defaultCallMethod was expected to be a function") --   @formatter:on
+    function NonStaticClassProtoFactory.StandardChainSetDefaultCall_(classProto, defaultCallMethod) -- @formatter:off
+        _ = _type(classProto) == "table"           or _throw_exception("classProto was expected to be a table")
+        _ = _type(defaultCallMethod) == "function" or _throw_exception("defaultCallMethod was expected to be a function") -- @formatter:on
 
         classProto.__call = defaultCallMethod
 
         return classProto
     end
 
-    function NonStaticClassProtoFactory.StandardInstantiator_(classProto, instanceSpecificFields)
-        _ = _type(classProto) == "table"                                                or _throw_exception("classProto was expected to be a table") --                             @formatter:off
-        _ = instanceSpecificFields == nil or _type(instanceSpecificFields) == "table"   or _throw_exception("instanceSpecificFields was expected to be either a table or nil") --   @formatter:on
+    function NonStaticClassProtoFactory.StandardInstantiator_(classProto, instance)  -- @formatter:off
+        _ = _type(classProto) == "table"                  or _throw_exception("classProto was expected to be a table")
+        _ = instance == nil or _type(instance) == "table" or _throw_exception("instanceSpecificFields was expected to be either a table or nil") -- @formatter:on
 
-        instanceSpecificFields = instanceSpecificFields or {}
-        _setmetatable(instanceSpecificFields, classProto)
+        -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
+        -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
+        
+        instance = instance or {}
+        _setmetatable(instance, classProto)
         if classProto.__index == nil then
             -- todo  examine under which conditions the __index is null - normally it should be impossible
             
             classProto.__index = classProto
         end
         
-        return instanceSpecificFields
+        return instance
     end
 end
 
