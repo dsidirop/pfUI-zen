@@ -174,14 +174,15 @@ do
         metaTable.__index = metaTable
 
         local newStaticClassProto = { }
-        newStaticClassProto.__index = newStaticClassProto -- 00 vital
+        newStaticClassProto.__index = newStaticClassProto -- just in case
         -- newStaticClassProto.__tostring = todo
         -- newClassProto.Instantiate = StaticClassProtoFactory.StandardInstantiator_ --                      no point for static-classes
         -- newStaticClassProto.ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_ -- no point for static-classes
 
         return _setmetatable(newStaticClassProto, metaTable)
 
-        -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
+        -- 00  in the particular case of static classes we could omit the __index assignment because static classes are not expected
+        --     to be instantiated   but it doesnt hurt to keep it around
     end
 
     function StaticClassProtoFactory.OnProtoCalledAsFunction_(staticClassProto, ...)
@@ -191,8 +192,8 @@ do
         _ = _type(ownCallFuncSnapshot) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
 
         return ownCallFuncSnapshot(
-                staticClassProto, --          vital to pass the static-class-proto to the call-function to ensure proper parameter order
-                _unpack(variadicsArray) --    considering that static-classes are supposed to define this as :__Call__() ( not as .__Call__()! )
+                staticClassProto, --          vital to pass the static-class-proto to the call-function to ensure proper parameter order considering that
+                _unpack(variadicsArray) --    static-classes are supposed to define this as :__Call__() ( not as .__Call__() despite being in a static-class! )
         )
     end
 end
@@ -206,13 +207,42 @@ do
 
         local newClassProto = { }
         newClassProto.__index = newClassProto -- 00 vital
+
+        newClassProto._ = {
+            --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
+            EnrichNakedInstanceWithFields = NonStaticClassProtoFactory.SpawnClosureFor_EnrichNakedInstanceWithFields_(newClassProto)
+        }
         newClassProto.Instantiate = NonStaticClassProtoFactory.StandardInstantiator_
         newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
         -- newClassProto.__tostring = todo
 
         return _setmetatable(newClassProto, metaTable)
 
-        -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
+        -- 00  __index needs to be set like this because each class-proto is expected to be used as a metatable for
+        --     its own class-instances later on    not having an __index would mean that the class-protos wouldnt even
+        --     be able to function as metatables for the spawned instances at all
+    end
+
+    function NonStaticClassProtoFactory.SpawnClosureFor_EnrichNakedInstanceWithFields_(classProto)
+        local classProtoSnapshot = classProto
+
+        return function(newInstance)
+            _setfenv(1, classProtoSnapshot)
+
+            newInstance = newInstance or {}
+
+            if classProtoSnapshot.asBlendxin ~= nil then
+                -- iterate over the asBlendxin.* table and call the _.EnrichNakedInstanceWithFields() static-method of each mixin in
+                -- order to aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
+                for _, mixinProto in _pairs(classProtoSnapshot.asBlendxin) do
+                    if mixinProto._.EnrichNakedInstanceWithFields ~= nil and _reflection_registry[mixinProto] ~= nil then
+                        newInstance = mixinProto._.EnrichNakedInstanceWithFields(newInstance)
+                    end
+                end
+            end
+
+            return newInstance
+        end
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
@@ -253,7 +283,6 @@ do
         _ = _type(classProto) == "table"                  or _throw_exception("classProto was expected to be a table")
         _ = classProto.__index ~= "nil"                   or _throw_exception("classProto.__index is nil - how did this happen?")
         _ = instance == nil or _type(instance) == "table" or _throw_exception("instanceSpecificFields was expected to be either a table or nil") -- @formatter:on
-        
 
         -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
@@ -318,27 +347,6 @@ do
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
         -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
-        
-        if symbolType == EManagedSymbolTypes.NonStaticClass then
-            symbolProto._ = symbolProto._ or {} --  by convention static-utility-methods of classes are to be hosted under 'Class._.*'
-            
-            local symbolProtoSnapshot = symbolProto
-            symbolProto._.EnrichNakedInstanceWithFields = function(instance)
-                _setfenv(1, symbolProtoSnapshot)
-
-                instance = instance or {}
-
-                if symbolProtoSnapshot.asBlendxin ~= nil then
-                    for _, mixinProto in _pairs(symbolProtoSnapshot.asBlendxin) do
-                        if mixinProto._.EnrichNakedInstanceWithFields ~= nil and _reflection_registry[mixinProto] ~= nil then
-                            instance = mixinProto._.EnrichNakedInstanceWithFields(instance)
-                        end
-                    end
-                end
-
-                return instance
-            end
-        end
         
         local instance = {
             _symbolType = symbolType,
