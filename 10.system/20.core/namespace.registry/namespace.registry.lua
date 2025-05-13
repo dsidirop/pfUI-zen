@@ -111,14 +111,18 @@ end
 
 local EnumsProtoFactory = {}
 do
+    local CommonMetaTable_ForAllEnumProtos
+    
     function EnumsProtoFactory.Spawn()
-        local metaTable = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
+        if CommonMetaTable_ForAllEnumProtos == nil then
+            CommonMetaTable_ForAllEnumProtos = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
+        end
 
         local newEnumProto = { }
         newEnumProto.__index = newEnumProto
         newEnumProto.IsValid = EnumsProtoFactory.IsValidEnumValue_
 
-        return _setmetatable(newEnumProto, metaTable)
+        return _setmetatable(newEnumProto, CommonMetaTable_ForAllEnumProtos)
     end
 
     function EnumsProtoFactory.IsValidEnumValue_(self, value)
@@ -149,10 +153,14 @@ end
 
 local InterfacesProtoFactory = {}
 do
+    local CommonMetaTable_ForAllInterfaceProtos
+
     function InterfacesProtoFactory.Spawn()
-        local metaTable = { }
-        metaTable.__index = metaTable
-        -- metaTable.__call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
+        if CommonMetaTable_ForAllInterfaceProtos == nil then
+            CommonMetaTable_ForAllInterfaceProtos = { }
+            CommonMetaTable_ForAllInterfaceProtos.__index = CommonMetaTable_ForAllInterfaceProtos
+            -- metaTable.__call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
+        end
 
         local newInterfaceProto = { }
         newInterfaceProto.__index = newInterfaceProto -- 00 vital
@@ -160,7 +168,7 @@ do
         -- newClassProto.Instantiate = InterfacesProtoFactory.StandardInstantiator_
         -- newClassProto.__tostring = todo
 
-        return _setmetatable(newInterfaceProto, metaTable)
+        return _setmetatable(newInterfaceProto, CommonMetaTable_ForAllInterfaceProtos)
 
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
@@ -168,18 +176,22 @@ end
 
 local StaticClassProtoFactory = {}
 do
-    function StaticClassProtoFactory.Spawn()
-        local metaTable = { }
-        metaTable.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
-        metaTable.__index = metaTable
+    local CommonMetaTable_ForAllStaticClassProtos
 
+    function StaticClassProtoFactory.Spawn()
+        if CommonMetaTable_ForAllStaticClassProtos == nil then
+            CommonMetaTable_ForAllStaticClassProtos = { }
+            CommonMetaTable_ForAllStaticClassProtos.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
+            CommonMetaTable_ForAllStaticClassProtos.__index = CommonMetaTable_ForAllStaticClassProtos
+        end
+        
         local newStaticClassProto = { }
         newStaticClassProto.__index = newStaticClassProto -- just in case
         -- newStaticClassProto.__tostring = todo
         -- newClassProto.Instantiate = StaticClassProtoFactory.StandardInstantiator_ --                      no point for static-classes
         -- newStaticClassProto.ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_ -- no point for static-classes
 
-        return _setmetatable(newStaticClassProto, metaTable)
+        return _setmetatable(newStaticClassProto, CommonMetaTable_ForAllStaticClassProtos)
 
         -- 00  in the particular case of static classes we could omit the __index assignment because static classes are not expected
         --     to be instantiated   but it doesnt hurt to keep it around
@@ -200,10 +212,14 @@ end
 
 local NonStaticClassProtoFactory = {}
 do
+    local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
+
     function NonStaticClassProtoFactory.Spawn()
-        local metaTable = { }
-        metaTable.__call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
-        metaTable.__index = metaTable
+        if CachedMetaTable_ForAllNonStaticClassProtos == nil then
+            CachedMetaTable_ForAllNonStaticClassProtos = {}
+            CachedMetaTable_ForAllNonStaticClassProtos.__call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
+            CachedMetaTable_ForAllNonStaticClassProtos.__index = CachedMetaTable_ForAllNonStaticClassProtos    
+        end
 
         local newClassProto = { }
         newClassProto.__index = newClassProto -- 00 vital
@@ -216,7 +232,7 @@ do
         newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
         -- newClassProto.__tostring = todo
 
-        return _setmetatable(newClassProto, metaTable)
+        return _setmetatable(newClassProto, CachedMetaTable_ForAllNonStaticClassProtos)
 
         -- 00  __index needs to be set like this because each class-proto is expected to be used as a metatable for
         --     its own class-instances later on    not having an __index would mean that the class-protos wouldnt even
