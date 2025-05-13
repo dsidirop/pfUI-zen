@@ -123,7 +123,7 @@ do
 
     function EnumsProtoFactory.IsValidEnumValue_(self, value)
         if _type(self) ~= "table" then
-            _throw_exception("The IsValid() method must be called like :IsValid() instead of :IsValid()!")
+            _throw_exception("The IsValid() method must be called like :IsValid() (it has probably been invoked as .IsValid() which is wrong!)")
         end
 
         _setfenv(1, self)
@@ -154,13 +154,13 @@ do
         metaTable.__index = metaTable
         -- metaTable.__call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
 
-        local newClassProto = { }
-        newClassProto.__index = newClassProto -- 00 vital
-        newClassProto.ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_
+        local newInterfaceProto = { }
+        newInterfaceProto.__index = newInterfaceProto -- 00 vital
+        newInterfaceProto.ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_
         -- newClassProto.Instantiate = InterfacesProtoFactory.StandardInstantiator_
         -- newClassProto.__tostring = todo
 
-        return _setmetatable(newClassProto, metaTable)
+        return _setmetatable(newInterfaceProto, metaTable)
 
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
     end
@@ -260,12 +260,16 @@ do
         
         instance = instance or {}
         _setmetatable(instance, classProto)
-        
-        --if classProto.__index == nil then -- noneed
-        --    classProto.__index = classProto
-        --end
+
+        -- instance.__index = classProto.__index --00 dont
         
         return instance
+        
+        --00   the instance will already use classProto as its metatable and any missing key lookups will automatically go through classProto.__index
+        --     setting instance.__index would only be relevant if the instance itself became a metatable for another table which is definitely not the case here
+        --
+        --     additionally setting instance.__index could interfere with the normal method lookup chain and potentially cause unexpected behavior or
+        --     infinite recursion   the standard pattern is to just set the metatable and let lua's built-in metatable mechanisms handle the property lookup
     end
 end
 
