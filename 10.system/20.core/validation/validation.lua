@@ -24,5 +24,5 @@ function Validation.FailFormatted(...)
 end
 
 function Validation.Fail(messageOrExceptionInstance)
-    Validation.Assert(false, S.Stringify(messageOrExceptionInstance) .. "\n" .. Validation.Debugstack(2))
+    Validation.Assert(false, S.Stringify((messageOrExceptionInstance or "<the provided error is dud!?>")) .. "\n" .. Validation.Debugstack(2))
 end
