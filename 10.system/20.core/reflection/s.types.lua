@@ -2,19 +2,19 @@
 
 local STypes = using "[declare] [enum]" "System.Reflection.STypes" --@formatter:off
 
-STypes.Nil         =   "nil"
-STypes.Table       =   "table"
-STypes.Number      =   "number"
-STypes.String      =   "string"
-STypes.Boolean     =   "boolean"
-STypes.Function    =   "function"
+STypes.Nil             = "nil"
+STypes.Table           = "table"
+STypes.Number          = "number"
+STypes.String          = "string"
+STypes.Boolean         = "boolean"
+STypes.Function        = "function"
+                       
+STypes.Thread          = "thread" --   rarely encountered
+STypes.Userdata        = "userdata" -- rarely encountered
                    
-STypes.Thread      =   "thread" --   rarely encountered
-STypes.Userdata    =   "userdata" -- rarely encountered
-                   
-STypes.Enum            =   "enum"
-STypes.Keyword         =   "keyword"
+STypes.Enum            = "enum" -- lua-zensharp stuff here
+STypes.Keyword         = "keyword"
 
-STypes.StaticClass     =   "static-class"
-STypes.NonStaticClass  =   "non-static-class"
---STypes.Interface = "Interface" -- todo   @formatter:on
+STypes.Interface       = "interface" 
+STypes.StaticClass     = "static-class"
+STypes.NonStaticClass  = "non-static-class" -- @formatter:on
