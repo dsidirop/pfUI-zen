@@ -1,4 +1,4 @@
-local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove = (function()
+local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -6,7 +6,8 @@ local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub,
 
 	_g.VWoWUnit = _g.VWoWUnit or {}
 	
-	local _pcall = _assert(_g.pcall)
+	local _type = _assert(_g.type)
+    local _pcall = _assert(_g.pcall)
 	local _unpack = _assert(_g.unpack)
 	local _strsub = _assert(_g.string.sub)
 	local _format = _assert(_g.string.format)
@@ -14,7 +15,7 @@ local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub,
 	local _debugstack = _assert(_g.debugstack)
 	local _tableRemove = _assert(_g.table.remove)
 
-	return _g.VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove
+	return _g.VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type
 end)()
 
 _setfenv(1, {})
@@ -27,10 +28,16 @@ VWoWUnit.Should.Not.Be = {}
 function VWoWUnit.Should.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
 
+    if action == nil then
+        -- todo   this sort of testbed-failure should mark the test as inconclusive instead of failed    its a small detail but it would be a nice to have
+        VWoWUnit.Raise_(_format("[Should.Throw()] [TESTBED BUG] Expected a function but got %q (fix the testbed - make sure the call is *.Throw(action) and not *.Throw(action()) !)", _tostring(_type(action))))
+        return
+    end
+
 	local success = _pcall(action)
 
 	if success then
-		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
+		VWoWUnit.Raise_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
 	end
 end
 
@@ -68,7 +75,12 @@ end
 
 function VWoWUnit.Should.Not.Throw(action)
 	_setfenv(1, VWoWUnit.Should)
-	
+
+    if action == nil then
+        VWoWUnit.Raise_(_format("[Should.Not.Throw()] [TESTBED BUG] Expected a function but got %q (fix the testbed - make sure the call is *.Throw(action) and not *.Throw(action()) !)", _tostring(_type(action))))
+        return
+    end
+    
 	local returnValuesTable = {_pcall(action)}
 	
 	local success = returnValuesTable[1]
