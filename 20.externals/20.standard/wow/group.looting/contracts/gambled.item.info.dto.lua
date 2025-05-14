@@ -33,9 +33,9 @@ function Class:New(options)
     Guard.Assert.IsNilOrPositiveIntegerOfMaxValue(options.Count, 2000, "options.Count")
     Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.EnchantingLevelRequiredToDEItem, 3000, "options.EnchantingLevelRequiredToDEItem")
 
-    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.NeedInelligibilityReasonType, 20, "options.NeedInelligibilityReasonType")  --            EWowLootingInelligibilityReasonType  but its better to not enforce the enum type via an explicit check
-    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.GreedInelligibilityReasonType, 20, "options.GreedInelligibilityReasonType") --           EWowLootingInelligibilityReasonType
-    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.DisenchantInelligibilityReasonType, 20, "options.DisenchantInelligibilityReasonType") -- EWowLootingInelligibilityReasonType
+    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.NeedIneligibilityReasonType, 20, "options.NeedIneligibilityReasonType")  --            EWowLootingIneligibilityReasonType  but its better to not enforce the enum type via an explicit check
+    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.GreedIneligibilityReasonType, 20, "options.GreedIneligibilityReasonType") --           EWowLootingIneligibilityReasonType
+    Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.DisenchantIneligibilityReasonType, 20, "options.DisenchantIneligibilityReasonType") -- EWowLootingIneligibilityReasonType
 
     return self:Instantiate({ --@formatter:off
         _name            = StringsHelper.Trim(options.Name),
@@ -52,9 +52,9 @@ function Class:New(options)
         _textureFilepath                 = options.TextureFilepath                 == nil and "" or options.TextureFilepath,
         _enchantingLevelRequiredToDEItem = options.EnchantingLevelRequiredToDEItem == nil and 0  or options.EnchantingLevelRequiredToDEItem,
         
-        _needInelligibilityReasonType       = options.NeedInelligibilityReasonType       == nil and 0 or options.NeedInelligibilityReasonType, --        can be nil if isNeedable       is true
-        _greedInelligibilityReasonType      = options.GreedInelligibilityReasonType      == nil and 0 or options.GreedInelligibilityReasonType, --       can be nil if isGreedable      is true
-        _disenchantInelligibilityReasonType = options.DisenchantInelligibilityReasonType == nil and 0 or options.DisenchantInelligibilityReasonType --   can be nil if isDisenchantable is true
+        _needIneligibilityReasonType       = options.NeedIneligibilityReasonType       == nil and 0 or options.NeedIneligibilityReasonType, --        can be nil if isNeedable       is true
+        _greedIneligibilityReasonType      = options.GreedIneligibilityReasonType      == nil and 0 or options.GreedIneligibilityReasonType, --       can be nil if isGreedable      is true
+        _disenchantIneligibilityReasonType = options.DisenchantIneligibilityReasonType == nil and 0 or options.DisenchantIneligibilityReasonType --   can be nil if isDisenchantable is true
     }) --@formatter:on
 end
 
@@ -172,25 +172,25 @@ function Class:GetEnchantingLevelRequiredToDEItem()
     return _enchantingLevelRequiredToDEItem
 end
 
--- @return EWowLootingInelligibilityReasonType
-function Class:GetNeedInelligibilityReasonType()
+-- @return EWowLootingIneligibilityReasonType
+function Class:GetNeedIneligibilityReasonType()
     Scopify(EScopes.Function, self)
     
-    return _needInelligibilityReasonType
+    return _needIneligibilityReasonType
 end
 
--- @return EWowLootingInelligibilityReasonType
-function Class:GetGreedInelligibilityReasonType()
+-- @return EWowLootingIneligibilityReasonType
+function Class:GetGreedIneligibilityReasonType()
     Scopify(EScopes.Function, self)
 
-    return _greedInelligibilityReasonType
+    return _greedIneligibilityReasonType
 end
 
--- @return EWowLootingInelligibilityReasonType
-function Class:GetDisenchantInelligibilityReasonType()
+-- @return EWowLootingIneligibilityReasonType
+function Class:GetDisenchantIneligibilityReasonType()
     Scopify(EScopes.Function, self)
 
-    return _disenchantInelligibilityReasonType
+    return _disenchantIneligibilityReasonType
 end
 
 function Class:ToString()
@@ -212,9 +212,9 @@ function Class:ToString()
             "  Texture                            = %q,\n"     ..
             "  EnchantingLevelRequiredToDEItem          = %s,\n"     ..
 
-            "  NeedInelligibilityReasonType       = %s,\n"     ..
-            "  GreedInelligibilityReasonType      = %s,\n"     ..
-            "  DisenchantInelligibilityReasonType = %s\n"      ..
+            "  NeedIneligibilityReasonType       = %s,\n"     ..
+            "  GreedIneligibilityReasonType      = %s,\n"     ..
+            "  DisenchantIneligibilityReasonType = %s\n"      ..
             "}\n",
             self:GetName(),
             self:GetItemQuality(),
@@ -230,9 +230,9 @@ function Class:ToString()
             self:GetTextureFilepath(),
             self:GetEnchantingLevelRequiredToDEItem(),
 
-            self:GetNeedInelligibilityReasonType(),
-            self:GetGreedInelligibilityReasonType(),
-            self:GetDisenchantInelligibilityReasonType()            
+            self:GetNeedIneligibilityReasonType(),
+            self:GetGreedIneligibilityReasonType(),
+            self:GetDisenchantIneligibilityReasonType()            
     ) --@formatter:on
 end
 Class.__tostring = Class.ToString

@@ -1,9 +1,9 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local S                                      = using "System.Helpers.Strings" --                                                               @formatter:off
-local EWowItemQuality                        = using "Pavilion.Warcraft.Enums.EWowItemQuality"
-local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
-local EWoWLootingInelligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingInelligibilityReasonType"
+local S                                     = using "System.Helpers.Strings" --                                                               @formatter:off
+local EWowItemQuality                       = using "Pavilion.Warcraft.Enums.EWowItemQuality"
+local GambledItemInfoDto                    = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
+local EWoWLootingIneligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingIneligibilityReasonType"
 
 local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
@@ -25,9 +25,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.Sho
                     TextureFilepath = "abc/def/ghi",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    NeedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    GreedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    DisenchantIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
                 },
                 ["GII.CTOR.GFVP.SCS.020"] = {
                     Name = " Foobar ",
@@ -44,9 +44,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.Sho
                     TextureFilepath = "abc/def/ghi",
                     EnchantingLevelRequiredToDEItem = 999, -- <-- this should pass fine too
 
-                    NeedInelligibilityReasonType = 14, --  <-- these should pass because we are sensibly future-leaning when it comes to additions to the enum
-                    GreedInelligibilityReasonType = 14,
-                    DisenchantInelligibilityReasonType = 14,
+                    NeedIneligibilityReasonType = 14, --  <-- these should pass because we are sensibly future-leaning when it comes to additions to the enum
+                    GreedIneligibilityReasonType = 14,
+                    DisenchantIneligibilityReasonType = 14,
                 },
             }
         end,
@@ -72,9 +72,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.Sho
             U.Should.Be.Equivalent(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
             U.Should.Be.Equivalent(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
 
-            U.Should.Be.Equivalent(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
-            U.Should.Be.Equivalent(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
-            U.Should.Be.Equivalent(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetNeedIneligibilityReasonType(), options.NeedIneligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetGreedIneligibilityReasonType(), options.GreedIneligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetDisenchantIneligibilityReasonType(), options.DisenchantIneligibilityReasonType)
 
             U.Should.Be.Equivalent(gambledItemInfo:IsGreyQuality(), options.ItemQuality == EWowItemQuality.Grey)
             U.Should.Be.Equivalent(gambledItemInfo:IsWhiteQuality(), options.ItemQuality == EWowItemQuality.White)

@@ -1,9 +1,9 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local S                                      = using "System.Helpers.Strings" --                                                               @formatter:off
-local EWowItemQuality                        = using "Pavilion.Warcraft.Enums.EWowItemQuality"
-local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
-local EWoWLootingInelligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingInelligibilityReasonType"
+local S                                     = using "System.Helpers.Strings" --                                                               @formatter:off
+local EWowItemQuality                       = using "Pavilion.Warcraft.Enums.EWowItemQuality"
+local GambledItemInfoDto                    = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
+local EWoWLootingIneligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingIneligibilityReasonType"
 
 local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
@@ -25,9 +25,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.Sh
                     TextureFilepath = "",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    NeedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    GreedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    DisenchantIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
                 },
                 ["GII.CTOR.GBVP.SCS.020"] = {
                     Name = " Foobar ",
@@ -44,9 +44,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.Sh
                     TextureFilepath = "",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    NeedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    GreedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    DisenchantIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
                 },
                 ["GII.CTOR.GBVP.SCS.030"] = {
                     Name = " Foobar ",
@@ -63,9 +63,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.Sh
                     TextureFilepath = "",
                     EnchantingLevelRequiredToDEItem = 0,
 
-                    NeedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    GreedInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
-                    DisenchantInelligibilityReasonType = EWoWLootingInelligibilityReasonType.None,
+                    NeedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    GreedIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
+                    DisenchantIneligibilityReasonType = EWoWLootingIneligibilityReasonType.None,
                 },
             }
         end,
@@ -96,9 +96,9 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.Sh
             U.Should.Be.Equivalent(gambledItemInfo:GetTextureFilepath(), options.TextureFilepath)
             U.Should.Be.Equivalent(gambledItemInfo:GetEnchantingLevelRequiredToDEItem(), options.EnchantingLevelRequiredToDEItem)
 
-            U.Should.Be.Equivalent(gambledItemInfo:GetNeedInelligibilityReasonType(), options.NeedInelligibilityReasonType)
-            U.Should.Be.Equivalent(gambledItemInfo:GetGreedInelligibilityReasonType(), options.GreedInelligibilityReasonType)
-            U.Should.Be.Equivalent(gambledItemInfo:GetDisenchantInelligibilityReasonType(), options.DisenchantInelligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetNeedIneligibilityReasonType(), options.NeedIneligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetGreedIneligibilityReasonType(), options.GreedIneligibilityReasonType)
+            U.Should.Be.Equivalent(gambledItemInfo:GetDisenchantIneligibilityReasonType(), options.DisenchantIneligibilityReasonType)
 
             U.Should.Be.Equivalent(gambledItemInfo:IsGreyQuality(), options.ItemQuality == EWowItemQuality.Grey)
             U.Should.Be.Equivalent(gambledItemInfo:IsWhiteQuality(), options.ItemQuality == EWowItemQuality.White)

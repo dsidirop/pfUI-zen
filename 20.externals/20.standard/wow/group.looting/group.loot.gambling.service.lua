@@ -44,9 +44,9 @@ function Service:GetGambledItemInfo(gamblingId)
     isNeedable,
     isGreedable,
     isDisenchantable,
-    needInelligibilityReasonType,
-    greedInelligibilityReasonType,
-    disenchantInelligibilityReasonType,
+    needIneligibilityReasonType,
+    greedIneligibilityReasonType,
+    disenchantIneligibilityReasonType,
     enchantingLevelRequiredToDEItem,
     isTransmogrifiable = self.GetLootRollItemInfo_(gamblingId)
 
@@ -65,9 +65,9 @@ function Service:GetGambledItemInfo(gamblingId)
         TextureFilepath = textureFilepath,
         EnchantingLevelRequiredToDEItem = enchantingLevelRequiredToDEItem,
         
-        NeedInelligibilityReasonType = needInelligibilityReasonType,
-        GreedInelligibilityReasonType = greedInelligibilityReasonType,
-        DisenchantInelligibilityReasonType = disenchantInelligibilityReasonType,
+        NeedIneligibilityReasonType = needIneligibilityReasonType,
+        GreedIneligibilityReasonType = greedIneligibilityReasonType,
+        DisenchantIneligibilityReasonType = disenchantIneligibilityReasonType,
     }
 end
 
