@@ -14,13 +14,8 @@ Scopify(EScopes.Function, {})
 -- todo   add tests for Reflection.IsInstanceOf(<instance>, <proto>) + associated Guards
 -- todo   add tests for Reflection.Is(<instance>, <proto>) + associated Guards
 -- todo   add tests for Reflection.IsImplementingInterface(<instance>, <interface-proto>) + associated Guards
+-- todo   add support + tests for .CastAs(), .IsCastableAs(), .TryCastAs()
 --
--- todo   figure out what do with static-base-utility-methods that are defined as Bar.SomeMethod(someString) instead of Bar:SomeMethod(someString) <- we have a problem here!
--- todo         solution#1 store them in .blendxinRaw and in .asBlendxinRaw
--- todo         solution#2 refactor the entire codebase so that it supports static utility-methods under Class._.* while also supporting static classes through [declare] [static] [class]
--- todo                    thus enabling us to treat static classes specially when blending them!
--- todo   co-store the actual symbol-protos inside the .asBlendxin table!
--- todo   add support and tests for .CastAs(), .IsCastableAs(), .TryCastAs()
 -- todo   figure out what to do with the inheritance of the __tostring() method from the base class (is it a static method or what?) 
 -- todo   support passing arrays too for the mixins (as nameless mixins)
 
@@ -89,27 +84,30 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                     local IPing = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
                     local Class = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
-                        ["IPing"] = IPing,
                         ["Zong"]  = Zong,
+                        ["IPing"] = IPing,
                     }
 
                     function Class:New()
                         Scopify(EScopes.Function, self)
 
-                        return self:Instantiate(self._.EnrichNakedInstanceWithFields())
+                        local newInstance = self:Instantiate(self._.EnrichNakedInstanceWithFields()) -- order
+
+                        newInstance = newInstance.asBlendxin.Zong.New(self) --     order    todo   test this approach out
+                        -- newInstance = newInstance.asBlendxin.Bram.New(self) --  order
+                        -- newInstance = newInstance.asBlendxin.Trong.New(self) -- order
+
+                        newInstance._b = 10 -- finally the constructor can work its own magic after all super-constructors have been invoked above
+                        
+                        return newInstance
                     end
 
-                    -- local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
+                    local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
                     function Class._.EnrichNakedInstanceWithFields(allocatedInstance)
                         Scopify(EScopes.Function, Class)
 
-                        -- allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance) -- todo try this approach as well
-
-                        allocatedInstance = Class.asBlendxin.Zong._.EnrichNakedInstanceWithFields(allocatedInstance) -- order
-                        -- allocatedInstance = Foobar.asBlendxin.Kramp._.EnrichNakedInstanceWithFields(allocatedInstance)
-                        -- allocatedInstance = Foobar.asBlendxin.Dromp._.EnrichNakedInstanceWithFields(allocatedInstance)
-
-                        allocatedInstance._b = 10 -- order
+                        allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance) -- order
+                        allocatedInstance._b = 0 -- order
 
                         return allocatedInstance
                     end

@@ -299,15 +299,16 @@ do
         _ = _type(classProto) == "table"                  or _throw_exception("classProto was expected to be a table")
         _ = classProto.__index ~= "nil"                   or _throw_exception("classProto.__index is nil - how did this happen?")
         _ = instance == nil or _type(instance) == "table" or _throw_exception("instanceSpecificFields was expected to be either a table or nil") -- @formatter:on
-
-        -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
-        -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
         
         instance = instance or {}
         _setmetatable(instance, classProto)
-
         -- instance.__index = classProto.__index --00 dont
         
+        -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
+        -- todo    but we have to be very careful around :New*() methods because those have to be bound against the CLASS-PROTO and not against the instance!
+        -- todo
+        -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
+
         return instance
         
         --00   the instance will already use classProto as its metatable and any missing key lookups will automatically go through classProto.__index
@@ -714,6 +715,8 @@ do
     function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
         _setfenv(1, self)
         
+        -- todo   detect circular blending-dependencies such as AClass <- [BClass <- AClass] and throw an exception!
+        
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
         _ = protoTidbits ~= nil or _throw_exception("targetSymbolProto is not a symbol-proto")
         
@@ -843,7 +846,7 @@ end
 
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
--- @formatter:off   todo   also introduce [declare partial] [declare partial:enum] [declare:testbed] etc and remove the [partial] postfix-technique on the namespace path since it will no longer be needed 
+-- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
 NamespaceRegistrySingleton:Bind("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
 NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum                 ) end)
 NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
