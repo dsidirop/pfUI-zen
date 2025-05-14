@@ -19,6 +19,7 @@ end)()
 _setfenv(1, {})
 
 VWoWUnit.Test = {}
+VWoWUnit.Test.__index = VWoWUnit.Test -- standard class-proto scaffolding
 
 --[[ API ]]--
 
@@ -27,6 +28,7 @@ function VWoWUnit.Test:New(testName, testFunction)
 
 	_assert(_type(testName) == "string" and testName ~= "", "test name must be a non-empty string")
 	_assert(_type(testFunction) == "function", "test function must be a function")
+    _assert(self == VWoWUnit.Test, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
 
 	return self:NewWithDynamicDataGeneratorCallback(testName, testFunction, function()
 		return {}
@@ -39,6 +41,7 @@ function VWoWUnit.Test:NewWithHardData(testName, testFunction, hardData)
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
 	_assert(_type(hardData) == "table", "hardData must be a table")
 	_assert(_type(testFunction) == "function", "test function must be a function")
+    _assert(self == VWoWUnit.Test, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
 
 	return self:NewWithDynamicDataGeneratorCallback(testName, testFunction, function()
 		return hardData
@@ -46,9 +49,12 @@ function VWoWUnit.Test:NewWithHardData(testName, testFunction, hardData)
 end
 
 function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunction, dynamicDataGeneratorCallback)
+    _setfenv(1, self)
+
 	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
 	_assert(_type(testFunction) == "function", "test function must be a function")
 	_assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
+    _assert(self == VWoWUnit.Test, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
 
 	local test = {
 		_logger = VWoWUnit.DefaultLogger,
@@ -58,7 +64,6 @@ function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunctio
 	}
 
 	_setmetatable(test, self)
-	self.__index = self
 
 	return test
 end

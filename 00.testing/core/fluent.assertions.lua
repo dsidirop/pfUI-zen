@@ -20,7 +20,9 @@ end)()
 
 _setfenv(1, {})
 
-VWoWUnit.Should = {}
+-- todo   this should probably be moved into a separate package called "VWoWFluentAssertions" or something like that
+
+VWoWUnit.Should = {} -- everything is static here    no point to use class-proto or instances for these
 VWoWUnit.Should.Be = {}
 VWoWUnit.Should.Not = {}
 VWoWUnit.Should.Not.Be = {}

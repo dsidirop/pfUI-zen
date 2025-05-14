@@ -4,7 +4,7 @@
     <Include file="utilities.lua"/>
 
     <Include file="logger.lua"/>
-    <Include file="assertions.lua"/>
+    <Include file="fluent.assertions.lua"/>
 
     <Include file="test.lua"/>
     <Include file="test.group.lua"/>

@@ -17,17 +17,22 @@ end)()
 _setfenv(1, {})
 
 VWoWUnit.TestsGroup = {}
+VWoWUnit.TestsGroup.__index = VWoWUnit.TestsGroup -- standard class-proto scaffolding
 
 --[[ API ]]--
 
 function VWoWUnit.TestsGroup:New(name)
+    _setfenv(1, self)
+    
+    _assert(_type(name) == "string" and name ~= "", "test-group-name must be a non-empty string")
+    _assert(self == VWoWUnit.TestsGroup, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
+    
     local instance = {
         _name  = name,
         _tests = {},
     }
 
     _setmetatable(instance, self)
-    self.__index = self
 
     return instance
 end

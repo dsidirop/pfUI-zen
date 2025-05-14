@@ -17,7 +17,8 @@ end)()
 
 _setfenv(1, {})
 
-local Logger = {} -- local to this file only and instantiated only once at the bottom of this file
+local Logger = {} --       local to this file only and instantiated only once at the bottom of this file
+Logger.__index = Logger -- standard class-proto scaffolding
 
 function Logger:New(optionalLogLevel)
 	_setfenv(1, self)
@@ -29,7 +30,6 @@ function Logger:New(optionalLogLevel)
 	}
 
 	_setmetatable(instance, self)
-	self.__index = self
 
 	return instance
 end
