@@ -355,7 +355,9 @@ do
 end
 
 
-local Entry = {}
+local Entry = {} -- todo   create a method called '_spawnStandardClassDefinitionMetatable()'
+Entry.__index = Entry
+
 do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(1, self)
@@ -373,9 +375,7 @@ do
         }
 
         _setmetatable(instance, self)
-        self.__index = self
-        self.__tostring = self.ToString
-
+        
         return instance
     end
 
@@ -534,6 +534,7 @@ do
 
         return "symbolType='" .. _stringify(_symbolType) .. "', symbolProto='" .. _stringify(_symbolProto) .. "', namespacePath='" .. _stringify(_namespacePath) .. "', isForPartial='" .. _stringify(_isForPartial) .. "'"
     end
+    Entry.__tostring = Entry.ToString
 
 end
 
@@ -735,15 +736,13 @@ do
         targetSymbolProto.blendxin = targetSymbolProto_BlendxinProp
         targetSymbolProto.asBlendxin = targetSymbolProto_asBlendxinProp
 
-        local mt = _getmetatable(targetSymbolProto) or {}
-        local targetSymbolProto_BlendxinProp_mt = _getmetatable(targetSymbolProto_BlendxinProp) or {} -- for the blendxin
-
-        mt.__index = mt.__index or {}
-        targetSymbolProto_BlendxinProp_mt.__index = targetSymbolProto_BlendxinProp_mt.__index or {}
-
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
         for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
+            _ = targetSymbolProto ~= specific_MixinProtoSymbol or _throw_exception("mixin nicknamed %q tries to add the target-symbol-proto directly into itself (how did even manage this?)", specific_MixinNickname) 
+            
+            -- todo   get an iterator from specific_MixinProtoSymbol.asBlendxin.** and see if targetSymbolProto is in there! (circular dependency!)
+            
             local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
             _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q (raw-type=%s) is not a known class/interface/enum proto-symbol...", specific_MixinNickname, _type()) --@formatter:off
             _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
@@ -766,7 +765,7 @@ do
                 targetSymbolProto_asBlendxinProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
             end
 
-            for specific_MixinMemberName, specific_MixinMember in _pairs(specific_MixinProtoSymbol) do
+            for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do
                 -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
 
                 _ = _type(specific_MixinMemberName) == "string" or _throw_exception("mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
@@ -774,7 +773,7 @@ do
 
                 if specific_MixinMemberName == "_" then
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
-                    for _staticMemberName, _staticMember in _pairs(specific_MixinMember) do
+                    for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do
                         _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
                         _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
@@ -787,22 +786,23 @@ do
                 else
                     -- blend-in all whitelisted non-statics-methods and static-fields from every mixin both directly under targetSymbolProto.* and under target.blendxin.*
 
-                    local isFunction = _type(specific_MixinMember) == "function"
+                    local isFunction = _type(specific_MixinMemberSymbol) == "function"
                     local hasBlendxinRelatedName = specific_MixinMemberName == "blendxin" or specific_MixinMemberName == "asBlendxin"
                     _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", specific_MixinMemberName)
 
-                    local hasBlacklistedNameForBase = systemReservedMemberNames_forDirectMembers[specific_MixinMember] ~= nil
+                    -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+                    
+                    local hasBlacklistedNameForBase = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] ~= nil
                     if not hasBlacklistedNameForBase then
-                        mt.__index[specific_MixinMemberName] = specific_MixinMember -- combine all members/methods provided by mixins into __index     later mixins override earlier ones    
+                        targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
 
-                        targetSymbolProto_BlendxinProp_mt.__index[specific_MixinMemberName] = specific_MixinMember
+                        targetSymbolProto_asBlendxinProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBlendxin.<specific-mixin-nickname>.<specific-member-name>
+                    -- else
+                        -- _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")
                     end
                 end
             end
         end
-
-        _setmetatable(targetSymbolProto, mt)
-        _setmetatable(targetSymbolProto_BlendxinProp, targetSymbolProto_BlendxinProp_mt)
 
         return targetSymbolProto
     end

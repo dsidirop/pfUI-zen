@@ -2,12 +2,16 @@
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+local Metatable = using "System.Classes.Metatable"
 
 local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
 
 Scopify(EScopes.Function, {})
 
-local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.InheritanceTestbed" }
+local TG = U.TestsEngine:CreateOrUpdateGroup {
+    Name = "System.Core.Tests.InheritanceTestbed",
+    Tags = { "system", "system-core", "inheritance" }
+}
 
 Scopify(EScopes.Function, {})
 
@@ -25,11 +29,50 @@ TG:AddFact("T005.Inheritance.NamespaceBlending.GivenRawRogueObjectToBlend.Should
 
             -- ACT
             function action()
-                _ = using "[declare] [blend]" "T005.Inheritance.NamespaceBlending.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable" {
+                _ = using "[declare] [blend]" "T005.Inheritance.NamespaceBlending.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable.Foo" {
                     ["Bar"] = {
                         a = 1,
                         b = 2,
                     },
+                }
+            end
+
+            -- ASSERT
+            U.Should.Throw(action)
+        end
+)
+
+TG:AddFact("T006.Inheritance.NamespaceBlending.GivenNoMixins.ShouldThrowException",
+        function()
+            -- ARRANGE
+
+            -- ACT
+            function action()
+                _ = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenNoMixins.ShouldThrowException.Foo" { }
+            end
+
+            -- ASSERT
+            U.Should.Throw(action)
+        end
+)
+
+TG:AddFact("T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException",
+        function()
+            -- ARRANGE
+            do
+                local Foo = using "[declare]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
+
+                local _ = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
+                    ["Foo"] = Foo,
+                }
+            end
+
+            -- ACT
+            function action()
+                local Bar = using "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Bar"
+
+                local Foo = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                    ["Bar"] = Bar,
                 }
             end
 
@@ -91,7 +134,20 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                     function Class:New()
                         Scopify(EScopes.Function, self)
 
+                        U.Should.Be.True(self.__index == self)
+                        U.Should.Not.Be.Nil(self.blendxin)
+                        U.Should.Not.Be.Nil(self.asBlendxin)
+                        U.Should.Not.Be.Nil(self.asBlendxin.Zong)
+                        
                         local newInstance = self:Instantiate(self._.EnrichNakedInstanceWithFields()) -- order
+
+                        U.Should.Be.True(Metatable.Get(newInstance).__index == Metatable.Get(newInstance))
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance))
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).blendxin)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBlendxin)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBlendxin.Zong)
+                        U.Should.Not.Be.Nil(newInstance.blendxin)
+                        U.Should.Not.Be.Nil(newInstance.asBlendxin)
 
                         newInstance = newInstance.asBlendxin.Zong.New(self) --     order    todo   test this approach out
                         -- newInstance = newInstance.asBlendxin.Bram.New(self) --  order
