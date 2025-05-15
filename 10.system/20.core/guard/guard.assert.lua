@@ -38,14 +38,17 @@ do
     end
 
     -- ARRAYS (can't be made entirely accurate though)
-    function Guard.Assert.IsTableray(value, optionalArgumentName)
+    Guard.Assert.DefaultMaxIndexToCheckInIsTableray = 30 -- can be set by the user to something else
+    function Guard.Assert.IsTableray(value, optionalArgumentName, optionalMaxIndexToCheck)
         if not Reflection.IsTable(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table-array"))
         end
-
+        
         local i = 1
         local key = Iterators.Next(value)
-        while key and i < 4 do -- confine the validation to the first few elements of the array for the sake of performance
+
+        optionalMaxIndexToCheck = optionalMaxIndexToCheck or Guard.Assert.DefaultMaxIndexToCheckInIsTableray
+        while key and i < optionalMaxIndexToCheck do -- confine the validation to the first few elements of the array for the sake of performance
             if not Reflection.IsNumber(key) or key ~= i then
                 Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table-array"))
             end
