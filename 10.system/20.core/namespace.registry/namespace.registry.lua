@@ -743,41 +743,40 @@ do
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
-        for mixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
-            local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol)
-
-            _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q is not a known type (class/interface/enum ...)", mixinNickname) --@formatter:off
-            _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("mixin nicknamed %q has dud specs", mixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[mixinNickname]             == nil or _throw_exception("mixin nicknamed %q cannot be added because another mixin has registered this nickname", mixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("mixin nicknamed %q has already been added to the target under a different nickname", mixinNickname)
+        for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
+            local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
+            _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q (raw-type=%s) is not a known class/interface/enum proto-symbol...", specific_MixinNickname, _type()) --@formatter:off
+            _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[specific_MixinNickname]    == nil or _throw_exception("mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname)
             
             local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
             local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()
             local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
-            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("mixin nicknamed %q (type=%s) is not an enum or a static-class - cannot mix it into an enum", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("mixin nicknamed %q (type=%s) is not an interface - cannot mix it into an interface", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (type=%s) is not a static-class or an interface - cannot mix it into a static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", mixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
+            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
+            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
             
             targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
 
-            local isNamelessMixin = mixinNickname == ""
+            local isNamelessMixin = specific_MixinNickname == ""
             if not isNamelessMixin then
-                targetSymbolProto_asBlendxinProp[mixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
+                targetSymbolProto_asBlendxinProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
             end
 
             for specific_MixinMemberName, specific_MixinMember in _pairs(specific_MixinProtoSymbol) do
                 -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
 
                 _ = _type(specific_MixinMemberName) == "string" or _throw_exception("mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
-                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", mixinNickname)
+                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
                 if specific_MixinMemberName == "_" then
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
                     for _staticMemberName, _staticMember in _pairs(specific_MixinMember) do
                         _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
-                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", mixinNickname)
+                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
                         -- must not let the mixins overwrite the default .EnrichNakedInstanceWithFields()
                         local hasBlacklistedNameForStatics = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] ~= nil -- _staticMemberName ~= "EnrichNakedInstanceWithFields"
