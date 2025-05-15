@@ -19,7 +19,7 @@ _setfenv(1, {})
 VWoWUnit.Utilities = {}
 
 -- https://stackoverflow.com/a/70096863/863651
-function VWoWUnit.Utilities.GetTablePairsOrderedByKeys(tableObject, comparer)
+function VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(tableObject, comparer)
 	_setfenv(1, VWoWUnit.Utilities)
 	
 	local allTableKeys = {}

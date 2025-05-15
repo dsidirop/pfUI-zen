@@ -127,7 +127,7 @@ function TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
 		return {}
 	end
 
-	return VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testGroups, function(a, b)
+	return VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(testGroups, function(a, b)
 		local lengthA = _strlen(a) -- 00
 		local lengthB = _strlen(b)
 

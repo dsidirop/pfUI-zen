@@ -132,6 +132,46 @@ function VWoWUnit.Should.Be.Equivalent(a, b)
 	VWoWUnit.Raise_(message)
 end
 
+function VWoWUnit.Should.Be.TypeOfTable(value)
+    _setfenv(1, VWoWUnit.Should)
+
+    if _type(value) == "table" then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Be.TypeOfTable()] Expected %q to be a table but got type = %q (value = %q)", name, _type(value), _tostring(value)))
+end
+
+function VWoWUnit.Should.Be.TypeOfString(value, name)
+    _setfenv(1, VWoWUnit.Should)
+
+    if _type(value) == "string" then
+        return
+    end
+    
+    VWoWUnit.Raise_(_format("[Should.Be.TypeOfString()] Expected %q to be a string but got type = %q (value = %q)", name, _type(value), _tostring(value)))
+end
+
+function VWoWUnit.Should.Be.Boolean(value)
+    _setfenv(1, VWoWUnit.Should)
+
+    if _type(value) == "boolean" then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Be.Boolean()] Expected boolean value, got %q ( value = %q )", _type(value), _tostring(value)))
+end
+
+function VWoWUnit.Should.Be.True(value)
+    _setfenv(1, VWoWUnit.Should)
+
+    if _type(value) == "boolean" and value == true then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Be.True()] Expected 'true' boolean value, got %q ( value = %q )", _tostring(value), _type(value)))
+end
+
 function VWoWUnit.Should.Be.Truthy(value)
 	_setfenv(1, VWoWUnit.Should)
 	

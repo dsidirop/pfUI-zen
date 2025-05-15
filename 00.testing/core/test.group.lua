@@ -47,7 +47,7 @@ function VWoWUnit.TestsGroup:Run()
     _setfenv(1, self)
 
     local nonSuccessfulTests = {}
-    for _, test in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(_tests) do
+    for _, test in VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(_tests) do
         local possibleErrorMessages = test:Run()
         if possibleErrorMessages then
             for _, errorMessage in _pairs(possibleErrorMessages) do

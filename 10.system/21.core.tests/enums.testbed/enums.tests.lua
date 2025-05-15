@@ -58,12 +58,12 @@ TestsGroup:AddTheory("T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.Sho
             ["EBIIVM.GIVTC.SRER.0050"] = { Value = 4, ExpectedVerdict = false },
             ["EBIIVM.GIVTC.SRER.0060"] = { Value = 5, ExpectedVerdict = false },
         },
-        function(options)
+        function(options, subTestCaseName)
             -- ARRANGE
 
             -- ACT
             function action()
-                local EFoo = using "[declare] [enum]" "T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict.EFoo"
+                local EFoo = using "[declare] [enum]" ("T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict." .. subTestCaseName .. ".EFoo")
 
                 EFoo.A = 1
                 EFoo.B = 2
@@ -85,12 +85,12 @@ TestsGroup:AddTheory("T020.StringEnumBuiltInIsValidMethod.GivenInvalidValueToChe
             ["SEBIIVM.GIVTC.SRER.0030"] = { Value = "b", ExpectedVerdict = true },
             ["SEBIIVM.GIVTC.SRER.0040"] = { Value = ".", ExpectedVerdict = false },
         },
-        function(options)
+        function(options, subTestCaseName)
             -- ARRANGE
 
             -- ACT
             function action()
-                local EFoo = using "[declare] [enum]" "T020.StringEnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict.EFoo"
+                local EFoo = using "[declare] [enum]" ("T020.StringEnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict." .. subTestCaseName .. ".EFoo")
 
                 EFoo.A = "a"
                 EFoo.B = "b"

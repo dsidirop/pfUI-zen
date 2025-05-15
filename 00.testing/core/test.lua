@@ -56,16 +56,12 @@ function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunctio
 	_assert(_type(dynamicDataGeneratorCallback) == "function", "dynamicDataGeneratorCallback must be a function")
     _assert(self == VWoWUnit.Test, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
 
-	local test = {
-		_logger = VWoWUnit.DefaultLogger,
-		_testName = testName,
-		_testFunction = testFunction,
-		_dynamicDataGeneratorCallback = dynamicDataGeneratorCallback,
-	}
-
-	_setmetatable(test, self)
-
-	return test
+	return _setmetatable({
+        _logger = VWoWUnit.DefaultLogger,
+        _testName = testName,
+        _testFunction = testFunction,
+        _dynamicDataGeneratorCallback = dynamicDataGeneratorCallback,
+    }, self)
 end
 
 function VWoWUnit.Test:Run()
@@ -80,8 +76,8 @@ function VWoWUnit.Test:Run()
 	_logger:LogInfo("**** Running sub-test-cases of |cffbbbbbb " .. _testName)
 
 	local allErrorMessages = {}
-	for subtestName, datum in VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testData) do -- if testData actually has data
-		local possibleErrorMessage = self:RunImpl_("** " .. subtestName, datum)
+	for subTestCaseName, datum in VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(testData) do -- if testData actually has data
+		local possibleErrorMessage = self:RunImpl_(subTestCaseName, datum)
 		if possibleErrorMessage then
 			_tableInsert(allErrorMessages, possibleErrorMessage)
 		end
@@ -90,21 +86,21 @@ function VWoWUnit.Test:Run()
 	return allErrorMessages
 end
 
-function VWoWUnit.Test:RunImpl_(testName, data)
+function VWoWUnit.Test:RunImpl_(subTestCaseName, data)
 	_setfenv(1, self)
 
 	_assert(_type(data) == "table", "test data must be a table")
-	_assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+	_assert(_type(subTestCaseName) == "string" and subTestCaseName ~= "", "testName must be a non-empty string")
 
 	-- _print("****" .. testName .. " starting ... ") --dont
 
-	local success, errorMessage = _pcall(_testFunction, data)
+	local success, errorMessage = _pcall(_testFunction, data, subTestCaseName)
 	if success == nil or success == false or errorMessage ~= nil then
-		_logger:LogError("****" .. testName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		_logger:LogError("****** " .. subTestCaseName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
 		return errorMessage
 	end
 
-	_logger:LogInfo("****" .. testName .. " |cff00ff00[PASSED]")
+	_logger:LogInfo("****** " .. subTestCaseName .. " |cff00ff00[PASSED]")
 
 	return nil
 end

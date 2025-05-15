@@ -37,10 +37,21 @@ do
         return value
     end
 
-    -- TABLES
-    function Guard.Assert.IsArray(value, optionalArgumentName)
-        if not Reflection.IsTable(value) then -- todo improve the heuristic to check the first index for 1
+    -- ARRAYS (can't be made entirely accurate though)
+    function Guard.Assert.IsTableray(value, optionalArgumentName)
+        if not Reflection.IsTable(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table-array"))
+        end
+
+        local i = 1
+        local key = Iterators.Next(value)
+        while key and i < 4 do -- confine the validation to the first few elements of the array for the sake of performance
+            if not Reflection.IsNumber(key) or key ~= i then
+                Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "table-array"))
+            end
+
+            i = i + 1
+            key = Iterators.Next(value, key)
         end
 
         return value

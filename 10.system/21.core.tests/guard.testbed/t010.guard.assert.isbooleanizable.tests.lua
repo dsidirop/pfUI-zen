@@ -13,7 +13,7 @@ local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
     Tags = { "system", "guard", "guard-check", "guard-check-booleanizables" }
 }
 
-TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",
+TestsGroup:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",
         {
             ["GRD.SRT.IB.GGI.SNT.0000"] = { Value = 0 },
             ["GRD.SRT.IB.GGI.SNT.0010"] = { Value = 1 },
@@ -46,7 +46,7 @@ TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThro
         end
 )
 
-TestsGroup:AddTheory("Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
+TestsGroup:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
         {
             ["GRD.SRT.IB.GRI.ST.0000"] = { Value = nil },
             ["GRD.SRT.IB.GRI.ST.0010"] = { Value = 0.3 },

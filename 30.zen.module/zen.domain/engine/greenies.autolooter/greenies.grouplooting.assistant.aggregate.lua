@@ -252,7 +252,7 @@ end
 function Class:SubmitSameResponseToAllItemGamblingRequests_(gamblingIds, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsArray(gamblingIds, "gamblingIds")
+    Guard.Assert.IsTableray(gamblingIds, "gamblingIds")
     Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
 
     _groupLootGamblingService:SubmitSameResponseToAllItemGamblingRequests(
