@@ -712,6 +712,54 @@ do
 
         return _reflection_registry[symbolProto]
     end
+    
+    function NamespaceRegistry.HasCircularProtoDependency(mixinProtoSymbol, targetSymbolProto)
+        _setfenv(1, NamespaceRegistry)
+
+        local protosCheckedCount = 0
+        
+        function impl_(mixinProtoSymbol_, targetSymbolProto_, depth_)
+            if mixinProtoSymbol_ == nil then
+                return false
+            end
+
+            if mixinProtoSymbol_ == targetSymbolProto_ then
+                return true
+            end
+
+            if mixinProtoSymbol_.asBlendxin == nil then
+                return false
+            end
+
+            if mixinProtoSymbol_.asBlendxin[targetSymbolProto_] ~= nil then
+                return true
+            end
+
+            protosCheckedCount = protosCheckedCount + 2
+
+            if depth_ > 30 then
+                _throw_exception("recursion-depth search too deep (%s) during circular-dependency check - something feels off - possible circular dependency detected", depth_)
+            end
+
+            if protosCheckedCount > 40 then
+                _throw_exception("too many protos (%s) during recursion - something feels off - possible circular dependency detected", protosCheckedCount)
+            end
+
+            if mixinProtoSymbol_.asBlendxin ~= nil then
+                for key, protoSymbol_ in _pairs(mixinProtoSymbol_.asBlendxin) do
+                    if _type(key) == "table" then
+                        if impl_(protoSymbol_, targetSymbolProto_, depth_ + 1) then -- recurse
+                            return true
+                        end
+                    end
+                end
+            end
+            
+            return false
+        end
+        
+        return impl_(mixinProtoSymbol, targetSymbolProto, 0)
+    end
 
     function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
         _setfenv(1, self)
@@ -739,9 +787,8 @@ do
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
         for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
-            _ = targetSymbolProto ~= specific_MixinProtoSymbol or _throw_exception("mixin nicknamed %q tries to add the target-symbol-proto directly into itself (how did even manage this?)", specific_MixinNickname) 
-            
-            -- todo   get an iterator from specific_MixinProtoSymbol.asBlendxin.** and see if targetSymbolProto is in there! (circular dependency!)
+            _ = targetSymbolProto ~= specific_MixinProtoSymbol or _throw_exception("mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
+            _ = not NamespaceRegistry.HasCircularProtoDependency(specific_MixinProtoSymbol, targetSymbolProto) or _throw_exception("mixin nicknamed %q introduces a circular dependency", specific_MixinNickname)
             
             local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
             _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q (raw-type=%s) is not a known class/interface/enum proto-symbol...", specific_MixinNickname, _type()) --@formatter:off

@@ -56,23 +56,53 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenNoMixins.ShouldThrowExceptio
         end
 )
 
-TG:AddFact("T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException",
+TG:AddFact("T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException",
         function()
             -- ARRANGE
             do
-                local Foo = using "[declare]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
+                local Foo = using "[declare]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
 
-                local _ = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
+                local _ = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
                     ["Foo"] = Foo,
                 }
             end
 
             -- ACT
             function action()
-                local Bar = using "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Bar"
+                local Bar = using "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Bar"
 
-                local Foo = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                local Foo = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                    ["Bar"] = Bar, -- circular dependency
+                }
+            end
+
+            -- ASSERT
+            U.Should.Throw(action)
+        end
+)
+
+
+TG:AddFact("T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException",
+        function()
+            -- ARRANGE
+            do
+                local Foo = using "[declare]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
+
+                local Bar = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
+                    ["Foo"] = Foo,
+                }
+
+                local Sir = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir" {
                     ["Bar"] = Bar,
+                }
+            end
+
+            -- ACT
+            function action()
+                local Sir = using "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir"
+
+                local Foo = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                    ["Sir"] = Sir,
                 }
             end
 
