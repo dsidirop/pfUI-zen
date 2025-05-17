@@ -36,6 +36,9 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
             MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
         },
 
+        -- todo   strictly speaking these listeners do not belong in the aggregate   they should be moved at
+        -- todo   the engine level and they should just dispatch commands that should be handled by the aggregate
+
         _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
         _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
         _groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New(), --todo   refactor this later on so that this gets injected through DI
@@ -167,7 +170,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --  order
     _modifierKeysListener:Start()
 
-    -- todo   add take into account CANCEL_LOOT_ROLL event at some point
+    -- todo   take into account CANCEL_LOOT_ROLL event at some point
 end
 
 function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)

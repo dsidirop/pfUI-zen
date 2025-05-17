@@ -6,69 +6,11 @@ local Metatable = using "System.Classes.Metatable"
 
 local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
 
-local TG = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.InheritanceTestbed",
-    Tags = { "system", "system-core", "inheritance" }
-}
+local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.InheritanceTestbed" }
 
 Scopify(EScopes.Function, {})
 
-TG:AddFact("T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException",
-        function()
-            -- ARRANGE
-            do
-                local Foo = using "[declare]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
-
-                local _ = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
-                    ["Foo"] = Foo,
-                }
-            end
-
-            -- ACT
-            function action()
-                local Bar = using "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Bar"
-
-                using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
-                    ["Bar"] = Bar, -- circular dependency
-                }
-            end
-
-            -- ASSERT
-            U.Should.Throw(action)
-        end
-)
-
-
-TG:AddFact("T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException",
-        function()
-            -- ARRANGE
-            do
-                local Foo = using "[declare]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo [Partial]"
-
-                local Bar = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Bar" {
-                    ["Foo"] = Foo,
-                }
-
-                using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir" {
-                    ["Bar"] = Bar,
-                }
-            end
-
-            -- ACT
-            function action()
-                local Sir = using "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir"
-
-                using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
-                    ["Sir"] = Sir,
-                }
-            end
-
-            -- ASSERT
-            U.Should.Throw(action)
-        end
-)
-
-TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
+TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()
             -- ARRANGE
             local FoobarInstance
@@ -78,13 +20,13 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 -------
 
                 do
-                    local _ = using "[declare] [interface]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    local _ = using "[declare] [interface]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                 end
                 
                 -------
 
                 do
-                    local Class = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local Class = using "[declare]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
 
                     Class._.W = 1 -- statics
                     Class._.F = 2
@@ -110,10 +52,10 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 -------
 
                 do
-                    local Zong = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
-                    local IPing = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    local Zong = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local IPing = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
-                    local Class = using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
+                    local Class = using "[declare] [blend]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
                         ["Zong"]  = Zong,
                         ["IPing"] = IPing,
                     }
@@ -157,7 +99,7 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 ------
 
                 do
-                    local Foobar = using "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
+                    local Foobar = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
                     
                     FoobarInstance = Foobar:New()    
                 end                
@@ -170,6 +112,10 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
             U.Should.Be.PlainlyEqual(FoobarInstance._b, 10)
             U.Should.Be.PlainlyEqual(FoobarInstance._sum, 11)
 
+            local Zong = using "[declare]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+            U.Should.Be.PlainlyEqual(FoobarInstance._.W, Zong._.W)
+            U.Should.Be.PlainlyEqual(FoobarInstance._.F, Zong._.F)
+
             U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
 
@@ -181,31 +127,3 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPing)
         end
 )
-
---TG:AddFact("T030.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow",
---        function()
---            -- ARRANGE
---
---            -- ACT
---            function action()
---                using "[declare] [blend]" "T030.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow" { a = 1 }
---            end
---
---            -- ASSERT
---            U.Should.Throw(action)
---        end
---)
---
---TG:AddFact("T040.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow",
---        function()
---            -- ARRANGE
---
---            -- ACT
---            function action()
---                using "[declare] [blend]" "T040.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow" { a = 1 }
---            end
---
---            -- ASSERT
---            U.Should.Throw(action)
---        end
---)

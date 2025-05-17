@@ -1,0 +1,43 @@
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+
+local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
+
+local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.InheritanceTestbed" }
+
+Scopify(EScopes.Function, {})
+
+TG:AddFact("T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow",
+        function()
+            -- ARRANGE
+            do
+                local GreatGrandParent = using "[declare]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent [Partial]"
+
+                local GrantParent = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GrantParent" {
+                    ["GGParent"] = GreatGrandParent,
+                }
+
+                local Parent = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.Parent" {
+                    ["GParent"] = GrantParent,
+                }
+
+                local GreatGrandChild = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild" {
+                    ["Parent"] = Parent,
+                }
+            end
+
+            -- ACT
+            function action()
+                local GreatGrandChild = using "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild"
+
+                local GreatGrandParent = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent" {
+                    ["GrandChild"] = GreatGrandChild,
+                }
+            end
+
+            -- ASSERT
+            U.Should.Throw(action)
+        end
+)
