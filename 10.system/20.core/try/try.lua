@@ -26,8 +26,8 @@ function Class:New(action, optionalExceptionsDeserializationFactory)
     Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
 
     return self:Instantiate({
-        _action = action,
-        _allExceptionHandlers = {},
+        _action                           = action,
+        _allExceptionHandlers             = {},
         _exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or Class.DefaultExceptionsDeserializationFactory,
     })
 end

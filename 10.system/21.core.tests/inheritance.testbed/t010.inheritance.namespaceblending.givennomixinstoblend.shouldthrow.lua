@@ -71,7 +71,7 @@ TG:AddFact("T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlen
             function action()
                 local Bar = using "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Bar"
 
-                local Foo = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
                     ["Bar"] = Bar, -- circular dependency
                 }
             end
@@ -92,7 +92,7 @@ TG:AddFact("T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBl
                     ["Foo"] = Foo,
                 }
 
-                local Sir = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir" {
+                using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir" {
                     ["Bar"] = Bar,
                 }
             end
@@ -101,7 +101,7 @@ TG:AddFact("T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBl
             function action()
                 local Sir = using "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Sir"
 
-                local Foo = using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
+                using "[declare] [blend]" "T008.Inheritance.NamespaceBlending.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrowException.Foo" {
                     ["Sir"] = Sir,
                 }
             end
@@ -129,20 +129,20 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 do
                     local Class = using "[declare]" "T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
 
+                    Class._.W = 1 -- statics
+                    Class._.F = 2
+                    
                     function Class:New()
                         Scopify(EScopes.Function, self)
 
-                        return self:Instantiate(Class._.EnrichNakedInstanceWithFields())
+                        return self:Instantiate()
                     end
 
-                    local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
-                    function Class._.EnrichNakedInstanceWithFields(allocatedInstance)
-                        allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance)
-
-                        allocatedInstance._a = 1
-                        allocatedInstance._b = 2
+                    function Class._.EnrichInstanceWithFields(upcomingInstance)
+                        upcomingInstance._a = 1
+                        upcomingInstance._b = 2
                         
-                        return allocatedInstance
+                        return upcomingInstance
                     end
 
                     function Class:Zang()
@@ -169,8 +169,11 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                         U.Should.Not.Be.Nil(self.asBlendxin)
                         U.Should.Not.Be.Nil(self.asBlendxin.Zong)
                         
-                        local newInstance = self:Instantiate(self._.EnrichNakedInstanceWithFields()) -- order
+                        local newInstance = self:Instantiate() -- order  calls _.EnrichInstanceWithFields() automatically
 
+                        U.Should.Be.PlainlyEqual(newInstance._a, 1)
+                        U.Should.Be.PlainlyEqual(newInstance._b, 10)
+                        
                         U.Should.Be.True(Metatable.Get(newInstance).__index == Metatable.Get(newInstance))
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance))
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).blendxin)
@@ -179,23 +182,18 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                         U.Should.Not.Be.Nil(newInstance.blendxin)
                         U.Should.Not.Be.Nil(newInstance.asBlendxin)
 
-                        newInstance = newInstance.asBlendxin.Zong.New(self) --     order    todo   test this approach out
-                        -- newInstance = newInstance.asBlendxin.Bram.New(self) --  order
-                        -- newInstance = newInstance.asBlendxin.Trong.New(self) -- order
+                        newInstance = newInstance.asBlendxin.Zong.New(newInstance) --     order   notice that we are calling it as .New() instead of :New()
+                        -- newInstance = newInstance.asBlendxin.Bram.New(newInstance) --  order   that is intentional because we want to call the base constructor
 
-                        newInstance._b = 10 -- finally the constructor can work its own magic after all super-constructors have been invoked above
-                        
+                        newInstance._sum = newInstance._a + newInstance._b -- finally the constructor can work its own magic after all super-constructors have been invoked above
+
                         return newInstance
                     end
 
-                    local BaseEnrichNakedInstanceWithFields = Class._.EnrichNakedInstanceWithFields -- autoset by the using() statement
-                    function Class._.EnrichNakedInstanceWithFields(allocatedInstance)
-                        Scopify(EScopes.Function, Class)
-
-                        allocatedInstance = BaseEnrichNakedInstanceWithFields(allocatedInstance) -- order
-                        allocatedInstance._b = 0 -- order
-
-                        return allocatedInstance
+                    function Class._.EnrichInstanceWithFields(upcomingInstance)
+                        upcomingInstance._b = 10
+                        upcomingInstance._sum = 0
+                        return upcomingInstance
                     end
                 end
                 
@@ -212,7 +210,8 @@ TG:AddFact("T006.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
             U.Should.Not.Throw(action)
 
             U.Should.Be.PlainlyEqual(FoobarInstance._a, 1)
-            U.Should.Be.PlainlyEqual(FoobarInstance._b, 10) -- should be unaffected
+            U.Should.Be.PlainlyEqual(FoobarInstance._b, 10)
+            U.Should.Be.PlainlyEqual(FoobarInstance._sum, 11)
 
             U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil

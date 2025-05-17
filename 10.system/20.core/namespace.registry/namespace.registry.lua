@@ -109,6 +109,10 @@ local function _nilCoalesce(value, defaultFallbackValue)
     return value
 end
 
+-- the NamespaceRegistrySingleton has to be defined at the top of the
+-- file because it is used by the ProtosFactory standard-methods
+local NamespaceRegistrySingleton
+
 local EnumsProtoFactory = {}
 do
     local CommonMetaTable_ForAllEnumProtos
@@ -226,7 +230,7 @@ do
 
         newClassProto._ = {
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            EnrichNakedInstanceWithFields = NonStaticClassProtoFactory.SpawnClosureFor_EnrichNakedInstanceWithFields_(newClassProto)
+            EnrichInstanceWithFields = nil,
         }
         newClassProto.Instantiate = NonStaticClassProtoFactory.StandardInstantiator_
         newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
@@ -237,28 +241,6 @@ do
         -- 00  __index needs to be set like this because each class-proto is expected to be used as a metatable for
         --     its own class-instances later on    not having an __index would mean that the class-protos wouldnt even
         --     be able to function as metatables for the spawned instances at all
-    end
-
-    function NonStaticClassProtoFactory.SpawnClosureFor_EnrichNakedInstanceWithFields_(classProto)
-        local classProtoSnapshot = classProto
-
-        return function(newInstance)
-            _setfenv(1, classProtoSnapshot)
-
-            newInstance = newInstance or {}
-
-            if classProtoSnapshot.asBlendxin ~= nil then
-                -- iterate over the asBlendxin.* table and call the _.EnrichNakedInstanceWithFields() static-method of each mixin in
-                -- order to aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
-                for _, mixinProto in _pairs(classProtoSnapshot.asBlendxin) do
-                    if mixinProto._.EnrichNakedInstanceWithFields ~= nil and _reflection_registry[mixinProto] ~= nil then
-                        newInstance = mixinProto._.EnrichNakedInstanceWithFields(newInstance)
-                    end
-                end
-            end
-
-            return newInstance
-        end
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
@@ -295,27 +277,85 @@ do
         return classProto
     end
 
-    function NonStaticClassProtoFactory.StandardInstantiator_(classProto, instance)  -- @formatter:off
-        _ = _type(classProto) == "table"                  or _throw_exception("classProto was expected to be a table")
-        _ = classProto.__index ~= "nil"                   or _throw_exception("classProto.__index is nil - how did this happen?")
-        _ = instance == nil or _type(instance) == "table" or _throw_exception("instanceSpecificFields was expected to be either a table or nil") -- @formatter:on
-        
-        instance = instance or {}
-        _setmetatable(instance, classProto)
+    -- todo   refactor all classes to have them define their fields via their own
+    -- todo   _.EnrichInstanceWithFields() method and then remove the instance parameter from here
+    function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched, instance) -- @formatter:off
+        _setfenv(1, NonStaticClassProtoFactory)
+
+        _ = _type(classProtoOrInstanceBeingEnriched) == "table"    or _throw_exception("classProtoOrInstance was expected to be a table")
+        _ = instance == nil or _type(instance) == "table"          or _throw_exception("instance was expected to be either a table or nil") -- @formatter:on
+
+        if NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(classProtoOrInstanceBeingEnriched) == nil then
+            -- in this scenario we are dealing with the "instance-being-enriched" case
+            --
+            -- the :Instantiate() was called as newInstance:Instantiate() which is a clear sign that the callstack can be traced
+            -- back to a sub-class constructor so we should skip creating a new instance because the instance has already been created
+
+            if instance ~= nil then
+                -- todo   temporary hack    get rid of this once we remove the 'instance' parameter 
+                for key, value in _pairs(instance) do
+                    classProtoOrInstanceBeingEnriched[key] = value
+                end
+            end
+
+            return classProtoOrInstanceBeingEnriched
+        end
+
+        _ = classProtoOrInstanceBeingEnriched.__index ~= "nil" or _throw_exception("classProto.__index is nil - how did this happen?")
+
+        instance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, instance)
+        _setmetatable(instance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
-        
+
         -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
         -- todo    but we have to be very careful around :New*() methods because those have to be bound against the CLASS-PROTO and not against the instance!
         -- todo
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
 
         return instance
-        
+
         --00   the instance will already use classProto as its metatable and any missing key lookups will automatically go through classProto.__index
         --     setting instance.__index would only be relevant if the instance itself became a metatable for another table which is definitely not the case here
         --
         --     additionally setting instance.__index could interfere with the normal method lookup chain and potentially cause unexpected behavior or
         --     infinite recursion   the standard pattern is to just set the metatable and let lua's built-in metatable mechanisms handle the property lookup
+    end
+
+    function NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProto, upcomingInstance) --@formatter:off
+        _setfenv(1, NonStaticClassProtoFactory)
+
+        _ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
+        _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type '%s'", _type(upcomingInstance)) --@formatter:on
+
+        upcomingInstance = upcomingInstance or {}
+        if classProto.asBlendxin ~= nil then
+            -- iterate over the asBlendxin.* table and call the _.EnrichInstanceWithFields() static-method of each mixin in
+            -- order to aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
+            for _, mixinProto in _pairs(classProto.asBlendxin) do
+
+                local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
+                if mixinProtoTidbits ~= nil and mixinProtoTidbits:IsNonStaticClassEntry() then
+                    local snapshotOfMixinStaticMethods = mixinProto._
+                    __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type '%s' (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
+
+                    upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, upcomingInstance) -- vital order    depth first
+
+                    local enrichInstanceWithFieldsOfMixin = snapshotOfMixinStaticMethods.EnrichInstanceWithFields
+                    if enrichInstanceWithFieldsOfMixin ~= nil then
+                        upcomingInstance = enrichInstanceWithFieldsOfMixin(upcomingInstance)
+                    end
+                end
+
+            end
+        end
+
+        -- finally we can enrich the instance with the fields of the class itself if it has any
+        local enrichInstanceWithOwnFields = classProto._.EnrichInstanceWithFields
+        if enrichInstanceWithOwnFields ~= nil then
+            upcomingInstance = enrichInstanceWithOwnFields(upcomingInstance)
+        end        
+
+        return upcomingInstance
     end
 end
 
@@ -468,7 +508,7 @@ do
         ["asBlendxin"]       = "asBlendxin",
     }
     local Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local StaticClasses_SystemReservedMemberNames_ForDirectMembers = {
@@ -480,7 +520,7 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local NonStaticClasses_SystemReservedMemberNames_ForDirectMembers = {
@@ -492,7 +532,7 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+        ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local Interface_SystemReservedMemberNames_ForDirectMembers = {
@@ -504,7 +544,7 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichNakedInstanceWithFields"] = "EnrichNakedInstanceWithFields",
+        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     function Entry:GetSpecialReservedNames()
@@ -539,6 +579,7 @@ do
 end
 
 local NamespaceRegistry = {}
+NamespaceRegistry.__index = NamespaceRegistry
 do
     function NamespaceRegistry:New()
         _setfenv(1, self)
@@ -548,10 +589,7 @@ do
             _reflection_registry = {},
         }
 
-        _setmetatable(instance, self)
-        self.__index = self
-
-        return instance
+        return _setmetatable(instance, self)
     end
 
     NamespaceRegistry.Assert = {}
@@ -764,8 +802,6 @@ do
     function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
         _setfenv(1, self)
         
-        -- todo   detect circular blending-dependencies such as AClass <- [BClass <- AClass] and throw an exception!
-        
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
         _ = protoTidbits ~= nil or _throw_exception("targetSymbolProto is not a symbol-proto")
         
@@ -819,13 +855,15 @@ do
                 _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
                 if specific_MixinMemberName == "_" then
+                    -- todo   we should refactor this part to just use __index with a custom look up function for the base statics and be done with it nice and easy
+                    
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
                     for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do
                         _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
                         _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
-                        -- must not let the mixins overwrite the default .EnrichNakedInstanceWithFields()
-                        local hasBlacklistedNameForStatics = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] ~= nil -- _staticMemberName ~= "EnrichNakedInstanceWithFields"
+                        -- must not let the mixins overwrite the default .EnrichInstanceWithFields()
+                        local hasBlacklistedNameForStatics = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] ~= nil -- _staticMemberName ~= "EnrichInstanceWithFields"
                         if hasBlacklistedNameForStatics then
                             targetSymbolProto._[_staticMemberName] = _staticMember -- static member
                         end
@@ -837,6 +875,8 @@ do
                     local hasBlendxinRelatedName = specific_MixinMemberName == "blendxin" or specific_MixinMemberName == "asBlendxin"
                     _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", specific_MixinMemberName)
 
+                    -- todo  once every non-static-class is migrated to place its static fields under _.* we can limit the logic to just transfer functions
+                    
                     -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
                     
                     local hasBlacklistedNameForBase = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] ~= nil
@@ -871,7 +911,7 @@ do
     end
 end
 
-local NamespaceRegistrySingleton = NamespaceRegistry:New()
+NamespaceRegistrySingleton = NamespaceRegistry:New()
 do
     -- using "x.y.z"
     _g.pvl_namespacer_get = function(namespacePath)
