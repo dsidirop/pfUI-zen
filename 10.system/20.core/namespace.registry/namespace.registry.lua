@@ -166,16 +166,9 @@ do
     local CommonMetaTable_ForAllInterfaceProtos
 
     function InterfacesProtoFactory.Spawn()
-        CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable({
-            -- __call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
-        })
+        CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable()
 
-        local newInterfaceProto = _spawnSimpleMetatable({
-            ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_,
-            
-            -- __tostring  = todo,
-            -- Instantiate = InterfacesProtoFactory.StandardInstantiator_,
-        })
+        local newInterfaceProto = _spawnSimpleMetatable()
 
         return _setmetatable(newInterfaceProto, CommonMetaTable_ForAllInterfaceProtos)
 
@@ -227,7 +220,7 @@ do
 
         local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            _                   = { EnrichInstanceWithFields = nil, },
+            _                   = { EnrichInstanceWithFields = nil },
             Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
@@ -266,7 +259,7 @@ do
         _ = _type(classProto) == "table"           or _throw_exception("classProto was expected to be a table")
         _ = _type(defaultCallMethod) == "function" or _throw_exception("defaultCallMethod was expected to be a function") -- @formatter:on
 
-        classProto.__call = defaultCallMethod
+        classProto.__Call__ = defaultCallMethod
 
         return classProto
     end
@@ -276,8 +269,8 @@ do
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched, instance) -- @formatter:off
         _setfenv(1, NonStaticClassProtoFactory)
 
-        _ = _type(classProtoOrInstanceBeingEnriched) == "table"    or _throw_exception("classProtoOrInstance was expected to be a table")
-        _ = instance == nil or _type(instance) == "table"          or _throw_exception("instance was expected to be either a table or nil") -- @formatter:on
+        _ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("classProtoOrInstance was expected to be a table")
+        _ = instance == nil or _type(instance) == "table"       or _throw_exception("instance was expected to be either a table or nil") -- @formatter:on
 
         if NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(classProtoOrInstanceBeingEnriched) == nil then
             -- in this scenario we are dealing with the "instance-being-enriched" case
