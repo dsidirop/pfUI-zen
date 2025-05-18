@@ -30,6 +30,8 @@
     <Include file="exceptions\.xml"/>
 
     <Include file="guard\.xml"/>
+
+    <Include file="io\.xml"/>
     
     <Include file="helpers.arrays\.xml"/>
     <Include file="helpers.tables\.xml"/>

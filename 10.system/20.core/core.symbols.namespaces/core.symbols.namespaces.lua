@@ -35,9 +35,10 @@ using "[declare] [static]" "System.Exceptions.Utilities"
 using "[declare] [static]" "System.Externals.WoW.UI.GlobalFrames"
 
 using "[declare]" "System.Try"
-using "[declare]" "System.Console.Writer"
-
 using "[declare]" "System.Event"
+
+using "[declare]" "System.IO.GenericTextWriter"
+
 using "[declare]" "System.Exceptions.Exception"
 using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"

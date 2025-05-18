@@ -2,55 +2,55 @@
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Console = using "System.Console"
 local ArraysHelper = using "System.Helpers.Arrays"
+local GenericTextWriter = using "System.IO.GenericTextWriter"
 
 local U = using "[built-in]" [[ VWoWUnit ]]
 
 Scopify(EScopes.Function, {})
 
 local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Console.Tests",
-    Tags = { "system", "output" },
+    Name = "System.IO.GenericTextWriterTestbed",
+    Tags = { "system", "io", "text-writer" },
 }
 
-TestsGroup:AddFact("ConsoleWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("GenericTextWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
-    local consoleWriter = Console.Writer:New(function(message)
+    local geneticTextWriter = GenericTextWriter:New(function(message)
         ArraysHelper.Append(allMessagesArray, message)
     end)
     
     -- ACT
-    consoleWriter:Write("Hello")
+    geneticTextWriter:Write("Hello")
 
     -- ASSERT
     U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)
 
-TestsGroup:AddFact("ConsoleWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("GenericTextWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
-    local consoleWriter = Console.Writer:New(function(message)
+    local geneticTextWriter = GenericTextWriter:New(function(message)
         ArraysHelper.Append(allMessagesArray, message)
     end)
 
     -- ACT
-    consoleWriter:WriteLine("Hello")
+    geneticTextWriter:WriteLine("Hello")
 
     -- ASSERT
     U.Should.Be.Equivalent(allMessagesArray, { "Hello\n" })
 end)
 
-TestsGroup:AddFact("ConsoleWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TestsGroup:AddFact("GenericTextWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
-    local consoleWriter = Console.Writer:New(function(message)
+    local geneticTextWriter = GenericTextWriter:New(function(message)
         ArraysHelper.Append(allMessagesArray, message)
     end)
 
     -- ACT
-    consoleWriter:WriteFormatted("Hello")
+    geneticTextWriter:WriteFormatted("Hello")
 
     -- ASSERT
     U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
