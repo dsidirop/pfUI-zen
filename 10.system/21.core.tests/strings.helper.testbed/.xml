@@ -2,6 +2,7 @@
     <Include file="strings.helper._.tests.lua"/>
     <Include file="strings.helper.split.tests.lua"/>
     <Include file="strings.helper.match.tests.lua"/>
+    <Include file="strings.helper.starts.with.tests.lua"/>    
     <Include file="strings.helper.substring.via.range.tests.lua"/>
     <Include file="strings.helper.substring.via.length.tests.lua"/>
 </Ui>
