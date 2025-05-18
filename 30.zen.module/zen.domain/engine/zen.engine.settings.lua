@@ -9,12 +9,20 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenE
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._greeniesAutolooterAggregateSettings = nil
+
+    return upcomingInstance
+end
+
 function Class:New()
     Scopify(EScopes.Function, self)
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _greeniesAutolooterAggregateSettings = GreeniesAutolooterAggregateSettings:New(),
-    })
+    instance._greeniesAutolooterAggregateSettings = GreeniesAutolooterAggregateSettings:New()
+
+    return instance
 end
 
 function Class:GetGreeniesAutolooterAggregateSettings()

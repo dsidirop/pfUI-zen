@@ -1,6 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard        = using "System.Guard" --@formatter:off
+local Nils         = using "System.Nils" --@formatter:off
+local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
@@ -12,6 +13,28 @@ local EWowItemQuality = using "Pavilion.Warcraft.Enums.EWowItemQuality" --  @for
 local Class = using "[declare]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
 
 Scopify(EScopes.Function, {})
+
+function Class._.EnrichInstanceWithFields(upcomingInstance) --@formatter:off
+    upcomingInstance._name        = ""
+    upcomingInstance._gamblingId  = 0
+    upcomingInstance._itemQuality = 0
+
+    upcomingInstance._isNeedable         = false
+    upcomingInstance._isGreedable        = false
+    upcomingInstance._isBindOnPickUp     = false
+    upcomingInstance._isDisenchantable   = false
+    upcomingInstance._isTransmogrifiable = false
+
+    upcomingInstance._count                           = 0
+    upcomingInstance._textureFilepath                 = ""
+    upcomingInstance._enchantingLevelRequiredToDEItem = 0
+
+    upcomingInstance._needIneligibilityReasonType       = 0
+    upcomingInstance._greedIneligibilityReasonType      = 0
+    upcomingInstance._disenchantIneligibilityReasonType = 0
+
+    return upcomingInstance --@formatter:on
+end
 
 function Class:New(options)
     Scopify(EScopes.Function, self)
@@ -37,25 +60,27 @@ function Class:New(options)
     Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.GreedIneligibilityReasonType, 20, "options.GreedIneligibilityReasonType") --           EWowLootingIneligibilityReasonType
     Guard.Assert.IsNilOrPositiveIntegerOrZeroOfMaxValue(options.DisenchantIneligibilityReasonType, 20, "options.DisenchantIneligibilityReasonType") -- EWowLootingIneligibilityReasonType
 
-    return self:Instantiate({ --@formatter:off
-        _name            = StringsHelper.Trim(options.Name),
-        _gamblingId      = options.GamblingId,
-        _itemQuality     = options.ItemQuality,
-        
-        _isNeedable                = BooleansHelper.Booleanize(options.IsNeedable,         true),
-        _isGreedable               = BooleansHelper.Booleanize(options.IsGreedable,        true),
-        _isBindOnPickUp            = BooleansHelper.Booleanize(options.IsBindOnPickUp,     true),
-        _isDisenchantable          = BooleansHelper.Booleanize(options.IsDisenchantable,   true),
-        _isTransmogrifiable        = BooleansHelper.Booleanize(options.IsTransmogrifiable, true),
+    local instance = self:Instantiate() --@formatter:off
 
-        _count                           = options.Count                           == nil and 1  or options.Count,
-        _textureFilepath                 = options.TextureFilepath                 == nil and "" or options.TextureFilepath,
-        _enchantingLevelRequiredToDEItem = options.EnchantingLevelRequiredToDEItem == nil and 0  or options.EnchantingLevelRequiredToDEItem,
-        
-        _needIneligibilityReasonType       = options.NeedIneligibilityReasonType       == nil and 0 or options.NeedIneligibilityReasonType, --        can be nil if isNeedable       is true
-        _greedIneligibilityReasonType      = options.GreedIneligibilityReasonType      == nil and 0 or options.GreedIneligibilityReasonType, --       can be nil if isGreedable      is true
-        _disenchantIneligibilityReasonType = options.DisenchantIneligibilityReasonType == nil and 0 or options.DisenchantIneligibilityReasonType --   can be nil if isDisenchantable is true
-    }) --@formatter:on
+    instance._name        = StringsHelper.Trim(options.Name)
+    instance._gamblingId  = options.GamblingId
+    instance._itemQuality = options.ItemQuality
+
+    instance._isNeedable         = BooleansHelper.Booleanize(options.IsNeedable,         true)
+    instance._isGreedable        = BooleansHelper.Booleanize(options.IsGreedable,        true)
+    instance._isBindOnPickUp     = BooleansHelper.Booleanize(options.IsBindOnPickUp,     true)
+    instance._isDisenchantable   = BooleansHelper.Booleanize(options.IsDisenchantable,   true)
+    instance._isTransmogrifiable = BooleansHelper.Booleanize(options.IsTransmogrifiable, true)
+
+    instance._count                           = Nils.Coalesce(options.Count, 1)
+    instance._textureFilepath                 = Nils.Coalesce(options.TextureFilepath, "")
+    instance._enchantingLevelRequiredToDEItem = Nils.Coalesce(options.EnchantingLevelRequiredToDEItem, 0)
+
+    instance._needIneligibilityReasonType       = Nils.Coalesce(options.NeedIneligibilityReasonType, 0) --        can be nil if isNeedable       is true
+    instance._greedIneligibilityReasonType      = Nils.Coalesce(options.GreedIneligibilityReasonType, 0) --       can be nil if isGreedable      is true
+    instance._disenchantIneligibilityReasonType = Nils.Coalesce(options.DisenchantIneligibilityReasonType, 0) --  can be nil if isDisenchantable is true
+
+    return instance --@formatter:on
 end
 
 function Class:GetName()
@@ -210,7 +235,7 @@ function Class:ToString()
 
             "  Count                              = %s,\n"     ..
             "  Texture                            = %q,\n"     ..
-            "  EnchantingLevelRequiredToDEItem          = %s,\n"     ..
+            "  EnchantingLevelRequiredToDEItem    = %s,\n"     ..
 
             "  NeedIneligibilityReasonType       = %s,\n"     ..
             "  GreedIneligibilityReasonType      = %s,\n"     ..

@@ -8,32 +8,47 @@ local EScopes = using "System.EScopes"
 local Event          = using("System.Event")
 local WoWCreateFrame = using("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
 
+-- todo   it would make sense to have a timer-factory so that it will generate the best possible
+-- todo   timer for the underlying platform   newer wow clients do support C_Timer afterall 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer" -- @formatter:on
 
 Scopify(EScopes.Function, {})
+
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._global = Global --20
+    upcomingInstance._interval = nil
+    upcomingInstance._wantedActive = false
+
+    upcomingInstance._element = nil
+    upcomingInstance._eventElapsed = nil
+    upcomingInstance._elapsedTimeSinceLastFiring = 0
+
+    return upcomingInstance
+
+    -- 20  this is vital in order for us to have access to _global.arg1 inside the onupdate handler
+end
 
 function Class:New(interval)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveNumber(interval, "interval")
 
-    local element = WoWCreateFrame("Frame") -- 00
+    local instance = self:Instantiate()
+    
+    local element = WoWCreateFrame("Frame") -- 00   todo   use UI.ManagedElements.Builder here
     element:Hide() -- 10
 
-    return self:Instantiate({
-        _global = Global, -- 20
+    instance._interval = interval
+    instance._wantedActive = false
 
-        _interval = interval,
-        _wantedActive = false,
+    instance._element = element
+    instance._eventElapsed = Event:New()
+    instance._elapsedTimeSinceLastFiring = 0
 
-        _element = element,
-        _eventElapsed = Event:New(),
-        _elapsedTimeSinceLastFiring = 0,
-    })
+    return instance
 
     -- 00  dont even bother using strenums here
     -- 10  we need to hide the frame because its important to ensure that the timer is not running when we create it
-    -- 20  this is vital in order for us to have access to _global.arg1 inside the onupdate handler
 end
 
 function Class:GetInterval()

@@ -15,12 +15,17 @@ if U then
 	-- _print("Running VWoWUnit tests...\n ")
 
 	-- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Trace) -- for debugging
+    -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
 
-	-- U.TestsEngine:RunAllTestGroups()
+	U.TestsEngine:RunAllTestGroups()
 
 	-- U.TestsEngine:RunTestGroup("System.Guard.Assert.IsBooleanizable")	
 
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 
-	U.TestsEngine:RunTestGroupsByTag("inheritance")
+	-- U.TestsEngine:RunTestGroupsByTag("guard-check-tablerays")
+
+    -- U.TestsEngine:RunTestGroupsByTag("inheritance")
+
+    -- U.TestsEngine:RunTestGroupsByTag("text-writer")
 end

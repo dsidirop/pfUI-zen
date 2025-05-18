@@ -36,6 +36,8 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     return upcomingInstance
 end
 
+-- todo   options should be a separate class with its own validation mechanism
+--
 --@options.MaxSize                        must be either nil (default value of 100 items) or zero (limitless) or a positive integer number
 --@options.TrimRatio                      must be either nil (default value of 0.25) or between 0 and 1 
 --@options.MaxLifespanPerEntryInSeconds   must be either nil (default value of 300secs) or 0 (no expiration) or a positive integer number of seconds

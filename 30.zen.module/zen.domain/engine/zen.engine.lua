@@ -11,15 +11,22 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenE
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._settings = nil -- this is set via :SetSettings()
+    upcomingInstance._isRunning = false
+    upcomingInstance._greeniesAutolooterAggregate = nil
+
+    return upcomingInstance
+end
+
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        _settings = nil,
-
-        _isRunning = false,
-        _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(), -- todo  use di
-    })
+    local instance = self:Instantiate()
+    
+    instance._greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New() -- todo  use di
+    
+    return instance
 end
 
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place

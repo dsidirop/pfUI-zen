@@ -1,6 +1,7 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard = using "System.Guard" -- @formatter:off
+local Nils = using "System.Nils" -- @formatter:off
+local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
@@ -11,18 +12,25 @@ local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foun
 
 Scopify(EScopes.Function, {})
 
+function TranslationsService._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._zenAddonTranslator = nil
+    upcomingInstance._pfuiTranslatorAsFallback = nil
+
+    return upcomingInstance
+end
+
 function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator")
     Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
-    self:ChainSetDefaultCall(self.TryTranslate) -- vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
+    local instance = self:Instantiate():ChainSetDefaultCall(self.TryTranslate) --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
-    return self:Instantiate({ --@formatter:off
-        _zenAddonTranslator       = zenAddonTranslator       or ZenAddonTranslator:NewForActiveUILanguage(), -- todo   get this from di
-        _pfuiTranslatorAsFallback = pfuiTranslatorAsFallback or PfuiTranslator.I, --                            todo   get this from di
-    }) --@formatter:on
+    instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenAddonTranslator:NewForActiveUILanguage()) -- todo   get this from di
+    instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslator.I                           ) -- todo   get this from di
+
+    return instance --@formatter:on
 end
 
 --  this method is the default :__Call__ method so the following calls are equivalent
@@ -30,9 +38,11 @@ end
 --     _translationsService("foobar")   ==   _translationsService:TryTranslate("foobar")
 --
 function TranslationsService:TryTranslate(message, optionalColor)
-    message = self._zenAddonTranslator:Translate(message) --          order
-            or self._pfuiTranslatorAsFallback:Translate(message) --   order
-            or message
+    message = Nils.Coalesce(
+            self._zenAddonTranslator:Translate(message), --         order
+            self._pfuiTranslatorAsFallback:Translate(message), --   order
+            message
+    )
 
     if not optionalColor then
         return message

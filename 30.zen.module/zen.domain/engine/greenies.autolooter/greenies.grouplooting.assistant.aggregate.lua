@@ -3,7 +3,6 @@
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
--- local Console      = using "System.Console"
 
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
@@ -20,6 +19,19 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.Gree
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._settings = nil
+
+    upcomingInstance._isRunning = false
+    upcomingInstance._pendingLootGamblingRequests = nil
+
+    upcomingInstance._modifierKeysListener = nil
+    upcomingInstance._groupLootingListener = nil
+    upcomingInstance._groupLootGamblingService = nil
+
+    return upcomingInstance
+end
+
 function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)
 
@@ -27,22 +39,23 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
 
-    return self:Instantiate({
-        _settings = nil,
+    local instance = self:Instantiate()
 
-        _isRunning = false,
-        _pendingLootGamblingRequests = LRUCache:New {
-            MaxSize = 20,
-            MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
-        },
+    -- instance._settings = nil -- set independently through :SetSettings()
+    instance._isRunning = false
+    instance._pendingLootGamblingRequests = LRUCache:New {
+        MaxSize                      = 20,
+        MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
+    }
 
-        -- todo   strictly speaking these listeners do not belong in the aggregate   they should be moved at
-        -- todo   the engine level and they should just dispatch commands that should be handled by the aggregate
+    instance._modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1) --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New() --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New() --todo   refactor this later on so that this gets injected through DI
 
-        _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
-        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
-        _groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New(), --todo   refactor this later on so that this gets injected through DI
-    })
+    return instance
+
+    -- todo   strictly speaking these listeners do not belong in the aggregate   they should be moved at
+    -- todo   the engine level    they should just dispatch commands that should be handled by the aggregate
 end
 
 function Class:IsRunning()
