@@ -9,17 +9,24 @@ local Class = using "[declare]" "System.Exceptions.ValueCannotBeNilException [Pa
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._message = nil
+    upcomingInstance._stacktrace = ""
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end
+
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return self:Instantiate({
-        _message = Class._.FormulateMessage_(optionalArgumentName),
-        _stacktrace = "",
-        
-        _stringified = nil
-    })
+    local instance = self:Instantiate()
+
+    instance._message = instance._.FormulateMessage_(optionalArgumentName)
+
+    return instance
 end
 
 function Class:NewWithMessage(customMessage)
@@ -27,12 +34,11 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Assert.IsNonDudString(customMessage, "customMessage")
 
-    return self:Instantiate({
-        _message = customMessage,
-        _stacktrace = "",
+    local instance = self:Instantiate()
+    
+    instance._message = customMessage
 
-        _stringified = nil
-    })
+    return instance
 end
 
 function Class:GetMessage()

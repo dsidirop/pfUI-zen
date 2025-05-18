@@ -11,17 +11,21 @@ local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._message = nil
+    upcomingInstance._stacktrace = ""
+
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end
+
 function Class:New(message)
     Scopify(EScopes.Function, self)
    
     Guard.Assert.IsNilOrNonDudString(message, "message")
 
-    return self:Instantiate({
-        _message = nil,
-        _stacktrace = "",
-
-        _stringified = nil,
-    }):ChainSetMessage(message)
+    return self:Instantiate():ChainSetMessage(message)
 end
 
 function Class:GetMessage()

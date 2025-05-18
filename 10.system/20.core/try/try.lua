@@ -19,17 +19,27 @@ Scopify(EScopes.Function, {})
 
 Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._action                           = nil
+    upcomingInstance._allExceptionHandlers             = nil
+    upcomingInstance._exceptionsDeserializationFactory = nil
+
+    return upcomingInstance
+end
+
 function Class:New(action, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
     Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    
+    local instance = self:Instantiate()
+    
+    instance._action                           = action
+    instance._allExceptionHandlers             = {}
+    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance.DefaultExceptionsDeserializationFactory
 
-    return self:Instantiate({
-        _action                           = action,
-        _allExceptionHandlers             = {},
-        _exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or Class.DefaultExceptionsDeserializationFactory,
-    })
+    return instance
 end
 
 -- for specific exceptions

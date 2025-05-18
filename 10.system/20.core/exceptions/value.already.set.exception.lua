@@ -9,17 +9,21 @@ local Class = using "[declare]" "System.Exceptions.ValueAlreadySetException [Par
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._message = nil
+    upcomingInstance._stacktrace = ""
+
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end
+
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
-  
+
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return self:Instantiate({
-        _message = Class._.FormulateMessage_(optionalArgumentName),
-        _stacktrace = "",
-
-        _stringified = nil
-    })
+    return self:Instantiate()
 end
 
 -- getters

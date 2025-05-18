@@ -11,18 +11,25 @@ local Class = using "[declare]" "System.Exceptions.ValueIsOutOfRangeException [P
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._message = nil
+    upcomingInstance._stacktrace = ""
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end
+
 function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
 
-    --Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
-    --Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
+    Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
+    Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    return self:Instantiate({
-        _message = Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType),
-        _stacktrace = "",
+    local instance = self:Instantiate()
 
-        _stringified = nil
-    })
+    instance._message = instance._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+
+    return instance
 end
 
 function Class:NewWithMessage(customMessage)
@@ -30,12 +37,11 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Assert.IsNonDudString(customMessage, "customMessage")
 
-    return self:Instantiate({
-        _message = customMessage,
-        _stacktrace = "",
-
-        _stringified = nil
-    })
+    local instance = self:Instantiate()
+    
+    instance._message = customMessage
+    
+    return instance
 end
 
 function Class:GetMessage()

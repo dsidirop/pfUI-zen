@@ -4,7 +4,7 @@
 
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Time         = using "System.Time" --                @formatter:off
+local Time         = using "System.Time" --             @formatter:off
 local Nils         = using "System.Nils"
 local Guard        = using "System.Guard"
 local Table        = using "System.Table"
@@ -12,39 +12,45 @@ local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
 local T            = using "System.Helpers.Tables"
-local S            = using "System.Helpers.Strings" --  @formater:on
+local S            = using "System.Helpers.Strings" --  @formatter:on
 
 local Class = using "[declare]" "Pavilion.DataStructures.LRUCache"
 
 Scopify(EScopes.Function, {})
 
-Class.DefaultOptions_ = {
-    MaxSize = 100,
-    TrimRatio = 0.25,
+Class._.DefaultOptions = {
+    MaxSize                      = 100,
+    TrimRatio                    = 0.25,
     MaxLifespanPerEntryInSeconds = 5 * 60,
 }
+
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._count = 0
+    upcomingInstance._entries = {}
+    upcomingInstance._timestampOfLastDeadlinesCleanup = -1
+
+    upcomingInstance._maxSize = 0
+    upcomingInstance._trimRatio = 0
+    upcomingInstance._maxLifespanPerEntryInSeconds = 0
+
+    return upcomingInstance
+end
 
 --@options.MaxSize                        must be either nil (default value of 100 items) or zero (limitless) or a positive integer number
 --@options.TrimRatio                      must be either nil (default value of 0.25) or between 0 and 1 
 --@options.MaxLifespanPerEntryInSeconds   must be either nil (default value of 300secs) or 0 (no expiration) or a positive integer number of seconds
-function Class:New(options)
+function Class:New(optionalOptions)
     Scopify(EScopes.Function, self)
 
-    options = Guard.Assert.IsNilOrTable(options, "options") or Class.DefaultOptions_ --@formatter:off
+    optionalOptions = Guard.Assert.IsNilOrTable(optionalOptions, "options") or {} --@formatter:off
 
-    Guard.Assert.IsNilOrRatioNumber(options.TrimRatio, "options.TrimRatio")
-    Guard.Assert.IsNilOrPositiveInteger(options.MaxSize, "options.MaxSize")
-    Guard.Assert.IsNilOrPositiveIntegerOrZero(options.MaxLifespanPerEntryInSeconds, "options.MaxLifespanPerEntryInSeconds")
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _count = 0,
-        _entries = {},
-        _timestampOfLastDeadlinesCleanup = -1,
+    instance._maxSize                      = Guard.Assert.IsNilOrPositiveInteger(       Nils.Coalesce(optionalOptions.MaxSize,                      instance._.DefaultOptions.MaxSize))
+    instance._trimRatio                    = Guard.Assert.IsNilOrRatioNumber(           Nils.Coalesce(optionalOptions.TrimRatio,                    instance._.DefaultOptions.TrimRatio))
+    instance._maxLifespanPerEntryInSeconds = Guard.Assert.IsNilOrPositiveIntegerOrZero( Nils.Coalesce(optionalOptions.MaxLifespanPerEntryInSeconds, instance._.DefaultOptions.MaxLifespanPerEntryInSeconds))
 
-        _maxSize                      = options.MaxSize                      == nil  and Class.DefaultOptions_.MaxSize                       or options.MaxSize,
-        _trimRatio                    = options.TrimRatio                    == nil  and Class.DefaultOptions_.TrimRatio                     or options.TrimRatio,
-        _maxLifespanPerEntryInSeconds = options.MaxLifespanPerEntryInSeconds == nil  and Class.DefaultOptions_.MaxLifespanPerEntryInSeconds  or options.MaxLifespanPerEntryInSeconds,
-    }) --@formatter:on
+    return instance --@formatter:on
 end
 
 function Class:Clear()

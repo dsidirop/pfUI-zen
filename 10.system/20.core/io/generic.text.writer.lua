@@ -12,14 +12,22 @@ local Class = using "[declare]" "System.IO.GenericTextWriter [Partial]"
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._nativeWriteCallback = nil
+
+    return upcomingInstance
+end
+
 function Class:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)
-
+    
     Guard.Assert.IsFunction(nativeWriteCallback, "nativeWriteCallback")
     
-    return self:Instantiate({
-        _nativeWriteCallback = nativeWriteCallback
-    })
+    local instance = self:Instantiate()
+    
+    instance._nativeWriteCallback = nativeWriteCallback
+    
+    return instance
 end
 
 function Class:WriteFormatted(format, ...)

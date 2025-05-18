@@ -9,13 +9,17 @@ local Class = using "[declare]" "System.Event [Partial]"
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._handlers = {}
+    upcomingInstance._handlersJustOnce = {}
+
+    return upcomingInstance
+end
+
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        _handlers = {},
-        _handlersJustOnce = {}
-    })
+    return self:Instantiate()
 end
 
 local NoOwner = {}
