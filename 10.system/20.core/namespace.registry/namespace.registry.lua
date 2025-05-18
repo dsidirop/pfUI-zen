@@ -863,8 +863,8 @@ do
                         _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
                         -- must not let the mixins overwrite the default .EnrichInstanceWithFields()
-                        local hasBlacklistedNameForStatics = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] ~= nil -- _staticMemberName ~= "EnrichInstanceWithFields"
-                        if hasBlacklistedNameForStatics then
+                        local hasGreenName = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] == nil
+                        if hasGreenName then
                             targetSymbolProto._[_staticMemberName] = _staticMember -- static member
                         end
                     end
@@ -879,8 +879,8 @@ do
                     
                     -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
                     
-                    local hasBlacklistedNameForBase = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] ~= nil
-                    if not hasBlacklistedNameForBase then
+                    local hasGreenName = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] == nil
+                    if hasGreenName then
                         targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
 
                         targetSymbolProto_asBlendxinProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBlendxin.<specific-mixin-nickname>.<specific-member-name>

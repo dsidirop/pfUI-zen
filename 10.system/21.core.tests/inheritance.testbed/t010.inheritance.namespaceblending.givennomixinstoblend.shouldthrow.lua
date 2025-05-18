@@ -112,9 +112,12 @@ TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
             U.Should.Be.PlainlyEqual(FoobarInstance._b, 10)
             U.Should.Be.PlainlyEqual(FoobarInstance._sum, 11)
 
-            local Zong = using "[declare]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
-            U.Should.Be.PlainlyEqual(FoobarInstance._.W, Zong._.W)
-            U.Should.Be.PlainlyEqual(FoobarInstance._.F, Zong._.F)
+            local FoobarProto = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
+            U.Should.Be.PlainlyEqual(FoobarInstance._.EnrichInstanceWithFields, FoobarProto._.EnrichInstanceWithFields)
+
+            local ZongProto = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+            U.Should.Be.PlainlyEqual(FoobarInstance._.W, ZongProto._.W)
+            U.Should.Be.PlainlyEqual(FoobarInstance._.F, ZongProto._.F)
 
             U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
             U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
