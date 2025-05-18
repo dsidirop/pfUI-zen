@@ -1,4 +1,4 @@
-local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type = (function()
+local VWoWUnit, _pcall, _unpack, _assert, _format, _rawequal, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -11,11 +11,12 @@ local VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub,
 	local _unpack = _assert(_g.unpack)
 	local _strsub = _assert(_g.string.sub)
 	local _format = _assert(_g.string.format)
+    local _rawequal = _assert(_g.rawequal)
 	local _tostring = _assert(_g.tostring)
 	local _debugstack = _assert(_g.debugstack)
 	local _tableRemove = _assert(_g.table.remove)
 
-	return _g.VWoWUnit, _pcall, _unpack, _assert, _format, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type
+	return _g.VWoWUnit, _pcall, _unpack, _assert, _format, _rawequal, _setfenv, _tostring, _strsub, _debugstack, _tableRemove, _type
 end)()
 
 _setfenv(1, {})
@@ -104,6 +105,16 @@ function VWoWUnit.Should.Be.Nil(value)
     end
 
     VWoWUnit.Raise_(_format("[Should.Be.Nil()] Expected a nil value but got %q", _tostring(value)))
+end
+
+function VWoWUnit.Should.Be.RawEqual(a, b)
+    _setfenv(1, VWoWUnit.Should)
+
+    if _rawequal(a, b) then
+        return
+    end
+
+    VWoWUnit.Raise_(_format("[Should.Be.RawEqual()] Expected the two values to be raw-equal but they're not (pointers: a = %p and b = %p)", a, b))
 end
 
 function VWoWUnit.Should.Be.PlainlyEqual(a, b)
