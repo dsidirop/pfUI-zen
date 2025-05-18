@@ -39,6 +39,12 @@ local function _throw_exception(format, ...)
     _assert(false, _format(format, _unpack(variadicsArray)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
 end
 
+local function _spawnSimpleMetatable(mt)
+    mt = mt or {}
+    mt.__index = mt.__index or mt
+    return mt
+end
+
 local function _stringStartsWith(input, desiredPrefix)
     _ = _type(input) == "string" or _throw_exception("input must be a string")
     _ = _type(desiredPrefix) == "string" or _throw_exception("desiredPrefix must be a string")
@@ -118,15 +124,15 @@ do
     local CommonMetaTable_ForAllEnumProtos
     
     function EnumsProtoFactory.Spawn()
-        if CommonMetaTable_ForAllEnumProtos == nil then
-            CommonMetaTable_ForAllEnumProtos = { __index = EnumsProtoFactory.OnUnknownPropertyDetected_ }
-        end
+        CommonMetaTable_ForAllEnumProtos = CommonMetaTable_ForAllEnumProtos or _spawnSimpleMetatable({
+            __index = EnumsProtoFactory.OnUnknownPropertyDetected_,
+        })
 
-        local newEnumProto = { }
-        newEnumProto.__index = newEnumProto
-        newEnumProto.IsValid = EnumsProtoFactory.IsValidEnumValue_
+        local newEnumProto = _spawnSimpleMetatable({
+            IsValid = EnumsProtoFactory.IsValidEnumValue_,
+        })
 
-        return _setmetatable(newEnumProto, CommonMetaTable_ForAllEnumProtos)
+        return _setmetatable(newEnumProto, CommonMetaTable_ForAllEnumProtos) -- set the common mt of all enum-mts ;)
     end
 
     function EnumsProtoFactory.IsValidEnumValue_(self, value)
@@ -160,17 +166,16 @@ do
     local CommonMetaTable_ForAllInterfaceProtos
 
     function InterfacesProtoFactory.Spawn()
-        if CommonMetaTable_ForAllInterfaceProtos == nil then
-            CommonMetaTable_ForAllInterfaceProtos = { }
-            CommonMetaTable_ForAllInterfaceProtos.__index = CommonMetaTable_ForAllInterfaceProtos
-            -- metaTable.__call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
-        end
+        CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable({
+            -- __call = InterfacesProtoFactory.OnProtoCalledAsFunction_ -- cant think of a good reason why interfaces would need a default call
+        })
 
-        local newInterfaceProto = { }
-        newInterfaceProto.__index = newInterfaceProto -- 00 vital
-        newInterfaceProto.ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_
-        -- newClassProto.Instantiate = InterfacesProtoFactory.StandardInstantiator_
-        -- newClassProto.__tostring = todo
+        local newInterfaceProto = _spawnSimpleMetatable({
+            ChainSetDefaultCall = InterfacesProtoFactory.StandardChainSetDefaultCall_,
+            
+            -- __tostring  = todo,
+            -- Instantiate = InterfacesProtoFactory.StandardInstantiator_,
+        })
 
         return _setmetatable(newInterfaceProto, CommonMetaTable_ForAllInterfaceProtos)
 
@@ -183,17 +188,14 @@ do
     local CommonMetaTable_ForAllStaticClassProtos
 
     function StaticClassProtoFactory.Spawn()
-        if CommonMetaTable_ForAllStaticClassProtos == nil then
-            CommonMetaTable_ForAllStaticClassProtos = { }
-            CommonMetaTable_ForAllStaticClassProtos.__call = StaticClassProtoFactory.OnProtoCalledAsFunction_ -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
-            CommonMetaTable_ForAllStaticClassProtos.__index = CommonMetaTable_ForAllStaticClassProtos
-        end
-        
-        local newStaticClassProto = { }
-        newStaticClassProto.__index = newStaticClassProto -- just in case
-        -- newStaticClassProto.__tostring = todo
-        -- newClassProto.Instantiate = StaticClassProtoFactory.StandardInstantiator_ --                      no point for static-classes
-        -- newStaticClassProto.ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_ -- no point for static-classes
+        CommonMetaTable_ForAllStaticClassProtos = CommonMetaTable_ForAllStaticClassProtos or _spawnSimpleMetatable({
+            __call = StaticClassProtoFactory.OnProtoCalledAsFunction_, -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
+        })
+
+        local newStaticClassProto = _spawnSimpleMetatable({
+            -- Instantiate         = StaticClassProtoFactory.StandardInstantiator_, --        no point for static-classes
+            -- ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_, -- no point for static-classes    
+        })
 
         return _setmetatable(newStaticClassProto, CommonMetaTable_ForAllStaticClassProtos)
 
@@ -219,28 +221,20 @@ do
     local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
 
     function NonStaticClassProtoFactory.Spawn()
-        if CachedMetaTable_ForAllNonStaticClassProtos == nil then
-            CachedMetaTable_ForAllNonStaticClassProtos = {}
-            CachedMetaTable_ForAllNonStaticClassProtos.__call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
-            CachedMetaTable_ForAllNonStaticClassProtos.__index = CachedMetaTable_ForAllNonStaticClassProtos    
-        end
+        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
+            __call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_,
+        })
 
-        local newClassProto = { }
-        newClassProto.__index = newClassProto -- 00 vital
-
-        newClassProto._ = {
+        local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            EnrichInstanceWithFields = nil,
-        }
-        newClassProto.Instantiate = NonStaticClassProtoFactory.StandardInstantiator_
-        newClassProto.ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_
-        -- newClassProto.__tostring = todo
+            _                   = { EnrichInstanceWithFields = nil, },
+            Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
+            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
+
+            -- __tostring = todo,
+        })
 
         return _setmetatable(newClassProto, CachedMetaTable_ForAllNonStaticClassProtos)
-
-        -- 00  __index needs to be set like this because each class-proto is expected to be used as a metatable for
-        --     its own class-instances later on    not having an __index would mean that the class-protos wouldnt even
-        --     be able to function as metatables for the spawned instances at all
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
@@ -394,10 +388,7 @@ do
     end
 end
 
-
-local Entry = {} -- todo   create a method called '_spawnStandardClassDefinitionMetatable()'
-Entry.__index = Entry
-
+local Entry = _spawnSimpleMetatable()
 do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(1, self)
@@ -578,8 +569,7 @@ do
 
 end
 
-local NamespaceRegistry = {}
-NamespaceRegistry.__index = NamespaceRegistry
+local NamespaceRegistry = _spawnSimpleMetatable()
 do
     function NamespaceRegistry:New()
         _setfenv(1, self)
