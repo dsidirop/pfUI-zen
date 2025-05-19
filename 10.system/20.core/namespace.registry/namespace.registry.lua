@@ -214,13 +214,13 @@ do
     local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
 
     function NonStaticClassProtoFactory.Spawn()
-        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
-            __call = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_,
-        })
+        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable()
 
         local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            _                   = { EnrichInstanceWithFields = nil },
+            _                   = { },
+            __call              = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --00 must be here
+
             Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
@@ -228,6 +228,9 @@ do
         })
 
         return _setmetatable(newClassProto, CachedMetaTable_ForAllNonStaticClassProtos)
+        
+        -- 00   based on practical experiments it seems that in wow-lua the __call function doesnt work if we place it
+        --      in CachedMetaTable_ForAllNonStaticClassProtos    but it does work if it is placed directly in newClassProto
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)

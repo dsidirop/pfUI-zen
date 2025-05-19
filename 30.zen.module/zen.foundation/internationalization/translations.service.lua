@@ -22,7 +22,7 @@ end
 function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator")
+    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
     Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
     local instance = self:Instantiate():ChainSetDefaultCall(self.TryTranslate) --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
@@ -35,7 +35,7 @@ end
 
 --  this method is the default :__Call__ method so the following calls are equivalent
 --
---     _translationsService("foobar")   ==   _translationsService:TryTranslate("foobar")
+--     _translationsService("foobar")   <=>   _translationsService:TryTranslate("foobar")
 --
 function TranslationsService:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(

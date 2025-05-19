@@ -10,7 +10,7 @@ local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pf
 
 local ZenAllTranslations = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All"
 
--- [note]   dont use this directly   use the TranslationService instead
+-- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
 local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator"
 
 Scopify(EScopes.Function, {})
