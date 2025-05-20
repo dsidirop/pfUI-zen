@@ -2,7 +2,7 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests" { "i18n", "translations" }
+local TG, U = using "[testgroup]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests"
 
 TG:AddTheory("Τ005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
         {
@@ -11,11 +11,11 @@ TG:AddTheory("Τ005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTr
                 Color          = nil,
                 ExpectedResult = "(Translated) Foobar",
             },
-            --["TS.TTWDC.GVT.STS.020"] = {
-            --    Text           = "Foobar",
-            --    Color          = "|cFF00FF00",
-            --    ExpectedResult = "|cFF00FF00(Translated) Foobar|r",
-            --},
+            ["TS.TTWDC.GVT.STS.020"] = {
+                Text           = "Foobar",
+                Color          = "|cFF00FF00",
+                ExpectedResult = "|cFF00FF00(Translated) Foobar|r",
+            },
         },
         function(options)
             -- ARRANGE
