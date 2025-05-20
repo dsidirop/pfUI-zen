@@ -129,7 +129,7 @@ do
         })
 
         local newEnumProto = _spawnSimpleMetatable({
-            IsValid = EnumsProtoFactory.IsValidEnumValue_,
+            IsValid = EnumsProtoFactory.IsValidEnumValue_, -- must be here
         })
 
         return _setmetatable(newEnumProto, CommonMetaTable_ForAllEnumProtos) -- set the common mt of all enum-mts ;)
@@ -214,17 +214,16 @@ do
     local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
 
     function NonStaticClassProtoFactory.Spawn()
-        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable()
+        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
+            Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
+            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
+        })
 
         local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            _                   = { },
-            __call              = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --00 must be here
-
-            Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
-            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
-
-            -- __tostring = todo,
+            _          = { },
+            __call     = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --00 must be here
+            __tostring = nil, -- todo
         })
 
         return _setmetatable(newClassProto, CachedMetaTable_ForAllNonStaticClassProtos)
