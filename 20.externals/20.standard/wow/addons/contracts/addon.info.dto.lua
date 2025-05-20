@@ -10,10 +10,22 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._title = ""
+    upcomingInstance._isLoaded = false
+    upcomingInstance._isDynamicallyLoadable = false
+
+    upcomingInstance._notes = ""
+    upcomingInstance._folderName = ""
+    upcomingInstance._notLoadedReason = ""
+
+    return upcomingInstance
+end
+
 function Class:New(options)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsTable(options, "options") -- todo   Guard.Assert.IsTableWithSpecificPropertyNames(options, OptionsPrototype)  
+    Guard.Assert.IsTable(options, "options") -- todo   turn the options into its own options-class and add a validate() method to it  
 
     Guard.Assert.IsBooleanizable(options.IsLoaded, "options.IsLoaded")
     Guard.Assert.IsBooleanizable(options.IsDynamicallyLoadable, "options.IsDynamicallyLoadable")
@@ -24,15 +36,16 @@ function Class:New(options)
 
     Guard.Assert.IsNilOrEnumValue(SWoWAddonNotLoadableReason, options.NotLoadedReason, "options.NotLoadedReason")
     
-    return self:Instantiate({ --@formatter:off
-        _title = options.Title,
-        _isLoaded = options.IsLoaded,
-        _isDynamicallyLoadable = options.IsDynamicallyLoadable,
-        
-        _notes = options.Notes,
-        _folderName = options.FolderName,
-        _notLoadedReason = options.NotLoadedReason,
-    }) --@formatter:on
+    local instance = self:Instantiate() --@formatter:off
+
+    instance._title                 = options.Title
+    instance._notes                 = options.Notes
+    instance._isLoaded              = options.IsLoaded
+    instance._folderName            = options.FolderName
+    instance._notLoadedReason       = options.NotLoadedReason
+    instance._isDynamicallyLoadable = options.IsDynamicallyLoadable
+
+    return instance --@formatter:on
 end
 
 function Class:GetTitle()

@@ -1,6 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local T = using "System.Helpers.Tables" --@formatter:off
+local T = using "System.Helpers.Tables"
 
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
@@ -16,16 +16,25 @@ local Service = using "[declare]" "Pavilion.Warcraft.GroupLooting.GroupLootGambl
 
 Scopify(EScopes.Function, {})
 
-function Service:New(rollOnLoot, getLootRollItemInfo)
+function Service._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance.RollOnLootFunc_ = nil --          to help unit testing
+    upcomingInstance.GetLootRollItemInfoFunc_ = nil -- to help unit testing
+
+    return upcomingInstance
+end
+
+function Service:New(rollOnLootFunc, getLootRollItemInfoFunc)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrFunction(rollOnLoot, "rollOnLoot")
-    Guard.Assert.IsNilOrFunction(getLootRollItemInfo, "getLootRollItemInfo")
+    Guard.Assert.IsNilOrFunction(rollOnLootFunc, "rollOnLoot")
+    Guard.Assert.IsNilOrFunction(getLootRollItemInfoFunc, "getLootRollItemInfo")
+    
+    local instance = self:Instantiate() -- @formatter:off
 
-    return self:Instantiate({ -- @formatter:off
-        RollOnLoot_          = rollOnLoot          or WoWRollOnLoot, --          to help unit testing
-        GetLootRollItemInfo_ = getLootRollItemInfo or WoWGetLootRollItemInfo, -- to help unit testing
-    })
+    instance.RollOnLootFunc_          = rollOnLootFunc          or WoWRollOnLoot --          to help unit testing
+    instance.GetLootRollItemInfoFunc_ = getLootRollItemInfoFunc or WoWGetLootRollItemInfo -- to help unit testing
+
+    return instance
 end -- @formatter:on
 
 -- https://wowpedia.fandom.com/wiki/API_GetLootRollItemInfo
@@ -48,25 +57,25 @@ function Service:GetGambledItemInfo(gamblingId)
     greedIneligibilityReasonType,
     disenchantIneligibilityReasonType,
     enchantingLevelRequiredToDEItem,
-    isTransmogrifiable = self.GetLootRollItemInfo_(gamblingId)
+    isTransmogrifiable = self.GetLootRollItemInfoFunc_(gamblingId)
 
     return GambledItemInfoDto:New {
-        Name = name,
-        GamblingId = gamblingId,
-        ItemQuality = itemQuality,
-        
-        IsNeedable = isNeedable,
-        IsGreedable = isGreedable,
-        IsBindOnPickUp = isBindOnPickUp,
-        IsDisenchantable = isDisenchantable,
-        IsTransmogrifiable = isTransmogrifiable,
+        Name                              = name,
+        GamblingId                        = gamblingId,
+        ItemQuality                       = itemQuality,
 
-        Count = count,
-        TextureFilepath = textureFilepath,
-        EnchantingLevelRequiredToDEItem = enchantingLevelRequiredToDEItem,
-        
-        NeedIneligibilityReasonType = needIneligibilityReasonType,
-        GreedIneligibilityReasonType = greedIneligibilityReasonType,
+        IsNeedable                        = isNeedable,
+        IsGreedable                       = isGreedable,
+        IsBindOnPickUp                    = isBindOnPickUp,
+        IsDisenchantable                  = isDisenchantable,
+        IsTransmogrifiable                = isTransmogrifiable,
+
+        Count                             = count,
+        TextureFilepath                   = textureFilepath,
+        EnchantingLevelRequiredToDEItem   = enchantingLevelRequiredToDEItem,
+
+        NeedIneligibilityReasonType       = needIneligibilityReasonType,
+        GreedIneligibilityReasonType      = greedIneligibilityReasonType,
         DisenchantIneligibilityReasonType = disenchantIneligibilityReasonType,
     }
 end
@@ -76,9 +85,9 @@ function Service:SubmitSameResponseToAllItemGamblingRequests(gamblingRequestIdsA
 
     Guard.Assert.IsTable(gamblingRequestIdsArray, "gamblingRequestIdsArray")
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
-    
+
     for _, gamblingRequestId in T.GetIndexedPairs(gamblingRequestIdsArray) do
-        self.RollOnLoot_(gamblingRequestId, wowRollMode)
+        self.RollOnLootFunc_(gamblingRequestId, wowRollMode)
     end
 end
 
@@ -88,7 +97,7 @@ function Service:SubmitResponseToItemGamblingRequest(gamblingRequestId, wowRollM
     Guard.Assert.IsEnumValue(EWowGamblingResponseType, wowRollMode, "wowRollMode")
     Guard.Assert.IsPositiveIntegerOrZero(gamblingRequestId, "gamblingRequestId")
 
-    self.RollOnLoot_(gamblingRequestId, wowRollMode) --00
+    self.RollOnLootFunc_(gamblingRequestId, wowRollMode) --00
 
     -- 00 https://wowpedia.fandom.com/wiki/API_RollOnLoot   the rollid number increases with every
     --    roll you have in a party till how high it counts   is currently unknown   blizzard uses

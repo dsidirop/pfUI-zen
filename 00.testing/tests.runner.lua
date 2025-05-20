@@ -15,7 +15,7 @@ if U then
 	-- _print("Running VWoWUnit tests...\n ")
 
 	-- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Trace) -- for debugging
-    -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
+    U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
 
 	U.TestsEngine:RunAllTestGroups()
 
@@ -28,4 +28,6 @@ if U then
     -- U.TestsEngine:RunTestGroupsByTag("inheritance")
 
     -- U.TestsEngine:RunTestGroupsByTag("text-writer")
+
+    -- U.TestsEngine:RunTestGroupsByTag("i18n")
 end

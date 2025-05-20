@@ -13,14 +13,8 @@ local Service = using "[declare]" "Pavilion.Warcraft.Addons.AddonsService"
 
 Scopify(EScopes.Function, {})
 
-function Service:New(getAddonInfo)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsNilOrFunction(getAddonInfo, "getAddonInfo")
-
-    return self:Instantiate({ -- @formatter:off
-        GetAddonInfo_ = getAddonInfo or WoWGetAddonInfo,
-    }) -- @formatter:on
+function Service:New()
+    return self:Instantiate()
 end
 
 -- https://wowpedia.fandom.com/wiki/API_GetAddOnInfo
@@ -35,7 +29,7 @@ function Service:TryGetAddonInfoByFolderName(addonFolderName)
     notes,
     isLoaded,
     isDynamicallyLoadable,
-    notLoadedReason = self.GetAddonInfo_(addonFolderName)
+    notLoadedReason = WoWGetAddonInfo(addonFolderName)
 
     if isDynamicallyLoadable == nil or notLoadedReason == SWoWAddonNotLoadableReason.Missing then
         return nil
