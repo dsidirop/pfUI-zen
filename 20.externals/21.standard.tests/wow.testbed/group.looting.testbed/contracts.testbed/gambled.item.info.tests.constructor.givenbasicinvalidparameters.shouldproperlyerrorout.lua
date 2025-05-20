@@ -7,7 +7,7 @@ local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLoo
 local ValueIsOutOfRangeException             = using "System.Exceptions.ValueIsOutOfRangeException"
 local ValueHasInappropriateTypeException     = using "System.Exceptions.ValueIsOfInappropriateTypeException"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
+local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
 TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
         function()

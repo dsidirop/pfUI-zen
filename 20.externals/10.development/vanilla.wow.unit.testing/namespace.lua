@@ -12,7 +12,7 @@ Namespacer:Bind("[testgroup]", function(name)
     return testGroup, B.VWoWUnit
 end)
 
-Namespacer:Bind("[testgroup.tagged]", function(name)
+Namespacer:Bind("[testgroup] [tagged]", function(name)
     local testGroup = B.VWoWUnit.TestsEngine:CreateOrUpdateGroup { Name = name }
 
     return function(tags)

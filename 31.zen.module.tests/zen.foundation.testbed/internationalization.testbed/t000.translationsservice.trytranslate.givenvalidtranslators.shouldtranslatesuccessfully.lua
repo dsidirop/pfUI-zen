@@ -2,7 +2,7 @@ local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests" { "i18n", "translations" }
+local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests" { "i18n", "translations" }
 
 TG:AddTheory("Τ000.TranslationsService.TryTranslate.GivenValidTranslators.ShouldTranslateSuccessfully",
         {

@@ -5,7 +5,7 @@ local EWowItemQuality                       = using "Pavilion.Warcraft.Enums.EWo
 local GambledItemInfoDto                    = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
 local EWoWLootingIneligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingIneligibilityReasonType"
 
-local TG, U = using "[testgroup.tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
+local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
 TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenFullValidParameters.ShouldConstructSuccessfully",
         function()
