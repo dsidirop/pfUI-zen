@@ -105,7 +105,7 @@ function Class:Raise(sender, eventArgs)
 
     for k, v in TablesHelper.GetPairs(_handlers) do
         if v and v ~= NoOwner then -- v is the owning class-instance of the handler
-            k(v, sender, eventArgs)
+            k(v, sender, eventArgs)  -- todo  introduce an option to call event-handlers using pcall() so as to suppress and log any exceptions from handlers 
         else
             k(sender, eventArgs)
         end

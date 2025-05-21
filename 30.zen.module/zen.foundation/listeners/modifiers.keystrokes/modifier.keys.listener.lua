@@ -16,18 +16,32 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listene
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._timer = nil
+
+    upcomingInstance._wantedActive = false
+    upcomingInstance._mustEmitOnFreshStart = false
+
+    upcomingInstance._lastEventArgsEmitted = nil
+    upcomingInstance._eventModifierKeysStatesChanged = nil
+
+    return upcomingInstance
+end
+
 function Class:New(timer)
     Scopify(EScopes.Function, self)
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _timer = timer or Timer:New(0.1), -- todo di this as a singleton when di comes to town
+    instance._timer = timer or Timer:New(0.1) -- todo di this as a singleton when di comes to town
 
-        _wantedActive = false,
-        _mustEmitOnFreshStart = false,
+    instance._wantedActive = false
+    instance._mustEmitOnFreshStart = false
 
-        _lastEventArgs = nil,
-        _eventModifierKeysStatesChanged = Event:New(),
-    })
+    instance._lastEventArgs = nil
+    instance._eventModifierKeysStatesChanged = Event:New()
+
+    return instance
 end
 
 function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
