@@ -28,16 +28,24 @@ local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft
 
 local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._hasChanges = false
+    upcomingInstance._userPreferencesEntity = nil
+
+    return upcomingInstance
+end
+
 function Class:New(dbcontext)
     Scopify(EScopes.Function, self)
 
     _assert(_type(dbcontext) == "table")
 
-    return self:Instantiate({
-        _hasChanges = false,
-
-        _userPreferencesEntity = dbcontext.Settings.UserPreferences,
-    })    
+    local instance = self:Instantiate()
+    
+    instance._hasChanges = false
+    instance._userPreferencesEntity = dbcontext.Settings.UserPreferences
+    
+    return instance
 end
 
 function Class:HasChanges()
