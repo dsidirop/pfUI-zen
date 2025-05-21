@@ -1,54 +1,41 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable"
+local UserPreferencesRepositoryWriteable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository"
 
-_setfenv(1, {})
-
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
-local UserPreferencesRepositoryWriteable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryWriteable")
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
-
-function Class:NewWithDBContext(dbcontext)
-    Scopify(EScopes.Function, self)
-
-    _assert(_type(dbcontext) == "table")
-    
-    return self:New(
-            UserPreferencesRepositoryQueryable:New(dbcontext),
-            UserPreferencesRepositoryWriteable:New(dbcontext)
-    )
-end
+Scopify(EScopes.Function, {})
 
 function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryWriteable)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(userPreferencesRepositoryQueryable) == "table")
-    _assert(_type(userPreferencesRepositoryWriteable) == "table")
+    Guard.Assert.IsTable(userPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
+    Guard.Assert.IsTable(userPreferencesRepositoryWriteable, "userPreferencesRepositoryWriteable")
 
-    return self:Instantiate({
-        _userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable,
-        _userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable,
-    })
+    local instance = self:Instantiate()
+
+    instance._userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable
+    instance._userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable
+
+    return instance
+end
+
+function Class:NewWithDBContext(dbcontext)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsTable(dbcontext, "dbcontext")
+
+    local instance = self:Instantiate()
+    
+    instance._userPreferencesRepositoryQueryable = UserPreferencesRepositoryQueryable:New(dbcontext)
+    instance._userPreferencesRepositoryWriteable = UserPreferencesRepositoryWriteable:New(dbcontext)
+    
+    return instance
 end
 
 -- @return UserPreferencesDto
