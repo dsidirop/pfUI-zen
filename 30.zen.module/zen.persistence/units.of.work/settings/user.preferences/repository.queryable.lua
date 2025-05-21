@@ -1,5 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
+local Nils = using "System.Nils"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
@@ -14,14 +15,22 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settin
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._userPreferencesEntity = nil
+
+    return upcomingInstance
+end
+
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    dbcontextReadonly = Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") or DBContext:New() -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") -- todo  remove this later on in favour of DI
 
-    return self:Instantiate({
-        _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
-    })
+    local instance = self:Instantiate()
+    
+    instance._userPreferencesEntity = Nils.Coalesce(dbcontextReadonly, DBContext:New()).Settings.UserPreferences
+    
+    return instance
 end
 
 -- @return UserPreferencesDto
