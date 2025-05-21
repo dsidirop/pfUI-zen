@@ -33,10 +33,10 @@ function Class:New(interval)
 
     Guard.Assert.IsPositiveNumber(interval, "interval")
 
-    local instance = self:Instantiate()
-    
     local element = WoWCreateFrame("Frame") -- 00   todo   use UI.ManagedElements.Builder here
     element:Hide() -- 10
+    
+    local instance = self:Instantiate()
 
     instance._interval = interval
     instance._wantedActive = false
