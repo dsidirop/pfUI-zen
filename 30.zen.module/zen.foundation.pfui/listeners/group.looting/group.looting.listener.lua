@@ -15,20 +15,31 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.Gro
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._active = false
+    upcomingInstance._hookApplied = false
+
+    upcomingInstance._rollIdsEncounteredCache = nil
+    upcomingInstance._eventPendingLootItemGamblingDetected = nil
+
+    return upcomingInstance
+end
+
 function Class:New()
     Scopify(EScopes.Function, self)
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _active = false,
-        _hookApplied = false,
-        _rollIdsEncounteredCache = LRUCache:New {
-            MaxSize = 10,
-            TrimRatio = 0.25,
-            MaxLifespanPerEntryInSeconds = 5 * 60,
-        },
+    instance._active = false
+    instance._hookApplied = false
+    instance._rollIdsEncounteredCache = LRUCache:New {
+        MaxSize                      = 10,
+        TrimRatio                    = 0.25,
+        MaxLifespanPerEntryInSeconds = 5 * 60,
+    }
+    instance._eventPendingLootItemGamblingDetected = Event:New()
 
-        _eventPendingLootItemGamblingDetected = Event:New(),
-    })
+    return instance
 end
 
 function Class:StartListening()
