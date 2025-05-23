@@ -1,55 +1,48 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard   = using "System.Guard"
+local Event   = using "System.Event"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
+local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
+local IsControlKeyDown = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local KeyEventArgs  = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs"
+local EKeyEventType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType"
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element" -- @formatter:on
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
+Scopify(EScopes.Function, {})
 
-local IsAltKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown")
-local IsShiftKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown")
-local IsControlKeyDown = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown")
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._nativeElement = nil
 
-local Event = _importer("System.Event")
-local KeyEventArgs = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
-local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
+    upcomingInstance._eventKeyDown = nil
+    upcomingInstance._eventOnEvent = nil
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element")
+    return upcomingInstance
+end
 
 function Class:New(nativeElement)
     Scopify(EScopes.Function, self)
     
-    _assert(_type(nativeElement) == "table", "nativeElement must be a table")
+    Guard.Assert.IsTable(nativeElement, "nativeElement")
 
-    return self:Instantiate({
-        _nativeElement = nativeElement,
+    local instance = self:Instantiate()
 
-        _eventKeyDown = Event:New(),
-        _eventOnEvent = Event:New(),
-    })
+    instance._eventKeyDown = Event:New()
+    instance._eventOnEvent = Event:New()
+    instance._nativeElement = nativeElement
+
+    return instance
 end
 
 function Class:ChainSetPropagateKeyboardInput(value)
     Scopify(EScopes.Function, self)
-    
-    _assert(_type(value) == "boolean", "value must be a boolean")
+
+    Guard.Assert.IsBoolean(value, "value")
 
     if _nativeElement.SetPropagateKeyboardInput then
         _nativeElement:SetPropagateKeyboardInput(value) -- 00
@@ -62,8 +55,8 @@ end
 
 function Class:ChainSetFrameStrata(value)
     Scopify(EScopes.Function, self)
-    
-    _assert(_type(value) == "string", "value must be a boolean")
+
+    Guard.Assert.IsString(value, "value")
 
     _nativeElement:SetFrameStrata(value)
 
@@ -73,7 +66,7 @@ end
 function Class:ChainSetKeystrokeListenerEnabled(onOrOff)
     Scopify(EScopes.Function, self)
 
-    -- _assert(...) -- nah  dont
+    Guard.Assert.IsBoolean(onOrOff, "onOrOff")
 
     _nativeElement:EnableKeyboard(onOrOff)
 
