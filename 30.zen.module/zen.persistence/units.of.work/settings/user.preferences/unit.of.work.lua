@@ -1,48 +1,36 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Nils = using "System.Nils"
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local PfuiZenDbContext = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
+local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork"
 
-_setfenv(1, {})
+Scopify(EScopes.Function, {})
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._dbcontext = nil
+    upcomingInstance._userPreferencesRepository = nil
 
-local PfuiZenDbContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
-local UserPreferencesRepository = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository")
+    return upcomingInstance
+end
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
-
---todo  refactor this later on so that this gets injected through DI
 function Class:New(dbcontext, userPreferencesRepository)
     Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNilOrTable(dbcontext, "dbcontext")
+    Guard.Assert.IsNilOrTable(userPreferencesRepository, "userPreferencesRepository")
+
+    local instance = self:Instantiate() -- @formatter:off
     
-    _assert(dbcontext == nil or _type(dbcontext) == "table")
-    _assert(userPreferencesRepository == nil or _type(userPreferencesRepository) == "table")
+    instance._dbcontext                 = Nils.Coalesce(dbcontext,                 PfuiZenDbContext:New())
+    instance._userPreferencesRepository = Nils.Coalesce(userPreferencesRepository, UserPreferencesRepository:NewWithDBContext(dbcontext))
 
-    dbcontext = dbcontext or PfuiZenDbContext:New()
-    userPreferencesRepository = userPreferencesRepository or UserPreferencesRepository:NewWithDBContext(dbcontext)
-
-    return self:Instantiate({
-        _dbcontext = dbcontext,
-
-        _userPreferencesRepository = userPreferencesRepository,
-    })
+    return instance -- @formatter:on
 end
 
 function Class:GetUserPreferencesRepository()
