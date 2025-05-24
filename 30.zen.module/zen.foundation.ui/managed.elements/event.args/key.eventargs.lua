@@ -1,50 +1,45 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _stringLength, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    _setfenv(1, {})
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+local EKeyEventType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _stringLength = _assert(_g.string.len)
-    local _setmetatable = _assert(_g.setmetatable)
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _stringLength, _setmetatable
-end)()
+Scopify(EScopes.Function, Class)
 
-_setfenv(1, {})
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance._key = nil
+    upcomingInstance._eventType = nil
+    upcomingInstance._hasModifierAlt = nil
+    upcomingInstance._hasModifierShift = nil
+    upcomingInstance._hasModifierControl = nil
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
+    upcomingInstance._stringified = nil
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
+    return upcomingInstance
+end
 
 function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, eventType)
     Scopify(EScopes.Function, self)
+    
+    Guard.Assert.IsNilOrNonDudStringOfMaxLength(key, 1, "key")
+    
+    Guard.Assert.IsBoolean(hasModifierAlt, "hasModifierAlt")
+    Guard.Assert.IsBoolean(hasModifierShift, "hasModifierShift")
+    Guard.Assert.IsBoolean(hasModifierControl, "hasModifierControl")
+    Guard.Assert.IsEnumValue(EKeyEventType, eventType, "eventType")
+    
+    local instance = self:Instantiate()
 
-    _assert(key == nil or _type(key) == "string" and _stringLength(key) <= 1)
-    _assert(_type(hasModifierAlt) == "boolean")
-    _assert(_type(hasModifierShift) == "boolean")
-    _assert(_type(hasModifierControl) == "boolean")
-    _assert(EKeyEventType:IsValid(eventType))
-
-    return self:Instantiate({
-        _key = key or "",
-        _eventType = eventType,
-        _hasModifierAlt = hasModifierAlt,
-        _hasModifierShift = hasModifierShift,
-        _hasModifierControl = hasModifierControl,
-
-        _stringified = nil,
-    })
+    instance._key = key or ""
+    instance._eventType = eventType
+    instance._hasModifierAlt = hasModifierAlt
+    instance._hasModifierShift = hasModifierShift
+    instance._hasModifierControl = hasModifierControl
+    
+    return instance
 end
 
 function Class:GetType()
