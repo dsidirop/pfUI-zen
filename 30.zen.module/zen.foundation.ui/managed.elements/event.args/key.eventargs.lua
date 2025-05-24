@@ -10,11 +10,11 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.Mana
 Scopify(EScopes.Function, Class)
 
 function Class._.EnrichInstanceWithFields(upcomingInstance)
-    upcomingInstance._key = nil
+    upcomingInstance._key = ""
     upcomingInstance._eventType = nil
-    upcomingInstance._hasModifierAlt = nil
-    upcomingInstance._hasModifierShift = nil
-    upcomingInstance._hasModifierControl = nil
+    upcomingInstance._hasModifierAlt = false
+    upcomingInstance._hasModifierShift = false
+    upcomingInstance._hasModifierControl = false
 
     upcomingInstance._stringified = nil
 
@@ -23,14 +23,14 @@ end
 
 function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, eventType)
     Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsNilOrNonDudStringOfMaxLength(key, 1, "key")
-    
+
+    Guard.Assert.IsNilOrStringOfMaxLength(key, 1, "key")
+
     Guard.Assert.IsBoolean(hasModifierAlt, "hasModifierAlt")
     Guard.Assert.IsBoolean(hasModifierShift, "hasModifierShift")
     Guard.Assert.IsBoolean(hasModifierControl, "hasModifierControl")
     Guard.Assert.IsEnumValue(EKeyEventType, eventType, "eventType")
-    
+
     local instance = self:Instantiate()
 
     instance._key = key or ""
@@ -38,7 +38,7 @@ function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, ev
     instance._hasModifierAlt = hasModifierAlt
     instance._hasModifierShift = hasModifierShift
     instance._hasModifierControl = hasModifierControl
-    
+
     return instance
 end
 
@@ -74,29 +74,29 @@ end
 
 function Class:ToString()
     Scopify(EScopes.Function, self)
-    
+
     if _stringified then
         return _stringified
     end
-    
+
     local result = ""
 
     if _hasModifierControl then
         result = "Ctrl"
     end
-    
+
     if _hasModifierAlt then
         result = result == ""
                 and "Alt"
                 or (result .. "+Alt")
     end
-    
+
     if _hasModifierShift then
         result = result == ""
                 and "Shift"
                 or (result .. "+Shift")
     end
-    
+
     if _key then
         result = result == ""
                 and _key

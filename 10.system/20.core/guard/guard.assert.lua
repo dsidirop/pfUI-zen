@@ -320,6 +320,14 @@ do
         return value 
     end
 
+    function Guard.Assert.IsStringOfMaxLength(value, optionalArgumentName)
+        if not GuardUtilities.IsStringOfMaxLength(value, maxLength) then
+            Throw(ValueIsOutOfRangeException:New(value, optionalArgumentName, "string of max length " .. StringsHelper.Stringify(maxLength)))
+        end
+        
+        return value
+    end
+
     function Guard.Assert.IsNilOrString(value, optionalArgumentName)
         if value == nil then
             return nil
@@ -334,6 +342,14 @@ do
         end
 
         return Guard.Assert.IsNonDudString(value, optionalArgumentName)
+    end
+
+    function Guard.Assert.IsNilOrStringOfMaxLength(value, maxLength, optionalArgumentName)
+        if value == nil then
+            return nil
+        end
+
+        return Guard.Assert.IsStringOfMaxLength(value, maxLength, optionalArgumentName)
     end
 
     function Guard.Assert.IsNilOrNonDudStringOfMaxLength(value, maxLength, optionalArgumentName)
