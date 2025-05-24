@@ -44,8 +44,8 @@ function Class:Handle_RestartEngineCommand(_)
     local zenEngineSettings = ZenEngineSettings:New()
 
     zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
-                     :ChainSetMode(userPreferencesDto:GetGreeniesGrouplootingAutomation_Mode())
-                     :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesGrouplootingAutomation_ActOnKeybind())
+                     :ChainSetMode(userPreferencesDto:Get_GreeniesGrouplootingAutomation_Mode())
+                     :ChainSetActOnKeybind(userPreferencesDto:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
     
     -- todo   add more settings-sections here
 

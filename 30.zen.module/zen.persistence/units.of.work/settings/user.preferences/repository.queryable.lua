@@ -47,8 +47,8 @@ function Class:GetAllUserPreferences()
 
     return UserPreferencesDto -- todo   automapper (with precondition-validators!)
             :New()
-            :ChainSetGreeniesGrouplootingAutomation_Mode(mode)
-            :ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
+            :ChainSet_GreeniesGrouplootingAutomation_Mode(mode)
+            :ChainSet_GreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
 
     --00 todo   whenever we detect a corruption in the database we auto-sanitive it but on top of that we should also update error-metrics and log it too
 end
