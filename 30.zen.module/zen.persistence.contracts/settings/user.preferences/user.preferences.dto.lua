@@ -13,8 +13,8 @@ Scopify(EScopes.Function, {})
 
 function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._greeniesGrouplootingAutomation = {
-        mode         = SGreeniesGrouplootingAutomationMode.None,
-        actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.None,
+        mode         = SGreeniesGrouplootingAutomationMode.LetUserChoose,
+        actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.Automatic,
     }
     
     -- ... more user-preferences sections can be added here in the future ...
@@ -43,7 +43,7 @@ end
 function Class:ChainSet_GreeniesGrouplootingAutomation_Mode(value)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsEnumValue(value, SGreeniesGrouplootingAutomationMode, "value")
+    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, value, "value")
 
     _greeniesGrouplootingAutomation.mode = value
 
@@ -53,7 +53,7 @@ end
 function Class:ChainSet_GreeniesGrouplootingAutomation_ActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsEnumValue(value, SGreeniesGrouplootingAutomationActOnKeybind, "value")
+    Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationActOnKeybind, value, "value")
 
     _greeniesGrouplootingAutomation.actOnKeybind = value
 

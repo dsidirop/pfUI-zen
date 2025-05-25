@@ -7,13 +7,16 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfu
 
 Scopify(EScopes.Function, {})
 
+function Class._.EnrichInstanceWithFields(upcomingInstance)
+    upcomingInstance.Response = {
+        UserPreferences = nil -- type: UserPreferencesDto
+    }
+
+    return upcomingInstance
+end
+
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        Response = {
-            UserPreferences = nil -- type: UserPreferencesDto
-        }
-    })
+    return self:Instantiate()
 end
-
