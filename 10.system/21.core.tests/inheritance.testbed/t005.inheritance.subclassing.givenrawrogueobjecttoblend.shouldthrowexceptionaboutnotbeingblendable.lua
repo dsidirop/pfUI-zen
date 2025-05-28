@@ -9,13 +9,18 @@ local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Inherit
 
 Scopify(EScopes.Function, {})
 
-TG:AddFact("T006.Inheritance.NamespaceBlending.GivenEmptyMixinsTableToBlend.ShouldThrow",
+TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable",
         function()
             -- ARRANGE
 
             -- ACT
             function action()
-                using "[declare] [blend]" "T006.Inheritance.NamespaceBlending.GivenEmptyMixinsTableToBlend.ShouldThrow.Ping" {}
+                _ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable.Foo" {
+                    ["Bar"] = {
+                        a = 1,
+                        b = 2,
+                    },
+                }
             end
 
             -- ASSERT

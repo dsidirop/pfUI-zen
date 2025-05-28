@@ -1,8 +1,8 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
-    <Include file="t002.inheritance.namespaceblending.givenplainmixintoblend.shouldthrow.lua"/>
-    <Include file="t005.inheritance.namespaceblending.givenrawrogueobjecttoblend.shouldthrowexceptionaboutnotbeingblendable.lua"/>
-    <Include file="t006.inheritance.namespaceblending.givenemptymixinstabletoblend.shouldthrow.lua"/>
-    <Include file="t007.inheritance.namespaceblending.givensimplecirculardependencyblendingattempt.shouldthrow.lua"/>
-    <Include file="t008.inheritance.namespaceblending.giventwolayercirculardependencyblendingattempt.shouldthrow.lua"/>
-    <Include file="t010.inheritance.namespaceblending.givennomixinstoblend.shouldthrow.lua"/>
+    <Include file="t002.inheritance.subclassing.givenplainmixintoblend.shouldthrow.lua"/>
+    <Include file="t005.inheritance.subclassing.givenrawrogueobjecttoblend.shouldthrowexceptionaboutnotbeingblendable.lua"/>
+    <Include file="t006.inheritance.subclassing.givenemptymixinstabletoblend.shouldthrow.lua"/>
+    <Include file="t007.inheritance.subclassing.givensimplecirculardependencyblendingattempt.shouldthrow.lua"/>
+    <Include file="t008.inheritance.subclassing.giventwolayercirculardependencyblendingattempt.shouldthrow.lua"/>
+    <Include file="t010.inheritance.subclassing.givennomixinstoblend.shouldthrow.lua"/>
 </Ui>

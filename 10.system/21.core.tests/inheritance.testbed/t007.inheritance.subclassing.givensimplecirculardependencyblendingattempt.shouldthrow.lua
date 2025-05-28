@@ -9,22 +9,22 @@ local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Inherit
 
 Scopify(EScopes.Function, {})
 
-TG:AddFact("T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow",
+TG:AddFact("T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow",
         function()
             -- ARRANGE
             do
-                local Foo = using "[declare]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo [Partial]"
+                local Foo = using "[declare]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo [Partial]"
 
-                local _ = using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar" {
+                local _ = using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar" {
                     ["Foo"] = Foo,
                 }
             end
 
             -- ACT
             function action()
-                local Bar = using "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar"
+                local Bar = using "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar"
 
-                using "[declare] [blend]" "T007.Inheritance.NamespaceBlending.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo" {
+                using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo" {
                     ["Bar"] = Bar, -- circular dependency
                 }
             end

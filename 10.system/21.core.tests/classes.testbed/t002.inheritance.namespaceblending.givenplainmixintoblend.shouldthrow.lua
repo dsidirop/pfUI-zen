@@ -20,13 +20,13 @@ Scopify(EScopes.Function, {})
 -- todo   figure out what to do with the inheritance of the __tostring() method from the base class (is it a static method or what?) 
 -- todo   support passing arrays too for the mixins (as nameless mixins)
 
-TG:AddFact("T002.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow",
+TG:AddFact("T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow",
         function()
             -- ARRANGE
 
             -- ACT
             function action()
-                using "[declare] [blend]" "T002.Inheritance.NamespaceBlending.GivenPlainMixinToBlend.ShouldThrow.Foobar" { a = 1 }
+                using "[declare] [blend]" "T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow.Foobar" { a = 1 }
             end
 
             -- ASSERT

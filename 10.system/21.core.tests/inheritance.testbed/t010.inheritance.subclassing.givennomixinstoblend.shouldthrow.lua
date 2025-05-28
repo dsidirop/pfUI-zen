@@ -10,7 +10,7 @@ local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Inherit
 
 Scopify(EScopes.Function, {})
 
-TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
+TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()
             -- ARRANGE
             local FoobarInstance
@@ -20,13 +20,13 @@ TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 -------
 
                 do
-                    local _ = using "[declare] [interface]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    local _ = using "[declare] [interface]" "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                 end
                 
                 -------
 
                 do
-                    local Class = using "[declare]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local Class = using "[declare]" "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
 
                     Class._.W = 1 -- statics
                     Class._.F = 2
@@ -52,10 +52,10 @@ TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 -------
 
                 do
-                    local Zong = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
-                    local IPing = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    local Zong = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local IPing = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
-                    local Class = using "[declare] [blend]" "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
+                    local Class = using "[declare] [blend]" "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
                         ["Zong"]  = Zong,
                         ["IPing"] = IPing,
                     }
@@ -99,7 +99,7 @@ TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
                 ------
 
                 do
-                    local Foobar = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
+                    local Foobar = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
                     
                     FoobarInstance = Foobar:New()    
                 end                
@@ -112,10 +112,10 @@ TG:AddFact("T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBas
             U.Should.Be.PlainlyEqual(FoobarInstance._b, 10)
             U.Should.Be.PlainlyEqual(FoobarInstance._sum, 11)
 
-            local FoobarProto = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
+            local FoobarProto = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
             U.Should.Be.PlainlyEqual(FoobarInstance._.EnrichInstanceWithFields, FoobarProto._.EnrichInstanceWithFields)
 
-            local ZongProto = using "T010.Inheritance.NamespaceBlending.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+            local ZongProto = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
             U.Should.Be.PlainlyEqual(FoobarInstance._.W, ZongProto._.W)
             U.Should.Be.PlainlyEqual(FoobarInstance._.F, ZongProto._.F)
 
