@@ -26,6 +26,8 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                 -------
 
                 do
+                    local Fields = using "System.Classes.Fields"
+
                     local Class = using "[declare]" "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
 
                     Class._.W = 1 -- statics
@@ -37,12 +39,12 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         return self:Instantiate()
                     end
 
-                    function Class._.EnrichInstanceWithFields(upcomingInstance)
+                    Fields(function(upcomingInstance)
                         upcomingInstance._a = 1
                         upcomingInstance._b = 2
                         
                         return upcomingInstance
-                    end
+                    end)
 
                     function Class:Zang()
                         return true
@@ -52,6 +54,8 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                 -------
 
                 do
+                    local Fields = using "System.Classes.Fields"
+                    
                     local Zong = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
                     local IPing = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
@@ -89,11 +93,11 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         return newInstance
                     end
 
-                    function Class._.EnrichInstanceWithFields(upcomingInstance)
+                    Fields(function(upcomingInstance)
                         upcomingInstance._b = 10
                         upcomingInstance._sum = 0
                         return upcomingInstance
-                    end
+                    end)
                 end
                 
                 ------
