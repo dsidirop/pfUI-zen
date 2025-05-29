@@ -13,12 +13,6 @@ local Validation = using "[declare] [static]" "System.Validation [Partial]"
 Validation.Assert = B.Assert
 Validation.DebugStack = B.DebugStack
 
-function Validation.Stacktrace(optionalExtraStackframesToSkipping)
-    optionalExtraStackframesToSkipping = optionalExtraStackframesToSkipping or 0
-
-    return Validation.DebugStack(2 + optionalExtraStackframesToSkipping)
-end
-
 function Validation.FailFormatted(...)
     Validation.Fail(S.Format(A.Unpack(arg)))
 end

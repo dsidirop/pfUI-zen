@@ -9,7 +9,7 @@ local Reflection         = using "System.Reflection"
 
 local A                  = using "System.Helpers.Arrays"
 
-local Rethrow                          = using "System.Exceptions.Rethrow"
+local Throw                            = using "System.Exceptions.Throw"
 local Exception                        = using "System.Exceptions.Exception"
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
@@ -77,7 +77,7 @@ function Class:Run()
         return properExceptionHandler(deserializedException)
     end
 
-    Rethrow(deserializedException) -- 10
+    Throw(deserializedException) -- 10 no catch block matched  rethrowing then!
 
     -- 00  raw errors also fall through here   by raw errors we mean errors like calling a non existent function or dividing by zero etc
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
