@@ -1,23 +1,16 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard              = using "System.Guard" --                            @formatter:off
+local Guard              = using "System.Guard" --               @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
-local StringsHelpers     = using "System.Helpers.Strings"
-local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
+local StringsHelpers     = using "System.Helpers.Strings" --     @formatter:on
 
-local Class = using "[declare]" "System.Exceptions.ValueIsOfInappropriateTypeException [Partial]"
+local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOfInappropriateTypeException [Partial]" {
+    ["Exception"] = using "System.Exceptions.Exception",
+}
 
 Scopify(EScopes.Function, {})
-
-function Class._.EnrichInstanceWithFields(upcomingInstance)
-    upcomingInstance._message = nil
-    upcomingInstance._stacktrace = ""
-    upcomingInstance._stringified = nil
-
-    return upcomingInstance
-end
 
 function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)
@@ -25,11 +18,8 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Guard.Assert.IsNilOrString(optionalArgumentName, "optionalArgumentName")
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    local instance = self:Instantiate()
-
-    instance._message = instance._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
-
-    return instance
+    return self:Instantiate()
+               :ChainSetMessage(_.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
 function Class:NewWithMessage(value, customMessage, optionalArgumentName, optionalExpectationOrExpectedType)
@@ -39,62 +29,11 @@ function Class:NewWithMessage(value, customMessage, optionalArgumentName, option
     Guard.Assert.IsNilOrString(optionalArgumentName, "optionalArgumentName")
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    local instance = self:Instantiate()
-
-    instance._message = customMessage .. " because " .. instance._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
-
-    return instance
+    return self:Instantiate()
+               :ChainSetMessage(customMessage .. " because " .. _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
-function Class:GetMessage()
-    Scopify(EScopes.Function, self)
-
-    return _message
-end
-
-function Class:GetStacktrace()
-    Scopify(EScopes.Function, self)
-
-    return _stacktrace
-end
-
--- setters   used by the exception-deserialization-factory
-function Class:ChainSetMessage(message)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsNilOrNonDudString(message, "message")
-
-    _message = message or "(exception message not available)"
-    _stringified = nil
-
-    return self
-end
-
--- this is called by throw() right before actually throwing the exception 
-function Class:ChainSetStacktrace(stacktrace)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsNilOrNonDudString(stacktrace, "stacktrace")
-
-    _stacktrace = stacktrace or ""
-    _stringified = nil
-
-    return self
-end
-
-function Class:ToString()
-    Scopify(EScopes.Function, self)
-
-    if _stringified ~= nil then
-        return _stringified
-    end
-
-    _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
-    return _stringified
-end
-Class.__tostring = Class.ToString
-
--- private space
+--- @private
 function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
@@ -102,7 +41,7 @@ function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectat
             and "Value is of inappropriate type"
             or "'" .. optionalArgumentName .. "' is of inappropriate type"
 
-    local expectationString = Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    local expectationString = _.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
         message = StringsHelpers.Format("%s (expected %s - got %s)", message, expectationString, Reflection.TryGetNamespaceWithFallbackToRawType(value)) 
     else
@@ -112,6 +51,7 @@ function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectat
     return message
 end
 
+--- @private
 function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 

@@ -1,15 +1,13 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard              = using "System.Guard" --                            @formatter:off
+local Guard              = using "System.Guard" --                       @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
-local StringsHelper      = using "System.Helpers.Strings"
-
-local Exception          = using "System.Exceptions.Exception" --             @formatter:on
+local StringsHelper      = using "System.Helpers.Strings" --             @formatter:on
 
 local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOutOfRangeException [Partial]" {
-    ["Exception"] = Exception
+    ["Exception"] = using "System.Exceptions.Exception",
 }
 
 Scopify(EScopes.Function, {})
@@ -20,11 +18,8 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    local instance = self:Instantiate()
-
-    instance._message = instance._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
-
-    return instance
+    return self:Instantiate()
+               :ChainSetMessage(_.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
 function Class:NewWithMessage(customMessage)
@@ -32,14 +27,11 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Assert.IsNonDudString(customMessage, "customMessage")
 
-    local instance = self:Instantiate()
-    
-    instance._message = customMessage
-    
-    return instance
+    return self:Instantiate()
+               :ChainSetMessage(customMessage)
 end
 
--- private space
+--- @private
 function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
@@ -47,7 +39,7 @@ function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectat
             and "Value out of range"
             or "Value of '" .. optionalArgumentName .. "' is out of range"
 
-    local expectationString = Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
+    local expectationString = _.GetExpectationMessage_(optionalExpectationOrExpectedType)
     if expectationString ~= nil then
         StringsHelper.Format("%s (expected %s - got %q)", message, expectationString, value)
     else
@@ -57,6 +49,7 @@ function Class._.FormulateMessage_(value, optionalArgumentName, optionalExpectat
     return message
 end
 
+--- @private
 function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, Class)
 
