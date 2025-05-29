@@ -28,20 +28,38 @@ VWoWUnit.Should.Be = {}
 VWoWUnit.Should.Not = {}
 VWoWUnit.Should.Not.Be = {}
 
-function VWoWUnit.Should.Throw(action)
+function VWoWUnit.Should.Throw(action, optionalErrorMessageGlobPattern)
 	_setfenv(1, VWoWUnit.Should)
 
     if action == nil then
         -- todo   this sort of testbed-failure should mark the test as inconclusive instead of failed    its a small detail but it would be a nice to have
-        VWoWUnit.Raise_(_format("[Should.Throw()] [TESTBED BUG] Expected a function but got %q (fix the testbed - make sure the call is *.Throw(action) and not *.Throw(action()) !)", _tostring(_type(action))))
+        VWoWUnit.Raise_(_format("[Should.Throw()] [!!!TESTBED BUG!!!] Expected a function but got %q (fix the testbed - make sure the call is *.Throw(action) and not *.Throw(action()) !)", _tostring(_type(action))))
+        return
+    end
+    
+    if optionalErrorMessageGlobPattern ~= nil and _type(optionalErrorMessageGlobPattern) ~= "string" then
+        VWoWUnit.Raise_(_format("[Should.Throw()] [!!!TESTBED BUG!!!] Expected a string glob pattern but got %q", _tostring(_type(optionalErrorMessageGlobPattern))))
         return
     end
 
-	local success = _pcall(action)
+    local returnValuesTable = {_pcall(action)}
 
+    local success = returnValuesTable[1]
+    _tableRemove(returnValuesTable, 1)
+    
 	if success then
 		VWoWUnit.Raise_(_format("[Should.Throw()] Was expecting an exception but no exception was thrown"))
 	end
+
+    if optionalErrorMessageGlobPattern ~= nil then
+        local errorMessage = returnValuesTable[1]
+
+        if not VWoWUnit.Utilities.IsGlobMatch(errorMessage, optionalErrorMessageGlobPattern) then
+            VWoWUnit.Raise_(_format("[Should.Throw()] Expected exception-message to match glob pattern %q but got this exception-message instead:\n\n%s", optionalErrorMessageGlobPattern, _tostring(errorMessage)))
+        end
+    end
+
+    return _unpack(returnValuesTable)
 end
 
 function VWoWUnit.Should.Not.Be.Nil(value)
@@ -130,7 +148,7 @@ end
 function VWoWUnit.Should.Be.Equivalent(a, b)
 	_setfenv(1, VWoWUnit.Should)
 
-	local path, aa, bb = VWoWUnit.Utilities.Difference_(a, b)
+	local path, aa, bb = VWoWUnit.Utilities.Difference(a, b)
 	if path == nil then
 		return
 	end

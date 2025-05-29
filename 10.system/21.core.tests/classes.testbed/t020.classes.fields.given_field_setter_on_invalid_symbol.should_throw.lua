@@ -41,6 +41,6 @@ TG:AddTheory("T020.Classes.Fields.GivenFieldSetterOnInvalidSymbol.ShouldThrow",
             end
 
             -- ASSERT
-            U.Should.Throw(action)
+            U.Should.Throw(action, "*[NR.ENT.CSFPFFNSCP.020]*")
         end
 )
