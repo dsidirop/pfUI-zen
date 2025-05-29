@@ -1,6 +1,4 @@
-﻿-- we just want to preemptively declare the namespaces so that we will be able to use strings.* inside guard.* and vice-versa
-
-local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off  we just want to preemptively declare the namespaces so that we will be able to use strings.* inside guard.* and vice-versa
 
 -- using "[declare] [static]" "System.Scopify"      no need to predeclare this really
 
@@ -17,6 +15,7 @@ using "[declare] [static]" "System.Reflection"
 
 using "[declare] [static]" "System.Console"
 
+using "[declare] [static]" "System.Classes.Fields"
 using "[declare] [static]" "System.Classes.Metatable"
 using "[declare] [static]" "System.Classes.Instantiator"
 using "[declare] [static]" "System.Classes.Mixins.MixinsBlender"

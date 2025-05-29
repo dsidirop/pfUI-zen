@@ -1,0 +1,48 @@
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
+
+local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
+
+local TG = U.TestsEngine:CreateOrUpdateGroup {
+    Name = "System.Core.Tests.InheritanceTestbed",
+    Tags = { "system", "system-core", "inheritance" }
+}
+
+Scopify(EScopes.Function, {})
+
+TG:AddFact("T000.Classes.Fields.GivenValidFields.ShouldConstructFine",
+        function()
+            -- ARRANGE
+
+            -- ACT
+            function action()
+                local Fields = using "System.Classes.Fields"
+                
+                local Class = using "[declare]" "T000.Classes.Fields.GivenValidFields.ShouldConstructFine.Foobar"
+
+                Fields(function(upcomingInstance)
+                    upcomingInstance._field1 = 42
+                    upcomingInstance._field2 = "Hello, World!"
+
+                    return upcomingInstance
+                end)
+                
+                function Class:New()
+                    return self:Instantiate()
+                end
+                
+                return Class:New(), Class
+            end
+
+            -- ASSERT
+            local instance, classProto = U.Should.Not.Throw(action)
+
+            U.Should.Be.Nil(classProto._field1)
+            U.Should.Be.Nil(classProto._field2)
+
+            U.Should.Be.PlainlyEqual(instance._field1, 42)
+            U.Should.Be.PlainlyEqual(instance._field2, "Hello, World!")
+        end
+)

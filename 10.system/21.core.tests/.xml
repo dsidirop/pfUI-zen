@@ -4,6 +4,7 @@
     <Include file="time.testbed\.xml"/>
     <Include file="enums.testbed\.xml"/>
     <Include file="guard.testbed\.xml"/>
+    <Include file="classes.testbed\.xml"/>    
     <Include file="reflection.testbed\.xml"/>
     <Include file="exceptions.testbed\.xml"/>
     <Include file="inheritance.testbed\.xml"/>
