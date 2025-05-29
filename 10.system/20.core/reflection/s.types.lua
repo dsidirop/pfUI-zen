@@ -2,6 +2,7 @@
 
 local STypes = using "[declare] [enum]" "System.Reflection.STypes" --@formatter:off
 
+--- @alias STypes
 STypes.Nil             = "nil"
 STypes.Table           = "table"
 STypes.Number          = "number"

@@ -1,5 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
+local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -43,7 +44,7 @@ function Class:ChainSetMessage(message)
 
     Guard.Assert.IsNilOrString(message, "message")
 
-    _message = message or "(exception message not available)"
+    _message = Nils.Coalesce(message, "(no exception message available)")
     _stringified = nil
 
     return self
@@ -55,7 +56,7 @@ function Class:ChainSetStacktrace(stacktrace)
 
     Guard.Assert.IsNilOrString(stacktrace, "stacktrace")
 
-    _stacktrace = stacktrace or ""
+    _stacktrace = Nils.Coalesce(stacktrace, "")
     _stringified = nil
 
     return self

@@ -9,7 +9,7 @@ local Utilities = using "[declare] [static]" "System.Exceptions.Utilities [Parti
 function Utilities.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Utilities)
 
-    return "[" .. (Reflection.TryGetNamespaceIfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(exception message not available)")
+    return "[" .. (Reflection.TryGetNamespaceIfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(no exception message available)")
             .. "\n\n--------------[ Stacktrace ]--------------\n"
             .. (exception:GetStacktrace() or "(stacktrace not available)")
             .. "------------[ End Stacktrace ]------------\n "

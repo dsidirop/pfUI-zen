@@ -6,11 +6,14 @@ local Math       = using "System.Math"
 local Guard      = using "System.Guard"
 local Scopify    = using "System.Scopify"
 local EScopes    = using "System.EScopes"
-local Namespacer = using "System.Namespacer"
+
+local TablesHelper = using "System.Helpers.Tables"
 
 local STypes              = using "System.Reflection.STypes"
 local SRawTypes           = using "System.Language.SRawTypes"
 local RawTypeSystem       = using "System.Language.RawTypeSystem"
+
+local Namespacer          = using "System.Namespacer"
 local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
 local Throw                   = using "System.Exceptions.Throw"
@@ -28,7 +31,7 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
--- returns   { System.Reflection.STypes, namespace-string }
+--- @return STypes, string?
 function Reflection.GetInfo(valueOrClassInstanceOrProto)
     if valueOrClassInstanceOrProto == nil then
         return STypes.Nil, nil
@@ -160,18 +163,24 @@ function Reflection.IsNilOrTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredClassProto)
-    local desiredNamespace = Guard.Assert.Explained.IsNotNil(Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto), "desiredClassProto was expected to be a class-proto but it's not")
+    Guard.Assert.Explained.IsTrue(Reflection.IsNonStaticClassProto(desiredClassProto), "desiredClassProto was expected to be a non-static-class-proto but it's not")
 
-    if object == nil then
+    if not Reflection.IsTable(object) then
         return false
+    end
+
+    if object.__index == desiredClassProto then
+        return true
+    end
+
+    for mixinKey, _ in TablesHelper.GetPairs(object.asBlendxin or {}) do
+        -- the asBlendxin.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
+        if mixinKey == desiredClassProto then
+            return true
+        end
     end
     
-    local objectNamespace = Reflection.TryGetNamespaceIfClassInstance(object)
-    if objectNamespace == nil then
-        return false
-    end
-
-    return objectNamespace == desiredNamespace
+    return false
 end
 
 function Reflection.TryGetNamespaceWithFallbackToRawType(object) --00
@@ -195,7 +204,7 @@ function Reflection.IsClassInstance(object)
 end
 
 function Reflection.IsNonStaticClassProto(object)
-    return Reflection.TryGetNamespaceIfNonStaticClassProto(object) ~= nil
+    return Reflection.GetInfo(object) == STypes.NonStaticClass
 end
 
 function Reflection.TryGetNamespaceIfClassInstance(object)
@@ -228,8 +237,13 @@ function Reflection.TryGetNamespaceIfClassProto(value)
 end
 
 -- covers only non-static-classes
-function Reflection.TryGetNamespaceIfNonStaticClassProto(value)
-    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
+function Reflection.IsNonStaticClassProto(allegedClassProto)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(allegedClassProto)
+    return protoTidbits ~= nil and protoTidbits:IsNonStaticClassEntry()
+end
+
+function Reflection.TryGetNamespaceIfNonStaticClassProto(allegedClassProto)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(allegedClassProto)
     if protoTidbits == nil or not protoTidbits:IsNonStaticClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
         return nil
     end
