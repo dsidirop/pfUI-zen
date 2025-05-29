@@ -1,3 +1,5 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
-    <Include file="t000.classes.fields.givenvalidfields.shouldconstructfine.lua"/>
+    <Include file="t000.classes.fields.given_one_field_setter.should_construct_fine.lua"/>
+    <Include file="t010.classes.fields.given_multiple_field_setters.should_construct_fine.lua"/>
+    <Include file="t020.classes.fields.given_field_setter_on_invalid_symbol.should_throw.lua"/>
 </Ui>

@@ -307,7 +307,7 @@ do
         _setfenv(1, NonStaticClassProtoFactory)
 
         _ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
-        _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type '%s'", _type(upcomingInstance)) --@formatter:on
+        _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type %q", _type(upcomingInstance)) --@formatter:on
 
         upcomingInstance = upcomingInstance or {}
         if classProto.asBlendxin ~= nil then
@@ -318,7 +318,7 @@ do
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
                 if mixinProtoTidbits ~= nil and mixinProtoTidbits:IsNonStaticClassEntry() then
                     local snapshotOfMixinStaticMethods = mixinProto._
-                    __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type '%s' (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
+                    __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type %q (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
 
                     upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, mixinProtoTidbits, upcomingInstance) -- vital order    depth first
 
@@ -383,9 +383,9 @@ do
         _setfenv(1, self)
 
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
-        _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
-        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
-        -- _ = EManagedSymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
+        _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type %q)", _type(namespacePath))
+        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got %q)", _type(isForPartial)) -- @formatter:on
+        -- _ = EManagedSymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds 
 
         local instance = {
             _symbolType               = symbolType,
@@ -403,7 +403,7 @@ do
     function Entry:GetFieldPluggerFunc()
         _setfenv(1, self)
 
-        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("trying to get the field-plugger-func makes sense for non-static-classes but this proto is of type '%s'", _symbolType)
+        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
         
         return self._fieldPluggerCallbackFunc
     end
@@ -411,8 +411,8 @@ do
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
         _setfenv(1, self)
 
-        _ = _type(func) == "function"                         or _throw_exception("the field-plugger-callback must be a function (got '%s')", _type(func))
-        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("setting a field-plugger-callback makes sense only for non-static-classes but this proto is of type '%s'", _symbolType) -- @formatter:on
+        _ = _type(func) == "function"                         or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
+        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
 
         if _fieldPluggerCallbackFunc == nil then
             _fieldPluggerCallbackFunc = func
@@ -606,9 +606,10 @@ do
     end
 
     NamespaceRegistry.Assert = {}
-    NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath)
-        _ = _type(namespacePath) == "string" and namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespacePath %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
-    end
+    NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath) --@formatter:off
+        _ = _type(namespacePath) == "string"                                                   or _throw_exception("the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
+        _ = namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+    end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == EManagedSymbolTypes.NonStaticClass or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
 

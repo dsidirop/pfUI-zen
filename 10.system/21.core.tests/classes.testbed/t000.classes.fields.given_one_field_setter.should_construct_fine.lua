@@ -12,7 +12,7 @@ local TG = U.TestsEngine:CreateOrUpdateGroup {
 
 Scopify(EScopes.Function, {})
 
-TG:AddFact("T000.Classes.Fields.GivenValidFields.ShouldConstructFine",
+TG:AddFact("T000.Classes.Fields.GivenOneFieldSetter.ShouldConstructFine",
         function()
             -- ARRANGE
 
@@ -20,22 +20,17 @@ TG:AddFact("T000.Classes.Fields.GivenValidFields.ShouldConstructFine",
             function action()
                 local Fields = using "System.Classes.Fields"
                 
-                local Class = using "[declare]" "T000.Classes.Fields.GivenValidFields.ShouldConstructFine.Foobar"
-
-                Fields(function(upcomingInstance)
-                    upcomingInstance._field1 = -1
-                    return upcomingInstance
-                end)
-
-                function Class:New()
-                    return self:Instantiate()
-                end
+                local Class = using "[declare]" "T000.Classes.Fields.GivenOneFieldSetter.ShouldConstructFine.Foobar"
 
                 Fields(function(upcomingInstance) -- we allow multiple field-setters to co-exist
                     upcomingInstance._field1 = 42 -- overrides the previous value
                     upcomingInstance._field2 = "Hello, World!"
                     return upcomingInstance
                 end)
+
+                function Class:New()
+                    return self:Instantiate()
+                end
 
                 return Class:New(), Class
             end
