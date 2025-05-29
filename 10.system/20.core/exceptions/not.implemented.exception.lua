@@ -5,7 +5,7 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
-local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
+local Class = using "[declare]" "System.Exceptions.NotImplementedException [Partial]"
 
 Scopify(EScopes.Function, {})
 

@@ -8,7 +8,6 @@
     <Include file="global.environment\.xml"/>
     <Include file="nils\.xml"/>
     <Include file="scopify\.xml"/>
-    <Include file="validation\.xml"/>
     
     <!-- keep classes.metatable this here -->
     <Include file="classes.metatable\.xml"/>

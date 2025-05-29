@@ -4,6 +4,7 @@
     <Include file="utilities.lua"/>
 
     <Include file="exception.lua"/>
+    <Include file="not.implemented.exception.lua"/>
     <Include file="value.already.set.exception.lua"/>
     <Include file="value.cannot.be.nil.exception.lua"/>
     <Include file="value.is.out.of.range.exception.lua"/>

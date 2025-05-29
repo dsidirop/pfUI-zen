@@ -1,20 +1,22 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local Math = using "System.Math"
-local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
-local Validation = using "System.Validation"
+local S          = using "System.Helpers.Strings"
+
+local Math       = using "System.Math"
+local Guard      = using "System.Guard"
+local Scopify    = using "System.Scopify"
+local EScopes    = using "System.EScopes"
 local Namespacer = using "System.Namespacer"
 
-local STypes = using "System.Reflection.STypes"
-
-local SRawTypes = using "System.Language.SRawTypes"
-local RawTypeSystem = using "System.Language.RawTypeSystem"
-
+local STypes              = using "System.Reflection.STypes"
+local SRawTypes           = using "System.Language.SRawTypes"
+local RawTypeSystem       = using "System.Language.RawTypeSystem"
 local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
 
-local Reflection = using "[declare] [static]" "System.Reflection [Partial]"
+local Throw                   = using "System.Exceptions.Throw"
+local NotImplementedException = using "System.Exceptions.NotImplementedException"
+
+local Reflection = using "[declare] [static]" "System.Reflection [Partial]" --@formatter:on
 
 Scopify(EScopes.Function, {})
 
@@ -76,10 +78,14 @@ function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOr
         return Reflection.ConvertERawTypeToESymbolType_(rawType)
     end
 
-    Validation.FailFormatted("(NotImplemented) cannot convert managedSymbolType %q to EManagedSymbolTypes", managedSymbolType) -- cant throw an exception here
+    Throw(NotImplementedException:New(S.Format(
+            "[REF.CEMSTTST.010] [!!!CORE BUG!!!] Lacking support for converting managed-symbol-type %q to an STypes value.", managedSymbolType
+    )))
 end
 
 function Reflection.ConvertERawTypeToESymbolType_(rawType)
+    Guard.Assert.IsEnumValue(SRawTypes, rawType, "rawType")
+
     if rawType == SRawTypes.Nil then
         return STypes.Nil
     end
@@ -112,7 +118,9 @@ function Reflection.ConvertERawTypeToESymbolType_(rawType)
         return STypes.Thread
     end
 
-    Validation.FailFormatted("rawType has value %q which is out of range and cannot be converted into an SRawTypes value", rawType) -- cant throw an exception here
+    Throw(NotImplementedException:New(S.Format(
+            "[REF.CERTTEST.010] [!!!CORE BUG!!!] Lacking support for converting RawType %q to an SRawTypes value", rawType
+    )))
 end
 
 function Reflection.IsNilOrTable(value)

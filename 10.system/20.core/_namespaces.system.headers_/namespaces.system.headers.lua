@@ -10,7 +10,6 @@ using "[declare] [static]" "System.Time"
 using "[declare] [static]" "System.Table"
 using "[declare] [static]" "System.Guard"
 using "[declare] [static]" "System.Iterators"
-using "[declare] [static]" "System.Validation"
 using "[declare] [static]" "System.Reflection"
 
 using "[declare] [static]" "System.Console"
@@ -28,7 +27,6 @@ using "[declare] [static]" "System.Helpers.Booleans"
 using "[declare] [static]" "System.Language.RawTypeSystem"
 
 using "[declare] [static]" "System.Exceptions.Throw"
-using "[declare] [static]" "System.Exceptions.Rethrow"
 using "[declare] [static]" "System.Exceptions.Utilities"
 
 using "[declare] [static]" "System.Externals.WoW.UI.GlobalFrames"
@@ -39,6 +37,7 @@ using "[declare]" "System.Event"
 using "[declare]" "System.IO.GenericTextWriter"
 
 using "[declare]" "System.Exceptions.Exception"
+using "[declare]" "System.Exceptions.NotImplementedException"
 using "[declare]" "System.Exceptions.ValueAlreadySetException"
 using "[declare]" "System.Exceptions.ValueCannotBeNilException"
 using "[declare]" "System.Exceptions.ValueIsOutOfRangeException"

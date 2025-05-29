@@ -182,7 +182,7 @@ do
 
     function StaticClassProtoFactory.Spawn()
         CommonMetaTable_ForAllStaticClassProtos = CommonMetaTable_ForAllStaticClassProtos or _spawnSimpleMetatable({
-            __call = StaticClassProtoFactory.OnProtoCalledAsFunction_, -- needed by static-class utilities like Throw.__Call__() and Rethrow.__Call__() so as for them to work properly
+            __call = StaticClassProtoFactory.OnProtoCalledAsFunction_, -- needed by static-class utilities like Throw.__Call__() so as for them to work properly
         })
 
         local newStaticClassProto = _spawnSimpleMetatable({
@@ -266,8 +266,6 @@ do
         return classProto
     end
 
-    -- todo   refactor all classes to have them define their fields via their own
-    -- todo   _.EnrichInstanceWithFields() method and then remove the instance parameter from here
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off
         _setfenv(1, NonStaticClassProtoFactory)
 
@@ -909,7 +907,7 @@ do
                 _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname)
 
                 if specific_MixinMemberName == "_" then
-                    -- todo   we should refactor this part to just use __index with a custom look up function for the base statics and be done with it nice and easy
+                    -- todo   try refactor this part to just use __index with a custom look up function for the base statics and be done with it nice and easy (not sure if wow-lua indeed supports multi-mt lookups though!)
                     
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
                     for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do
@@ -929,8 +927,6 @@ do
                     local hasBlendxinRelatedName = specific_MixinMemberName == "blendxin" or specific_MixinMemberName == "asBlendxin"
                     _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", specific_MixinMemberName)
 
-                    -- todo  once every non-static-class is migrated to place its static fields under _.* we can limit the logic to just transfer functions
-                    
                     -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
                     
                     local hasGreenName = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] == nil
@@ -939,7 +935,7 @@ do
 
                         targetSymbolProto_asBlendxinProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBlendxin.<specific-mixin-nickname>.<specific-member-name>
                     -- else
-                        -- _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")
+                    --     _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")
                     end
                 end
             end

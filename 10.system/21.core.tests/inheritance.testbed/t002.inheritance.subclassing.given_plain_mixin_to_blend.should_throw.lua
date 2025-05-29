@@ -13,9 +13,9 @@ local TG = U.TestsEngine:CreateOrUpdateGroup {
 Scopify(EScopes.Function, {})
 
 -- todo   add tests for Reflection.IsInstanceOf(<instance>, <proto>) + associated Guards
--- todo   add tests for Reflection.Is(<instance>, <proto>) + associated Guards
--- todo   add tests for Reflection.IsImplementingInterface(<instance>, <interface-proto>) + associated Guards
+-- todo   add tests for Reflection.IsImplementing(<instance>, <interface-proto>) + associated Guards
 -- todo   add support + tests for .CastAs(), .IsCastableAs(), .TryCastAs()
+-- todo   enhance try-catch to support catching base-exceptions too
 --
 -- todo   figure out what to do with the inheritance of the __tostring() method from the base class (is it a static method or what?) 
 -- todo   support passing arrays too for the mixins (as nameless mixins)
