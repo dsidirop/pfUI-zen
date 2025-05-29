@@ -2,6 +2,7 @@
     <Include file="io.testbed\.xml"/>
     <Include file="nils.testbed\.xml"/>
     <Include file="time.testbed\.xml"/>
+    <Include file="throw.testbed\.xml"/>    
     <Include file="enums.testbed\.xml"/>
     <Include file="guard.testbed\.xml"/>
     <Include file="classes.testbed\.xml"/>    
