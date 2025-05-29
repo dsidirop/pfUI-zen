@@ -30,6 +30,6 @@ TG:AddFact("T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow",
             end
 
             -- ASSERT
-            U.Should.Throw(action)
+            U.Should.Throw(action, "*[NR.BM.052]*")
         end
 )

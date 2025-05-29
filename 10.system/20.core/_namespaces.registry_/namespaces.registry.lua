@@ -467,6 +467,21 @@ do
 
         return _isForPartial
     end
+    
+    function Entry:CanBeSubclassed()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolTypes.Enum
+                or _symbolType == EManagedSymbolTypes.Interface
+                or _symbolType == EManagedSymbolTypes.StaticClass
+                or _symbolType == EManagedSymbolTypes.NonStaticClass
+    end
+    
+    function Entry:IsEnumEntry()
+        _setfenv(1, self)
+
+        return _symbolType == EManagedSymbolTypes.Enum
+    end
 
     function Entry:IsClassEntry()
         _setfenv(1, self)
@@ -792,6 +807,9 @@ do
     
     function NamespaceRegistry.HasCircularProtoDependency(mixinProtoSymbol, targetSymbolProto)
         _setfenv(1, NamespaceRegistry)
+        
+        _ = _type(mixinProtoSymbol) == "table" or _throw_exception("mixinProtoSymbol must be a table but it was found to be of type %q", _type(mixinProtoSymbol))
+        _ = _type(targetSymbolProto) == "table" or _throw_exception("targetSymbolProto must be a table but it was found to be of type %q", _type(targetSymbolProto))
 
         local protosCheckedCount = 0
         
@@ -842,16 +860,11 @@ do
         _setfenv(1, self)
         
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
-        _ = protoTidbits ~= nil or _throw_exception("targetSymbolProto is not a symbol-proto")
-        
-        local targetIsEnum = protoTidbits:IsEnumEntry()
-        local targetIsInterface = protoTidbits:IsInterfaceEntry()
-        local targetIsStaticClass = protoTidbits:IsStaticClassEntry()
-        local targetIsNonStaticClass = protoTidbits:IsNonStaticClassEntry()
-        _ = (targetIsEnum or targetIsInterface or targetIsStaticClass or targetIsNonStaticClass) or _throw_exception("targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetManagedSymbolType())
+        _ = protoTidbits ~= nil or _throw_exception("[NR.BM.000] targetSymbolProto is not a symbol-proto")
 
-        _ = _type(namedMixins) == "table" or _throw_exception("namedMixins must be a table")
-        _ = _next(namedMixins) ~= nil or _throw_exception("namedMixins must not be empty")
+        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetManagedSymbolType()) --@formatter:off
+        _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
+        _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
 
         local targetSymbolProto_BlendxinProp = targetSymbolProto.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin fields/methods
         local targetSymbolProto_asBlendxinProp = targetSymbolProto.asBlendxin or {}
@@ -861,15 +874,17 @@ do
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
-        for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do
-            _ = targetSymbolProto ~= specific_MixinProtoSymbol or _throw_exception("mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
-            _ = not NamespaceRegistry.HasCircularProtoDependency(specific_MixinProtoSymbol, targetSymbolProto) or _throw_exception("mixin nicknamed %q introduces a circular dependency", specific_MixinNickname)
-            
+        for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do --@formatter:off
+            _ = targetSymbolProto ~= specific_MixinProtoSymbol                                                 or _throw_exception("[NR.BM.050] mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
+            _ = _type(specific_MixinNickname) == "string" and specific_MixinNickname ~= ""                     or _throw_exception("[NR.BM.051] mixin nicknamed %q has a nickname that is either not a string or its dud - its type is %q", specific_MixinNickname, _type(specific_MixinNickname))
+            _ = _type(specific_MixinProtoSymbol) == "table"                                                    or _throw_exception("[NR.BM.052] mixin nicknamed %q has a proto-symbol that is not a table (type=%q)", specific_MixinNickname, _type(specific_MixinProtoSymbol))
+            _ = not NamespaceRegistry.HasCircularProtoDependency(specific_MixinProtoSymbol, targetSymbolProto) or _throw_exception("[NR.BM.053] mixin nicknamed %q introduces a circular dependency", specific_MixinNickname)
+
             local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
-            _ = mixinProtoTidbits                                           ~= nil or _throw_exception("mixin nicknamed %q (raw-type=%s) is not a known class/interface/enum proto-symbol...", specific_MixinNickname, _type()) --@formatter:off
-            _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[specific_MixinNickname]    == nil or _throw_exception("mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname)
+            _ = mixinProtoTidbits                                           ~= nil or _throw_exception("[NR.BM.060] mixin nicknamed %q is not a registered proto-symbol for a class/interface/enum", specific_MixinNickname)
+            _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("[NR.BM.061] mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[specific_MixinNickname]    == nil or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
+            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
             
             local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()

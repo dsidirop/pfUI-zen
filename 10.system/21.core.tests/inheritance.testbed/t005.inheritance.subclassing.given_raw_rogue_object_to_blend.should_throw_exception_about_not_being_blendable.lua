@@ -24,6 +24,6 @@ TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrowE
             end
 
             -- ASSERT
-            U.Should.Throw(action)
+            U.Should.Throw(action, "*[NR.BM.060]*")
         end
 )

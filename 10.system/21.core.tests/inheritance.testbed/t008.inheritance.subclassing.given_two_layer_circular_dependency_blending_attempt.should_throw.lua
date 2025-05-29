@@ -38,6 +38,6 @@ TG:AddFact("T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlending
             end
 
             -- ASSERT
-            U.Should.Throw(action)
+            U.Should.Throw(action, "*[NR.BM.053]*")
         end
 )
