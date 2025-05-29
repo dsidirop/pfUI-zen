@@ -2,7 +2,7 @@
 
 local B = using "[built-ins]" [[
     Assert     = assert,
-    Bebugstack = debugstack,
+    DebugStack = debugstack,
 ]]
 
 local A = using "System.Helpers.Arrays"
@@ -11,12 +11,12 @@ local S = using "System.Helpers.Strings"
 local Validation = using "[declare] [static]" "System.Validation [Partial]"
 
 Validation.Assert = B.Assert
-Validation.Debugstack = B.Bebugstack
+Validation.DebugStack = B.DebugStack
 
 function Validation.Stacktrace(optionalExtraStackframesToSkipping)
     optionalExtraStackframesToSkipping = optionalExtraStackframesToSkipping or 0
 
-    return Validation.Debugstack(2 + optionalExtraStackframesToSkipping)
+    return Validation.DebugStack(2 + optionalExtraStackframesToSkipping)
 end
 
 function Validation.FailFormatted(...)
@@ -24,5 +24,5 @@ function Validation.FailFormatted(...)
 end
 
 function Validation.Fail(messageOrExceptionInstance)
-    Validation.Assert(false, S.Stringify((messageOrExceptionInstance or "<the provided error is dud!?>")) .. "\n" .. Validation.Debugstack(2))
+    Validation.Assert(false, S.Stringify((messageOrExceptionInstance or "<the provided error is dud!?>")) .. "\n" .. Validation.DebugStack(2))
 end
