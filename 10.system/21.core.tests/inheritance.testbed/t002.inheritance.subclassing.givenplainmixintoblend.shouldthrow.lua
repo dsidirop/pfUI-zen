@@ -6,8 +6,8 @@ local EScopes = using "System.EScopes"
 local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
 
 local TG = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.InheritanceTestbed",
-    Tags = { "system", "system-core", "inheritance" }
+    Name = "System.Core.Tests.Classes.Inheritance.Testbed",
+    Tags = { "system", "system-core", "classes", "inheritance" }
 }
 
 Scopify(EScopes.Function, {})

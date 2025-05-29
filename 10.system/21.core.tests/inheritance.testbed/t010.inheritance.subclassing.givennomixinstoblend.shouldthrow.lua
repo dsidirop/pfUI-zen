@@ -6,7 +6,7 @@ local Metatable = using "System.Classes.Metatable"
 
 local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
 
-local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.InheritanceTestbed" }
+local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Classes.Inheritance.Testbed" }
 
 Scopify(EScopes.Function, {})
 

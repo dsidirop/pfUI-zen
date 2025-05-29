@@ -268,32 +268,25 @@ do
 
     -- todo   refactor all classes to have them define their fields via their own
     -- todo   _.EnrichInstanceWithFields() method and then remove the instance parameter from here
-    function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched, instance) -- @formatter:off
+    function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off
         _setfenv(1, NonStaticClassProtoFactory)
 
-        _ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("classProtoOrInstance was expected to be a table")
-        _ = instance == nil or _type(instance) == "table"       or _throw_exception("instance was expected to be either a table or nil") -- @formatter:on
+        _ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("classProtoOrInstance was expected to be a table") -- @formatter:on
 
-        if NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(classProtoOrInstanceBeingEnriched) == nil then
+        local protoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(classProtoOrInstanceBeingEnriched)
+        if protoTidbits == nil then
             -- in this scenario we are dealing with the "instance-being-enriched" case
             --
             -- the :Instantiate() was called as newInstance:Instantiate() which is a clear sign that the callstack can be traced
             -- back to a sub-class constructor so we should skip creating a new instance because the instance has already been created
-
-            if instance ~= nil then
-                -- todo   temporary hack    get rid of this once we remove the 'instance' parameter 
-                for key, value in _pairs(instance) do
-                    classProtoOrInstanceBeingEnriched[key] = value
-                end
-            end
 
             return classProtoOrInstanceBeingEnriched
         end
 
         _ = classProtoOrInstanceBeingEnriched.__index ~= "nil" or _throw_exception("classProto.__index is nil - how did this happen?")
 
-        instance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, instance)
-        _setmetatable(instance, classProtoOrInstanceBeingEnriched)
+        local newInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, protoTidbits)
+        _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
 
         -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
@@ -301,7 +294,7 @@ do
         -- todo
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
 
-        return instance
+        return newInstance
 
         --00   the instance will already use classProto as its metatable and any missing key lookups will automatically go through classProto.__index
         --     setting instance.__index would only be relevant if the instance itself became a metatable for another table which is definitely not the case here
@@ -310,7 +303,7 @@ do
         --     infinite recursion   the standard pattern is to just set the metatable and let lua's built-in metatable mechanisms handle the property lookup
     end
 
-    function NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProto, upcomingInstance) --@formatter:off
+    function NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProto, protoTidbits, upcomingInstance) --@formatter:off
         _setfenv(1, NonStaticClassProtoFactory)
 
         _ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
@@ -327,19 +320,20 @@ do
                     local snapshotOfMixinStaticMethods = mixinProto._
                     __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type '%s' (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
 
-                    upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, upcomingInstance) -- vital order    depth first
+                    upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, mixinProtoTidbits, upcomingInstance) -- vital order    depth first
 
-                    local enrichInstanceWithFieldsOfMixin = snapshotOfMixinStaticMethods.EnrichInstanceWithFields
-                    if enrichInstanceWithFieldsOfMixin ~= nil then
-                        upcomingInstance = enrichInstanceWithFieldsOfMixin(upcomingInstance)
-                    end
+                    -- local enrichInstanceWithFieldsOfMixin = _nilCoalesce(mixinProtoTidbits:GetFieldPluggerFunc(), snapshotOfMixinStaticMethods.EnrichInstanceWithFields)
+                    -- if enrichInstanceWithFieldsOfMixin ~= nil then
+                    --     upcomingInstance = enrichInstanceWithFieldsOfMixin(upcomingInstance)
+                    -- end
                 end
 
             end
         end
 
-        -- finally we can enrich the instance with the fields of the class itself if it has any
-        local enrichInstanceWithOwnFields = classProto._.EnrichInstanceWithFields
+        -- must be last    finally we can enrich the instance with the fields of the class itself if it has any in case of
+        -- overlaps with base-classes we want the fields of this child-class to prevail over the ones of the parent-base-classes
+        local enrichInstanceWithOwnFields = _nilCoalesce(protoTidbits:GetFieldPluggerFunc(), classProto._.EnrichInstanceWithFields)
         if enrichInstanceWithOwnFields ~= nil then
             upcomingInstance = enrichInstanceWithOwnFields(upcomingInstance)
         end        
@@ -383,21 +377,22 @@ do
     end
 end
 
-local Entry = _spawnSimpleMetatable()
+local Entry = _spawnSimpleMetatable() -- proto symbol tidbits
 do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(1, self)
 
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type '%s')", _type(namespacePath))
-        -- _ = EManagedSymbolTypes:IsValid(symbolType)                  or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got '%s')", _type(isForPartial)) -- @formatter:on
-        
+        -- _ = EManagedSymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got '%s')", symbolType) -- todo   auto-enable this only in debug builds 
+
         local instance = {
-            _symbolType = symbolType,
-            _symbolProto = symbolProto,
-            _isForPartial = _nilCoalesce(isForPartial, false),
-            _namespacePath = namespacePath,
+            _symbolType               = symbolType,
+            _symbolProto              = symbolProto,
+            _isForPartial             = _nilCoalesce(isForPartial, false),
+            _namespacePath            = namespacePath,
+            _fieldPluggerCallbackFunc = nil, -- set during the class declaration if at all
         }
 
         _setmetatable(instance, self)
@@ -405,10 +400,40 @@ do
         return instance
     end
 
+    function Entry:GetFieldPluggerFunc()
+        _setfenv(1, self)
+
+        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("trying to get the field-plugger-func makes sense for non-static-classes but this proto is of type '%s'", _symbolType)
+        
+        return self._fieldPluggerCallbackFunc
+    end
+
+    function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
+        _setfenv(1, self)
+
+        _ = _type(func) == "function"                         or _throw_exception("the field-plugger-callback must be a function (got '%s')", _type(func))
+        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("setting a field-plugger-callback makes sense only for non-static-classes but this proto is of type '%s'", _symbolType) -- @formatter:on
+
+        if _fieldPluggerCallbackFunc == nil then
+            _fieldPluggerCallbackFunc = func
+            return self
+        end
+
+        local preexistingFieldPluggerCallbackFunc = _fieldPluggerCallbackFunc
+
+        _fieldPluggerCallbackFunc = function(upcomingInstance)
+            return func(preexistingFieldPluggerCallbackFunc(upcomingInstance)) -- chain the field-plugger-callbacks
+        end
+
+        return self
+    end
+    
     function Entry:UnsetPartiality()
         _setfenv(1, self)
 
         _isForPartial = false
+        
+        return self
     end
 
     function Entry:GetNamespace()
@@ -570,8 +595,11 @@ do
         _setfenv(1, self)
 
         local instance = {
-            _namespaces_registry = {},
-            _reflection_registry = {},
+            _namespaces_registry                   = {},
+            _reflection_registry                   = {}, -- proto tidbits like namespace, symbol-type, is-for-partial, fields-plugger-callback etc
+
+            _mostRecentlyDefinedSymbolProto        = nil, -- the most recently defined symbol proto           needed by ChainSetFieldPluggerFuncForNonStaticClassProto()
+            _mostRecentlyDefinedSymbolProtoTidbits = nil, -- the most recently defined symbol proto-tidbits   needed by ChainSetFieldPluggerFuncForNonStaticClassProto()
         }
 
         return _setmetatable(instance, self)
@@ -596,6 +624,25 @@ do
     end
 
     -- namespacer()
+    function NamespaceRegistry:ChainSetFieldPluggerFuncForNonStaticClassProto(classProto, func)
+        _setfenv(1, self)
+
+        local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(classProto)
+        if protoTidbits == nil then
+            _throw_exception("[NR.CSFPFFNSCP.010] cannot chain-set field-plugger-callback for a non-static-class %q because it has not been registered yet", classProto)
+        end
+
+        protoTidbits:ChainSetFieldPluggerFuncForNonStaticClassProto(func)
+        
+        return self
+    end
+
+    function NamespaceRegistry:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+        _setfenv(1, self)
+
+        return _mostRecentlyDefinedSymbolProto, _mostRecentlyDefinedSymbolProtoTidbits
+    end
+    
     function NamespaceRegistry:UpsertSymbolProtoSpecs(namespacePath, symbolType)
         _setfenv(1, self)
 
@@ -604,27 +651,33 @@ do
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
 
-        local preExistingEntry = _namespaces_registry[sanitizedNamespacePath]
-        if preExistingEntry == nil then -- insert new entry
+        local preExistingTidbitsEntry = _namespaces_registry[sanitizedNamespacePath]
+        if preExistingTidbitsEntry == nil then -- insert new entry
             local newSymbolProto = ProtosFactory.Spawn(symbolType)
 
-            local newEntry = Entry:New(symbolType, newSymbolProto, sanitizedNamespacePath, isForPartial)
+            local newProtoTidbitsEntry = Entry:New(symbolType, newSymbolProto, sanitizedNamespacePath, isForPartial)
 
-            _reflection_registry[newSymbolProto] = newEntry
-            _namespaces_registry[sanitizedNamespacePath] = newEntry
+            _mostRecentlyDefinedSymbolProto = newSymbolProto
+            _mostRecentlyDefinedSymbolProtoTidbits = newProtoTidbitsEntry
+            
+            _reflection_registry[newSymbolProto] = newProtoTidbitsEntry
+            _namespaces_registry[sanitizedNamespacePath] = newProtoTidbitsEntry
 
             return newSymbolProto
         end
-
-        -- update existing entry
-        NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType(symbolType, preExistingEntry, sanitizedNamespacePath) -- 10
-        NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial(isForPartial, preExistingEntry, sanitizedNamespacePath) -- 10
+        
+        -- update existing entry (partials come here)
+        NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType(symbolType, preExistingTidbitsEntry, sanitizedNamespacePath) -- 10
+        NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial(isForPartial, preExistingTidbitsEntry, sanitizedNamespacePath) -- 10
 
         if not isForPartial then -- 20
-            preExistingEntry:UnsetPartiality()
+            preExistingTidbitsEntry:UnsetPartiality()
         end
 
-        return preExistingEntry:GetSymbolProto()
+        _mostRecentlyDefinedSymbolProto = preExistingTidbitsEntry:GetSymbolProto()
+        _mostRecentlyDefinedSymbolProtoTidbits = preExistingTidbitsEntry
+
+        return _mostRecentlyDefinedSymbolProto
 
         -- 10  notice that if the intention is to declare an extension-class then we dont care if the class already exists
         --     and its also perfectly fine if the the core class gets loaded after its associated extension classes too

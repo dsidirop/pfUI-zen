@@ -6,8 +6,8 @@ local EScopes = using "System.EScopes"
 local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
 
 local TG = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.InheritanceTestbed",
-    Tags = { "system", "system-core", "inheritance" }
+    Name = "System.Core.Tests.Classes.Fields.Testbed",
+    Tags = { "system", "system-core", "classes", "fields" }
 }
 
 Scopify(EScopes.Function, {})
@@ -23,16 +23,20 @@ TG:AddFact("T000.Classes.Fields.GivenValidFields.ShouldConstructFine",
                 local Class = using "[declare]" "T000.Classes.Fields.GivenValidFields.ShouldConstructFine.Foobar"
 
                 Fields(function(upcomingInstance)
-                    upcomingInstance._field1 = 42
-                    upcomingInstance._field2 = "Hello, World!"
-
+                    upcomingInstance._field1 = -1
                     return upcomingInstance
                 end)
-                
+
                 function Class:New()
                     return self:Instantiate()
                 end
-                
+
+                Fields(function(upcomingInstance) -- we allow multiple field-setters to co-exist
+                    upcomingInstance._field1 = 42 -- overrides the previous value
+                    upcomingInstance._field2 = "Hello, World!"
+                    return upcomingInstance
+                end)
+
                 return Class:New(), Class
             end
 
