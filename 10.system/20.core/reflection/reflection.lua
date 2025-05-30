@@ -173,6 +173,7 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
         return true
     end
 
+    -- todo   we should look recursively through the entire asBlendxin.* tree
     for mixinKey, _ in TablesHelper.GetPairs(object.asBlendxin or {}) do
         -- the asBlendxin.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
         if mixinKey == desiredClassProto then
@@ -180,6 +181,28 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
         end
     end
     
+    return false
+end
+
+function Reflection.IsImplementing(object, desiredInterfaceProto)
+    Guard.Assert.Explained.IsTrue(Reflection.IsInterfaceProto(desiredInterfaceProto), "desiredInterfaceProto was expected to be an interface-proto but it's not")
+
+    if not Reflection.IsTable(object) then
+        return false
+    end
+
+    if object.__index == desiredInterfaceProto then
+        return true
+    end
+
+    -- todo   we should look recursively through the entire asBlendxin.* tree
+    for mixinKey, _ in TablesHelper.GetPairs(object.asBlendxin or {}) do
+        -- the asBlendxin.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
+        if mixinKey == desiredInterfaceProto then
+            return true
+        end
+    end
+
     return false
 end
 
@@ -205,6 +228,10 @@ end
 
 function Reflection.IsNonStaticClassProto(object)
     return Reflection.GetInfo(object) == STypes.NonStaticClass
+end
+
+function Reflection.IsInterfaceProto(object)
+    return Reflection.GetInfo(object) == STypes.Interface
 end
 
 function Reflection.TryGetNamespaceIfClassInstance(object)
