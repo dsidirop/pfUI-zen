@@ -6,6 +6,8 @@ local EScopes  = using "System.EScopes"
 local Guard = using "System.Guard"
 local Event = using "System.Event"
 
+local Fields = using "System.Classes.Fields"
+
 local PfuiGui                         = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 
@@ -20,7 +22,7 @@ local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilio
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._t = nil
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
@@ -34,7 +36,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._eventRequestingCurrentUserPreferences = nil
 
     return upcomingInstance
-end
+end)
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called

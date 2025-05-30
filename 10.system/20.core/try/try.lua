@@ -6,11 +6,13 @@ local Guard              = using "System.Guard" --                              
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
+local Fields             = using "System.Classes.Fields"
 
 local A                  = using "System.Helpers.Arrays"
 
-local Throw                            = using "System.Exceptions.Throw"
-local Exception                        = using "System.Exceptions.Exception"
+local Throw              = using "System.Exceptions.Throw"
+local Exception          = using "System.Exceptions.Exception"
+
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
 local Class = using "[declare]" "System.Try [Partial]"
@@ -19,13 +21,13 @@ Scopify(EScopes.Function, {})
 
 Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._action                           = nil
     upcomingInstance._allExceptionHandlers             = nil
     upcomingInstance._exceptionsDeserializationFactory = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(action, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)

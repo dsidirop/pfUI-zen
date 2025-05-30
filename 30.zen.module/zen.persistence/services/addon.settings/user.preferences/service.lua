@@ -1,25 +1,27 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
+
+local Guard  = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local DBContext                          = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
 local QueryableService                   = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 local WriteableService                   = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.WriteableService"
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork"
-local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable"
+local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable" --@formatter:on
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._serviceQueryable = nil
     upcomingInstance._serviceWriteable = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:NewWithDBContext(optionalDbContext)
     Scopify(EScopes.Function, self)

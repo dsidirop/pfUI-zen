@@ -1,20 +1,23 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Nils = using "System.Nils"
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Nils = using "System.Nils"
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
+
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._userPreferencesRepositoryQueryable = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(userPreferencesRepositoryQueryable)
     Scopify(EScopes.Function, self)

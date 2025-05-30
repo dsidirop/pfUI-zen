@@ -8,15 +8,17 @@ local A = using "System.Helpers.Arrays"
 local T = using "System.Helpers.Tables"
 local S = using "System.Helpers.Strings"
 
+local Fields = using "System.Classes.Fields"
+
 local Class = using "[declare]" "System.IO.GenericTextWriter [Partial]"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._nativeWriteCallback = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(nativeWriteCallback)
     Scopify(EScopes.Function, self)

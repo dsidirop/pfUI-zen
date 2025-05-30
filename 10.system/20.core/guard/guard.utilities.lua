@@ -6,7 +6,7 @@ local Reflection = using "System.Reflection"
 
 local StringsHelper = using "System.Helpers.Strings"
 
-local Utilities = using "[declare] [static]" "System.Guard.Utilities"
+local Utilities = using "[declare] [static]" "System.Guard.Utilities [Partial]"
 
 Scopify(EScopes.Function, {})
 

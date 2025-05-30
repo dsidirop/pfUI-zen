@@ -4,6 +4,8 @@ local Guard   = using "System.Guard" -- @formatter:off
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Fields = using "System.Classes.Fields"
+
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
@@ -11,12 +13,12 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.Gree
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._mode = nil --         SGreeniesGrouplootingAutomationMode
     upcomingInstance._actOnKeybind = nil -- SGreeniesGrouplootingAutomationActOnKeybind
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     return self:Instantiate()

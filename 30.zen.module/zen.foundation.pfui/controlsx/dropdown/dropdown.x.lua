@@ -5,6 +5,8 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local Event = using "System.Event"
+local Fields = using "System.Classes.Fields"
+
 local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local SelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
 
@@ -16,7 +18,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._nativePfuiControl = nil
 
     upcomingInstance._caption = ""
@@ -31,7 +33,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._eventSelectionChanged = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

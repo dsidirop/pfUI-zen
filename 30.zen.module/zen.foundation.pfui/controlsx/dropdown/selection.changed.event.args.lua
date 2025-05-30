@@ -7,16 +7,18 @@ local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Fields = using "System.Classes.Fields"
+
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._old = nil
     upcomingInstance._new = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

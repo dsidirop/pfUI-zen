@@ -3,18 +3,20 @@
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Fields = using "System.Classes.Fields"
 local TablesHelper = using "System.Helpers.Tables"
 
 local Class = using "[declare]" "System.Event [Partial]"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._handlers = {}
     upcomingInstance._handlersJustOnce = {}
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

@@ -1,9 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard = using "System.Guard"
-
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local GreeniesAutolooterAggregate = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
 
@@ -11,13 +12,13 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenE
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._settings = nil -- this is set via :SetSettings()
     upcomingInstance._isRunning = false
     upcomingInstance._greeniesAutolooterAggregate = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)

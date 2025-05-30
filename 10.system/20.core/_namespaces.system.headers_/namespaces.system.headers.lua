@@ -8,7 +8,12 @@ using "[declare] [static]" "System.Nils"
 using "[declare] [static]" "System.Math"
 using "[declare] [static]" "System.Time"
 using "[declare] [static]" "System.Table"
+
 using "[declare] [static]" "System.Guard"
+using "[declare] [static]" "System.Guard.Utilities"
+using "[declare] [static]" "System.Guard.Assert"
+using "[declare] [static]" "System.Guard.Assert.Explained"
+
 using "[declare] [static]" "System.Iterators"
 using "[declare] [static]" "System.Reflection"
 

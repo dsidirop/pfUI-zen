@@ -1,19 +1,20 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local Guard = using "System.Guard"
-
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._gamblingRequestId = 0
 
     return upcomingInstance
-end
+end)
 
 function Class:New(gamblingRequestId)
     Scopify(EScopes.Function, self)

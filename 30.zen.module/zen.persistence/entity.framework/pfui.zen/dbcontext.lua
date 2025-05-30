@@ -1,8 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Nils = using "System.Nils"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Nils = using "System.Nils"
+local Fields = using "System.Classes.Fields"
 
 local Schema = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1"
 local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration"
@@ -11,7 +13,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Entity
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance.Settings = { -- these are all public properties
         Logging         = { --[[placeholder]] },
         EngineSettings  = { --[[placeholder]] },
@@ -24,7 +26,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     }
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

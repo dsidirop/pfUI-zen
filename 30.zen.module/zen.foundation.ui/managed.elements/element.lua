@@ -5,6 +5,8 @@ local Event   = using "System.Event"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Fields  = using "System.Classes.Fields"
+
 local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
 local IsControlKeyDown = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown"
@@ -16,14 +18,14 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.Mana
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._nativeElement = nil
 
     upcomingInstance._eventKeyDown = nil
     upcomingInstance._eventOnEvent = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(nativeElement)
     Scopify(EScopes.Function, self)

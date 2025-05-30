@@ -1,9 +1,11 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Nils = using "System.Nils"
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Nils = using "System.Nils"
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local PfuiZenDbContext = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
 local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.Repository"
@@ -12,12 +14,12 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settin
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._dbcontext = nil
     upcomingInstance._userPreferencesRepository = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(dbcontext, userPreferencesRepository)
     Scopify(EScopes.Function, self)

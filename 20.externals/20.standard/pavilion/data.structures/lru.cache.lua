@@ -4,12 +4,14 @@
 
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Time         = using "System.Time" --             @formatter:off
+local Scopify      = using "System.Scopify" --           @formatter:off
+local EScopes      = using "System.EScopes"
+
+local Time         = using "System.Time" 
 local Nils         = using "System.Nils"
 local Guard        = using "System.Guard"
 local Table        = using "System.Table"
-local Scopify      = using "System.Scopify"
-local EScopes      = using "System.EScopes"
+local Fields       = using "System.Classes.Fields"
 
 local T            = using "System.Helpers.Tables"
 local S            = using "System.Helpers.Strings" --  @formatter:on
@@ -24,7 +26,7 @@ Class._.DefaultOptions = {
     MaxLifespanPerEntryInSeconds = 5 * 60,
 }
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._count = 0
     upcomingInstance._entries = {}
     upcomingInstance._timestampOfLastDeadlinesCleanup = -1
@@ -34,7 +36,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._maxLifespanPerEntryInSeconds = 0
 
     return upcomingInstance
-end
+end)
 
 -- todo   options should be a separate class with its own validation mechanism
 --

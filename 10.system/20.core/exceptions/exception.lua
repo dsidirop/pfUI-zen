@@ -4,19 +4,21 @@ local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Fields = using "System.Classes.Fields"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
 local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._message = nil
     upcomingInstance._stacktrace = ""
     upcomingInstance._stringified = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(message)
     Scopify(EScopes.Function, self)

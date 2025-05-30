@@ -6,6 +6,8 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local Event    = using "System.Event"
+local Fields   = using "System.Classes.Fields"
+
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
 local PfuiRoll                                 = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll"
@@ -15,7 +17,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.Gro
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._active = false
     upcomingInstance._hookApplied = false
 
@@ -23,7 +25,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._eventPendingLootItemGamblingDetected = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

@@ -1,9 +1,11 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-local Guard   = using "System.Guard"
-local Event   = using "System.Event"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard  = using "System.Guard"
+local Event  = using "System.Event"
+local Fields = using "System.Classes.Fields"
 
 local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
@@ -16,7 +18,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listene
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._timer = nil
 
     upcomingInstance._wantedActive = false
@@ -26,7 +28,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._eventModifierKeysStatesChanged = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(timer)
     Scopify(EScopes.Function, self)

@@ -4,6 +4,7 @@ local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
 
+local Fields       = using "System.Classes.Fields"
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
 local GroupLootGamblingService = using "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
@@ -19,7 +20,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.Gree
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._settings = nil
 
     upcomingInstance._isRunning = false
@@ -30,7 +31,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._groupLootGamblingService = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)

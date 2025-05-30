@@ -5,6 +5,8 @@ local Guard    = using "System.Guard"
 local Scopify  = using "System.Scopify"
 local EScopes  = using "System.EScopes"
 
+local Fields = using "System.Classes.Fields"
+
 local ZenEngine              = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 local ZenEngineSettings      = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings"
 local UserPreferencesService = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service"
@@ -16,12 +18,12 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.CommandingS
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._zenEngineSingleton = nil
     upcomingInstance._userPreferencesService = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(userPreferencesService)
     Scopify(EScopes.Function, self)

@@ -3,16 +3,18 @@
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Fields  = using "System.Classes.Fields"
+
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._old = nil
     upcomingInstance._new = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     return self:Instantiate()

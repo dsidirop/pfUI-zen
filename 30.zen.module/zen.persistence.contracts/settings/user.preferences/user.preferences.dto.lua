@@ -1,8 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local Guard   = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard  = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -11,7 +13,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Contra
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._greeniesGrouplootingAutomation = {
         mode         = SGreeniesGrouplootingAutomationMode.LetUserChoose,
         actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind.Automatic,
@@ -20,7 +22,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     -- ... more user-preferences sections can be added here in the future ...
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

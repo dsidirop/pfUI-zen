@@ -1,8 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard        = using "System.Guard" --@formatter:off
-local Scopify      = using "System.Scopify"
+local Scopify      = using "System.Scopify" --@formatter:off
 local EScopes      = using "System.EScopes"
+
+local Guard        = using "System.Guard"
+local Fields       = using "System.Classes.Fields"
 
 local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNotLoadableReason" --  @formater:on
 
@@ -10,7 +12,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._title = ""
     upcomingInstance._isLoaded = false
     upcomingInstance._isDynamicallyLoadable = false
@@ -20,7 +22,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._notLoadedReason = ""
 
     return upcomingInstance
-end
+end)
 
 function Class:New(options)
     Scopify(EScopes.Function, self)

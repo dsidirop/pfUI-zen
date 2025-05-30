@@ -1,12 +1,14 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-local Guard   = using "System.Guard"
-local Global  = using "System.Global"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local Event          = using("System.Event")
-local WoWCreateFrame = using("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
+local Guard  = using "System.Guard"
+local Global = using "System.Global"
+local Fields = using "System.Classes.Fields"
+
+local Event          = using "System.Event"
+local WoWCreateFrame = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame"
 
 -- todo   it would make sense to have a timer-factory so that it will generate the best possible
 -- todo   timer for the underlying platform   newer wow clients do support C_Timer afterall 
@@ -14,7 +16,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Ti
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._global = Global --20
     upcomingInstance._interval = nil
     upcomingInstance._wantedActive = false
@@ -26,7 +28,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     return upcomingInstance
 
     -- 20  this is vital in order for us to have access to _global.arg1 inside the onupdate handler
-end
+end)
 
 function Class:New(interval)
     Scopify(EScopes.Function, self)

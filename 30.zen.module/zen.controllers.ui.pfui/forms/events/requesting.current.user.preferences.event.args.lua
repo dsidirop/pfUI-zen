@@ -3,17 +3,19 @@
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Fields = using "System.Classes.Fields"
+
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance.Response = {
         UserPreferences = nil -- type: UserPreferencesDto
     }
 
     return upcomingInstance
-end
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)

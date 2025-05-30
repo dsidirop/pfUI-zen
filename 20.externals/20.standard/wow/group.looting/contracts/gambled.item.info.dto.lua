@@ -1,9 +1,11 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Nils         = using "System.Nils" --@formatter:off
-local Guard        = using "System.Guard"
-local Scopify      = using "System.Scopify"
+local Scopify      = using "System.Scopify" --                              @formatter:off
 local EScopes      = using "System.EScopes"
+
+local Nils         = using "System.Nils"
+local Guard        = using "System.Guard"
+local Fields       = using "System.Classes.Fields"
 
 local StringsHelper   = using "System.Helpers.Strings"
 local BooleansHelper  = using "System.Helpers.Booleans"
@@ -14,7 +16,7 @@ local Class = using "[declare]" "Pavilion.Warcraft.GroupLooting.Contracts.Gamble
 
 Scopify(EScopes.Function, {})
 
-function Class._.EnrichInstanceWithFields(upcomingInstance) --@formatter:off
+Fields(function(upcomingInstance) --@formatter:off
     upcomingInstance._name        = ""
     upcomingInstance._gamblingId  = 0
     upcomingInstance._itemQuality = 0
@@ -34,7 +36,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance) --@formatter:off
     upcomingInstance._disenchantIneligibilityReasonType = 0
 
     return upcomingInstance --@formatter:on
-end
+end)
 
 function Class:New(options)
     Scopify(EScopes.Function, self)

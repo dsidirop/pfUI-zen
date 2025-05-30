@@ -1,15 +1,18 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
+
 local EKeyEventType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs"
 
 Scopify(EScopes.Function, Class)
 
-function Class._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._key = ""
     upcomingInstance._eventType = nil
     upcomingInstance._hasModifierAlt = false
@@ -19,7 +22,7 @@ function Class._.EnrichInstanceWithFields(upcomingInstance)
     upcomingInstance._stringified = nil
 
     return upcomingInstance
-end
+end)
 
 function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, eventType)
     Scopify(EScopes.Function, self)

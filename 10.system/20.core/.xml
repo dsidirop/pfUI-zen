@@ -25,18 +25,18 @@
     <Include file="time\.xml"/>
 
     <Include file="table\.xml"/>
-    
-    <Include file="reflection\.xml"/>
-    <Include file="exceptions\.xml"/>
 
+    <!-- the guard.* stuff need to be loaded before exception-classes kick-in -->
     <Include file="guard\.xml"/>
-
-    <Include file="io\.xml"/>
-    
+    <Include file="reflection\.xml"/>
     <Include file="helpers.arrays\.xml"/>
     <Include file="helpers.tables\.xml"/>
     <Include file="helpers.strings\.xml"/>
     <Include file="helpers.booleans\.xml"/>
+
+    <Include file="exceptions\.xml"/>
+
+    <Include file="io\.xml"/>
     
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>
