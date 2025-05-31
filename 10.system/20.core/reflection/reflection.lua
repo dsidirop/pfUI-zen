@@ -2,6 +2,7 @@
 
 local S          = using "System.Helpers.Strings"
 
+local Nils       = using "System.Nils"
 local Math       = using "System.Math"
 local Guard      = using "System.Guard"
 local Scopify    = using "System.Scopify"
@@ -31,25 +32,30 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
---- @return STypes, string?
+--- @return STypes, string?, proto?
 function Reflection.GetInfo(valueOrClassInstanceOrProto)
     if valueOrClassInstanceOrProto == nil then
-        return STypes.Nil, nil
-    end
-    
-    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) -- 00
-    if protoTidbits ~= nil then
-        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
-
-        return overallSymbolType, protoTidbits:GetNamespace()
+        return STypes.Nil, nil, nil
     end
 
-    local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto) -- 10
+    local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto) -- 00
+    if rawType == SRawTypes.Table then
+        local protoTidbits = Nils.Coalesce(
+                Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto.__index), -- 10   class-instance
+                Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) --               proto
+        )
 
-    return Reflection.ConvertERawTypeToESymbolType_(rawType), nil
+        if protoTidbits ~= nil then
+            local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
 
-    -- 00  if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
-    -- 10  value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
+            return overallSymbolType, protoTidbits:GetNamespace(), protoTidbits:GetSymbolProto()
+        end 
+    end
+
+    return Reflection.ConvertSRawTypeToSType_(rawType), nil, nil
+
+    -- 00  value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
+    -- 10  if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
 end
 
 function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOrClassInstanceOrProto)
@@ -78,7 +84,7 @@ function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOr
     
     if managedSymbolType == EManagedSymbolTypes.RawSymbol then
         local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto)
-        return Reflection.ConvertERawTypeToESymbolType_(rawType)
+        return Reflection.ConvertSRawTypeToSType_(rawType)
     end
 
     Throw(NotImplementedException:New(S.Format(
@@ -86,7 +92,7 @@ function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOr
     )))
 end
 
-function Reflection.ConvertERawTypeToESymbolType_(rawType)
+function Reflection.ConvertSRawTypeToSType_(rawType)
     Guard.Assert.IsEnumValue(SRawTypes, rawType, "rawType")
 
     if rawType == SRawTypes.Nil then
@@ -165,22 +171,39 @@ end
 function Reflection.IsInstanceOf(object, desiredClassProto)
     Guard.Assert.Explained.IsTrue(Reflection.IsNonStaticClassProto(desiredClassProto), "desiredClassProto was expected to be a non-static-class-proto but it's not")
 
-    if not Reflection.IsTable(object) then
+    local type, _, proto = Reflection.GetInfo(object)
+    if type ~= STypes.NonStaticClass then
         return false
     end
 
-    if object.__index == desiredClassProto then
+    if proto == desiredClassProto then --optimization
         return true
     end
 
-    -- todo   we should look recursively through the entire asBlendxin.* tree
-    for mixinKey, _ in TablesHelper.GetPairs(object.asBlendxin or {}) do
-        -- the asBlendxin.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
-        if mixinKey == desiredClassProto then
+    local queue = { proto }
+    local currentProto
+    while true do
+        currentProto = TablesHelper.Dequeue(queue) -- dequeue   breadth first search
+        if currentProto == nil then
+            break -- we have exhausted the queue
+        end
+
+        if currentProto == desiredClassProto then
             return true
         end
+
+        -- if we have a class-proto then we can check its asBlendxin.* for mixins
+        for mixinKey, _ in TablesHelper.GetPairs(currentProto.asBlendxin or {}) do
+            if mixinKey == desiredClassProto then
+                return true
+            end
+
+            if Reflection.IsNonStaticClassProto(mixinKey) then
+                TablesHelper.Append(queue, mixinKey) -- append enqueue
+            end
+        end
     end
-    
+
     return false
 end
 
