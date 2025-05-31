@@ -5,6 +5,7 @@ local T = using "System.Helpers.Tables"
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
+local Fields       = using "System.Classes.Fields"
 
 local WoWRollOnLoot            = using "Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot"
 local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo"
@@ -16,12 +17,12 @@ local Service = using "[declare]" "Pavilion.Warcraft.GroupLooting.GroupLootGambl
 
 Scopify(EScopes.Function, {})
 
-function Service._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance.RollOnLootFunc_ = nil --          to help unit testing
     upcomingInstance.GetLootRollItemInfoFunc_ = nil -- to help unit testing
 
     return upcomingInstance
-end
+end)
 
 function Service:New(rollOnLootFunc, getLootRollItemInfoFunc)
     Scopify(EScopes.Function, self)

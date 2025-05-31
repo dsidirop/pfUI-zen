@@ -72,7 +72,7 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         U.Should.Not.Be.Nil(self.asBlendxin)
                         U.Should.Not.Be.Nil(self.asBlendxin.Zong)
                         
-                        local newInstance = self:Instantiate() -- order  calls _.EnrichInstanceWithFields() automatically
+                        local newInstance = self:Instantiate() -- order  calls the field-pluggers automatically
 
                         U.Should.Be.PlainlyEqual(newInstance._a, 1)
                         U.Should.Be.PlainlyEqual(newInstance._b, 10)
@@ -115,9 +115,6 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
             U.Should.Be.PlainlyEqual(FoobarInstance._a, 1)
             U.Should.Be.PlainlyEqual(FoobarInstance._b, 10)
             U.Should.Be.PlainlyEqual(FoobarInstance._sum, 11)
-
-            local FoobarProto = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
-            U.Should.Be.PlainlyEqual(FoobarInstance._.EnrichInstanceWithFields, FoobarProto._.EnrichInstanceWithFields)
 
             local ZongProto = using "T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
             U.Should.Be.PlainlyEqual(FoobarInstance._.W, ZongProto._.W)

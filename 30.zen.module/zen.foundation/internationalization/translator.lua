@@ -1,25 +1,26 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
 
-local Nils = using "System.Nils"
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local Localization = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
-local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
+local Nils   = using "System.Nils"
+local Guard  = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
-local ZenAllTranslations = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All"
+local Localization            = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
+local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
+local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 
 -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
 local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator"
 
 Scopify(EScopes.Function, {})
 
-function ZenAddonTranslator._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._properTranslationTable = nil
 
     return upcomingInstance
-end
+end)
 
 
 function ZenAddonTranslator:NewForActiveUILanguage()

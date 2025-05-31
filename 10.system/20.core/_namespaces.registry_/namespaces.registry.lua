@@ -309,8 +309,8 @@ do
 
         upcomingInstance = upcomingInstance or {}
         if classProto.asBlendxin ~= nil then
-            -- iterate over the asBlendxin.* table and call the _.EnrichInstanceWithFields() static-method of each mixin in
-            -- order to aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
+            -- iterate over the asBlendxin.* table and call the field-plugger method of each mixin in order to
+            -- aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
             for _, mixinProto in _pairs(classProto.asBlendxin) do
 
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
@@ -319,11 +319,6 @@ do
                     __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type %q (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
 
                     upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, mixinProtoTidbits, upcomingInstance) -- vital order    depth first
-
-                    -- local enrichInstanceWithFieldsOfMixin = _nilCoalesce(mixinProtoTidbits:GetFieldPluggerFunc(), snapshotOfMixinStaticMethods.EnrichInstanceWithFields)
-                    -- if enrichInstanceWithFieldsOfMixin ~= nil then
-                    --     upcomingInstance = enrichInstanceWithFieldsOfMixin(upcomingInstance)
-                    -- end
                 end
 
             end
@@ -331,12 +326,7 @@ do
 
         -- must be last    finally we can enrich the instance with the fields of the class itself if it has any in case of
         -- overlaps with base-classes we want the fields of this child-class to prevail over the ones of the parent-base-classes
-        local enrichInstanceWithOwnFields = _nilCoalesce(protoTidbits:GetFieldPluggerFunc(), classProto._.EnrichInstanceWithFields)
-        if enrichInstanceWithOwnFields ~= nil then
-            upcomingInstance = enrichInstanceWithOwnFields(upcomingInstance)
-        end        
-
-        return upcomingInstance
+        return protoTidbits:GetFieldPluggerCallbackFunc()(upcomingInstance)
     end
 end
 
@@ -377,6 +367,10 @@ end
 
 local Entry = _spawnSimpleMetatable() -- proto symbol tidbits
 do
+    local function _dudFieldPluggerFunc(upcomingInstance)
+        return upcomingInstance
+    end
+    
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(1, self)
 
@@ -390,7 +384,9 @@ do
             _symbolProto              = symbolProto,
             _isForPartial             = _nilCoalesce(isForPartial, false),
             _namespacePath            = namespacePath,
-            _fieldPluggerCallbackFunc = nil, -- set during the class declaration if at all
+            _fieldPluggerCallbackFunc = symbolType == EManagedSymbolTypes.NonStaticClass
+                    and _dudFieldPluggerFunc  -- placeholder
+                    or nil,
         }
 
         _setmetatable(instance, self)
@@ -398,12 +394,12 @@ do
         return instance
     end
 
-    function Entry:GetFieldPluggerFunc()
+    function Entry:GetFieldPluggerCallbackFunc()
         _setfenv(1, self)
 
-        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
+        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
         
-        return self._fieldPluggerCallbackFunc
+        return _fieldPluggerCallbackFunc
     end
 
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
@@ -532,7 +528,6 @@ do
         ["asBlendxin"]       = "asBlendxin",
     }
     local Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local StaticClasses_SystemReservedMemberNames_ForDirectMembers = {
@@ -544,7 +539,6 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local NonStaticClasses_SystemReservedMemberNames_ForDirectMembers = {
@@ -556,7 +550,6 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     local Interface_SystemReservedMemberNames_ForDirectMembers = {
@@ -568,7 +561,6 @@ do
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
-        -- ["EnrichInstanceWithFields"] = "EnrichInstanceWithFields",
     }
 
     function Entry:GetSpecialReservedNames()
@@ -900,21 +892,19 @@ do
                 targetSymbolProto_asBlendxinProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
             end
 
-            for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do
-                -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
-
-                _ = _type(specific_MixinMemberName) == "string" or _throw_exception("mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
-                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname)
+            for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do --@formatter:off _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+                _ = _type(specific_MixinMemberName) == "string"                          or _throw_exception("mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
+                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
 
                 if specific_MixinMemberName == "_" then
                     -- todo   try refactor this part to just use __index with a custom look up function for the base statics and be done with it nice and easy (not sure if wow-lua indeed supports multi-mt lookups though!)
                     
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
-                    for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do
-                        _ = _type(_staticMemberName) == "string" or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
-                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname)
+                    for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do --@formatter:off
+                        _ = _type(_staticMemberName) == "string"                   or _throw_exception("static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
+                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
 
-                        -- must not let the mixins overwrite the default .EnrichInstanceWithFields()
+                        -- must not let the mixins overwrite the default fields
                         local hasGreenName = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] == nil
                         if hasGreenName then
                             targetSymbolProto._[_staticMemberName] = _staticMember -- static member

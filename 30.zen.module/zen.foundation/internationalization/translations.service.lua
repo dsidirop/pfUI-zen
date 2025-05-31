@@ -1,9 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-local Nils = using "System.Nils" -- @formatter:off
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Nils    = using "System.Nils"
+local Guard   = using "System.Guard"
+local Fields  = using "System.Classes.Fields"
 
 local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Translator"
 local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- @formatter:on
@@ -12,12 +14,12 @@ local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foun
 
 Scopify(EScopes.Function, {})
 
-function TranslationsService._.EnrichInstanceWithFields(upcomingInstance)
+Fields(function(upcomingInstance)
     upcomingInstance._zenAddonTranslator = nil
     upcomingInstance._pfuiTranslatorAsFallback = nil
 
     return upcomingInstance
-end
+end)
 
 function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
