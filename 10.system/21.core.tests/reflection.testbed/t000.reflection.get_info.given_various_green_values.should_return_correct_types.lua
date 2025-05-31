@@ -28,7 +28,20 @@ TestsGroup:AddTheory("T000.Reflection.GetInfo.GivenVariousGreenValues.ShouldRetu
             ["REF.GI.GVGV.SRCT.0050"] = {   Value = true,                  Expected = { SymbolType = STypes.Boolean,         SymbolNamespace = nil,                                      SymbolProto = nil }  },
             ["REF.GI.GVGV.SRCT.0060"] = {   Value = Reflection,            Expected = { SymbolType = STypes.StaticClass,     SymbolNamespace = "System.Reflection",                      SymbolProto = (using "System.Reflection"                      ) }  },
             ["REF.GI.GVGV.SRCT.0065"] = {   Value = Event,                 Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Event",                           SymbolProto = (using "System.Event"                           ) }  },
+            ["REF.GI.GVGV.SRCT.0067"] = {   Value = Event:New(),           Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Event",                           SymbolProto = (using "System.Event"                           ) }  },
             ["REF.GI.GVGV.SRCT.0070"] = {   Value = EManagedSymbolTypes,   Expected = { SymbolType = STypes.Enum,            SymbolNamespace = "System.Namespacer.EManagedSymbolTypes",  SymbolProto = (using "System.Namespacer.EManagedSymbolTypes"  ) }  },
+            ["REF.GI.GVGV.SRCT.0080"] = (function()
+                local ITestInterface = using "[declare] [interface]" "REF.GI.GVGV.SRCT.0080.ITestInterface"
+
+                return {
+                    Value = ITestInterface,
+                    Expected = {
+                        SymbolType = STypes.Interface,
+                        SymbolNamespace = "REF.GI.GVGV.SRCT.0080.ITestInterface",
+                        SymbolProto = ITestInterface,
+                    }
+                }
+            end)(),
         }, -- @formatter:on
         function(options)
             -- ARRANGE

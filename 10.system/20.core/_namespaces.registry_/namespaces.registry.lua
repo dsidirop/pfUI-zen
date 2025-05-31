@@ -335,9 +335,9 @@ do
     EManagedSymbolTypes.Enum = 1
     EManagedSymbolTypes.NonStaticClass = 2
     EManagedSymbolTypes.StaticClass = 3
-    EManagedSymbolTypes.Interface = 3
-    EManagedSymbolTypes.RawSymbol = 4 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
-    EManagedSymbolTypes.Keyword = 5 -- [declare] and friends
+    EManagedSymbolTypes.Interface = 4
+    EManagedSymbolTypes.RawSymbol = 5 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+    EManagedSymbolTypes.Keyword = 6 --    "[declare]*" and friends
 end
 
 local ProtosFactory = {}
@@ -615,7 +615,10 @@ do
         _ = namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
-        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.NonStaticClass or symbolType == EManagedSymbolTypes.Enum or symbolType == EManagedSymbolTypes.Interface
+        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.Enum
+                or symbolType == EManagedSymbolTypes.Interface
+                or symbolType == EManagedSymbolTypes.StaticClass
+                or symbolType == EManagedSymbolTypes.NonStaticClass
 
         _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
