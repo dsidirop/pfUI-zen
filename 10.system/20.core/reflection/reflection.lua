@@ -192,8 +192,8 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
             return true
         end
 
-        -- if we have a class-proto then we can check its asBlendxin.* for mixins
-        for mixinKey, _ in TablesHelper.GetPairs(currentProto.asBlendxin or {}) do
+        -- if we have a class-proto then we can check its asBase.* for mixins
+        for mixinKey, _ in TablesHelper.GetPairs(currentProto.asBase or {}) do
             if mixinKey == desiredClassProto then
                 return true
             end
@@ -218,9 +218,9 @@ function Reflection.IsImplementing(object, desiredInterfaceProto)
         return true
     end
 
-    -- todo   we should look recursively through the entire asBlendxin.* tree
-    for mixinKey, _ in TablesHelper.GetPairs(object.asBlendxin or {}) do
-        -- the asBlendxin.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
+    -- todo   we should look recursively through the entire asBase.* tree
+    for mixinKey, _ in TablesHelper.GetPairs(object.asBase or {}) do
+        -- the asBase.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
         if mixinKey == desiredInterfaceProto then
             return true
         end

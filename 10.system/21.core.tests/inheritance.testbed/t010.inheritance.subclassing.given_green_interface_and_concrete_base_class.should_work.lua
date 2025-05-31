@@ -68,9 +68,9 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         Scopify(EScopes.Function, self)
 
                         U.Should.Be.True(self.__index == self)
-                        U.Should.Not.Be.Nil(self.blendxin)
-                        U.Should.Not.Be.Nil(self.asBlendxin)
-                        U.Should.Not.Be.Nil(self.asBlendxin.Zong)
+                        U.Should.Not.Be.Nil(self.base)
+                        U.Should.Not.Be.Nil(self.asBase)
+                        U.Should.Not.Be.Nil(self.asBase.Zong)
                         
                         local newInstance = self:Instantiate() -- order  calls the field-pluggers automatically
 
@@ -79,14 +79,14 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         
                         U.Should.Be.True(Metatable.Get(newInstance).__index == Metatable.Get(newInstance))
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance))
-                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).blendxin)
-                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBlendxin)
-                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBlendxin.Zong)
-                        U.Should.Not.Be.Nil(newInstance.blendxin)
-                        U.Should.Not.Be.Nil(newInstance.asBlendxin)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).base)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Zong)
+                        U.Should.Not.Be.Nil(newInstance.base)
+                        U.Should.Not.Be.Nil(newInstance.asBase)
 
-                        newInstance = newInstance.asBlendxin.Zong.New(newInstance) --     order   notice that we are calling it as .New() instead of :New()
-                        -- newInstance = newInstance.asBlendxin.Bram.New(newInstance) --  order   that is intentional because we want to call the base constructor
+                        newInstance = newInstance.asBase.Zong.New(newInstance) --     order   notice that we are calling it as .New() instead of :New()
+                        -- newInstance = newInstance.asBase.Bram.New(newInstance) --  order   that is intentional because we want to call the base constructor
 
                         newInstance._sum = newInstance._a + newInstance._b -- finally the constructor can work its own magic after all super-constructors have been invoked above
 
@@ -120,14 +120,14 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
             U.Should.Be.PlainlyEqual(FoobarInstance._.W, ZongProto._.W)
             U.Should.Be.PlainlyEqual(FoobarInstance._.F, ZongProto._.F)
 
-            U.Should.Not.Be.Nil(FoobarInstance.blendxin) --   we do allow interfaces to provide default implementations like in
-            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin) -- the latest versions of C# and Java so these members should not be nil
+            U.Should.Not.Be.Nil(FoobarInstance.base) --   we do allow interfaces to provide default implementations like in
+            U.Should.Not.Be.Nil(FoobarInstance.asBase) -- the latest versions of C# and Java so these members should not be nil
 
-            U.Should.Be.Nil(FoobarInstance.asBlendxin.Zong._a) -- these members should never be
-            U.Should.Be.Nil(FoobarInstance.asBlendxin.Zong._b) -- initialized at the proto level
+            U.Should.Be.Nil(FoobarInstance.asBase.Zong._a) -- these members should never be
+            U.Should.Be.Nil(FoobarInstance.asBase.Zong._b) -- initialized at the proto level
 
-            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong)
-            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.Zong.Zang)
-            U.Should.Not.Be.Nil(FoobarInstance.asBlendxin.IPing)
+            U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong)
+            U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong.Zang)
+            U.Should.Not.Be.Nil(FoobarInstance.asBase.IPing)
         end
 )

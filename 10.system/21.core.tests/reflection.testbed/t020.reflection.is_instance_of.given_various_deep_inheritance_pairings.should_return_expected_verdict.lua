@@ -36,7 +36,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                     ExpectedVerdict = true
                 },
                 ["REF.IIO.GVDPIP.SREV.0020"] = {
-                    Value           = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
+                    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
                         ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
                             ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
                                 ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
@@ -51,6 +51,24 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                     Parent          = Exception,
                     ExpectedVerdict = false
                 },
+                ["REF.IIO.GVDPIP.SREV.0030"] = (function()
+                    return {
+                        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.IrrelevantException" {
+                            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
+                                ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Bar1" {
+                                    ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Ping1"
+                                },
+                            },
+                            ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo2" {
+                                ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Bar2" {
+                                    ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Ping2"
+                                },
+                            },
+                        },
+                        Parent          = Exception,
+                        ExpectedVerdict = false
+                    }
+                end)(),
             }
         end, -- @formatter:on
         function(specs)

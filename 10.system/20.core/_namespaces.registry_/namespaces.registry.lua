@@ -287,7 +287,7 @@ do
         _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
 
-        -- todo    try to auto-generate the bindings for the blendxinProtos.* and the asBlendxinProto.* using instance.blendxin.* and instance.asBlendxin.*
+        -- todo    try to auto-generate the bindings for the base.* and the asBaseProto.* using instance.base.* and instance.asBase.*
         -- todo    but we have to be very careful around :New*() methods because those have to be bound against the CLASS-PROTO and not against the instance!
         -- todo
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
@@ -308,10 +308,10 @@ do
         _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type %q", _type(upcomingInstance)) --@formatter:on
 
         upcomingInstance = upcomingInstance or {}
-        if classProto.asBlendxin ~= nil then
-            -- iterate over the asBlendxin.* table and call the field-plugger method of each mixin in order to
+        if classProto.asBase ~= nil then
+            -- iterate over the asBase.* table and call the field-plugger method of each mixin in order to
             -- aggregate all the fields of all mixins in a single instance   in case of field-overlaps the last mixin wins
-            for _, mixinProto in _pairs(classProto.asBlendxin) do
+            for _, mixinProto in _pairs(classProto.asBase) do
 
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
                 if mixinProtoTidbits ~= nil and mixinProtoTidbits:IsNonStaticClassEntry() then
@@ -520,32 +520,31 @@ do
     end
 
     local Enums_SystemReservedMemberNames_ForDirectMembers = {
+        ["base"]             = "base",
+        ["asBase"]           = "asBase",
         ["IsValid"]          = "IsValid",
-
         ["__call"]           = "__call",
         ["__index"]          = "__index",
-        ["blendxin"]         = "blendxin",
-        ["asBlendxin"]       = "asBlendxin",
     }
     local Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
 
     local StaticClasses_SystemReservedMemberNames_ForDirectMembers = {
+        ["base"]                = "base",
+        ["asBase"]              = "asBase",
         ["__call"]              = "__call",
         ["__index"]             = "__index",
-        ["blendxin"]            = "blendxin",
-        ["asBlendxin"]          = "asBlendxin",
-        -- ["Instantiate"]         = "Instantiate",
+        -- ["Instantiate"]      = "Instantiate",
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
 
     local NonStaticClasses_SystemReservedMemberNames_ForDirectMembers = {
+        ["base"]                = "base",
+        ["asBase"]              = "asBase",
         ["__call"]              = "__call",
         ["__index"]             = "__index",
-        ["blendxin"]            = "blendxin",
-        ["asBlendxin"]          = "asBlendxin",
         ["Instantiate"]         = "Instantiate",
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
@@ -553,11 +552,11 @@ do
     }
 
     local Interface_SystemReservedMemberNames_ForDirectMembers = {
+        ["base"]                = "base",
+        ["asBase"]              = "asBase",
         ["__call"]              = "__call",
         ["__index"]             = "__index",
-        ["blendxin"]            = "blendxin",
-        ["asBlendxin"]          = "asBlendxin",
-        -- ["Instantiate"]         = "Instantiate",
+        -- ["Instantiate"]      = "Instantiate",
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
@@ -812,11 +811,11 @@ do
                 return true
             end
 
-            if mixinProtoSymbol_.asBlendxin == nil then
+            if mixinProtoSymbol_.asBase == nil then
                 return false
             end
 
-            if mixinProtoSymbol_.asBlendxin[targetSymbolProto_] ~= nil then
+            if mixinProtoSymbol_.asBase[targetSymbolProto_] ~= nil then
                 return true
             end
 
@@ -830,8 +829,8 @@ do
                 _throw_exception("too many protos (%s) during recursion - something feels off - possible circular dependency detected", protosCheckedCount)
             end
 
-            if mixinProtoSymbol_.asBlendxin ~= nil then
-                for key, protoSymbol_ in _pairs(mixinProtoSymbol_.asBlendxin) do
+            if mixinProtoSymbol_.asBase ~= nil then
+                for key, protoSymbol_ in _pairs(mixinProtoSymbol_.asBase) do
                     if _type(key) == "table" then
                         if impl_(protoSymbol_, targetSymbolProto_, depth_ + 1) then -- recurse
                             return true
@@ -856,11 +855,11 @@ do
         _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
         _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
 
-        local targetSymbolProto_BlendxinProp = targetSymbolProto.blendxin or {} -- create an blendxin and asBlendxin tables to hold per-mixin fields/methods
-        local targetSymbolProto_asBlendxinProp = targetSymbolProto.asBlendxin or {}
+        local targetSymbolProto_BaseProp = targetSymbolProto.base or {} -- create an base and asBase tables to hold per-mixin fields/methods
+        local targetSymbolProto_asBaseProp = targetSymbolProto.asBase or {}
 
-        targetSymbolProto.blendxin = targetSymbolProto_BlendxinProp
-        targetSymbolProto.asBlendxin = targetSymbolProto_asBlendxinProp
+        targetSymbolProto.base = targetSymbolProto_BaseProp
+        targetSymbolProto.asBase = targetSymbolProto_asBaseProp
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
@@ -873,8 +872,8 @@ do
             local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
             _ = mixinProtoTidbits                                           ~= nil or _throw_exception("[NR.BM.060] mixin nicknamed %q is not a registered proto-symbol for a class/interface/enum", specific_MixinNickname)
             _ = _next(specific_MixinProtoSymbol)                            ~= nil or _throw_exception("[NR.BM.061] mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[specific_MixinNickname]    == nil or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
-            _ = targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] == nil or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
+            _ = targetSymbolProto_asBaseProp[specific_MixinNickname]    == nil or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
+            _ = targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] == nil or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
             
             local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
@@ -885,11 +884,11 @@ do
             _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
             _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
             
-            targetSymbolProto_asBlendxinProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
+            targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
 
             local isNamelessMixin = specific_MixinNickname == ""
             if not isNamelessMixin then
-                targetSymbolProto_asBlendxinProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBlendxin[name]
+                targetSymbolProto_asBaseProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBase[name]
             end
 
             for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do --@formatter:off _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
@@ -911,11 +910,11 @@ do
                         end
                     end
                 else
-                    -- blend-in all whitelisted non-statics-methods and static-fields from every mixin both directly under targetSymbolProto.* and under target.blendxin.*
+                    -- blend-in all whitelisted non-statics-methods and static-fields from every mixin both directly under targetSymbolProto.* and under target.base.*
 
                     local isFunction = _type(specific_MixinMemberSymbol) == "function"
-                    local hasBlendxinRelatedName = specific_MixinMemberName == "blendxin" or specific_MixinMemberName == "asBlendxin"
-                    _ = (not isFunction or not hasBlendxinRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'blendxin'/'asBlendxin' - this is so odd it's treated as an error", specific_MixinMemberName)
+                    local hasBaseRelatedName = specific_MixinMemberName == "base" or specific_MixinMemberName == "asBase"
+                    _ = (not isFunction or not hasBaseRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'base'/'asBase' - this is so odd it's treated as an error", specific_MixinMemberName)
 
                     -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
                     
@@ -923,7 +922,7 @@ do
                     if hasGreenName then
                         targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
 
-                        targetSymbolProto_asBlendxinProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBlendxin.<specific-mixin-nickname>.<specific-member-name>
+                        targetSymbolProto_asBaseProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBase.<specific-mixin-nickname>.<specific-member-name>
                     -- else
                     --     _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")
                     end
