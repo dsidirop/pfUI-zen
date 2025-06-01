@@ -14,12 +14,15 @@ _setfenv(1, {})
 if U then
 	-- _print("Running VWoWUnit tests...\n ")
 
-	-- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Trace) -- for debugging
-    U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
+U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Trace) -- for debugging
+    -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
+    U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Warn) -- for debugging
 
 	U.TestsEngine:RunAllTestGroups()
 
-	-- U.TestsEngine:RunTestGroup("System.Guard.Assert.IsBooleanizable")	
+	-- U.TestsEngine:RunSpecificTest("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePairs.ShouldReturnExpectedVerdict")
+    
+    -- U.TestsEngine:RunTestGroup("System.Guard.Assert.IsBooleanizable")
 
 	-- U.TestsEngine:RunTestGroupsByTag("grouplooting")
 

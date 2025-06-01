@@ -20,7 +20,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
 
     local newInstance = self:Instantiate()
 
-    return newInstance.base.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
+    return Class.base.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
 function Class:NewWithMessage(value, customMessage, optionalArgumentName, optionalExpectationOrExpectedType)
@@ -32,7 +32,7 @@ function Class:NewWithMessage(value, customMessage, optionalArgumentName, option
 
     local newInstance = self:Instantiate()
 
-    return newInstance.base.New(
+    return Class.base.New(
             newInstance,
             customMessage .. " because " .. _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     )

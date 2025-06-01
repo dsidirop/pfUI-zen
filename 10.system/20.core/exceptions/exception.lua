@@ -1,14 +1,14 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
 
-local Nils = using "System.Nils"
-local Guard = using "System.Guard"
+local Nils    = using "System.Nils"
+local Guard   = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local Fields = using "System.Classes.Fields"
+local Fields             = using "System.Classes.Fields"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
-local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
+local Class = using "[declare]" "System.Exceptions.Exception [Partial]" -- @formatter:on
 
 Scopify(EScopes.Function, {})
 

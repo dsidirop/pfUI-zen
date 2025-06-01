@@ -284,10 +284,11 @@ do
         _ = classProtoOrInstanceBeingEnriched.__index ~= "nil" or _throw_exception("classProto.__index is nil - how did this happen?")
 
         local newInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, protoTidbits)
+
         _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
 
-        -- todo    try to auto-generate the bindings for the base.* and the asBaseProto.* using instance.base.* and instance.asBase.*
+        -- todo    try to auto-generate the bindings for the base.* and the asBaseProto.* using classProto.base.* and classProto.asBase.*
         -- todo    but we have to be very careful around :New*() methods because those have to be bound against the CLASS-PROTO and not against the instance!
         -- todo
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
@@ -315,9 +316,6 @@ do
 
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
                 if mixinProtoTidbits ~= nil and mixinProtoTidbits:IsNonStaticClassEntry() then
-                    local snapshotOfMixinStaticMethods = mixinProto._
-                    __ = _type(snapshotOfMixinStaticMethods) == "table" or _throw_exception("mixinProto._ was expected to be a table but it was found to be of type %q (mixin-namespace = %q)", _type(snapshotOfMixinStaticMethods), mixinProtoTidbits:GetNamespace())
-
                     upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, mixinProtoTidbits, upcomingInstance) -- vital order    depth first
                 end
 
@@ -924,6 +922,8 @@ do
                     
                     local hasGreenName = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] == nil
                     if hasGreenName then
+                        -- _g.print("****** [" .. _g.tostring(specific_MixinNickname) .. "] adding mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' to targetSymbolProto")
+                        
                         targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
 
                         targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol

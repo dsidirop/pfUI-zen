@@ -26,7 +26,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                     function GrandChildException:New()
                         local newInstance = self:Instantiate()
 
-                        return newInstance.base.New(newInstance, "GrandChildException")
+                        return GrandChildException.base.New(newInstance, "GrandChildException")
                     end
 
                     return {
@@ -49,7 +49,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                 --    function GrandChildException:New()
                 --        local newInstance = self:Instantiate()
                 --
-                --        return newInstance.base.New(newInstance, "GrandChildException")
+                --        return GrandChildException.base.New(newInstance, "GrandChildException")
                 --    end
                 --    
                 --    return {

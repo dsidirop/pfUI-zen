@@ -82,8 +82,8 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).base)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Zong)
-                        U.Should.Not.Be.Nil(newInstance.base)
-                        U.Should.Not.Be.Nil(newInstance.asBase)
+                        -- U.Should.Not.Be.Nil(newInstance.base) -- these should be offlimits and any attempt to access them should generate an exception
+                        -- U.Should.Not.Be.Nil(newInstance.asBase) -- these should be offlimits and any attempt to access them should generate an exception
 
                         newInstance = newInstance.asBase.Zong.New(newInstance) --     order   notice that we are calling it as .New() instead of :New()
                         -- newInstance = newInstance.asBase.Bram.New(newInstance) --  order   that is intentional because we want to call the base constructor
