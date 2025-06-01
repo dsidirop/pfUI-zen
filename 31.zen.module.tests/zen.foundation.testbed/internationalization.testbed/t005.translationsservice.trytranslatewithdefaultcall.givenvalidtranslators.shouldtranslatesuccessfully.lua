@@ -4,7 +4,7 @@ local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Inter
 
 local TG, U = using "[testgroup]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests"
 
-TG:AddTheory("Τ005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
+TG:AddTheory("T005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
         {
             ["TS.TTWDC.GVT.STS.010"] = {
                 Text           = "Foobar",
