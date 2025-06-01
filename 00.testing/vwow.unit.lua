@@ -1,4 +1,4 @@
-local VWoWUnit, _assert, _type, _strlen, _format, _setfenv, _tableGetn, _setmetatable = (function()
+local VWoWUnit, _assert, _type, _setfenv, _tableGetn, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -7,12 +7,10 @@ local VWoWUnit, _assert, _type, _strlen, _format, _setfenv, _tableGetn, _setmeta
 	_g.VWoWUnit = _g.VWoWUnit or {} -- dont introduce a local variable here    it will cause bugs
 
 	local _type = _assert(_g.type)
-	local _strlen = _assert(_g.string.len)
-	local _format = _assert(_g.string.format)
 	local _tableGetn = _assert(_g.table.getn)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g.VWoWUnit, _assert, _type, _strlen, _format, _setfenv, _tableGetn, _setmetatable
+	return _g.VWoWUnit, _assert, _type, _setfenv, _tableGetn, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -38,8 +36,8 @@ end
 function TestsRunnerEngine:RunAllTestGroups()
 	_setfenv(1, self)
 
-	for _, testsGroup in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
-		_logger:LogInfo("** Running test-group " .. testsGroup:GetName())
+	for _, testsGroup in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+		_logger:LogInfo("** [" .. testsGroup:GetName() .. "] Running test-group ...")
         testsGroup:Run()
 		_logger:LogInfo("")
 	end
@@ -52,19 +50,31 @@ function TestsRunnerEngine:RunTestGroup(testGroupName)
 	
 	local group = _testGroups[testGroupName]
 	if not group then
-		_logger:LogError(_format("** Test-group %q doesn't exist - ignoring it", testGroupName))
+		_logger:LogError("** [" .. testGroupName .. "] doesn't exist - ignoring it")
 		return
 	end
 
-	group:Run()
+    group:Run()
 end
 
 function TestsRunnerEngine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
-	for _, group in TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
+	for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
+end
+
+function TestsRunnerEngine:RunSpecificTest(testName)
+    _setfenv(1, self)
+
+    local test = self:GetSpecificTest_(testName)
+    if not test then
+        _logger:LogError("** [" .. testName .. "] doesn't exist - ignoring it")
+        return
+    end
+
+    test:Run()
 end
 
 --[[ Registry ]]--
@@ -120,19 +130,19 @@ function TestsRunnerEngine:GetsertGroup_(name)
 	return group
 end
 
-function TestsRunnerEngine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
-	_setfenv(1, TestsRunnerEngine)
+function TestsRunnerEngine:GetSpecificTest_(testName)
+    _setfenv(1, self)
 
-	if testGroups == nil then
-		return {}
-	end
+    _assert(_type(testName) == "string" and testName ~= "")
 
-	return VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(testGroups, function(a, b)
-		local lengthA = _strlen(a) -- 00
-		local lengthB = _strlen(b)
+    for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+        local test = group:GetTest(testName)
+        if test then
+            return test
+        end
+    end
 
-		return lengthA < lengthB or (lengthA == lengthB and a < b)
-	end)
+    return nil
 end
 
 VWoWUnit.TestsEngine = TestsRunnerEngine:New() -- single instance

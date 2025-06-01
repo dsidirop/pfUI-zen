@@ -1,4 +1,4 @@
-local VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next = (function()
+local VWoWUnit, _gsub, _pairs, _assert, _strlen, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -10,11 +10,12 @@ local VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _
     local _next = _assert(_g.next)
     local _gsub = _assert(_g.gsub)
     local _pairs = _assert(_g.pairs)
+    local _strlen = _assert(_g.string.len)
     local _strfind = _assert(_g.string.find)
     local _tableSort = _assert(_g.table.sort)
     local _tableInsert = _assert(_g.table.insert)
 
-    return _g.VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next
+    return _g.VWoWUnit, _gsub, _pairs, _assert, _strlen, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next
 end)()
 
 _setfenv(1, {})
@@ -85,6 +86,21 @@ function VWoWUnit.Utilities.IsEmptyTable(value)
     _setfenv(1, VWoWUnit.Utilities)
 
     return VWoWUnit.Utilities.IsTable(value) and _next(value) == nil
+end
+
+function VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(testGroups)
+    _setfenv(1, VWoWUnit.Utilities)
+
+    if testGroups == nil then
+        return {}
+    end
+
+    return VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(testGroups, function(a, b)
+        local lengthA = _strlen(a) -- 00
+        local lengthB = _strlen(b)
+
+        return lengthA < lengthB or (lengthA == lengthB and a < b)
+    end)
 end
 
 function VWoWUnit.Utilities.GlobToPattern_(globPattern)

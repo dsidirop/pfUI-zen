@@ -62,6 +62,20 @@ function VWoWUnit.TestsGroup:Run()
     return nonSuccessfulTests
 end
 
+ function VWoWUnit.TestsGroup:GetTest(testName)
+    _setfenv(1, self)
+
+    _assert(_type(testName) == "string" and testName ~= "", "testName must be a non-empty string")
+
+    for _, test in VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(_tests) do
+        if test:GetName() == testName then
+            return test
+        end
+    end
+
+    return nil
+end
+
 function VWoWUnit.TestsGroup:AddFact(testName, testFunction)
     _setfenv(1, self)
 

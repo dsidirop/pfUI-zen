@@ -64,6 +64,14 @@ function VWoWUnit.Test:NewWithDynamicDataGeneratorCallback(testName, testFunctio
     }, self)
 end
 
+function VWoWUnit.Test:GetName()
+    _setfenv(1, self)
+
+    return _testName
+end
+
+--[[ Run ]]--
+
 function VWoWUnit.Test:Run()
 	_setfenv(1, self)
 
