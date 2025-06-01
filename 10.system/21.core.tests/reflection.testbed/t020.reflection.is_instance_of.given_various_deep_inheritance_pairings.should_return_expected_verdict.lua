@@ -17,6 +17,7 @@ Scopify(EScopes.Function, {})
 TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePairs.ShouldReturnExpectedVerdict", -- @formatter:off
         function()
             return {
+
                 ["REF.IIO.GVDPIP.SREV.0000"] = (function()
                     local GrandChildException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0000.GrandChildException" {
                         ["NotImplementedException"] = NotImplementedException,
@@ -29,27 +30,38 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                     end
 
                     return {
-                        Value           = GrandChildException:New(),
+                        SpawnObjectFunc = function() return GrandChildException:New() end,
                         Parent          = Exception,
                         ExpectedVerdict = true,
                     }
                 end)(),
-                
-                -- todo  fix these tests so that they will spawn instances like we do on the first test
-                --["REF.IIO.GVDPIP.SREV.0010"] = {
-                --    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GreatGrandChildException" {
-                --        ["Foobar"]              = using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
+
+                --["REF.IIO.GVDPIP.SREV.0010"] = (function()
+                --    local GrandChildException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandChildException" {
+                --        ["Foobar"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
                 --        ["GrandChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.Parent.GrandChildException" {
                 --            ["ChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandParent.ChildException" {
                 --                ["NotImplementedException"] = NotImplementedException,
                 --            },
                 --        },
-                --    },
-                --    Parent          = Exception,
-                --    ExpectedVerdict = true,
-                --},
+                --    }
+                --
+                --    function GrandChildException:New()
+                --        local newInstance = self:Instantiate()
+                --
+                --        return newInstance.base.New(newInstance, "GrandChildException")
+                --    end
+                --    
+                --    return {
+                --        SpawnObjectFunc = function() return GrandChildException:New() end,
+                --        Parent          = Exception,
+                --        ExpectedVerdict = true,
+                --    }
+                --end)(),
+
+                -- todo  fix these tests so that they will spawn instances like we do on the first test
                 --["REF.IIO.GVDPIP.SREV.0020"] = {
-                --    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
+                --    SpawnObjectFunc = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
                 --        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
                 --            ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
                 --                ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
@@ -68,7 +80,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                 --    local IFoo = using "[declare] [interface]" "REF.IIO.GVDPIP.SREV.0030.IFoo"
                 --
                 --    return {
-                --        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.IrrelevantException" {
+                --        SpawnObjectFunc = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.IrrelevantException" {
                 --            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
                 --                ["IFoo"] = IFoo,
                 --            },
@@ -79,7 +91,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
                 --end)(),
                 --["REF.IIO.GVDPIP.SREV.0040"] = (function()
                 --    return {
-                --        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.IrrelevantException" {
+                --        SpawnObjectFunc = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.IrrelevantException" {
                 --            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo1" {
                 --                ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar1" {
                 --                    ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping1"
@@ -102,7 +114,7 @@ TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheri
 
             -- ACT
             local action = function()
-                return Reflection.IsInstanceOf(specs.Value, specs.Parent)
+                return Reflection.IsInstanceOf(specs.SpawnObjectFunc(), specs.Parent)
             end
 
             -- ASSERT
