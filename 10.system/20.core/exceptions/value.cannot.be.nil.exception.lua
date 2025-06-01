@@ -15,7 +15,11 @@ function Class:New(optionalArgumentName)
 
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return self:Instantiate():ChainSetMessage(_.FormulateMessage_(optionalArgumentName))
+    return self:Instantiate():NewWithMessage(
+            optionalArgumentName == nil
+                    and "Value cannot be nil"
+                    or "'" .. optionalArgumentName .. "' cannot be nil"
+    )
 end
 
 function Class:NewWithMessage(customMessage)
@@ -23,16 +27,7 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Assert.IsNonDudString(customMessage, "customMessage")
 
-    return self:Instantiate():ChainSetMessage(customMessage)
-end
+    local newInstance = self:Instantiate()
 
---- @private
-function Class._.FormulateMessage_(optionalArgumentName)
-    Scopify(EScopes.Function, Class)
-
-    local message = optionalArgumentName == nil
-            and "Value cannot be nil"
-            or "'" .. optionalArgumentName .. "' cannot be nil"
-
-    return message
+    return newInstance.base.New(newInstance, customMessage)
 end

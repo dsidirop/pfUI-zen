@@ -18,8 +18,9 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
     Guard.Assert.IsNilOrTableOrNonDudString(optionalExpectationOrExpectedType, "optionalExpectationOrExpectedType")
 
-    return self:Instantiate()
-               :ChainSetMessage(_.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
+    local newInstance = self:Instantiate()
+
+    return newInstance.base.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
 function Class:NewWithMessage(customMessage)
@@ -27,8 +28,9 @@ function Class:NewWithMessage(customMessage)
 
     Guard.Assert.IsNonDudString(customMessage, "customMessage")
 
-    return self:Instantiate()
-               :ChainSetMessage(customMessage)
+    local newInstance = self:Instantiate()
+
+    return newInstance.base.New(newInstance, customMessage)
 end
 
 --- @private

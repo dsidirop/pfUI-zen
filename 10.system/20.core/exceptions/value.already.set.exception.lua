@@ -15,7 +15,10 @@ function Class:New(optionalArgumentName)
 
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return self:Instantiate():ChainSetMessage(
+    local newInstance = self:Instantiate()
+
+    return newInstance.base.New(
+            newInstance,
             optionalArgumentName == nil
                     and "Property/field has already been set"
                     or "'" .. optionalArgumentName .. "' has already been set"

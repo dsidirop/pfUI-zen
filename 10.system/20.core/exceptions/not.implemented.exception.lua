@@ -18,7 +18,7 @@ function Class:New(optionalMessage)
    
     Guard.Assert.IsNilOrNonDudString(optionalMessage, "message")
     
-    -- todo  call the base constructor :New() here
+    local newInstance = self:Instantiate()
 
-    return self:Instantiate():ChainSetMessage(Nils.Coalesce(optionalMessage, "Not implemented"))
+    return newInstance.base.New(newInstance, Nils.Coalesce(optionalMessage, "Not implemented"))
 end
