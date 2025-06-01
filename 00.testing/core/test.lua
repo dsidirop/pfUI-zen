@@ -31,7 +31,7 @@ function VWoWUnit.Test:New(testName, testFunction)
     _assert(self == VWoWUnit.Test, "constructors are supposed to be called through class-proto itself but this time it was called through an actual instance")
 
 	return self:NewWithDynamicDataGeneratorCallback(testName, testFunction, function()
-		return {}
+		return nil -- no data
 	end)
 end
 
@@ -68,12 +68,22 @@ function VWoWUnit.Test:Run()
 	_setfenv(1, self)
 
 	local testData = self._dynamicDataGeneratorCallback()
-	if testData == nil or _next(testData) == nil then -- if testData is nil or empty
+	if testData == nil then -- if testData is nil then we assume that the test is a single test case without sub-test-cases
 		local possibleErrorMessage = self:RunImpl_(" " .. _testName, {})
 		return { possibleErrorMessage }
 	end
 
-	_logger:LogInfo("**** Running sub-test-cases of |cffbbbbbb " .. _testName)
+	_logger:LogInfo("**** [" .. _testName .. "] Running sub-test-cases ...")
+
+    if not VWoWUnit.Utilities.IsTable(testData) then
+        _logger:LogError("****** [" .. _testName .. "] Cannot run sub-test-cases. Sub-test-cases-specs must be a table, but got: " .. _tostring(_type(testData)))
+        return { }
+    end
+    
+    if VWoWUnit.Utilities.IsEmptyTable(testData) then
+        _logger:LogWarn("****** [" .. _testName .. "] Cannot run sub-test-cases. Sub-test-cases-specs table is empty.")
+        return { }
+    end
 
 	local allErrorMessages = {}
 	for subTestCaseName, datum in VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(testData) do -- if testData actually has data

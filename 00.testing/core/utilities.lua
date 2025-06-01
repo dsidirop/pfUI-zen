@@ -1,4 +1,4 @@
-local VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert = (function()
+local VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -7,13 +7,14 @@ local VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _
     _g.VWoWUnit = _g.VWoWUnit or {}
 
     local _type = _assert(_g.type)
+    local _next = _assert(_g.next)
     local _gsub = _assert(_g.gsub)
     local _pairs = _assert(_g.pairs)
     local _strfind = _assert(_g.string.find)
     local _tableSort = _assert(_g.table.sort)
     local _tableInsert = _assert(_g.table.insert)
 
-    return _g.VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert
+    return _g.VWoWUnit, _gsub, _pairs, _assert, _strfind, _type, _setfenv, _tableSort, _tableInsert, _next
 end)()
 
 _setfenv(1, {})
@@ -44,7 +45,7 @@ function VWoWUnit.Utilities.GetIteratorFunc_TablePairsOrderedByKeys(tableObject,
 end
 
 function VWoWUnit.Utilities.Difference(a, b)
-    if VWoWUnit.Utilities.IsTable_(a) and VWoWUnit.Utilities.IsTable_(b) then
+    if VWoWUnit.Utilities.IsTable(a) and VWoWUnit.Utilities.IsTable(b) then
         for key, value in _pairs(a) do
             local path, aa, bb = VWoWUnit.Utilities.Difference(value, b[key])
             if path then
@@ -74,10 +75,16 @@ function VWoWUnit.Utilities.IsGlobMatch(input, globPattern) --@formatter:off
     return _strfind(input, VWoWUnit.Utilities.GlobToPattern_(globPattern)) ~= nil
 end
 
-function VWoWUnit.Utilities.IsTable_(value)
+function VWoWUnit.Utilities.IsTable(value)
     _setfenv(1, VWoWUnit.Utilities)
 
     return _type(value) == "table"
+end
+
+function VWoWUnit.Utilities.IsEmptyTable(value)
+    _setfenv(1, VWoWUnit.Utilities)
+
+    return VWoWUnit.Utilities.IsTable(value) and _next(value) == nil
 end
 
 function VWoWUnit.Utilities.GlobToPattern_(globPattern)
