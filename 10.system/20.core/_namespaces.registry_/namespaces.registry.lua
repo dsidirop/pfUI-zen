@@ -285,6 +285,8 @@ do
 
         local newInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, protoTidbits)
 
+        -- todo  find a way to disable access to 'instance.base' and 'instance.asBase' because these fields
+        -- todo  are meant to be accessible only by the proto itself ala 'classProto.base' and 'classProto.asBase'   
         _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
 
