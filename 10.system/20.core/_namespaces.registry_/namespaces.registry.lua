@@ -341,7 +341,8 @@ do
 end
 
 local ProtosFactory = {}
-do    
+do
+    ---@class Proto
     function ProtosFactory.Spawn(symbolType)
         _setfenv(1, ProtosFactory)
 
@@ -858,10 +859,10 @@ do
         _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
         _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
 
-        local targetSymbolProto_BaseProp = targetSymbolProto.base or {} -- create an base and asBase tables to hold per-mixin fields/methods
+        local targetSymbolProto_baseProp = targetSymbolProto.base or {} -- create a .base and .asBase tables to hold per-mixin fields/methods
         local targetSymbolProto_asBaseProp = targetSymbolProto.asBase or {}
 
-        targetSymbolProto.base = targetSymbolProto_BaseProp
+        targetSymbolProto.base = targetSymbolProto_baseProp
         targetSymbolProto.asBase = targetSymbolProto_asBaseProp
 
         -- for each named mixin, create a table with closures that bind the target as self
@@ -925,6 +926,7 @@ do
                     if hasGreenName then
                         targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
 
+                        targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol
                         targetSymbolProto_asBaseProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBase.<specific-mixin-nickname>.<specific-member-name>
                     -- else
                     --     _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")

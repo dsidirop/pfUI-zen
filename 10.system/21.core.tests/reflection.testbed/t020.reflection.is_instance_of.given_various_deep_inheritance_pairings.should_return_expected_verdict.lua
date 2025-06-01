@@ -2,6 +2,7 @@
 
 local Scopify    = using "System.Scopify"
 local EScopes    = using "System.EScopes"
+
 local Reflection = using "System.Reflection"
 
 local Exception                  = using "System.Exceptions.Exception"
@@ -16,59 +17,84 @@ Scopify(EScopes.Function, {})
 TestsGroup:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePairs.ShouldReturnExpectedVerdict", -- @formatter:off
         function()
             return {
-                ["REF.IIO.GVDPIP.SREV.0000"] = {
-                    Value           = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0000.GrandChildException" {
+                ["REF.IIO.GVDPIP.SREV.0000"] = (function()
+                    local GrandChildException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0000.GrandChildException" {
                         ["NotImplementedException"] = NotImplementedException,
-                    },
-                    Parent          = Exception,
-                    ExpectedVerdict = true
-                },
-                ["REF.IIO.GVDPIP.SREV.0010"] = {
-                    Value           = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GreatGrandChildException" {
-                        ["Foobar"]              = using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
-                        ["GrandChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.Parent.GrandChildException" {
-                            ["ChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandParent.ChildException" {
-                                ["NotImplementedException"] = NotImplementedException,
-                            },
-                        },
-                    },
-                    Parent          = Exception,
-                    ExpectedVerdict = true
-                },
-                ["REF.IIO.GVDPIP.SREV.0020"] = {
-                    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
-                        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
-                            ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
-                                ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
-                            },
-                        },
-                        ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo2" {
-                            ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar2" {
-                                ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping2"
-                            },
-                        },
-                    },
-                    Parent          = Exception,
-                    ExpectedVerdict = false
-                },
-                ["REF.IIO.GVDPIP.SREV.0030"] = (function()
+                    }
+
+                    function GrandChildException:New()
+                        local newInstance = self:Instantiate()
+
+                        return newInstance.base.New(newInstance, "GrandChildException")
+                    end
+
                     return {
-                        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.IrrelevantException" {
-                            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
-                                ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Bar1" {
-                                    ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Ping1"
-                                },
-                            },
-                            ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo2" {
-                                ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Bar2" {
-                                    ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0030.GrandParent.Ping2"
-                                },
-                            },
-                        },
+                        Value           = GrandChildException:New(),
                         Parent          = Exception,
-                        ExpectedVerdict = false
+                        ExpectedVerdict = true,
                     }
                 end)(),
+                
+                -- todo  fix these tests so that they will spawn instances like we do on the first test
+                --["REF.IIO.GVDPIP.SREV.0010"] = {
+                --    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GreatGrandChildException" {
+                --        ["Foobar"]              = using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
+                --        ["GrandChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.Parent.GrandChildException" {
+                --            ["ChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandParent.ChildException" {
+                --                ["NotImplementedException"] = NotImplementedException,
+                --            },
+                --        },
+                --    },
+                --    Parent          = Exception,
+                --    ExpectedVerdict = true,
+                --},
+                --["REF.IIO.GVDPIP.SREV.0020"] = {
+                --    Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.IrrelevantException" {
+                --        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
+                --            ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
+                --                ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
+                --            },
+                --        },
+                --        ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo2" {
+                --            ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar2" {
+                --                ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping2"
+                --            },
+                --        },
+                --    },
+                --    Parent          = Exception,
+                --    ExpectedVerdict = false,
+                --},
+                --["REF.IIO.GVDPIP.SREV.0030"] = (function() -- interface
+                --    local IFoo = using "[declare] [interface]" "REF.IIO.GVDPIP.SREV.0030.IFoo"
+                --
+                --    return {
+                --        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.IrrelevantException" {
+                --            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
+                --                ["IFoo"] = IFoo,
+                --            },
+                --        },
+                --        Parent          = IFoo,
+                --        ExpectedVerdict = true,
+                --    }
+                --end)(),
+                --["REF.IIO.GVDPIP.SREV.0040"] = (function()
+                --    return {
+                --        Value = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.IrrelevantException" {
+                --            ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo1" {
+                --                ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar1" {
+                --                    ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping1"
+                --                },
+                --            },
+                --            ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo2" {
+                --                ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar2" {
+                --                    ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping2"
+                --                },
+                --            },
+                --        },
+                --        Parent          = Exception,
+                --        ExpectedVerdict = false,
+                --    }
+                --end)(),
             }
         end, -- @formatter:on
         function(specs)

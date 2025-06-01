@@ -20,6 +20,7 @@ Scopify(EScopes.Function, {})
 TestsGroup:AddTheory("T010.Reflection.IsInstanceOf.GivenVariousDirectInheritancePairs.ShouldReturnExpectedVerdict", -- @formatter:off
         {
             ["REF.IIO.GVDRIP.SREV.0000"] = { Base = Exception,  Subclass = 10,                                        ExpectedVerdict = false },
+            ["REF.IIO.GVDRIP.SREV.0005"] = { Base = Exception,  Subclass = Exception, --[[not an instance really]]    ExpectedVerdict = false },
             ["REF.IIO.GVDRIP.SREV.0010"] = { Base = Exception,  Subclass = Exception:New("foobar"),                   ExpectedVerdict = true  },
             ["REF.IIO.GVDRIP.SREV.0020"] = { Base = Exception,  Subclass = NotImplementedException:New("foobar"),     ExpectedVerdict = true  },
             ["REF.IIO.GVDRIP.SREV.0030"] = { Base = Exception,  Subclass = ValueIsOutOfRangeException:New("foobar"),  ExpectedVerdict = true  },

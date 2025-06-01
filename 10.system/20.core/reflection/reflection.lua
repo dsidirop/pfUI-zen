@@ -2,7 +2,6 @@
 
 local S          = using "System.Helpers.Strings"
 
-local Nils       = using "System.Nils"
 local Math       = using "System.Math"
 local Guard      = using "System.Guard"
 local Scopify    = using "System.Scopify"
@@ -32,27 +31,31 @@ Reflection.IsBoolean = RawTypeSystem.IsBoolean
 Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
---- @return STypes, string?, proto?
+--- @return STypes, string, Proto, boolean   (type, namespace, proto, isClassInstance)
 function Reflection.GetInfo(valueOrClassInstanceOrProto)
     if valueOrClassInstanceOrProto == nil then
-        return STypes.Nil, nil, nil
+        return STypes.Nil, nil, nil, false
     end
 
     local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto) -- 00
-    if rawType == SRawTypes.Table then
-        local protoTidbits = Nils.Coalesce(
-                Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto.__index), -- 10   class-instance
-                Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) --               proto
-        )
-
-        if protoTidbits ~= nil then
-            local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
-
-            return overallSymbolType, protoTidbits:GetNamespace(), protoTidbits:GetSymbolProto()
-        end 
+    if rawType ~= SRawTypes.Table then
+        return Reflection.ConvertSRawTypeToSType_(rawType), nil, nil, false
     end
 
-    return Reflection.ConvertSRawTypeToSType_(rawType), nil, nil
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto.__index) -- 10   class-instance?
+    if protoTidbits == nil then
+        protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(valueOrClassInstanceOrProto) -- proto maybe?
+    end
+
+    if protoTidbits ~= nil then
+        local proto = protoTidbits:GetSymbolProto()
+        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
+        local isActuallyClassInstance = overallSymbolType == STypes.NonStaticClass and valueOrClassInstanceOrProto ~= proto
+
+        return overallSymbolType, protoTidbits:GetNamespace(), proto, isActuallyClassInstance
+    end
+
+    return SRawTypes.Table, nil, nil, false -- just a plain table
 
     -- 00  value can be a primitive type or a class-instance or a class-proto or an enum-proto or an interface-proto
     -- 10  if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
@@ -169,14 +172,14 @@ function Reflection.IsNilOrTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredClassProto)
-    Guard.Assert.Explained.IsTrue(Reflection.IsNonStaticClassProto(desiredClassProto), "desiredClassProto was expected to be a non-static-class-proto but it's not")
+    Guard.Assert.Explained.IsTrue(Reflection.IsNonStaticClassProtoOrInterfaceProto(desiredClassProto), "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
 
-    local type, _, proto = Reflection.GetInfo(object)
-    if type ~= STypes.NonStaticClass then
-        return false
+    local _, _, proto, isClassInstance = Reflection.GetInfo(object)
+    if not isClassInstance then
+        return false -- interfaces are not instances
     end
 
-    if proto == desiredClassProto then --optimization
+    if proto == desiredClassProto then -- optimization
         return true
     end
 
@@ -198,7 +201,7 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
                 return true
             end
 
-            if Reflection.IsNonStaticClassProto(mixinKey) then
+            if Reflection.IsNonStaticClassProtoOrInterfaceProto(mixinKey) then
                 TablesHelper.Append(queue, mixinKey) -- append enqueue
             end
         end
@@ -207,22 +210,39 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
     return false
 end
 
-function Reflection.IsImplementing(object, desiredInterfaceProto)
+function Reflection.IsInstanceImplementing(object, desiredInterfaceProto)
     Guard.Assert.Explained.IsTrue(Reflection.IsInterfaceProto(desiredInterfaceProto), "desiredInterfaceProto was expected to be an interface-proto but it's not")
 
-    if not Reflection.IsTable(object) then
-        return false
+    local _, _, proto, isClassInstance = Reflection.GetInfo(object)
+    if not isClassInstance then
+        return false -- interfaces are not instances
     end
 
-    if object.__index == desiredInterfaceProto then
+    if proto == desiredInterfaceProto then -- optimization
         return true
     end
 
-    -- todo   we should look recursively through the entire asBase.* tree
-    for mixinKey, _ in TablesHelper.GetPairs(object.asBase or {}) do
-        -- the asBase.* also hosts the class-protos as keys to its own class-protos exactly in order for us to be able to use them in places like these
-        if mixinKey == desiredInterfaceProto then
+    local queue = { proto }
+    local currentProto
+    while true do
+        currentProto = TablesHelper.Dequeue(queue) -- dequeue   breadth first search
+        if currentProto == nil then
+            break -- we have exhausted the queue
+        end
+
+        if currentProto == desiredInterfaceProto then
             return true
+        end
+
+        -- if we have a class-proto then we can check its asBase.* for mixins
+        for mixinKey, _ in TablesHelper.GetPairs(currentProto.asBase or {}) do
+            if mixinKey == desiredInterfaceProto then
+                return true
+            end
+
+            if Reflection.IsNonStaticClassProtoOrInterfaceProto(mixinKey) then
+                TablesHelper.Append(queue, mixinKey) -- append enqueue
+            end
         end
     end
 
@@ -249,12 +269,18 @@ function Reflection.IsClassInstance(object)
     return Reflection.TryGetNamespaceIfClassInstance(object) ~= nil
 end
 
+function Reflection.IsInterfaceProto(object)
+    return Reflection.GetInfo(object) == STypes.Interface
+end
+
 function Reflection.IsNonStaticClassProto(object)
     return Reflection.GetInfo(object) == STypes.NonStaticClass
 end
 
-function Reflection.IsInterfaceProto(object)
-    return Reflection.GetInfo(object) == STypes.Interface
+function Reflection.IsNonStaticClassProtoOrInterfaceProto(object)
+    local type = Reflection.GetInfo(object)
+    
+    return type == STypes.NonStaticClass or type == STypes.Interface
 end
 
 function Reflection.TryGetNamespaceIfClassInstance(object)

@@ -17,6 +17,8 @@ function Class:New(optionalMessage)
     Scopify(EScopes.Function, self)
    
     Guard.Assert.IsNilOrNonDudString(optionalMessage, "message")
+    
+    -- todo  call the base constructor :New() here
 
     return self:Instantiate():ChainSetMessage(Nils.Coalesce(optionalMessage, "Not implemented"))
 end

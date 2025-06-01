@@ -30,4 +30,6 @@ if U then
     -- U.TestsEngine:RunTestGroupsByTag("text-writer")
 
     -- U.TestsEngine:RunTestGroupsByTag("is-instance-of")
+
+    -- U.TestsEngine:RunTestGroupsByTag("get-info")
 end
