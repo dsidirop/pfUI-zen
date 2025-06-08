@@ -1,5 +1,5 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
-    <Include file="t000.reflection.get_info.given_various_green_values.should_return_correct_types.lua"/>
-    <Include file="t010.reflection.is_instance_of.given_various_direct_inheritance_pairings.should_return_expected_verdict.lua"/>
-    <Include file="t020.reflection.is_instance_of.given_various_deep_inheritance_pairings.should_return_expected_verdict.lua"/>
+    <Include file="get.info\.xml"/>
+    <Include file="is.instance.of\.xml"/>
+    <Include file="is.instance.implementing\.xml"/>
 </Ui>

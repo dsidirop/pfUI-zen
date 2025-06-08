@@ -330,15 +330,16 @@ do
     end
 end
 
-local EManagedSymbolTypes = EnumsProtoFactory.Spawn()
-do
-    EManagedSymbolTypes.Enum = 1
-    EManagedSymbolTypes.NonStaticClass = 2
-    EManagedSymbolTypes.StaticClass = 3
-    EManagedSymbolTypes.Interface = 4
-    EManagedSymbolTypes.RawSymbol = 5 --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
-    EManagedSymbolTypes.Keyword = 6 --    "[declare]*" and friends
-end
+local SRegistrySymbolTypes = EnumsProtoFactory.Spawn()
+do --@formatter:off
+    SRegistrySymbolTypes.Enum = "enum"
+    SRegistrySymbolTypes.Interface = "interface"
+    SRegistrySymbolTypes.StaticClass = "static-class"
+    SRegistrySymbolTypes.NonStaticClass = "non-static-class"
+
+    SRegistrySymbolTypes.Keyword = "keyword" --       [declare]* and friends
+    SRegistrySymbolTypes.RawSymbol = "raw-symbol" --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+end --@formatter:off
 
 local ProtosFactory = {}
 do
@@ -346,19 +347,19 @@ do
     function ProtosFactory.Spawn(symbolType)
         _setfenv(1, ProtosFactory)
 
-        if symbolType == EManagedSymbolTypes.Enum then
+        if symbolType == SRegistrySymbolTypes.Enum then
             return EnumsProtoFactory.Spawn()
         end
 
-        if symbolType == EManagedSymbolTypes.StaticClass then
+        if symbolType == SRegistrySymbolTypes.StaticClass then
             return StaticClassProtoFactory.Spawn()
         end
 
-        if symbolType == EManagedSymbolTypes.NonStaticClass then
+        if symbolType == SRegistrySymbolTypes.NonStaticClass then
             return NonStaticClassProtoFactory.Spawn()
         end
 
-        if symbolType == EManagedSymbolTypes.Interface then
+        if symbolType == SRegistrySymbolTypes.Interface then
             return InterfacesProtoFactory.Spawn()
         end
 
@@ -378,14 +379,14 @@ do
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type %q)", _type(namespacePath))
         _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got %q)", _type(isForPartial)) -- @formatter:on
-        -- _ = EManagedSymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid EManagedSymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds 
+        -- _ = SRegistrySymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid SRegistrySymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds 
 
         local instance = {
             _symbolType               = symbolType,
             _symbolProto              = symbolProto,
             _isForPartial             = _nilCoalesce(isForPartial, false),
             _namespacePath            = namespacePath,
-            _fieldPluggerCallbackFunc = symbolType == EManagedSymbolTypes.NonStaticClass
+            _fieldPluggerCallbackFunc = symbolType == SRegistrySymbolTypes.NonStaticClass
                     and _dudFieldPluggerFunc  -- placeholder
                     or nil,
         }
@@ -398,7 +399,7 @@ do
     function Entry:GetFieldPluggerCallbackFunc()
         _setfenv(1, self)
 
-        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
+        _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
         
         return _fieldPluggerCallbackFunc
     end
@@ -407,7 +408,7 @@ do
         _setfenv(1, self)
 
         _ = _type(func) == "function"                         or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
-        _ = _symbolType == EManagedSymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
+        _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
 
         if _fieldPluggerCallbackFunc == nil then
             _fieldPluggerCallbackFunc = func
@@ -447,7 +448,7 @@ do
         return _symbolProto
     end
 
-    function Entry:GetManagedSymbolType()
+    function Entry:GetRegistrySymbolType()
         _setfenv(1, self)
 
         _ = _symbolType ~= nil or _throw_exception("spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)")
@@ -466,58 +467,58 @@ do
     function Entry:CanBeSubclassed()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Enum
-                or _symbolType == EManagedSymbolTypes.Interface
-                or _symbolType == EManagedSymbolTypes.StaticClass
-                or _symbolType == EManagedSymbolTypes.NonStaticClass
+        return _symbolType == SRegistrySymbolTypes.Enum
+                or _symbolType == SRegistrySymbolTypes.Interface
+                or _symbolType == SRegistrySymbolTypes.StaticClass
+                or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
     
     function Entry:IsEnumEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Enum
+        return _symbolType == SRegistrySymbolTypes.Enum
     end
 
     function Entry:IsClassEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.NonStaticClass or _symbolType == EManagedSymbolTypes.StaticClass
+        return _symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.StaticClass
     end
     
     function Entry:IsStaticClassEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.StaticClass
+        return _symbolType == SRegistrySymbolTypes.StaticClass
     end
 
     function Entry:IsNonStaticClassEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.NonStaticClass
+        return _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
     function Entry:IsEnumEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Enum
+        return _symbolType == SRegistrySymbolTypes.Enum
     end
 
     function Entry:IsInterfaceEntry()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Interface
+        return _symbolType == SRegistrySymbolTypes.Interface
     end
 
     function Entry:IsRawSymbol()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.RawSymbol -- external symbols from 3rd party libs etc
+        return _symbolType == SRegistrySymbolTypes.RawSymbol -- external symbols from 3rd party libs etc
     end
 
     function Entry:IsKeyword()
         _setfenv(1, self)
 
-        return _symbolType == EManagedSymbolTypes.Keyword -- [declare] and friends
+        return _symbolType == SRegistrySymbolTypes.Keyword -- [declare] and friends
     end
 
     local Enums_SystemReservedMemberNames_ForDirectMembers = {
@@ -566,19 +567,19 @@ do
     function Entry:GetSpecialReservedNames()
         _setfenv(1, self)
         
-        if _symbolType == EManagedSymbolTypes.Enum then
+        if _symbolType == SRegistrySymbolTypes.Enum then
             return Enums_SystemReservedMemberNames_ForDirectMembers, Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore
         end
 
-        if _symbolType == EManagedSymbolTypes.StaticClass then
+        if _symbolType == SRegistrySymbolTypes.StaticClass then
             return StaticClasses_SystemReservedMemberNames_ForDirectMembers, StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore
         end
 
-        if _symbolType == EManagedSymbolTypes.NonStaticClass then
+        if _symbolType == SRegistrySymbolTypes.NonStaticClass then
             return NonStaticClasses_SystemReservedMemberNames_ForDirectMembers, NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore
         end
 
-        if _symbolType == EManagedSymbolTypes.Interface then
+        if _symbolType == SRegistrySymbolTypes.Interface then
             return Interface_SystemReservedMemberNames_ForDirectMembers, Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore
         end
 
@@ -616,20 +617,20 @@ do
         _ = namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
-        local isDeclarableSymbol = symbolType == EManagedSymbolTypes.Enum
-                or symbolType == EManagedSymbolTypes.Interface
-                or symbolType == EManagedSymbolTypes.StaticClass
-                or symbolType == EManagedSymbolTypes.NonStaticClass
+        local isDeclarableSymbol = symbolType == SRegistrySymbolTypes.Enum
+                or symbolType == SRegistrySymbolTypes.Interface
+                or symbolType == SRegistrySymbolTypes.StaticClass
+                or symbolType == SRegistrySymbolTypes.NonStaticClass
 
         _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
-        _ = incomingSymbolType == preExistingEntry:GetManagedSymbolType() or _throw_exception("cannot re-register namespace %q with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetManagedSymbolType()) -- 10
+        _ = incomingSymbolType == preExistingEntry:GetRegistrySymbolType() or _throw_exception("cannot re-register namespace [%s] with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetRegistrySymbolType()) -- 10
     end
 
     NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial = function(isForPartial, preExistingEntry, sanitizedNamespacePath)
-        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace %q has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetManagedSymbolType()) -- 10
+        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace [%s] has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetRegistrySymbolType()) -- 10
     end
 
     -- namespacer()
@@ -709,7 +710,7 @@ do
     end
 
     NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable = function(possiblePreexistingEntry, namespacePath)
-        _ = possiblePreexistingEntry == nil or _throw_exception("namespace %q has already been assigned to another symbol", namespacePath)
+        _ = possiblePreexistingEntry == nil or _throw_exception("namespace [%s] has already been assigned to another symbol", namespacePath)
     end
 
     NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil = function(rawSymbolProto)
@@ -734,14 +735,14 @@ do
         NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable(possiblePreexistingEntry, keywordOrNamespacePath)
 
         local properSymbolType = _stringStartsWith(keywordOrNamespacePath, "[")
-                and EManagedSymbolTypes.Keyword -- [declare] and friends
-                or EManagedSymbolTypes.RawSymbol
+                and SRegistrySymbolTypes.Keyword -- [declare] and friends
+                or SRegistrySymbolTypes.RawSymbol
 
         local newFormalSymbolProtoEntry = Entry:New(properSymbolType, rawSymbol, keywordOrNamespacePath)
 
         _namespaces_registry[keywordOrNamespacePath] = newFormalSymbolProtoEntry
 
-        if properSymbolType == EManagedSymbolTypes.RawSymbol then
+        if properSymbolType == SRegistrySymbolTypes.RawSymbol then
             -- no point to include [declare] and other keywords in the registry
             _reflection_registry[rawSymbol] = newFormalSymbolProtoEntry
         end
@@ -762,7 +763,7 @@ do
             return nil, nil
         end
 
-        return entry:GetSymbolProto(), entry:GetManagedSymbolType()
+        return entry:GetSymbolProto(), entry:GetRegistrySymbolType()
     end
 
     -- importer()
@@ -782,7 +783,7 @@ do
 
         if entry:IsPartialEntry() then
             -- dont turn this into an debug.assertion   we want to know about this in production builds too
-            _throw_exception("namespace %q holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
+            _throw_exception("namespace [%s] holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
         end
 
         return entry:GetSymbolProto()
@@ -855,7 +856,7 @@ do
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
         _ = protoTidbits ~= nil or _throw_exception("[NR.BM.000] targetSymbolProto is not a symbol-proto")
 
-        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetManagedSymbolType()) --@formatter:off
+        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetRegistrySymbolType()) --@formatter:off
         _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
         _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
 
@@ -883,10 +884,10 @@ do
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
             local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()
             local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
-            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType())
-            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetManagedSymbolType()) --@formatter:on
+            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
             
             targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
 
@@ -967,7 +968,7 @@ do
 
     -- using "[declare]" "x.y.z"
     _g.pvl_namespacer_add = function(namespacePath)
-        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass)
+        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass)
     end
 
     -- namespacer_binder()
@@ -979,13 +980,13 @@ end
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
 -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
-NamespaceRegistrySingleton:Bind("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:Bind("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
-NamespaceRegistrySingleton:Bind("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
 local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
@@ -993,23 +994,21 @@ local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
 end
 
-NamespaceRegistrySingleton:Bind("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:Bind("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:Bind("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:Bind("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:Bind("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
-NamespaceRegistrySingleton:Bind("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:Bind("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, EManagedSymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:Bind("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
 -- @formatter:on
 
-local AdvertisedEManagedSymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.EManagedSymbolTypes", EManagedSymbolTypes.Enum)
-for k, v in _pairs(EManagedSymbolTypes) do -- this is the only way to get the enum values to be advertised to the outside world
-    if _type(v) == "number" then
-        AdvertisedEManagedSymbolTypes[k] = v
-    end
+local AdvertisedSRegistrySymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.SRegistrySymbolTypes", SRegistrySymbolTypes.Enum)
+for k, v in _pairs(SRegistrySymbolTypes) do -- this is the only way to get the enum values to be advertised to the outside world
+    AdvertisedSRegistrySymbolTypes[k] = v
 end
 
 -- no need for this   the standardized enum metatable is already in place and it does the same job just fine
 --
--- _setmetatable(AdvertisedEManagedSymbolTypes, _getmetatable(EManagedSymbolTypes))
+-- _setmetatable(AdvertisedSRegistrySymbolTypes, _getmetatable(SRegistrySymbolTypes))

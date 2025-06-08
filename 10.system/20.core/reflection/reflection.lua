@@ -13,8 +13,8 @@ local STypes              = using "System.Reflection.STypes"
 local SRawTypes           = using "System.Language.SRawTypes"
 local RawTypeSystem       = using "System.Language.RawTypeSystem"
 
-local Namespacer          = using "System.Namespacer"
-local EManagedSymbolTypes = using "System.Namespacer.EManagedSymbolTypes"
+local Namespacer           = using "System.Namespacer"
+local SRegistrySymbolTypes = using "System.Namespacer.SRegistrySymbolTypes"
 
 local Throw                   = using "System.Exceptions.Throw"
 local NotImplementedException = using "System.Exceptions.NotImplementedException"
@@ -49,7 +49,7 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
 
     if protoTidbits ~= nil then
         local proto = protoTidbits:GetSymbolProto()
-        local overallSymbolType = Reflection.ConvertEManagedSymbolTypeToSType_(protoTidbits:GetManagedSymbolType(), valueOrClassInstanceOrProto)
+        local overallSymbolType = Reflection.ConvertSRegistrySymbolTypeToSType_(protoTidbits:GetRegistrySymbolType(), valueOrClassInstanceOrProto)
         local isActuallyClassInstance = overallSymbolType == STypes.NonStaticClass and valueOrClassInstanceOrProto ~= proto
 
         return overallSymbolType, protoTidbits:GetNamespace(), proto, isActuallyClassInstance
@@ -61,37 +61,37 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
     -- 10  if we have a table we need to check if its a class-instance or a class-proto or an enum-proto or an interface-proto
 end
 
-function Reflection.ConvertEManagedSymbolTypeToSType_(managedSymbolType, valueOrClassInstanceOrProto)
-    Guard.Assert.IsEnumValue(EManagedSymbolTypes, managedSymbolType, "managedSymbolType")
+function Reflection.ConvertSRegistrySymbolTypeToSType_(registrySymbolType, valueOrClassInstanceOrProto)
+    Guard.Assert.IsEnumValue(SRegistrySymbolTypes, registrySymbolType, "registrySymbolType")
     
-    if managedSymbolType == EManagedSymbolTypes.Enum then
+    if registrySymbolType == SRegistrySymbolTypes.Enum then
         return STypes.Enum
     end
     
-    if managedSymbolType == EManagedSymbolTypes.NonStaticClass then
+    if registrySymbolType == SRegistrySymbolTypes.NonStaticClass then
         return STypes.NonStaticClass
     end
 
-    if managedSymbolType == EManagedSymbolTypes.StaticClass then
+    if registrySymbolType == SRegistrySymbolTypes.StaticClass then
         return STypes.StaticClass
     end
 
-    if managedSymbolType == EManagedSymbolTypes.Interface then
+    if registrySymbolType == SRegistrySymbolTypes.Interface then
         return STypes.Interface
     end
 
-    if managedSymbolType == EManagedSymbolTypes.Keyword then
+    if registrySymbolType == SRegistrySymbolTypes.Keyword then
         -- this should never happen but just in case
         return STypes.Keyword
     end
     
-    if managedSymbolType == EManagedSymbolTypes.RawSymbol then
+    if registrySymbolType == SRegistrySymbolTypes.RawSymbol then
         local rawType = RawTypeSystem.GetRawType(valueOrClassInstanceOrProto)
         return Reflection.ConvertSRawTypeToSType_(rawType)
     end
 
     Throw(NotImplementedException:New(S.Format(
-            "[REF.CEMSTTST.010] [!!!CORE BUG!!!] Lacking support for converting managed-symbol-type %q to an STypes value.", managedSymbolType
+            "[REF.CEMSTTST.010] [!!!CORE BUG!!!] Lacking support for converting managed-symbol-type %q to an STypes value.", registrySymbolType
     )))
 end
 
@@ -171,15 +171,22 @@ function Reflection.IsNilOrTableOrString(value)
     return value == nil or Reflection.IsTableOrString(value)
 end
 
-function Reflection.IsInstanceOf(object, desiredClassProto)
-    Guard.Assert.Explained.IsTrue(Reflection.IsNonStaticClassProtoOrInterfaceProto(desiredClassProto), "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
+function Reflection.IsInstanceOf(object, desiredParentProto)
+    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
 
     local _, _, proto, isClassInstance = Reflection.GetInfo(object)
     if not isClassInstance then
         return false -- interfaces are not instances
     end
 
-    if proto == desiredClassProto then -- optimization
+    return Reflection.IsSubProtoOf(proto, desiredParentProto)
+end
+
+function Reflection.IsSubProtoOf(proto, desiredParentProto)
+    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, "proto was expected to be a non-static-class-proto or an interface but it's not")
+    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
+
+    if proto == desiredParentProto then -- optimization
         return true
     end
 
@@ -191,13 +198,13 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
             break -- we have exhausted the queue
         end
 
-        if currentProto == desiredClassProto then
+        if currentProto == desiredParentProto then
             return true
         end
 
         -- if we have a class-proto then we can check its asBase.* for mixins
         for mixinKey, _ in TablesHelper.GetPairs(currentProto.asBase or {}) do
-            if mixinKey == desiredClassProto then
+            if mixinKey == desiredParentProto then
                 return true
             end
 
@@ -210,17 +217,20 @@ function Reflection.IsInstanceOf(object, desiredClassProto)
     return false
 end
 
-function Reflection.IsInstanceImplementing(object, desiredInterfaceProto)
-    Guard.Assert.Explained.IsTrue(Reflection.IsInterfaceProto(desiredInterfaceProto), "desiredInterfaceProto was expected to be an interface-proto but it's not")
+function Reflection.IsInstanceImplementing(classInstance, desiredInterfaceProto)
+    Guard.Assert.IsInterfaceProto(desiredInterfaceProto, "desiredInterfaceProto")
 
-    local _, _, proto, isClassInstance = Reflection.GetInfo(object)
-    if not isClassInstance then
-        return false -- interfaces are not instances
-    end
-
+    local _, _, proto = Guard.Assert.IsClassInstance(classInstance, "classInstance")
     if proto == desiredInterfaceProto then -- optimization
         return true
     end
+
+    return Reflection.IsProtoImplementing(proto, desiredInterfaceProto)
+end
+
+function Reflection.IsProtoImplementing(proto, desiredInterfaceProto)
+    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, "proto")
+    Guard.Assert.IsInterfaceProto(desiredInterfaceProto, "desiredInterfaceProto")
 
     local queue = { proto }
     local currentProto
@@ -295,7 +305,7 @@ function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     local symbolProto, symbolType = Reflection.TryGetProtoTidbitsViaNamespace(namespacePath)
     if symbolProto == nil
             or symbolType == nil
-            or (symbolType ~= EManagedSymbolTypes.StaticClass and symbolType ~= EManagedSymbolTypes.NonStaticClass) then
+            or (symbolType ~= SRegistrySymbolTypes.StaticClass and symbolType ~= SRegistrySymbolTypes.NonStaticClass) then
         return nil
     end
 

@@ -58,6 +58,14 @@ do
         return value
     end
 
+    function Guard.Assert.Explained.IsInterfaceProto(proto, customMessage)
+        if not Reflection.IsInterfaceProto(proto) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
+        end
+
+        return proto
+    end
+
     function Guard.Assert.Explained.IsInstanceOf(value, desiredClassProto, customMessage, optionalArgumentName)
         if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
             Throw(ValueIsOfInappropriateTypeException:NewWithMessage(

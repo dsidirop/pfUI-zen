@@ -13,7 +13,7 @@ local TG = U.TestsEngine:CreateOrUpdateGroup {
 Scopify(EScopes.Function, {})
 
 -- todo   add tests for Reflection.IsInstanceOf(<instance>, <proto>) + associated Guards
--- todo   add tests for Reflection.IsImplementing(<instance>, <interface-proto>) + associated Guards
+-- todo   add tests for Reflection.IsInstanceImplementing(<instance>, <interface-proto>) + associated Guards
 -- todo   add support + tests for .CastAs(), .IsCastableAs(), .TryCastAs()
 -- todo   enhance try-catch to support catching base-exceptions too
 --

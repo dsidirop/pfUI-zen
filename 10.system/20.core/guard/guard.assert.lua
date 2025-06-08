@@ -380,12 +380,42 @@ do
 
     -- NAMESPACES
     function Guard.Assert.IsNamespaceStringOrRegisteredNonStaticClassProto(value, optionalArgumentName)
-        local IsNamespaceStringOrRegisteredNonStaticClassProto = Reflection.IsString(value) or Reflection.TryGetNamespaceIfNonStaticClassProto(value) ~= nil
-        if not IsNamespaceStringOrRegisteredNonStaticClassProto then
+        local isNamespaceStringOrRegisteredNonStaticClassProto = Reflection.IsString(value) or Reflection.TryGetNamespaceIfNonStaticClassProto(value) ~= nil
+        if not isNamespaceStringOrRegisteredNonStaticClassProto then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "namespace string or registered proto"))
         end
 
         return value
+    end
+    
+    -- INTERFACES
+    function Guard.Assert.IsInterfaceProto(proto, optionalArgumentName)
+        if not Reflection.IsInterfaceProto(proto) then
+            Throw(ValueIsOfInappropriateTypeException:New(proto, optionalArgumentName, "interface proto"))
+        end
+
+        return proto
+    end
+
+    function Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, optionalArgumentName)
+        if not Reflection.IsNonStaticClassProtoOrInterfaceProto(proto) then
+            Throw(ValueIsOfInappropriateTypeException:New(proto, optionalArgumentName, "non-static-class proto or interface proto"))
+        end
+
+        return proto
+    end
+    
+
+    -- CLASS INSTANCES
+
+    --- @return STypes, string, Proto, boolean   (type, namespace, proto, isClassInstance)
+    function Guard.Assert.IsClassInstance(classInstance, optionalArgumentName)
+        local type, namespace, proto, isClassInstance = Reflection.GetInfo(classInstance)        
+        if not isClassInstance then
+            Throw(ValueIsOfInappropriateTypeException:New(proto, optionalArgumentName, "class-instance"))
+        end
+
+        return type, namespace, proto, isClassInstance
     end
 
     -- ISA
