@@ -1,19 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Global = using "System.Global"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
-local U = Global.VWoWUnit -- DO NOT EMPLOY   using "[built-in]"   HERE BECAUSE IT IS WHAT WE ARE ACTUALLY TESTING!!
+local TG, U = using "[testgroup] [tagged]" "System.Time" { "system", "time" }
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "Using.Builtins",
-    Tags = { "system", "using", "built-ins" },
-}
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddTheory("Using.Builtins.GivenRedInput.ShouldThrow",
+TG:AddTheory("Using.Builtins.GivenRedInput.ShouldThrow",
         {
             ["UBINS.GRA.ST.0000"] = { String = nil },
             ["UBINS.GRA.ST.0010"] = { String = function() return 123; end },
@@ -37,7 +28,7 @@ TestsGroup:AddTheory("Using.Builtins.GivenRedInput.ShouldThrow",
         end
 )
 
-TestsGroup:AddTheory("Using.Builtins.GivenGreenInput.ShouldReturnExpectedResults",
+TG:AddTheory("Using.Builtins.GivenGreenInput.ShouldReturnExpectedResults",
         { --@formatter:off
             ["UBINS.GGA.SRER.0000"] = {
                 String          = [[ A = getfenv        ]],
@@ -67,7 +58,7 @@ TestsGroup:AddTheory("Using.Builtins.GivenGreenInput.ShouldReturnExpectedResults
         end
 )
 
-TestsGroup:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
+TG:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
         { --@formatter:off
             ["UBINS.GRI.ST.0000"] = { String = [[ getfenv2 ]] },
         }, --@formatter:on
@@ -79,7 +70,7 @@ TestsGroup:AddTheory("Using.Builtin.GivenRedInput.ShouldThrow",
         end
 )
 
-TestsGroup:AddTheory("Using.Builtin.GivenGreenInput.ShouldReturnExpectedResults",
+TG:AddTheory("Using.Builtin.GivenGreenInput.ShouldReturnExpectedResults",
         { --@formatter:off
             ["UBINS.GGI.SRER.0000"] = {
                 String          = [[ getfenv ]],

@@ -1,17 +1,12 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local U = using "[built-in]" [[ VWoWUnit ]]
 local B = using "[built-ins]" [[ NativeSubstringViaRange = string.sub ]]
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 local StringsHelper = using "System.Helpers.Strings"
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
+local TG, U = using "[testgroup]" "System.Helpers.Strings"
 
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddTheory("StringsHelper.SubstringViaLength.GivenGreenInput.ShouldMatchExpectedResults",
+TG:AddTheory("StringsHelper.SubstringViaLength.GivenGreenInput.ShouldMatchExpectedResults",
         {
             ["SH.SVL.GGI.SMER.0000"] = {
                 Input = "",
@@ -43,7 +38,7 @@ TestsGroup:AddTheory("StringsHelper.SubstringViaLength.GivenGreenInput.ShouldMat
         end
 )
 
-TestsGroup:AddTheory("StringsHelper.SubstringViaLength.GivenRedInput.ShouldErrorOut",
+TG:AddTheory("StringsHelper.SubstringViaLength.GivenRedInput.ShouldErrorOut",
         {
             ["SH.SVL.GRI.SMER.0000"] = {
                 Input = nil,

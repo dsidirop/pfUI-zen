@@ -1,21 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify    = using "System.Scopify"
-local EScopes    = using "System.EScopes"
 local Reflection = using "System.Reflection"
-
 local Exception  = using "System.Exceptions.Exception"
 
-local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on
+local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Reflection.IsInstanceImplementing.Testbed" { "system", "core", "reflection", "is-instance-implementing" }
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.Reflection.IsInstanceImplementing.Testbed",
-    Tags = { "system", "core", "reflection", "is-implementing" },
-}
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddDynamicTheory("T000.Reflection.IsInstanceImplementing.GivenNonInterfaceInterface.ShouldThrowException", -- @formatter:off
+TG:AddDynamicTheory("T000.Reflection.IsInstanceImplementing.GivenNonInterfaceInterface.ShouldThrowException", -- @formatter:off
         function()
             return {
                 ["REF.IIMPL.GNIB.STE.0000"] = { ClassInstance = 10, --[[not an instance]]                                          Interface = ( using "[declare] [interface]" "REF.IIMPL.GNIB.STE.0000.IFoo" ) },

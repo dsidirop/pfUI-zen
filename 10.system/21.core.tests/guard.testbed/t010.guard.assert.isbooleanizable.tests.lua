@@ -1,19 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
+local TG, U = using "[testgroup] [tagged]" "System.Guard.Assert.IsBooleanizable" { "system", "guard", "guard-check", "guard-check-booleanizables" }
 
-Scopify(EScopes.Function, {})
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Guard.Assert.IsBooleanizable",
-    Tags = { "system", "guard", "guard-check", "guard-check-booleanizables" }
-}
-
-TestsGroup:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",
+TG:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNotThrow",
         {
             ["GRD.SRT.IB.GGI.SNT.0000"] = { Value = 0 },
             ["GRD.SRT.IB.GGI.SNT.0010"] = { Value = 1 },
@@ -46,7 +37,7 @@ TestsGroup:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenGreenInput.ShouldNo
         end
 )
 
-TestsGroup:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
+TG:AddTheory("T010.Guard.Assert.IsBooleanizable.GivenRedInput.ShouldThrow",
         {
             ["GRD.SRT.IB.GRI.ST.0000"] = { Value = nil },
             ["GRD.SRT.IB.GRI.ST.0010"] = { Value = 0.3 },

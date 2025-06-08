@@ -77,7 +77,7 @@ function VWoWUnit.Test:Run()
 
 	local testData = self._dynamicDataGeneratorCallback()
 	if testData == nil then -- if testData is nil then we assume that the test is a single test case without sub-test-cases
-		local possibleErrorMessage = self:RunImpl_(" " .. _testName, {})
+		local possibleErrorMessage = self:RunImpl_(_testName, {})
 		return { possibleErrorMessage }
 	end
 
@@ -104,21 +104,21 @@ function VWoWUnit.Test:Run()
 	return allErrorMessages
 end
 
-function VWoWUnit.Test:RunImpl_(subTestCaseName, data)
+function VWoWUnit.Test:RunImpl_(testNameOrSubtestCaseName, data)
 	_setfenv(1, self)
 
 	_assert(_type(data) == "table", "test data must be a table")
-	_assert(_type(subTestCaseName) == "string" and subTestCaseName ~= "", "testName must be a non-empty string")
+	_assert(_type(testNameOrSubtestCaseName) == "string" and testNameOrSubtestCaseName ~= "", "testNameOrSubtestCaseName must be a non-empty string")
 
 	-- _print("****" .. testName .. " starting ... ") --dont
 
-	local success, errorMessage = _pcall(_testFunction, data, subTestCaseName)
+	local success, errorMessage = _pcall(_testFunction, data, testNameOrSubtestCaseName)
 	if success == nil or success == false or errorMessage ~= nil then
-		_logger:LogError("****** [" .. subTestCaseName .. "] |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		_logger:LogError("****** [" .. testNameOrSubtestCaseName .. "] |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
 		return errorMessage
 	end
 
-	_logger:LogInfo("****** [" .. subTestCaseName .. "] |cff00ff00[PASSED]")
+	_logger:LogInfo("****** [" .. testNameOrSubtestCaseName .. "] |cff00ff00[PASSED]")
 
 	return nil
 end

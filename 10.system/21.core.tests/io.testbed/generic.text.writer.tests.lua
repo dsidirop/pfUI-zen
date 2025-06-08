@@ -1,20 +1,11 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 local ArraysHelper = using "System.Helpers.Arrays"
 local GenericTextWriter = using "System.IO.GenericTextWriter"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
+local TG, U = using "[testgroup] [tagged]" "System.IO.GenericTextWriterTestbed" { "system", "io", "text-writer" }
 
-Scopify(EScopes.Function, {})
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.IO.GenericTextWriterTestbed",
-    Tags = { "system", "io", "text-writer" },
-}
-
-TestsGroup:AddFact("GenericTextWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TG:AddFact("GenericTextWriter.Write.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local geneticTextWriter = GenericTextWriter:New(function(message)
@@ -28,7 +19,7 @@ TestsGroup:AddFact("GenericTextWriter.Write.GivenValidMessage.ShouldPrintExpecte
     U.Should.Be.Equivalent(allMessagesArray, { "Hello" })
 end)
 
-TestsGroup:AddFact("GenericTextWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TG:AddFact("GenericTextWriter.WriteLine.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local geneticTextWriter = GenericTextWriter:New(function(message)
@@ -42,7 +33,7 @@ TestsGroup:AddFact("GenericTextWriter.WriteLine.GivenValidMessage.ShouldPrintExp
     U.Should.Be.Equivalent(allMessagesArray, { "Hello\n" })
 end)
 
-TestsGroup:AddFact("GenericTextWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
+TG:AddFact("GenericTextWriter.WriteFormatted.GivenValidMessage.ShouldPrintExpectedMessage", function()
     -- ARRANGE
     local allMessagesArray = {}
     local geneticTextWriter = GenericTextWriter:New(function(message)

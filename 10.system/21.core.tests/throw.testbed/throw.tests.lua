@@ -1,29 +1,19 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
-
 local Throw = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
-
-local TG = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.Throw.Testbed",
-    Tags = { "system", "throw" },
-}
-
-Scopify(EScopes.Function, {})
+local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Throw.Testbed" { "system", "throw" }
 
 TG:AddFact("T000.Throw.GivenExceptionToThrow.ShouldThrowException",
         function()
             -- ARRANGE
-            
+
             -- ACT
             function action()
                 Throw(Exception:New("foobar"))
             end
-            
+
             -- ASSERT
             U.Should.Throw(action, "*foobar*")
         end

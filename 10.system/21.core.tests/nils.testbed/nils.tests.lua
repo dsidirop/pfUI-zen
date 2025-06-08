@@ -1,19 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Nils = using "System.Nils"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
+local TG, U = using "[testgroup] [tagged]" "System.Nils" { "system", "nils" }
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Nils",
-    Tags = { "system", "nils" },
-}
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddTheory("Nils.Coalesce.GivenGreenInput.ShouldReturnExpectedValues", -- @formatter:off
+TG:AddTheory("Nils.Coalesce.GivenGreenInput.ShouldReturnExpectedValues", -- @formatter:off
         {
             ["NILS.COA.GGI.SREV.0000"] = { Value = nil,                         FallbackValue = 1,   ExpectValueNotFallbackValue = false },
             ["NILS.COA.GGI.SREV.0010"] = { Value = 0,                           FallbackValue = 1,   ExpectValueNotFallbackValue = true  },
@@ -35,12 +26,12 @@ TestsGroup:AddTheory("Nils.Coalesce.GivenGreenInput.ShouldReturnExpectedValues",
 
                 return options.FallbackValue
             end)()
-            
+
             -- ACT
             returnedValue = U.Should.Not.Throw(function()
                 return Nils.Coalesce(options.Value, options.FallbackValue) -- options.Value ?? options.FallbackValue
             end)
-            
+
             -- ASSERT
             U.Should.Be.PlainlyEqual(expectedValue, returnedValue)
         end

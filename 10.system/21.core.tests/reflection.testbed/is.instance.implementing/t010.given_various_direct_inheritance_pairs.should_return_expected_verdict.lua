@@ -1,16 +1,10 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify    = using "System.Scopify"
-local EScopes    = using "System.EScopes"
 local Reflection = using "System.Reflection"
 
-local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on
+local TG, U = using "[testgroup]" "System.Core.Tests.Reflection.IsInstanceImplementing.Testbed"
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Reflection.IsInstanceImplementing.Testbed" }
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddDynamicTheory("T010.Reflection.IsInstanceImplementing.GivenVariousDirectInheritancePairs.ShouldReturnExpectedVerdict", -- @formatter:off
+TG:AddDynamicTheory("T010.Reflection.IsInstanceImplementing.GivenVariousDirectInheritancePairs.ShouldReturnExpectedVerdict",
         function()
             local testCases = {}
 

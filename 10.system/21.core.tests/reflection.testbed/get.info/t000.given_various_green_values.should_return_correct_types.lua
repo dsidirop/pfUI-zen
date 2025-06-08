@@ -1,24 +1,14 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
-
-local Event      = using "System.Event"
+local Event = using "System.Event"
 local Reflection = using "System.Reflection"
 
 local STypes = using "System.Reflection.STypes"
 local SRegistrySymbolTypes = using "System.Namespacer.SRegistrySymbolTypes"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
+local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Reflection.GetInfo.Testbed" { "system", "core", "reflection", "get-info" }
 
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Core.Tests.Reflection.GetInfo.Testbed",
-    Tags = { "system", "core", "reflection", "get-info" },
-}
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddDynamicTheory("T000.Reflection.GetInfo.GivenVariousGreenValues.ShouldReturnCorrectTypes", -- @formatter:off
+TG:AddDynamicTheory("T000.Reflection.GetInfo.GivenVariousGreenValues.ShouldReturnCorrectTypes", -- @formatter:off
         function()
             return {
                 ["REF.GI.GVGV.SRCT.0000"] = {   Value = nil,                   Expected = { SymbolType = STypes.Nil,             SymbolNamespace = nil,                                      SymbolProto = nil,  IsInstance = false }  },

@@ -1,19 +1,10 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
-local U = using "[built-in]" [[ VWoWUnit ]]
+local TG, U = using "[testgroup] [tagged]" "System.Guard.Assert.IsTableray" { "system", "guard", "guard-check", "guard-check-tablerays" }
 
-Scopify(EScopes.Function, {})
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Guard.Assert.IsTableray",
-    Tags = { "system", "guard", "guard-check", "guard-check-tablerays" }
-}
-
-TestsGroup:AddTheory("T000.Guard.Assert.IsTableray.GivenGreenInput.ShouldReturnTrue",
+TG:AddTheory("T000.Guard.Assert.IsTableray.GivenGreenInput.ShouldReturnTrue",
         {
             ["GRD.SRT.ITR.GGI.SNT.0000"] = { MaxIndexToCheck = nil, Value = {} },
             ["GRD.SRT.ITR.GGI.SNT.0010"] = { MaxIndexToCheck = nil, Value = { 10, } },
@@ -33,7 +24,7 @@ TestsGroup:AddTheory("T000.Guard.Assert.IsTableray.GivenGreenInput.ShouldReturnT
         end
 )
 
-TestsGroup:AddTheory("T000.Guard.Assert.IsTableray.GivenRedInput.ShouldThrow",
+TG:AddTheory("T000.Guard.Assert.IsTableray.GivenRedInput.ShouldThrow",
         {
             ["GRD.SRT.ITR.GRI.ST.0000"] = { Value = nil },
             ["GRD.SRT.ITR.GRI.ST.0010"] = { Value = 1.5 },

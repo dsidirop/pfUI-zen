@@ -1,14 +1,10 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 local Metatable = using "System.Classes.Metatable"
 
-local U = using "[built-in]" [[ VWoWUnit ]] -- @formatter:on         
-
-local TG = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Core.Tests.Classes.Inheritance.Testbed" }
-
-Scopify(EScopes.Function, {})
+local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
 
 TG:AddFact("T010.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()

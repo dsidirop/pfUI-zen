@@ -1,18 +1,8 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
+local TG, U = using "[testgroup] [tagged]" "System.Enums" { "system", "enums" }
 
-local U = using "[built-in]" [[ VWoWUnit ]]
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup {
-    Name = "System.Enums",
-    Tags = { "system", "enums" },
-}
-
-Scopify(EScopes.Function, {})
-
-TestsGroup:AddFact("T000.EnumLookup.GivenAttemptToAccessExistingMember.ShouldNotThrow",
+TG:AddFact("T000.EnumLookup.GivenAttemptToAccessExistingMember.ShouldNotThrow",
         function()
             -- ARRANGE
 
@@ -30,7 +20,7 @@ TestsGroup:AddFact("T000.EnumLookup.GivenAttemptToAccessExistingMember.ShouldNot
         end
 )
 
-TestsGroup:AddFact("T050.EnumLookup.GivenAttemptToAccessNonExistingMember.ShouldThrow",
+TG:AddFact("T050.EnumLookup.GivenAttemptToAccessNonExistingMember.ShouldThrow",
         function()
             -- ARRANGE
 
@@ -48,7 +38,7 @@ TestsGroup:AddFact("T050.EnumLookup.GivenAttemptToAccessNonExistingMember.Should
         end
 )
 
-TestsGroup:AddTheory("T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict",
+TG:AddTheory("T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict",
         {
             ["EBIIVM.GIVTC.SRER.0000"] = { Value = -1, ExpectedVerdict = false },
             ["EBIIVM.GIVTC.SRER.0010"] = { Value = 0, ExpectedVerdict = false },
@@ -78,7 +68,7 @@ TestsGroup:AddTheory("T010.EnumBuiltInIsValidMethod.GivenInvalidValueToCheck.Sho
         end
 )
 
-TestsGroup:AddTheory("T020.StringEnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict",
+TG:AddTheory("T020.StringEnumBuiltInIsValidMethod.GivenInvalidValueToCheck.ShouldReturnExpectedVerdict",
         {
             ["SEBIIVM.GIVTC.SRER.0000"] = { Value = "_", ExpectedVerdict = false },
             ["SEBIIVM.GIVTC.SRER.0020"] = { Value = "a", ExpectedVerdict = true },

@@ -1,22 +1,10 @@
-﻿local U, _setfenv, _importer = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-    local U = _assert(_g.VWoWUnit)
-    local _importer = _assert(_g.pvl_namespacer_get)
+local StringsHelper = using "System.Helpers.Strings"
 
-    return U, _setfenv, _importer
-end)()
+local TG, U = using "[testgroup]" "System.Helpers.Strings"
 
-_setfenv(1, {})
-
-local StringsHelper = _importer("System.Helpers.Strings")
-
-local TestsGroup = U.TestsEngine:CreateOrUpdateGroup { Name = "System.Helpers.Strings" }
-
-TestsGroup:AddTheory("StringsHelper.StartsWith.GivenVariousInputs.ShouldMatchExpectedResults",
+TG:AddTheory("StringsHelper.StartsWith.GivenVariousInputs.ShouldMatchExpectedResults",
         {
             ["SH.SW.GVI.SMER.0000"] = {
                 Input = "abc",
