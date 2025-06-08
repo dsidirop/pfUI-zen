@@ -1,4 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../Ui.xsd">
+    <!-- order -->
+    <Include file="_setup_\.xml"/>
+    
     <Include file="io.testbed\.xml"/>
     <Include file="nils.testbed\.xml"/>
     <Include file="time.testbed\.xml"/>
@@ -11,4 +14,7 @@
     <Include file="inheritance.testbed\.xml"/>
     <Include file="strings.helper.testbed\.xml"/>    
     <Include file="using.built.ins.testbed\.xml"/>
+
+    <!-- keep last -->
+    <Include file="_teardown_\.xml"/>
 </Ui>

@@ -1,4 +1,4 @@
-local VWoWUnit, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable = (function()
+local VWoWUnit, _g, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -11,7 +11,7 @@ local VWoWUnit, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable = (fu
 	local _tableGetn = _assert(_g.table.getn)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g.VWoWUnit, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable
+	return _g.VWoWUnit, _g, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -121,6 +121,49 @@ function TestsRunnerEngine:AssociateTestGroupWithTags(group, tags)
 	end
 	
 	return self
+end
+
+--[[ ZENSHARP ]]--
+
+function TestsRunnerEngine:BindZenSharpKeywords(optionalTestgroupKeyword)
+    _setfenv(1, self)
+    
+    _testgroupKeyword = optionalTestgroupKeyword or "[testgroup]"
+
+    local using = _assert(_g.pvl_namespacer_get)
+
+    local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
+
+    local vwowunitSnapshot = VWoWUnit
+    Namespacer:BindKeyword(_testgroupKeyword, function(name)
+        local testGroup = vwowunitSnapshot.TestsEngine:CreateOrUpdateGroup { Name = name }
+
+        return testGroup, vwowunitSnapshot
+    end)
+
+    Namespacer:BindKeyword(_testgroupKeyword .. " [tagged]", function(name)
+        local testGroup = vwowunitSnapshot.TestsEngine:CreateOrUpdateGroup { Name = name }
+
+        return function(tags)
+            vwowunitSnapshot.TestsEngine:AssociateTestGroupWithTags(testGroup, tags)
+            return testGroup, vwowunitSnapshot
+        end
+    end)
+end
+
+function TestsRunnerEngine:UnbindZenSharpKeywords()
+    _setfenv(1, self)
+
+    if not _testgroupKeyword then
+        return
+    end
+
+    local using = _assert(_g.pvl_namespacer_get)
+
+    local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
+
+    Namespacer:UnbindKeyword(_testgroupKeyword)
+    Namespacer:UnbindKeyword(_testgroupKeyword .. " [tagged]")
 end
 
 -- private space

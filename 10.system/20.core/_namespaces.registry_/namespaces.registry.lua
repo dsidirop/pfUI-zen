@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -16,13 +16,14 @@ local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, 
     local _strsub = _assert(_g.string.sub)
     local _format = _assert(_g.string.format)
     local _strfind = _assert(_g.string.find)
+    local _rawequal = _assert(_g.rawequal)
     local _stringify = _assert(_g.tostring)
     local _debugstack = _assert(_g.debugstack)
     local _tableRemove = _assert(_g.table.remove)
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g.pvl_namespacer_add then
@@ -59,6 +60,10 @@ local function _stringStartsWith(input, desiredPrefix)
         return false
     end
 
+    if _rawequal(input, desiredPrefix) then
+        return true
+    end
+
     local desiredPrefixLength = _strlen(desiredPrefix)
     if _strlen(input) < desiredPrefixLength then
         return false
@@ -75,6 +80,35 @@ local function _stringStartsWith(input, desiredPrefix)
 
     local startIndex = _strfind(input, desiredPrefix, --[[startindex:]] 1, --[[plainsearch:]] true)
     return startIndex == 1
+end
+
+local function _stringEndsWith(input, desiredPostfix)
+    _ = _type(input) == "string" or _throw_exception("input must be a string")
+    _ = _type(desiredPostfix) == "string" or _throw_exception("desiredPrefix must be a string")
+
+    if desiredPostfix == "" then
+        return true
+    end
+
+    if input == "" then
+        return false
+    end
+
+    if _rawequal(input, desiredPostfix) then
+        return true
+    end
+
+    local inputLength = _strlen(input)
+    local desiredPostfixLength = _strlen(desiredPostfix)
+    if inputLength < desiredPostfixLength then
+        return false
+    end
+
+    if inputLength == desiredPostfixLength and input == desiredPostfix then
+        return true
+    end
+
+    return _strsub(input, -desiredPostfixLength) == desiredPostfix
 end
 
 local function _strmatch(input, patternString, ...)
@@ -291,8 +325,6 @@ do
         -- todo  are meant to be accessible only by the proto itself ala 'classProto.base' and 'classProto.asBase'   
         _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
-
-        -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
 
         return newInstance
 
@@ -723,9 +755,17 @@ do
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
+    function NamespaceRegistry:BindKeyword(keyword, rawSymbol)
+        _setfenv(EScope.Function, self)
+        
+        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]") or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+
+        self:Bind(keyword, rawSymbol)
+    end
+
     function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol)
         _setfenv(EScope.Function, self)
-
+        
         NamespaceRegistry.Assert.NamespacePathIsHealthy(keywordOrNamespacePath)
         NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbol)
 
@@ -745,6 +785,23 @@ do
             -- no point to include [declare] and other keywords in the registry
             _reflection_registry[rawSymbol] = newFormalSymbolProtoEntry
         end
+    end
+
+    function NamespaceRegistry:UnbindKeyword(keyword)
+        _setfenv(EScope.Function, self)
+
+        local entry = _namespaces_registry[keyword]
+        if entry == nil then
+            return -- already unbound
+        end
+
+        local symbolType = entry:GetRegistrySymbolType()
+        if symbolType ~= SRegistrySymbolTypes.Keyword then
+            _throw_exception("cannot unbind namespace %q because it is not a keyword (it is a %q)", keyword, symbolType)
+        end
+
+        _namespaces_registry[keyword] = nil
+        _reflection_registry[entry:GetSymbolProto()] = nil -- remove the proto tidbits from the reflection registry
     end
 
     function NamespaceRegistry:TryGetProtoTidbitsViaNamespace(namespacePath)
@@ -979,13 +1036,13 @@ end
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
 -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
-NamespaceRegistrySingleton:Bind("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:Bind("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
-NamespaceRegistrySingleton:Bind("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:Bind("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
 local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
@@ -993,13 +1050,13 @@ local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
     return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
 end
 
-NamespaceRegistrySingleton:Bind("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:Bind("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:Bind("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
-NamespaceRegistrySingleton:Bind("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:Bind("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
 -- @formatter:on
 
