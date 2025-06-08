@@ -55,7 +55,7 @@ function VWoWUnit.Should.Throw(action, optionalErrorMessageGlobPattern)
         local errorMessage = returnValuesTable[1]
 
         if not VWoWUnit.Utilities.IsGlobMatch(errorMessage, optionalErrorMessageGlobPattern) then
-            VWoWUnit.Raise_(_format("[Should.Throw()] Expected exception-message to match glob pattern %q but got this exception-message instead:\n\n%s", optionalErrorMessageGlobPattern, _tostring(errorMessage)))
+            VWoWUnit.Raise_(_format("[Should.Throw()] Expected exception-message to match glob pattern %q but got this exception-message instead:\n\n%s\n\n", optionalErrorMessageGlobPattern, _tostring(errorMessage)))
         end
     end
 
@@ -109,7 +109,7 @@ function VWoWUnit.Should.Not.Throw(action)
 	
 	if not success then
 		local errorMessage = returnValuesTable[1]
-		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s", _tostring(errorMessage)))
+		VWoWUnit.RaiseWithoutStacktrace_(_format("[Should.Not.Throw()] Was not expecting an exception to be thrown but got this one:\n\n%s\n\n", _tostring(errorMessage)))
 	end
 	
 	return _unpack(returnValuesTable)
