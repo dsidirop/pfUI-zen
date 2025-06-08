@@ -201,21 +201,18 @@ function TestsRunnerEngine:EnsurePfuiChatInterceptorsArePluggedIn_()
     if _type(_pfui.chat.URLFuncs) ~= "table" then
         return
     end
-    
-    --   /script  DEFAULT_CHAT_FRAME:AddMessage( string.gsub("**** [foo.bar.x.y.z] [PASSED]", "%[([_A-Za-z0-9-]+)%.([^%s%]()]+)%]", "%1.%2") )
-    --   /script  DEFAULT_CHAT_FRAME:AddMessage( string.gsub("**** [foo.bar.x.y.z] [PASSED]", "%[([_A-Za-z0-9-]+)%.%]", "%s.%s") )
 
-    --_pfui.chat.URLPattern.VWoWUnitTestCases = { -- todo   figure out what is wrong with this one
-    --    ["rx"] = " %[([_A-Za-z0-9-]+)%.([^%s%]()]+)%.([^%s%]()]+)%] ", -- for some weird reason this ends up devouring entire lines instead of just [foo.bar.ping.pong]   go figure ...
-    --    ["fm"] = "%s.%s"
-    --}
-    --
-    --_pfui.chat.URLFuncs.VWoWUnitTestCases = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-    --    return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitTestCases.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-    --end
+    _pfui.chat.URLPattern.VWoWUnitTestCases = {
+        ["rx"] = "%[([_A-Za-z0-9-]+)%.([^%s%]()]+)%]",
+        ["fm"] = "%s.%s"
+    }
+
+    _pfui.chat.URLFuncs.VWoWUnitTestCases = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+        return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitTestCases.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    end
 
     _pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths = {
-        ["rx"] = "([\\._A-Za-z0-9-]+:[0-9]+): ", -- the regex works but its not getting replaced by a clickable [link] for some reason
+        ["rx"] = "([\\._A-Za-z0-9-]+:[0-9]+): ",
         ["fm"] = "%s"
     }
 
