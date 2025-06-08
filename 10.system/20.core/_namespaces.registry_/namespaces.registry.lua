@@ -1,8 +1,10 @@
-﻿local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+﻿local EScope = { EGlobal = 0, EFunction = 1 }
+
+local _g, _assert, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
-    _setfenv(1, {})
+    _setfenv(EScope.Function, {})
 
     local _next = _assert(_g.next)
     local _type = _assert(_g.type)
@@ -27,7 +29,7 @@ if _g.pvl_namespacer_add then
     return -- already in place
 end
 
-_setfenv(1, {})
+_setfenv(EScope.Function, {})
 
 local function _throw_exception(format, ...)
     local variadicsArray = arg
@@ -140,7 +142,7 @@ do
             _throw_exception("The IsValid() method must be called like :IsValid() (it has probably been invoked as .IsValid() which is wrong!)")
         end
 
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         local typeOfValue = _type(value)
         if typeOfValue ~= "string" and typeOfValue ~= "number" then
@@ -267,7 +269,7 @@ do
     end
 
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off
-        _setfenv(1, NonStaticClassProtoFactory)
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
         _ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("classProtoOrInstance was expected to be a table") -- @formatter:on
 
@@ -290,9 +292,6 @@ do
         _setmetatable(newInstance, classProtoOrInstanceBeingEnriched)
         -- instance.__index = classProto.__index --00 dont
 
-        -- todo    try to auto-generate the bindings for the base.* and the asBaseProto.* using classProto.base.* and classProto.asBase.*
-        -- todo    but we have to be very careful around :New*() methods because those have to be bound against the CLASS-PROTO and not against the instance!
-        -- todo
         -- todo    [PFZ-38] if the classProto claims that it implements an interface we should find a way to healthcheck that the interface methods are indeed honored!
 
         return newInstance
@@ -305,7 +304,7 @@ do
     end
 
     function NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProto, protoTidbits, upcomingInstance) --@formatter:off
-        _setfenv(1, NonStaticClassProtoFactory)
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
         _ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
         _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type %q", _type(upcomingInstance)) --@formatter:on
@@ -345,7 +344,7 @@ local ProtosFactory = {}
 do
     ---@class Proto
     function ProtosFactory.Spawn(symbolType)
-        _setfenv(1, ProtosFactory)
+        _setfenv(EScope.Function, ProtosFactory)
 
         if symbolType == SRegistrySymbolTypes.Enum then
             return EnumsProtoFactory.Spawn()
@@ -374,7 +373,7 @@ do
     end
     
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
         _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type %q)", _type(namespacePath))
@@ -397,7 +396,7 @@ do
     end
 
     function Entry:GetFieldPluggerCallbackFunc()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
         
@@ -405,7 +404,7 @@ do
     end
 
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _type(func) == "function"                         or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
         _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
@@ -425,7 +424,7 @@ do
     end
     
     function Entry:UnsetPartiality()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _isForPartial = false
         
@@ -433,7 +432,7 @@ do
     end
 
     function Entry:GetNamespace()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
 
@@ -441,7 +440,7 @@ do
     end
 
     function Entry:GetSymbolProto()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _symbolProto ~= nil or _throw_exception("spotted unset symbol (nil) for a namespace-entry (how is this even possible?)")
 
@@ -449,7 +448,7 @@ do
     end
 
     function Entry:GetRegistrySymbolType()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _symbolType ~= nil or _throw_exception("spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)")
 
@@ -457,7 +456,7 @@ do
     end
 
     function Entry:IsPartialEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _ = _isForPartial ~= nil or _throw_exception("spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)")
 
@@ -465,7 +464,7 @@ do
     end
     
     function Entry:CanBeSubclassed()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Enum
                 or _symbolType == SRegistrySymbolTypes.Interface
@@ -474,49 +473,49 @@ do
     end
     
     function Entry:IsEnumEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Enum
     end
 
     function Entry:IsClassEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.StaticClass
     end
     
     function Entry:IsStaticClassEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.StaticClass
     end
 
     function Entry:IsNonStaticClassEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
     function Entry:IsEnumEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Enum
     end
 
     function Entry:IsInterfaceEntry()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Interface
     end
 
     function Entry:IsRawSymbol()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.RawSymbol -- external symbols from 3rd party libs etc
     end
 
     function Entry:IsKeyword()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Keyword -- [declare] and friends
     end
@@ -565,7 +564,7 @@ do
     }
 
     function Entry:GetSpecialReservedNames()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
         
         if _symbolType == SRegistrySymbolTypes.Enum then
             return Enums_SystemReservedMemberNames_ForDirectMembers, Enums_SystemReservedStaticMemberNames_ForMembersOfUnderscore
@@ -587,7 +586,7 @@ do
     end
 
     function Entry:ToString()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return "symbolType='" .. _stringify(_symbolType) .. "', symbolProto='" .. _stringify(_symbolProto) .. "', namespacePath='" .. _stringify(_namespacePath) .. "', isForPartial='" .. _stringify(_isForPartial) .. "'"
     end
@@ -598,7 +597,7 @@ end
 local NamespaceRegistry = _spawnSimpleMetatable()
 do
     function NamespaceRegistry:New()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         local instance = {
             _namespaces_registry                   = {},
@@ -635,7 +634,7 @@ do
 
     -- namespacer()
     function NamespaceRegistry:ChainSetFieldPluggerFuncForNonStaticClassProto(classProto, func)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(classProto)
         if protoTidbits == nil then
@@ -648,13 +647,13 @@ do
     end
 
     function NamespaceRegistry:GetMostRecentlyDefinedSymbolProtoAndTidbits()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         return _mostRecentlyDefinedSymbolProto, _mostRecentlyDefinedSymbolProtoTidbits
     end
     
     function NamespaceRegistry:UpsertSymbolProtoSpecs(namespacePath, symbolType)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
         NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol(symbolType)
@@ -697,7 +696,7 @@ do
 
     NamespaceRegistry.PatternToDetectPartialKeywordPostfix = "%s*%[[Pp][Aa][Rr][Tt][Ii][Aa][Ll]%]%s*$"
     function NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
-        _setfenv(1, NamespaceRegistry)
+        _setfenv(EScope.Function, NamespaceRegistry)
 
         local sanitized = _gsub(namespacePath, NamespaceRegistry.PatternToDetectPartialKeywordPostfix, "") --00
         local isForPartial = sanitized ~= namespacePath
@@ -725,7 +724,7 @@ do
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
     function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(keywordOrNamespacePath)
         NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbol)
@@ -749,7 +748,7 @@ do
     end
 
     function NamespaceRegistry:TryGetProtoTidbitsViaNamespace(namespacePath)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         -- we intentionally omit validating the namespacepath in terms of whitespaces etc
         -- that is because this method is meant to be used by the reflection.* family of methods
@@ -768,7 +767,7 @@ do
 
     -- importer()
     function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
 
@@ -790,7 +789,7 @@ do
     end
 
     function NamespaceRegistry:TryGetProtoTidbitsViaSymbolProto(symbolProto)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         if symbolProto == nil then
             return nil
@@ -800,7 +799,7 @@ do
     end
     
     function NamespaceRegistry.HasCircularProtoDependency(mixinProtoSymbol, targetSymbolProto)
-        _setfenv(1, NamespaceRegistry)
+        _setfenv(EScope.Function, NamespaceRegistry)
         
         _ = _type(mixinProtoSymbol) == "table" or _throw_exception("mixinProtoSymbol must be a table but it was found to be of type %q", _type(mixinProtoSymbol))
         _ = _type(targetSymbolProto) == "table" or _throw_exception("targetSymbolProto must be a table but it was found to be of type %q", _type(targetSymbolProto))
@@ -851,7 +850,7 @@ do
     end
 
     function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
         
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto)
         _ = protoTidbits ~= nil or _throw_exception("[NR.BM.000] targetSymbolProto is not a symbol-proto")
@@ -942,7 +941,7 @@ do
     end
 
     function NamespaceRegistry:PrintOut()
-        _setfenv(1, self)
+        _setfenv(EScope.Function, self)
 
         _g.print("** namespaces-registry **")
         for namespace, entry in _pairs(self._namespaces_registry) do
