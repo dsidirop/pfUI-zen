@@ -37,13 +37,15 @@ end
 function TestsRunnerEngine:RunAllTestGroups()
 	_setfenv(1, self)
     
-    self:OnBeforeFirstTestRun_()
+    self:OnTestRoundCommencing_()
 
 	for _, testsGroup in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
 		_logger:LogInfo("** [" .. testsGroup:GetName() .. "] Running test-group ...")
         testsGroup:Run()
 		_logger:LogInfo("")
 	end
+
+    self:OnTestRoundCompleted_()
 	
 	-- 00  we want to ensure that tests with short names like system.exceptions to be run before tests with long names like pavilion.xyz.foo.bar 
 end
@@ -51,7 +53,7 @@ end
 function TestsRunnerEngine:RunTestGroup(testGroupName)
 	_setfenv(1, self)
 
-    self:OnBeforeFirstTestRun_()
+    self:OnTestRoundCommencing_()
 	
 	local group = _testGroups[testGroupName]
 	if not group then
@@ -60,24 +62,28 @@ function TestsRunnerEngine:RunTestGroup(testGroupName)
 	end
 
     group:Run()
+
+    self:OnTestRoundCompleted_()
 end
 
 function TestsRunnerEngine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
-    self:OnBeforeFirstTestRun_()
+    self:OnTestRoundCommencing_()
 
     _logger:LogInfo("** [tag:" .. tagName .. "] Running tests tagged with it ...")
     
 	for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
+
+    self:OnTestRoundCompleted_()
 end
 
 function TestsRunnerEngine:RunSpecificTest(testName)
     _setfenv(1, self)
 
-    self:OnBeforeFirstTestRun_()
+    self:OnTestRoundCommencing_()
 
     local test = self:GetSpecificTest_(testName)
     if not test then
@@ -86,6 +92,8 @@ function TestsRunnerEngine:RunSpecificTest(testName)
     end
 
     test:Run()
+
+    self:OnTestRoundCompleted_()
 end
 
 --[[ Registry ]]--
@@ -170,7 +178,7 @@ end
 
 -- private space
 
-function TestsRunnerEngine:OnBeforeFirstTestRun_()
+function TestsRunnerEngine:OnTestRoundCommencing_()
     _setfenv(1, self)
 
     self:EnsurePfuiChatInterceptorsArePluggedIn_()
@@ -219,6 +227,45 @@ function TestsRunnerEngine:EnsurePfuiChatInterceptorsArePluggedIn_()
     _pfui.chat.URLFuncs.VWoWUnitStackTraceFilePaths = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
         return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
     end
+end
+
+function TestsRunnerEngine:OnTestRoundCompleted_()
+    _setfenv(1, self)
+
+    self:EnsurePfuiChatInterceptorsAreUnplugged_()
+end
+
+
+function TestsRunnerEngine:EnsurePfuiChatInterceptorsAreUnplugged_()
+    _setfenv(1, self)
+
+    if not _pfuiChatInterceptorsGotPluggedIn then
+        return
+    end
+
+    _pfuiChatInterceptorsGotPluggedIn = false
+
+    if _type(_pfui) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLPattern) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLFuncs) ~= "table" then
+        return
+    end
+
+    _pfui.chat.URLPattern.VWoWUnitTestCases = nil
+    _pfui.chat.URLFuncs.VWoWUnitTestCases = nil
+
+    _pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths = nil
+    _pfui.chat.URLFuncs.VWoWUnitStackTraceFilePaths = nil
 end
 
 function TestsRunnerEngine:GetsertGroup_(name)
