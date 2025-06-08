@@ -1,4 +1,4 @@
-local VWoWUnit, _assert, _type, _setfenv, _tableGetn, _setmetatable = (function()
+local VWoWUnit, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
@@ -7,10 +7,11 @@ local VWoWUnit, _assert, _type, _setfenv, _tableGetn, _setmetatable = (function(
 	_g.VWoWUnit = _g.VWoWUnit or {} -- dont introduce a local variable here    it will cause bugs
 
 	local _type = _assert(_g.type)
+    local _pfui = _assert(_g.pfUI)
 	local _tableGetn = _assert(_g.table.getn)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g.VWoWUnit, _assert, _type, _setfenv, _tableGetn, _setmetatable
+	return _g.VWoWUnit, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable
 end)()
 
 _setfenv(1, {})
@@ -35,6 +36,8 @@ end
 
 function TestsRunnerEngine:RunAllTestGroups()
 	_setfenv(1, self)
+    
+    self:OnBeforeFirstTestRun_()
 
 	for _, testsGroup in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
 		_logger:LogInfo("** [" .. testsGroup:GetName() .. "] Running test-group ...")
@@ -47,6 +50,8 @@ end
 
 function TestsRunnerEngine:RunTestGroup(testGroupName)
 	_setfenv(1, self)
+
+    self:OnBeforeFirstTestRun_()
 	
 	local group = _testGroups[testGroupName]
 	if not group then
@@ -60,6 +65,8 @@ end
 function TestsRunnerEngine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
+    self:OnBeforeFirstTestRun_()
+    
 	for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
@@ -67,6 +74,8 @@ end
 
 function TestsRunnerEngine:RunSpecificTest(testName)
     _setfenv(1, self)
+
+    self:OnBeforeFirstTestRun_()
 
     local test = self:GetSpecificTest_(testName)
     if not test then
@@ -115,6 +124,57 @@ function TestsRunnerEngine:AssociateTestGroupWithTags(group, tags)
 end
 
 -- private space
+
+function TestsRunnerEngine:OnBeforeFirstTestRun_()
+    _setfenv(1, self)
+
+    self:EnsurePfuiChatInterceptorsArePluggedIn_()
+end
+
+local _pfuiChatInterceptorsGotPluggedIn = false
+function TestsRunnerEngine:EnsurePfuiChatInterceptorsArePluggedIn_()
+    _setfenv(1, self)
+
+    if _pfuiChatInterceptorsGotPluggedIn then
+        return
+    end
+    
+    _pfuiChatInterceptorsGotPluggedIn  = true
+    
+    if _type(_pfui) ~= "table" then
+        return
+    end
+    
+    if _type(_pfui.chat) ~= "table" then
+        return
+    end
+    
+    if _type(_pfui.chat.URLPattern) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLFuncs) ~= "table" then
+        return
+    end
+    
+    _pfui.chat.URLPattern.VWoWUnitTestCases = {
+        ["rx"] = "%[([_A-Za-z0-9-]+)%.([^%s%]()]+)%]",
+        ["fm"] = "%s.%s"
+    }
+
+    _pfui.chat.URLFuncs.VWoWUnitTestCases = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+        return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitTestCases.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    end
+
+    _pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths = {
+        ["rx"] = "([\\._A-Za-z0-9-]+:[0-9]+): ", -- the regex works but its not getting replaced by a clickable [link] for some reason
+        ["fm"] = "%s"
+    }
+
+    _pfui.chat.URLFuncs.VWoWUnitStackTraceFilePaths = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+        return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    end
+end
 
 function TestsRunnerEngine:GetsertGroup_(name)
 	_setfenv(1, self)

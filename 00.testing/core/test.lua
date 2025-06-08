@@ -114,11 +114,11 @@ function VWoWUnit.Test:RunImpl_(subTestCaseName, data)
 
 	local success, errorMessage = _pcall(_testFunction, data, subTestCaseName)
 	if success == nil or success == false or errorMessage ~= nil then
-		_logger:LogError("****** " .. subTestCaseName .. " |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
+		_logger:LogError("****** [" .. subTestCaseName .. "] |cffff0000[FAILED]\r\n" .. _tostring(errorMessage))
 		return errorMessage
 	end
 
-	_logger:LogInfo("****** " .. subTestCaseName .. " |cff00ff00[PASSED]")
+	_logger:LogInfo("****** [" .. subTestCaseName .. "] |cff00ff00[PASSED]")
 
 	return nil
 end
