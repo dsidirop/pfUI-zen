@@ -1,0 +1,29 @@
+﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+
+local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
+
+TG:AddFact("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow",
+        function()
+            -- ARRANGE
+
+            -- ACT
+            function action()
+                -- in the first partial file of the Bar definition we blend-in Foo1
+                local Foo1 = using "[declare]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Foo1"
+
+                local _ = using "[declare] [blend]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Bar [Partial]" {
+                    ["Foo"] = Foo1,
+                }
+
+                -- in another partial file we continue adding to the Bar definition ...
+                local Foo2 = using "[declare]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Foo2"
+
+                local _ = using "[declare] [blend]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Bar [Partial]" {
+                    ["Foo"] = Foo2, -- same key should cause an exception
+                }
+            end
+
+            -- ASSERT
+            U.Should.Throw(action, "*[NR.BM.062]*")
+        end
+)

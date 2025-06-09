@@ -4,5 +4,6 @@
     <Include file="t006.inheritance.subclassing.given_empty_mixins_table_to_blend.should_throw.lua"/>
     <Include file="t007.inheritance.subclassing.given_simple_circular_dependency_blending_attempt.should_throw.lua"/>
     <Include file="t008.inheritance.subclassing.given_two_layer_circular_dependency_blending_attempt.should_throw.lua"/>
+    <Include file="t009.inheritance.subclassing.given_same_nickname_for_two_parents.should_throw.lua"/>
     <Include file="t010.inheritance.subclassing.given_green_interface_and_concrete_base_class.should_work.lua"/>
 </Ui>
