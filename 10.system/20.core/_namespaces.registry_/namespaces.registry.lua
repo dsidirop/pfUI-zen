@@ -39,7 +39,7 @@ local function _throw_exception(format, ...)
         variadicsArray[i] = _stringify(variadicsArray[i])
     end
 
-    _assert(false, _format(format, _unpack(variadicsArray)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "\n---------------End Stacktrace---------------\n ")
+    _assert(false, _format(format, _unpack(variadicsArray)) .. "\n\n---------------Stacktrace---------------\n" .. _debugstack(2) .. "---------------End Stacktrace---------------\n ")
 end
 
 local function _spawnSimpleMetatable(mt)
@@ -932,7 +932,8 @@ do
             _ = _next(specific_MixinProtoSymbol)                        ~= nil or _throw_exception("[NR.BM.061] mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
             _ = targetSymbolProto_asBaseProp[specific_MixinNickname]    == nil or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
             _ = targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] == nil or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
-            
+            _ = not mixinProtoTidbits:IsPartialEntry()                         or _throw_exception("[NR.BM.064] mixin nicknamed %q is only partially defined and cannot be blended until it is fully defined", specific_MixinNickname) --@formatter:on
+
             local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
             local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()

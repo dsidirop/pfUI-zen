@@ -6,4 +6,5 @@
     <Include file="t008.inheritance.subclassing.given_two_layer_circular_dependency_blending_attempt.should_throw.lua"/>
     <Include file="t009.inheritance.subclassing.given_same_nickname_for_two_parents.should_throw.lua"/>
     <Include file="t010.inheritance.subclassing.given_green_interface_and_concrete_base_class.should_work.lua"/>
+    <Include file="t011.inheritance.subclassing.given_attempt_to_add_partially_defined_parent.should_throw.lua"/>
 </Ui>
