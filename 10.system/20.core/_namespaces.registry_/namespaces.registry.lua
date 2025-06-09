@@ -583,7 +583,7 @@ do
         ["asBase"]              = "asBase",
         ["__call"]              = "__call",
         ["__index"]             = "__index",
-        -- ["Instantiate"]      = "Instantiate",
+        ["Instantiate"]         = "Instantiate",
         ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
