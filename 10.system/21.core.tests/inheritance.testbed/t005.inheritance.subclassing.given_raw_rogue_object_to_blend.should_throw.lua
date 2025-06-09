@@ -2,13 +2,13 @@
 
 local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
 
-TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable",
+TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow",
         function()
             -- ARRANGE
 
             -- ACT
             function action()
-                _ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrowExceptionAboutNotBeingBlendable.Foo" {
+                _ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow.Foo" {
                     ["Bar"] = {
                         a = 1,
                         b = 2,

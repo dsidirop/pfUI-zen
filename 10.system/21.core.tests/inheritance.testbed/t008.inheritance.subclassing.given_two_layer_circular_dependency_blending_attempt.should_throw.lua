@@ -30,7 +30,7 @@ TG:AddFact("T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlending
                 }
             end
 
-            -- ASSERT
-            U.Should.Throw(action, "*[NR.BM.053]*")
+            -- ASSERT    we dont get [NR.BM.053] here because [NR.ASR.HNBEAPCY.010] gets detected first by merit of the fact that we are trying amend a class that was already used as a parent beforehand!
+            U.Should.Throw(action, "*[NR.ASR.HNBEAPCY.010]*")
         end
 )

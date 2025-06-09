@@ -420,6 +420,8 @@ do
             _fieldPluggerCallbackFunc = symbolType == SRegistrySymbolTypes.NonStaticClass
                     and _dudFieldPluggerFunc  -- placeholder
                     or nil,
+            
+            _wasEmployedAsParentClassSomewhere = false,
         }
 
         _setmetatable(instance, self)
@@ -536,6 +538,18 @@ do
         _setfenv(EScope.Function, self)
 
         return _symbolType == SRegistrySymbolTypes.Interface
+    end
+
+    function Entry:MarkEmployedAsParentClass()
+        _setfenv(EScope.Function, self)
+
+        _wasEmployedAsParentClassSomewhere = true
+    end
+
+    function Entry:GetWasEmployedAsParentClassSomewhere()
+        _setfenv(EScope.Function, self)
+
+        return _wasEmployedAsParentClassSomewhere
     end
 
     function Entry:IsRawSymbol()
@@ -655,11 +669,15 @@ do
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
-        _ = incomingSymbolType == preExistingEntry:GetRegistrySymbolType() or _throw_exception("cannot re-register namespace [%s] with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetRegistrySymbolType()) -- 10
+        _ = incomingSymbolType == preExistingEntry:GetRegistrySymbolType() or _throw_exception("[NR.ASR.EUCEWTSST.010] cannot re-register namespace [%s] with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetRegistrySymbolType()) -- 10
     end
 
     NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial = function(isForPartial, preExistingEntry, sanitizedNamespacePath)
-        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("namespace [%s] has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetRegistrySymbolType()) -- 10
+        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("[NR.ASR.ETIUIFPOTPEIP.010] namespace [%s] has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetRegistrySymbolType()) -- 10
+    end
+
+    NamespaceRegistry.Assert.HasNotBeenEmployedAsParentClassYet = function(preExistingEntry, sanitizedNamespacePath)
+        _ = not preExistingEntry:GetWasEmployedAsParentClassSomewhere() or _throw_exception("[NR.ASR.HNBEAPCY.010] Symbol [%s] is being amended through [partial] but it was already used as a parent-symbol at least once - this is forbidden as it can lead to unexpected behaviour in runtime", sanitizedNamespacePath) -- 10
     end
 
     -- namespacer()
@@ -708,6 +726,7 @@ do
         -- update existing entry (partials come here)
         NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType(symbolType, preExistingTidbitsEntry, sanitizedNamespacePath) -- 10
         NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial(isForPartial, preExistingTidbitsEntry, sanitizedNamespacePath) -- 10
+        NamespaceRegistry.Assert.HasNotBeenEmployedAsParentClassYet(preExistingTidbitsEntry, sanitizedNamespacePath)
 
         if not isForPartial then -- 20
             preExistingTidbitsEntry:UnsetPartiality()
@@ -942,6 +961,8 @@ do
             _ = (not targetIsInterface      or mixinIsInterface                           ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
             _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface  ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
             _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsInterface  ) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
+
+            mixinProtoTidbits:MarkEmployedAsParentClass()
             
             targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] = specific_MixinProtoSymbol -- add the mixin-proto-symbol itself as the key to its own mixin-proto-symbol
 
