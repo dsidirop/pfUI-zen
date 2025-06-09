@@ -497,6 +497,10 @@ do
     
     function Entry:CanBeSubclassed()
         _setfenv(EScope.Function, self)
+        
+        -- if _isForPartial then -- dont   we need to allow subclassing to happen even on partial entries   it comes in handy
+        --     return false
+        -- end
 
         return _symbolType == SRegistrySymbolTypes.Enum
                 or _symbolType == SRegistrySymbolTypes.Interface
@@ -905,7 +909,7 @@ do
         
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto) --@formatter:off
         _ = protoTidbits ~= nil            or _throw_exception("[NR.BM.000] targetSymbolProto is not a symbol-proto")
-        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto is not a class, an interface or an enum - its symbol-type is %q", protoTidbits:GetRegistrySymbolType())
+        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto to be blended must be a class/interface/enum (symbol-type=%q)", protoTidbits:GetRegistrySymbolType())
         _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
         _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
 
