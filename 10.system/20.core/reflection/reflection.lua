@@ -19,7 +19,7 @@ local SRegistrySymbolTypes = using "System.Namespacer.SRegistrySymbolTypes"
 local Throw                   = using "System.Exceptions.Throw"
 local NotImplementedException = using "System.Exceptions.NotImplementedException"
 
-local Reflection = using "[declare] [static]" "System.Reflection [Partial]" --@formatter:on
+local Reflection = using "[declare] [static]" "System.Reflection" --@formatter:on
 
 Scopify(EScopes.Function, {})
 

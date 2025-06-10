@@ -6,7 +6,7 @@ local EScopes = using "System.EScopes"
 local GenericTextWriter = using "System.IO.GenericTextWriter"
 local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
-local Console = using "[declare] [static]" "System.Console [Partial]" -- @formatter:on
+local Console = using "[declare] [static]" "System.Console" -- @formatter:on
 
 Scopify(EScopes.Function, {})
 

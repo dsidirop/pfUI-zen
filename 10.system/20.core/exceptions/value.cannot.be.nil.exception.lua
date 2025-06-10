@@ -4,7 +4,7 @@ local Guard   = using "System.Guard" --               @formatter:off
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes" --             @formatter:on
 
-local Class = using "[declare] [blend]" "System.Exceptions.ValueCannotBeNilException [Partial]" {
+local Class = using "[declare] [blend]" "System.Exceptions.ValueCannotBeNilException" {
     ["Exception"] = using "System.Exceptions.Exception",
 }
 

@@ -3,7 +3,7 @@
 local Guard      = using "System.Guard"
 local Namespacer = using "System.Namespacer"
 
-local Fields = using "[declare] [static]" "System.Classes.Fields [Partial]"
+local Fields = using "[declare] [static]" "System.Classes.Fields"
 
 function Fields:__Call__(classFieldPluggerCallbackFunc)
     Guard.Assert.IsNotNil(classFieldPluggerCallbackFunc)

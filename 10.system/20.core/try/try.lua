@@ -15,7 +15,7 @@ local Exception          = using "System.Exceptions.Exception"
 
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
-local Class = using "[declare]" "System.Try [Partial]"
+local Class = using "[declare]" "System.Try"
 
 Scopify(EScopes.Function, {})
 

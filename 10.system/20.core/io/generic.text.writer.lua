@@ -10,7 +10,7 @@ local S = using "System.Helpers.Strings"
 
 local Fields = using "System.Classes.Fields"
 
-local Class = using "[declare]" "System.IO.GenericTextWriter [Partial]"
+local Class = using "[declare]" "System.IO.GenericTextWriter"
 
 Scopify(EScopes.Function, {})
 

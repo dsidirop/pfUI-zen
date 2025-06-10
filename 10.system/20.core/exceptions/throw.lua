@@ -8,7 +8,7 @@ local B = using "[built-ins]" [[
 
 local S = using "System.Helpers.Strings"
 
-local Throw = using "[declare] [static]" "System.Exceptions.Throw [Partial]"
+local Throw = using "[declare] [static]" "System.Exceptions.Throw"
 
 
 function Throw:__Call__(exception)

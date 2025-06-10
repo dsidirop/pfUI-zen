@@ -8,7 +8,7 @@ local EScopes = using "System.EScopes"
 local Fields             = using "System.Classes.Fields"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
-local Class = using "[declare]" "System.Exceptions.Exception [Partial]" -- @formatter:on
+local Class = using "[declare]" "System.Exceptions.Exception" -- @formatter:on
 
 Scopify(EScopes.Function, {})
 

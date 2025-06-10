@@ -974,10 +974,9 @@ do
             _throw_exception("namespace/keyword %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
 
-        if entry:IsPartialEntry() then
-            -- dont turn this into an debug.assertion   we want to know about this in production builds too
-            _throw_exception("namespace [%s] holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
-        end
+        --if entry:IsPartialEntry() then -- dont   use "[healthcheck] [all]" to find out about dangling partial entries
+        --    _throw_exception("namespace [%s] holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
+        --end
         
         if entry:IsAutorunKeyword() then
             return entry:GetSymbolProto()() --special case for [healthcheck] and friends

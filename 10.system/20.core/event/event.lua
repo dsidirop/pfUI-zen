@@ -7,7 +7,7 @@ local EScopes = using "System.EScopes"
 local Fields = using "System.Classes.Fields"
 local TablesHelper = using "System.Helpers.Tables"
 
-local Class = using "[declare]" "System.Event [Partial]"
+local Class = using "[declare]" "System.Event"
 
 Scopify(EScopes.Function, {})
 

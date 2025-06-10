@@ -1,6 +1,6 @@
 ﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
-local Nils = using "[declare] [static]" "System.Nils [Partial]"
+local Nils = using "[declare] [static]" "System.Nils"
 
 function Nils.Coalesce(
         value,

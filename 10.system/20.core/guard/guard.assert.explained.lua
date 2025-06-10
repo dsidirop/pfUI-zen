@@ -16,7 +16,7 @@ local Guard = using "[declare] [static]" "System.Guard [Partial]"
 Scopify(EScopes.Function, {})
 
 do
-    Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained [Partial]"
+    Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained"
     
     function Guard.Assert.Explained.IsString(value, customMessage)
         if not Reflection.IsString(value) then

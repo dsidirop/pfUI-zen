@@ -11,7 +11,7 @@ local B = using "[built-ins]" [[
 local Nils  = using "System.Nils"
 local Guard = using "System.Guard"
 
-local Class = using "[declare] [static]" "System.Helpers.Arrays [Partial]" -- @formatter:on
+local Class = using "[declare] [static]" "System.Helpers.Arrays" -- @formatter:on
 
 function Class.Count(array)
     Guard.Assert.IsTable(array, "array")

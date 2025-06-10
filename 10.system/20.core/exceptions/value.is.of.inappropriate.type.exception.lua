@@ -6,7 +6,7 @@ local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
 local StringsHelpers     = using "System.Helpers.Strings" --     @formatter:on
 
-local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOfInappropriateTypeException [Partial]" {
+local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOfInappropriateTypeException" {
     ["Exception"] = using "System.Exceptions.Exception",
 }
 

@@ -6,7 +6,7 @@ local Scopify   = using "System.Scopify"
 local EScopes   = using "System.EScopes"
 local Exception = using "System.Exceptions.Exception"
 
-local Class = using "[declare] [blend]" "System.Exceptions.NotImplementedException [Partial]" { --@formatter:on
+local Class = using "[declare] [blend]" "System.Exceptions.NotImplementedException" { --@formatter:on
     ["Exception"] = Exception
 }
 

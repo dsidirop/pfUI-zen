@@ -2,48 +2,48 @@
 
 -- using "[declare] [static]" "System.Scopify"      no need to predeclare this really
 
-using "[declare] [enum]" "System.Language.SRawTypes"
+using "[declare] [enum]" "System.Language.SRawTypes [Partial]"
 
-using "[declare] [static]" "System.Nils"
-using "[declare] [static]" "System.Math"
-using "[declare] [static]" "System.Time"
-using "[declare] [static]" "System.Table"
+using "[declare] [static]" "System.Nils [Partial]"
+using "[declare] [static]" "System.Math [Partial]"
+using "[declare] [static]" "System.Time [Partial]"
+using "[declare] [static]" "System.Table [Partial]"
 
-using "[declare] [static]" "System.Guard"
-using "[declare] [static]" "System.Guard.Utilities"
-using "[declare] [static]" "System.Guard.Assert"
-using "[declare] [static]" "System.Guard.Assert.Explained"
+using "[declare] [static]" "System.Guard [Partial]"
+using "[declare] [static]" "System.Guard.Utilities [Partial]"
+using "[declare] [static]" "System.Guard.Assert [Partial]"
+using "[declare] [static]" "System.Guard.Assert.Explained [Partial]"
 
-using "[declare] [static]" "System.Iterators"
-using "[declare] [static]" "System.Reflection"
+using "[declare] [static]" "System.Iterators [Partial]"
+using "[declare] [static]" "System.Reflection [Partial]"
 
-using "[declare] [static]" "System.Console"
+using "[declare] [static]" "System.Console [Partial]"
 
-using "[declare] [static]" "System.Classes.Fields"
-using "[declare] [static]" "System.Classes.Metatable"
-using "[declare] [static]" "System.Classes.Instantiator"
-using "[declare] [static]" "System.Classes.Mixins.MixinsBlender"
+using "[declare] [static]" "System.Classes.Fields [Partial]"
+using "[declare] [static]" "System.Classes.Metatable [Partial]"
+using "[declare] [static]" "System.Classes.Instantiator [Partial]"
+using "[declare] [static]" "System.Classes.Mixins.MixinsBlender [Partial]"
 
-using "[declare] [static]" "System.Helpers.Arrays"
-using "[declare] [static]" "System.Helpers.Tables"
-using "[declare] [static]" "System.Helpers.Strings"
-using "[declare] [static]" "System.Helpers.Booleans"
+using "[declare] [static]" "System.Helpers.Arrays [Partial]"
+using "[declare] [static]" "System.Helpers.Tables [Partial]"
+using "[declare] [static]" "System.Helpers.Strings [Partial]"
+using "[declare] [static]" "System.Helpers.Booleans [Partial]"
 
-using "[declare] [static]" "System.Language.RawTypeSystem"
+using "[declare] [static]" "System.Language.RawTypeSystem [Partial]"
 
-using "[declare] [static]" "System.Exceptions.Throw"
-using "[declare] [static]" "System.Exceptions.Utilities"
+using "[declare] [static]" "System.Exceptions.Throw [Partial]"
+using "[declare] [static]" "System.Exceptions.Utilities [Partial]"
 
-using "[declare] [static]" "System.Externals.WoW.UI.GlobalFrames"
+using "[declare] [static]" "System.Externals.WoW.UI.GlobalFrames [Partial]"
 
-using "[declare]" "System.Try"
-using "[declare]" "System.Event"
+using "[declare]" "System.Try [Partial]"
+using "[declare]" "System.Event [Partial]"
 
-using "[declare]" "System.IO.GenericTextWriter"
+using "[declare]" "System.IO.GenericTextWriter [Partial]"
 
-using "[declare]" "System.Exceptions.Exception"
-using "[declare]" "System.Exceptions.NotImplementedException"
-using "[declare]" "System.Exceptions.ValueAlreadySetException"
-using "[declare]" "System.Exceptions.ValueCannotBeNilException"
-using "[declare]" "System.Exceptions.ValueIsOutOfRangeException"
-using "[declare]" "System.Exceptions.ValueIsOfInappropriateTypeException"
+using "[declare]" "System.Exceptions.Exception [Partial]"
+using "[declare]" "System.Exceptions.NotImplementedException [Partial]"
+using "[declare]" "System.Exceptions.ValueAlreadySetException [Partial]"
+using "[declare]" "System.Exceptions.ValueCannotBeNilException [Partial]"
+using "[declare]" "System.Exceptions.ValueIsOutOfRangeException [Partial]"
+using "[declare]" "System.Exceptions.ValueIsOfInappropriateTypeException [Partial]"

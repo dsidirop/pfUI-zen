@@ -14,12 +14,12 @@ local ValueCannotBeNilException           = using "System.Exceptions.ValueCannot
 local ValueIsOutOfRangeException          = using "System.Exceptions.ValueIsOutOfRangeException"
 local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException" --     @formatter:on
 
-local Guard = using "[declare] [static]" "System.Guard [Partial]"
+local Guard = using "[declare] [static]" "System.Guard"
 
 Scopify(EScopes.Function, {})
 
 do
-    Guard.Assert = using "[declare] [static]" "System.Guard.Assert [Partial]"
+    Guard.Assert = using "[declare] [static]" "System.Guard.Assert"
 
     function Guard.Assert.IsUnset(value, optionalArgumentName)
         if value ~= nil then
