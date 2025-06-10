@@ -80,7 +80,7 @@ function Reflection.ConvertSRegistrySymbolTypeToSType_(registrySymbolType, value
         return STypes.Interface
     end
 
-    if registrySymbolType == SRegistrySymbolTypes.Keyword then
+    if registrySymbolType == SRegistrySymbolTypes.Keyword or registrySymbolType == SRegistrySymbolTypes.AutorunKeyword then
         -- this should never happen but just in case
         return STypes.Keyword
     end

@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -18,12 +18,14 @@ local _g, _assert, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack
     local _strfind = _assert(_g.string.find)
     local _rawequal = _assert(_g.rawequal)
     local _stringify = _assert(_g.tostring)
+    local _tblInsert = _assert(_g.table.insert)
+    local _tblConcat = _assert(_g.table.concat)
     local _debugstack = _assert(_g.debugstack)
     local _tableRemove = _assert(_g.table.remove)
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g.pvl_namespacer_add then
@@ -51,7 +53,7 @@ end
 local function _stringStartsWith(input, desiredPrefix)
     _ = _type(input) == "string" or _throw_exception("input must be a string")
     _ = _type(desiredPrefix) == "string" or _throw_exception("desiredPrefix must be a string")
-    
+
     if desiredPrefix == "" then
         return true
     end
@@ -68,7 +70,7 @@ local function _stringStartsWith(input, desiredPrefix)
     if _strlen(input) < desiredPrefixLength then
         return false
     end
-    
+
     if input == desiredPrefix then
         return true
     end
@@ -111,7 +113,7 @@ local function _stringEndsWith(input, desiredPostfix)
     return _strsub(input, -desiredPostfixLength) == desiredPostfix
 end
 
-local function _strmatch(input, patternString, ...)
+local function _stringMatch(input, patternString, ...)
     local variadicsArray = arg
 
     _ = patternString ~= nil or _throw_exception("patternString must not be nil")
@@ -139,8 +141,8 @@ local function _strmatch(input, patternString, ...)
     return _unpack(results) -- matched with captures  ("Foo 11 bar   ping pong"):match("Foo (%d+) bar")
 end
 
-local function _strtrim(input)
-    return _strmatch(input, '^%s*(.*%S)') or ''
+local function _stringTrim(input)
+    return _stringMatch(input, '^%s*(.*%S)') or ''
 end
 
 local function _nilCoalesce(value, defaultFallbackValue)
@@ -153,7 +155,9 @@ end
 
 -- the NamespaceRegistrySingleton has to be defined at the top of the
 -- file because it is used by the ProtosFactory standard-methods
-local NamespaceRegistrySingleton
+local NamespaceRegistrySingleton, HealthCheckerSingleton
+
+--[[ PROTO FACTORIES ]] --
 
 local EnumsProtoFactory = {}
 do
@@ -368,7 +372,9 @@ do --@formatter:off
     SRegistrySymbolTypes.StaticClass = "static-class"
     SRegistrySymbolTypes.NonStaticClass = "non-static-class"
 
-    SRegistrySymbolTypes.Keyword = "keyword" --       [declare]* and friends
+    SRegistrySymbolTypes.Keyword = "keyword" --                 [declare]* and friends
+    SRegistrySymbolTypes.AutorunKeyword = "autorun-keyword" --  [healthcheck]* and friends
+    
     SRegistrySymbolTypes.RawSymbol = "raw-symbol" --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
 end --@formatter:off
 
@@ -407,10 +413,13 @@ do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(EScope.Function, self)
 
-        _ = symbolProto ~= nil                                       or  _throw_exception("symbolProto must not be nil") -- @formatter:off
-        _ = _type(namespacePath) == "string"                         or  _throw_exception("namespacePath must be a string (got something of type %q)", _type(namespacePath))
-        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("isForPartial must be a boolean or nil (got %q)", _type(isForPartial)) -- @formatter:on
-        -- _ = SRegistrySymbolTypes:IsValid(symbolType)               or  _throw_exception("symbolType must be a valid SRegistrySymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds 
+        _ = symbolProto ~= nil                                       or  _throw_exception("[NR.ENT.NW.010] symbolProto must not be nil") -- @formatter:off
+        _ = _type(namespacePath) == "string"                         or  _throw_exception("[NR.ENT.NW.020] namespacePath must be a string (got something of type %q)", _type(namespacePath))
+        _ = namespacePath ~= ""                                      or  _throw_exception("[NR.ENT.NW.030] namespacePath must not be an empty string")
+        _ = not _stringEndsWith(namespacePath, ".")                  or  _throw_exception("[NR.ENT.NW.032] namespacePath must not end with a dot (.)")
+        -- _ = _stringMatch(namespacePath, "^[%a_][%w_]+([.][%w_]+)*$") or  _throw_exception("[NR.ENT.NW.035] namespacePath must be a valid identifier (got %q)", namespacePath)
+        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("[NR.ENT.NW.040] isForPartial must be a boolean or nil (got %q)", _type(isForPartial))
+        _ = SRegistrySymbolTypes:IsValid(symbolType)                 or  _throw_exception("[NR.ENT.NW.050] symbolType must be a valid SRegistrySymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds   @formatter:on 
 
         local instance = {
             _symbolType               = symbolType,
@@ -429,40 +438,66 @@ do
         return instance
     end
     
-    function Entry:Healthcheck(namespaceRegistry)
+    function Entry:Healthcheck(namespaceRegistry, optionalErrorsAccumulatorArray)
         _setfenv(EScope.Function, self)
 
-        _ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q)", _type(_namespacePath))
-        _ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string")        
-        _ = _symbolType ~= nil or _throw_exception("[NR.ENT.HC.030] symbolType must not be nil")
-        _ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.020] symbolProto must not be nil")
-        _ = _isForPartial == false or _throw_exception("[NR.ENT.HC.040] isForPartial must be false")
+        -- _g.print("[Entry.Healthcheck.000] namespacePath=" .. _namespacePath)
+
+        _ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q - how did this happen?)", _type(_namespacePath))
+        _ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string (how did this happen?)")
+        _ = _symbolType ~= nil or _throw_exception("[[NR.ENT.HC.020] symbolType must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
+        _ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.030] symbolProto must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
+
+        local errorsAccumulatorArray = optionalErrorsAccumulatorArray or {}
+
+        self:HealthcheckPartiality_(errorsAccumulatorArray)
+        self:HealthcheckInheritance_(namespaceRegistry, errorsAccumulatorArray)
+
+        return errorsAccumulatorArray
+    end
+    
+    function Entry:HealthcheckPartiality_(errorsAccumulatorArray)
+        _setfenv(EScope.Function, self)
+        
+        if _isForPartial then
+            _tblInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCP.010] symbol [%s] is still partial - did you forget to add its core definition to finalize it?", _namespacePath))
+        end
+    end
+    
+    function Entry:HealthcheckInheritance_(namespaceRegistry, errorsAccumulatorArray)
+        _setfenv(EScope.Function, self)
+
+        -- _g.print("[Entry.HealthcheckInheritance.000] namespacePath=" .. _namespacePath)
+        
+        _ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.ENT.HCI.010] namespaceRegistry must be a table (got %q)", _type(namespaceRegistry))
+        _ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.ENT.HCI.020] errorsAccumulatorArray must be a table (got %q)", _type(errorsAccumulatorArray))
         
         if _symbolType ~= SRegistrySymbolTypes.NonStaticClass then
-            return -- we want to healthcheck any non-static-class that involved inheritance
+            -- _g.print("[Entry.HealthcheckInheritance.010]")
+            return -- we want to healthcheck any non-static-class that is based on inheritance
         end
 
+        -- _g.print("[Entry.HealthcheckInheritance.020]")
+        
         local missingMethods = {}
         for mixinNicknameOrProto, _ in _pairs(_symbolProto.asBase or {}) do
             if _type(mixinNicknameOrProto) == "table" then
                 local entry = namespaceRegistry:TryGetProtoTidbitsViaSymbolProto(mixinNicknameOrProto)
-                if entry ~= nil and entry:IsInterface() then
+                if entry ~= nil and entry:IsInterfaceEntry() then
                     for interfaceMethodName, interfaceMethod in _pairs(entry:GetSymbolProto()) do
                         for _, protoMethod in _pairs(_symbolProto) do
                             if _rawequal(interfaceMethod, protoMethod) then
-                                missingMethods[entry:GetNamespace() .. ":" .. interfaceMethodName .. "()"] = ""
+                                _tblInsert(missingMethods, "      - " .. entry:GetNamespace() .. ":" .. interfaceMethodName .. "()")
                             end
                         end
                     end
                 end
             end
         end
-        
+
         if _next(missingMethods) then
-            _throw_exception("[NR.ENT.HC.050] class %q lacks implementations for the following methods:\n\n%s\n\n", _namespacePath, "<todo>") -- _stringJoin("\n", _getKeys(missingMethods))
+            _tblInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tblConcat(missingMethods, "\n")))
         end
-        
-        return true
     end
 
     function Entry:GetFieldPluggerCallbackFunc()
@@ -476,7 +511,7 @@ do
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _type(func) == "function"                         or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
+        _ = _type(func) == "function"                          or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
         _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
 
         if _fieldPluggerCallbackFunc == nil then
@@ -507,6 +542,14 @@ do
         _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
 
         return _namespacePath
+    end
+
+    function Entry:GetSymbolName()
+        _setfenv(EScope.Function, self)
+
+        _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
+
+        return _stringMatch(_namespacePath, "([^%.]+)$")
     end
 
     function Entry:GetSymbolProto()
@@ -597,7 +640,13 @@ do
     function Entry:IsKeyword()
         _setfenv(EScope.Function, self)
 
-        return _symbolType == SRegistrySymbolTypes.Keyword -- [declare] and friends
+        return _symbolType == SRegistrySymbolTypes.Keyword or _symbolType == SRegistrySymbolTypes.AutorunKeyword -- [declare]/[healthcheck] and friends
+    end
+
+    function Entry:IsAutorunKeyword()
+        _setfenv(EScope.Function, self)
+
+        return _symbolType == SRegistrySymbolTypes.AutorunKeyword -- [healthcheck] and friends
     end
 
     local Enums_SystemReservedMemberNames_ForDirectMembers = {
@@ -674,6 +723,8 @@ do
 
 end
 
+--[[ NAMESPACE REGISTRY ]] --
+
 local NamespaceRegistry = _spawnSimpleMetatable()
 do
     function NamespaceRegistry:New()
@@ -692,8 +743,8 @@ do
 
     NamespaceRegistry.Assert = {}
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath) --@formatter:off
-        _ = _type(namespacePath) == "string"                                                   or _throw_exception("the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
-        _ = namespacePath == _strtrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        _ = _type(namespacePath) == "string"                                                      or _throw_exception("the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
+        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == SRegistrySymbolTypes.Enum
@@ -714,6 +765,22 @@ do
 
     NamespaceRegistry.Assert.HasNotBeenEmployedAsParentClassYet = function(preExistingEntry, sanitizedNamespacePath)
         _ = not preExistingEntry:GetWasEmployedAsParentClassSomewhere() or _throw_exception("[NR.ASR.HNBEAPCY.010] Symbol [%s] is being amended through [partial] but it was already used as a parent-symbol at least once - this is forbidden as it can lead to unexpected behaviour in runtime", sanitizedNamespacePath) -- 10
+    end
+    
+    function NamespaceRegistry:Healthcheck(errorsAccumulatorArray)
+        _setfenv(EScope.Function, self)
+
+        -- _g.print("[NamespaceRegistry.Healthcheck.000]")
+        
+        _ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.HC.010] errorsAccumulator must be a table (got %q)", _type(errorsAccumulatorArray))
+        
+        for _, protoTidbits in _pairs(_namespaces_registry) do
+            -- _g.print("[NamespaceRegistry.Healthcheck.010]")
+            
+            protoTidbits:Healthcheck(self, errorsAccumulatorArray)
+        end
+        
+        return errorsAccumulatorArray
     end
 
     -- namespacer()
@@ -786,7 +853,7 @@ do
         local sanitized = _gsub(namespacePath, NamespaceRegistry.PatternToDetectPartialKeywordPostfix, "") --00
         local isForPartial = sanitized ~= namespacePath
 
-        -- sanitized = _strtrim(sanitized) noneed
+        -- sanitized = _stringTrim(sanitized) noneed
 
         return sanitized, isForPartial
 
@@ -803,32 +870,49 @@ do
 
     -- used for binding external libs to a local namespace
     --
-    --     _namespacer_bind("Foo.Bar",         function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
+    --     _namespacer_bind("Foo.Bar",           function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("[declare] [class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
-    function NamespaceRegistry:BindKeyword(keyword, rawSymbol)
+    function NamespaceRegistry:BindKeyword(keyword, rawSymbol) --@formatter:off
         _setfenv(EScope.Function, self)
         
-        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]") or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")                                                             or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+        _ = _type(rawSymbol) == "function" or _type(rawSymbol) == "table" or _type(rawSymbol) == "string" or _type(rawSymbol) == "number" or _throw_exception("the raw-symbol must be a function, table, string or number (got %q)", _type(rawSymbol)) --@formatter:on
 
-        self:Bind(keyword, rawSymbol)
+        self:BindImpl_(keyword, rawSymbol, SRegistrySymbolTypes.Keyword)
     end
 
-    function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol)
+    -- [healthcheck] uses this
+    function NamespaceRegistry:BindAutorunKeyword(keyword, func) --@formatter:off
+        _setfenv(EScope.Function, self)
+
+        _ = _type(func) == "function"                                         or _throw_exception("the autorun keyword must be bound to a function (got %q)", _type(func))
+        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]") or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword) --@formatter:on
+
+        self:BindImpl_(keyword, func, SRegistrySymbolTypes.AutorunKeyword)
+    end
+
+    -- todo  rename this to :BindRawSymbol() for clarity
+    function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol) --@formatter:off
         _setfenv(EScope.Function, self)
         
+        _ = rawSymbol ~= nil                          or _throw_exception("the raw-symbol must not be nil (got %q)", _type(rawSymbol))
+        _ = _type(keywordOrNamespacePath) == "string" or _throw_exception("the keyword-or-namespace-path must be a string (got %q)", _type(keywordOrNamespacePath)) --@formatter:on
+
+        self:BindImpl_(keywordOrNamespacePath, rawSymbol, SRegistrySymbolTypes.RawSymbol)
+    end
+
+    function NamespaceRegistry:BindImpl_(keywordOrNamespacePath, rawSymbol, properSymbolType)
+        _setfenv(EScope.Function, self)
+
         NamespaceRegistry.Assert.NamespacePathIsHealthy(keywordOrNamespacePath)
         NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil(rawSymbol)
 
         local possiblePreexistingEntry = _namespaces_registry[keywordOrNamespacePath]
 
         NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable(possiblePreexistingEntry, keywordOrNamespacePath)
-
-        local properSymbolType = _stringStartsWith(keywordOrNamespacePath, "[")
-                and SRegistrySymbolTypes.Keyword -- [declare] and friends
-                or SRegistrySymbolTypes.RawSymbol
 
         local newFormalSymbolProtoEntry = Entry:New(properSymbolType, rawSymbol, keywordOrNamespacePath)
 
@@ -849,7 +933,7 @@ do
         end
 
         local symbolType = entry:GetRegistrySymbolType()
-        if symbolType ~= SRegistrySymbolTypes.Keyword then
+        if symbolType ~= SRegistrySymbolTypes.Keyword and symbolType ~= SRegistrySymbolTypes.AutorunKeyword then
             _throw_exception("cannot unbind namespace %q because it is not a keyword (it is a %q)", keyword, symbolType)
         end
 
@@ -893,6 +977,10 @@ do
         if entry:IsPartialEntry() then
             -- dont turn this into an debug.assertion   we want to know about this in production builds too
             _throw_exception("namespace [%s] holds a partially-registered entry (class/enum/interface) - did you forget to load its core definition?", namespacePath)
+        end
+        
+        if entry:IsAutorunKeyword() then
+            return entry:GetSymbolProto()() --special case for [healthcheck] and friends
         end
 
         return entry:GetSymbolProto()
@@ -1069,9 +1157,42 @@ do
     end
 end
 
-NamespaceRegistrySingleton = NamespaceRegistry:New()
+--[[ HEALTH-CHECKER ]] --
+
+local HealthChecker = _spawnSimpleMetatable()
 do
-    -- using "x.y.z"
+    function HealthChecker:New()
+        _setfenv(EScope.Function, self)
+
+        local instance = { }
+
+        return _setmetatable(instance, self)
+    end
+    
+    function HealthChecker:Run(namespaceRegistry)
+        _setfenv(EScope.Function, self)
+
+        _ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.HCR.RN.010] namespaceRegistry must be a table but it was found to be of type %q", _type(namespaceRegistry))
+        
+        local errorsAccumulatorArray = {}
+        
+        namespaceRegistry:Healthcheck(errorsAccumulatorArray)
+        -- add more healthchecks here in the future ...
+        
+        if _next(errorsAccumulatorArray) then
+            _throw_exception("[NR.HCR.RN.020] Healthcheck failed with the following errors:\n\n%s", _tblConcat(errorsAccumulatorArray, "\n\n"))
+        end
+    end
+end
+
+--[[ SINGLETON INSTANCES ]] --
+
+HealthCheckerSingleton = HealthChecker:New()
+NamespaceRegistrySingleton = NamespaceRegistry:New()
+
+--[[ EXPORTED SYMBOLS ]] --
+do
+    -- using "x.y.z"   todo  rename pvl_* to lua_zen_sharp_* 
     _g.pvl_namespacer_get = function(namespacePath)
         --    todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__<some_guid_here>__get
         return NamespaceRegistrySingleton:Get(namespacePath)
@@ -1083,10 +1204,11 @@ do
     end
 
     -- namespacer_binder()
-    _g.pvl_namespacer_bind = function(namespacePath, specificSymbolType)
-        return NamespaceRegistrySingleton:Bind(namespacePath, specificSymbolType)
+    _g.pvl_namespacer_bind = function(namespacePath, externalSymbol)
+        return NamespaceRegistrySingleton:Bind(namespacePath, externalSymbol)
     end
 end
+
 
 NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
 
@@ -1113,6 +1235,7 @@ NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",         
 NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
+NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
 -- @formatter:on
 
 local AdvertisedSRegistrySymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.SRegistrySymbolTypes", SRegistrySymbolTypes.Enum)
