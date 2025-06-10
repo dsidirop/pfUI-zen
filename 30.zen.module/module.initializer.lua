@@ -1,5 +1,7 @@
 local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
 
+using "[healthcheck] [all]"
+
 local S = using "System.Helpers.Strings"
 
 local Guard = using "System.Guard"
