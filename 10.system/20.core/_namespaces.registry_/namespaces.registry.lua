@@ -428,6 +428,42 @@ do
         
         return instance
     end
+    
+    function Entry:Healthcheck(namespaceRegistry)
+        _setfenv(EScope.Function, self)
+
+        _ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q)", _type(_namespacePath))
+        _ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string")        
+        _ = _symbolType ~= nil or _throw_exception("[NR.ENT.HC.030] symbolType must not be nil")
+        _ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.020] symbolProto must not be nil")
+        _ = _isForPartial == false or _throw_exception("[NR.ENT.HC.040] isForPartial must be false")
+        
+        if _symbolType ~= SRegistrySymbolTypes.NonStaticClass then
+            return -- we want to healthcheck any non-static-class that involved inheritance
+        end
+
+        local missingMethods = {}
+        for mixinNicknameOrProto, _ in _pairs(_symbolProto.asBase or {}) do
+            if _type(mixinNicknameOrProto) == "table" then
+                local entry = namespaceRegistry:TryGetProtoTidbitsViaSymbolProto(mixinNicknameOrProto)
+                if entry ~= nil and entry:IsInterface() then
+                    for interfaceMethodName, interfaceMethod in _pairs(entry:GetSymbolProto()) do
+                        for _, protoMethod in _pairs(_symbolProto) do
+                            if _rawequal(interfaceMethod, protoMethod) then
+                                missingMethods[entry:GetNamespace() .. ":" .. interfaceMethodName .. "()"] = ""
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        
+        if _next(missingMethods) then
+            _throw_exception("[NR.ENT.HC.050] class %q lacks implementations for the following methods:\n\n%s\n\n", _namespacePath, "<todo>") -- _stringJoin("\n", _getKeys(missingMethods))
+        end
+        
+        return true
+    end
 
     function Entry:GetFieldPluggerCallbackFunc()
         _setfenv(EScope.Function, self)
