@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 -- the main reason we introduce this class is to be able to set the selected option by nickname  on top of that
 -- the original pfui dropdown control has a counter-intuitive api surface that is not fluent enough for day to day use 

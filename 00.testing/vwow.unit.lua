@@ -140,7 +140,7 @@ function TestsRunnerEngine:BindZenSharpKeywords(optionalTestgroupKeyword)
     
     _testgroupKeyword = optionalTestgroupKeyword or "[testgroup]"
 
-    local using = _assert(_g.pvl_namespacer_get)
+    local using = _assert(_g["ZENSHARP:USING"])
 
     local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
 
@@ -168,7 +168,7 @@ function TestsRunnerEngine:UnbindZenSharpKeywords()
         return
     end
 
-    local using = _assert(_g.pvl_namespacer_get)
+    local using = _assert(_g["ZENSHARP:USING"])
 
     local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
 

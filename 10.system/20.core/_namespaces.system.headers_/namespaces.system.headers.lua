@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off  we just want to preemptively declare the namespaces so that we will be able to use strings.* inside guard.* and vice-versa
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off  we just want to preemptively declare the namespaces so that we will be able to use strings.* inside guard.* and vice-versa
 
 -- using "[declare] [static]" "System.Scopify"      no need to predeclare this really
 

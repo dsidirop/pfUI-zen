@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local S                                     = using "System.Helpers.Strings" --                                                               @formatter:off
 local EWowItemQuality                       = using "Pavilion.Warcraft.Enums.EWowItemQuality"

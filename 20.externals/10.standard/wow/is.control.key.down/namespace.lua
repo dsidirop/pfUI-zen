@@ -1,6 +1,6 @@
 local _g = assert(_G or getfenv(0))
 local _setfenv = assert(_g.setfenv)
-local _namespacer_binder = assert(_g.pvl_namespacer_bind)
+local _namespacer_binder = assert(_g["ZENSHARP:BIND"])
 
 local _isControlKeyDown = assert(_g.IsControlKeyDown)
 

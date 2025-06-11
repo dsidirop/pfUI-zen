@@ -28,7 +28,7 @@ local _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pair
     return _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
-if _g.pvl_namespacer_add then
+if _g["ZENSHARP:USING"] then
     return -- already in place
 end
 
@@ -1191,19 +1191,13 @@ NamespaceRegistrySingleton = NamespaceRegistry:New()
 
 --[[ EXPORTED SYMBOLS ]] --
 do
-    -- using "x.y.z"   todo  rename pvl_* to lua_zen_sharp_* 
-    _g.pvl_namespacer_get = function(namespacePath)
+    -- using "x.y.z" 
+    _g["ZENSHARP:USING"] = function(namespacePath)
         --    todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__<some_guid_here>__get
         return NamespaceRegistrySingleton:Get(namespacePath)
     end
 
-    -- using "[declare]" "x.y.z"
-    _g.pvl_namespacer_add = function(namespacePath)
-        return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass)
-    end
-
-    -- namespacer_binder()
-    _g.pvl_namespacer_bind = function(namespacePath, externalSymbol)
+    _g["ZENSHARP:BIND"] = function(namespacePath, externalSymbol)
         return NamespaceRegistrySingleton:Bind(namespacePath, externalSymbol)
     end
 end

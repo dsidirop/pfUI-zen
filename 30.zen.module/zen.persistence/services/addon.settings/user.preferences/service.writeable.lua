@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
 local Guard   = using "System.Guard"
 local Scopify = using "System.Scopify"

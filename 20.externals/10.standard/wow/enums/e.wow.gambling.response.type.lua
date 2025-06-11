@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local EWowGamblingResponseType = using "[declare] [enum]" "Pavilion.Warcraft.Enums.EWowGamblingResponseType" -- aka roll-mode
 

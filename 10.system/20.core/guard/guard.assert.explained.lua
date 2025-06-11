@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify = using "System.Scopify" --@formatter:off
 local EScopes = using "System.EScopes"
@@ -6,10 +6,10 @@ local EScopes = using "System.EScopes"
 local Reflection   = using "System.Reflection"
 local TablesHelper = using "System.Helpers.Tables"
 
-local Throw                               = using("System.Exceptions.Throw")
-local ValueCannotBeNilException           = using("System.Exceptions.ValueCannotBeNilException")
-local ValueIsOutOfRangeException          = using("System.Exceptions.ValueIsOutOfRangeException")
-local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfInappropriateTypeException") --@formatter:on
+local Throw                               = using "System.Exceptions.Throw"
+local ValueCannotBeNilException           = using "System.Exceptions.ValueCannotBeNilException"
+local ValueIsOutOfRangeException          = using "System.Exceptions.ValueIsOutOfRangeException"
+local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException" --@formatter:on
 
 local Guard = using "[declare] [static]" "System.Guard [Partial]"
 
