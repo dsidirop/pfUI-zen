@@ -20,7 +20,6 @@
 
     <Include file="classes.fields\.xml"/>
     <Include file="classes.instantiator\.xml"/>
-    <Include file="classes.mixins.mixinsblender\.xml"/>
 
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>

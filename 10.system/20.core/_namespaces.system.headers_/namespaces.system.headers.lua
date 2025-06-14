@@ -22,7 +22,6 @@ using "[declare] [static]" "System.Console [Partial]"
 using "[declare] [static]" "System.Classes.Fields [Partial]"
 using "[declare] [static]" "System.Classes.Metatable [Partial]"
 using "[declare] [static]" "System.Classes.Instantiator [Partial]"
-using "[declare] [static]" "System.Classes.Mixins.MixinsBlender [Partial]"
 
 using "[declare] [static]" "System.Helpers.Arrays [Partial]"
 using "[declare] [static]" "System.Helpers.Tables [Partial]"
