@@ -46,10 +46,12 @@ local _getBuiltIns = function(builtInsString)
     return builtIns
 end
 
+-- todo  rename this to "global" and find a way to make it work using "System.Global"
 _namespaceBinder("[built-in]", function(builtInString)
     local B = _getBuiltIns("X = " .. builtInString)
     
     return B.X
 end)
 
+-- todo  rename this to "globals" and find a way to make it work using "System.Global"
 _namespaceBinder("[built-ins]", _getBuiltIns)
