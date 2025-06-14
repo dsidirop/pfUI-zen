@@ -1,8 +1,5 @@
 ﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Throw = using "System.Exceptions.Throw"
-local NotImplementedException = using "System.Exceptions.NotImplementedException"
-
 local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
 
 TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.ShouldFailHealthcheck",
@@ -13,7 +10,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                         local IFoo = using "[declare] [interface]" "INH.INTF.GUM.SFH.010.IFoo"
 
                         function IFoo:Ping()
-                            Throw(NotImplementedException:New())
+                            -- Throw(NotImplementedException:New()) -- this is not needed because the infrastructure already auto-sets the methods properly 
                         end
 
                         local Bar = using "[declare] [blend]" "INH.INTF.GUM.SFH.010.Bar" {
@@ -31,7 +28,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                             .. "*[NR.HCR.RN.020]" -- healthcheck failed
                             .. "*[NR.ENT.HCI.010]" -- class lacks implementation of interface methods
                             .. "*[INH.INTF.GUM.SFH.010.Bar]"
-                            .. "*INH.INTF.GUM.SFH.010.IFoo:Ping()*"
+                            .. "*[INH.INTF.GUM.SFH.010.IFoo:Ping()]*"
                 },
 
                 ["INH.INTF.GUM.SFH.020"] = {
@@ -39,7 +36,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                         local IFoo1 = using "[declare] [interface]" "INH.INTF.GUM.SFH.020.IFoo1"
 
                         function IFoo1:Ping()
-                            Throw(NotImplementedException:New())
+                            -- Throw(NotImplementedException:New()) -- this is not needed because the infrastructure already auto-sets the methods properly
                         end
 
                         local IFoo2 = using "[declare] [interface] [blend]" "INH.INTF.GUM.SFH.020.IFoo2" {
@@ -61,8 +58,8 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                             .. "*[NR.HCR.RN.020]" -- healthcheck failed
                             .. "*[NR.ENT.HCI.010]" -- class lacks implementation of interface methods
                             .. "*[INH.INTF.GUM.SFH.020.Bar]"
-                            .. "*INH.INTF.GUM.SFH.020.IFoo2:Ping()*"
-                }
+                            .. "*[INH.INTF.GUM.SFH.020.IFoo2:Ping()]*"
+                },
             }
         end,
         function(options)

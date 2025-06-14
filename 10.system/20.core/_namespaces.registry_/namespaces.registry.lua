@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawset, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -11,6 +11,7 @@ local _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pair
     local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
     local _pairs = _assert(_g.pairs)
+    local _rawset = _assert(_g.rawset)
     local _unpack = _assert(_g.unpack)
     local _strlen = _assert(_g.string.len)
     local _strsub = _assert(_g.string.sub)
@@ -25,7 +26,7 @@ local _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pair
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _rawset, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g["ZENSHARP:USING"] then
@@ -206,7 +207,32 @@ do
     local CommonMetaTable_ForAllInterfaceProtos
 
     function InterfacesProtoFactory.Spawn()
-        CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable()
+        CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable({
+            __newindex = function(proto, key, value)
+                _setfenv(EScope.Function, proto)
+
+                -- _g.print(_format("[InterfacesProtoFactory.__newindex] New method added on interface-proto %q with key %q and value %q", _stringify(proto), _stringify(key), _stringify(value)))
+
+                if _type(value) ~= "function" then -- .base and .asBase go here
+                    _rawset(proto, key, value)
+                    return
+                end
+
+                _rawset(proto, key, function(self)
+                    local Throw = NamespaceRegistrySingleton:Get("System.Exceptions.Throw")
+                    local NotImplementedException = NamespaceRegistrySingleton:Get("System.Exceptions.NotImplementedException")
+                    
+                    local associatedClassNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(self)
+                    local associatedInterfaceNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(proto)
+
+                    Throw(NotImplementedException:New(
+                            associatedClassNamespace == nil
+                                    and _format("Interface method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key))
+                                    or _format("Interface method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key), _stringify(associatedClassNamespace))
+                    ))
+                end)
+            end,
+        })
 
         local newInterfaceProto = _spawnSimpleMetatable()
 
@@ -487,7 +513,7 @@ do
                     for interfaceMethodName, interfaceMethod in _pairs(entry:GetSymbolProto()) do
                         for _, protoMethod in _pairs(_symbolProto) do
                             if _rawequal(interfaceMethod, protoMethod) then
-                                _tblInsert(missingMethods, "      - " .. entry:GetNamespace() .. ":" .. interfaceMethodName .. "()")
+                                _tblInsert(missingMethods, "      - [" .. entry:GetNamespace() .. ":" .. interfaceMethodName .. "()]")
                             end
                         end
                     end
@@ -991,6 +1017,31 @@ do
         end
 
         return _reflection_registry[symbolProto]
+    end
+
+    function NamespaceRegistry:TryGetNamespaceIfInstanceOrProto(instanceOrProto)
+        _setfenv(EScope.Function, self)
+
+        local proto = self:TryGetProtoTidbitsIfInstanceOrProto(instanceOrProto)
+        if proto == nil then
+            return nil
+        end
+
+        return proto:GetNamespace()
+    end
+
+    function NamespaceRegistry:TryGetProtoTidbitsIfInstanceOrProto(instanceOrProto)
+        _setfenv(EScope.Function, self)
+
+        if instanceOrProto == nil then
+            return nil
+        end
+        
+        if _type(instanceOrProto) ~= "table" or _type(instanceOrProto.__index) ~= "table" then
+            return nil
+        end
+
+        return self:TryGetProtoTidbitsViaSymbolProto(instanceOrProto.__index)
     end
     
     function NamespaceRegistry.HasCircularProtoDependency(mixinProtoSymbol, targetSymbolProto)

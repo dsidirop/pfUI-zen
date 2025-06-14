@@ -20,7 +20,7 @@ TG:AddDynamicTheory("T000.Reflection.GetInfo.GivenVariousGreenValues.ShouldRetur
                 ["REF.GI.GVGV.SRCT.0060"] = {   Value = Reflection,            Expected = { SymbolType = STypes.StaticClass,     SymbolNamespace = "System.Reflection",                      SymbolProto = (using "System.Reflection"                      ),  IsInstance = false }  },
                 ["REF.GI.GVGV.SRCT.0065"] = {   Value = Event,                 Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Event",                           SymbolProto = (using "System.Event"                           ),  IsInstance = false }  },
                 ["REF.GI.GVGV.SRCT.0067"] = {   Value = Event:New(),           Expected = { SymbolType = STypes.NonStaticClass,  SymbolNamespace = "System.Event",                           SymbolProto = (using "System.Event"                           ),  IsInstance = true  }  },
-                ["REF.GI.GVGV.SRCT.0070"] = {   Value = SRegistrySymbolTypes,   Expected = { SymbolType = STypes.Enum,            SymbolNamespace = "System.Namespacer.SRegistrySymbolTypes",  SymbolProto = (using "System.Namespacer.SRegistrySymbolTypes"  ),  IsInstance = false }  },
+                ["REF.GI.GVGV.SRCT.0070"] = {   Value = SRegistrySymbolTypes,  Expected = { SymbolType = STypes.Enum,            SymbolNamespace = "System.Namespacer.SRegistrySymbolTypes", SymbolProto = (using "System.Namespacer.SRegistrySymbolTypes" ),  IsInstance = false }  },
                 ["REF.GI.GVGV.SRCT.0080"] = (function()
                     local ITestInterface = using "[declare] [interface]" "REF.GI.GVGV.SRCT.0080.ITestInterface"
             
