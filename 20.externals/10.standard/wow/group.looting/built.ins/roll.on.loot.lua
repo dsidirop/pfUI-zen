@@ -1,7 +1,5 @@
-local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local B = using "[built-ins]" [[  RollOnLoot = RollOnLoot  ]]
+local WowNativeRollOnLoot = using "[built-in]" [[  RollOnLoot  ]]
 
-local Namespacer = using "System.Namespacer"
-
-Namespacer:BindRawSymbol("Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot", B.RollOnLoot)
+using "[declare] [bind]" "Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot" (WowNativeRollOnLoot)

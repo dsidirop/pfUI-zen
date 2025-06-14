@@ -6,8 +6,7 @@
     <Include file="_namespaces.system.headers_\.xml"/>
 
     <Include file="using.built.ins\.xml"/>
-    
-    <Include file="global.environment\.xml"/>
+
     <Include file="nils\.xml"/>
     <Include file="scopify\.xml"/>
     

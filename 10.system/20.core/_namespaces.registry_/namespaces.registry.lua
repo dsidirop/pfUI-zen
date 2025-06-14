@@ -1203,6 +1203,7 @@ end
 
 --[[ EXPORTED CANON-KEYWORDS ]]--
 do
+    NamespaceRegistrySingleton:BindRawSymbol("System.Global", _g)
     NamespaceRegistrySingleton:BindRawSymbol("System.Namespacer", NamespaceRegistrySingleton)
 
     NamespaceRegistrySingleton:BindKeyword("[declare] [bind]", function(namespacePath)
