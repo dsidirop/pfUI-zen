@@ -211,7 +211,7 @@ function TestsRunnerEngine:EnsurePfuiChatInterceptorsArePluggedIn_()
     end
 
     _pfui.chat.URLPattern.VWoWUnitTestCases = {
-        ["rx"] = "%[([_A-Za-z0-9-]+)%.([^%s%]()]+)%]",
+        ["rx"] = "%[([_A-Za-z0-9-]+)%.([^%s%]]+)%]",
         ["fm"] = "%s.%s"
     }
 
