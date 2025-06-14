@@ -433,10 +433,10 @@ do
     end
 
     function Guard.Assert.IsNilOrInstanceOf(value, desiredClassProto, optionalArgumentName)
-        if value == nil then
-            return nil
+        if value ~= nil and not Reflection.IsInstanceOf(value, desiredClassProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
 
-        return Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
+        return value
     end
 end

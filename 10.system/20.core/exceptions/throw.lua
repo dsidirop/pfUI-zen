@@ -1,19 +1,19 @@
 ﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local B = using "[built-ins]" [[
-    Type       = type,
     Assert     = assert,
     DebugStack = debugstack,
 ]]
 
 local S = using "System.Helpers.Strings"
 
+local Guard = using "System.Guard"
+local Exception = using "System.Exceptions.Exception"
+
 local Throw = using "[declare] [static]" "System.Exceptions.Throw"
 
-
 function Throw:__Call__(exception)
-    -- todo  make the guard-check explicitly check for exception or a subclass of it
-    _ = (B.Type(exception) == "table" or B.Type(exception) == "string") or B.Assert(false, "[THR.CLL.010] Attempt to throw an exception that is neither a table nor a string (type=" .. B.Type(exception) .. ")\n\n" .. B.DebugStack())
+    Guard.Assert.Explained.IsInstanceOf(exception, Exception, "[THR.CLL.010]", "exception")
 
     if exception ~= nil and exception.ChainSetStacktrace ~= nil then
         exception:ChainSetStacktrace(B.DebugStack(3))
