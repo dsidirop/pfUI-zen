@@ -1196,15 +1196,22 @@ do
         return NamespaceRegistrySingleton:Get(namespacePath)
     end
 
-    _g["ZENSHARP:BIND_RAW_SYMBOL"] = function(namespacePath, externalSymbol)
-        return NamespaceRegistrySingleton:BindRawSymbol(namespacePath, externalSymbol)
+    _g["ZENSHARP:BIND_RAW_SYMBOL"] = function(namespacePath, rawExternalSymbol)
+        return NamespaceRegistrySingleton:BindRawSymbol(namespacePath, rawExternalSymbol)
     end
 end
 
 --[[ EXPORTED CANON-KEYWORDS ]]--
 do
     NamespaceRegistrySingleton:BindRawSymbol("System.Namespacer", NamespaceRegistrySingleton)
-    
+
+    NamespaceRegistrySingleton:BindKeyword("[declare] [bind]", function(namespacePath)
+        local namespacePathSnapshot = namespacePath -- vital
+        return function(rawExternalSymbol)
+            NamespaceRegistrySingleton:BindRawSymbol(namespacePathSnapshot, rawExternalSymbol)
+        end
+    end)
+
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
 
     -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
