@@ -873,7 +873,6 @@ do
     --     _namespacer_bind("Foo.Bar",           function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("[declare] [class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
-    --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.ServiceLocators.LibStub", _libstub_service_locator)
     --
     function NamespaceRegistry:BindKeyword(keyword, rawSymbol) --@formatter:off
         _setfenv(EScope.Function, self)
