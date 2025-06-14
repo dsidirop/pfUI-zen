@@ -1,6 +1,6 @@
 local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local B = using "[built-ins]" [[ PfuiTranslationTable = pfUI.env.T or {} ]]
+local PfuiTranslationTable = using "[built-in]" [[ pfUI.env.T or {} ]]
 
 local PfuiTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Translator"
 
@@ -9,7 +9,7 @@ function PfuiTranslator:New()
 end
 
 function PfuiTranslator:Translate(message)
-    return B.PfuiTranslationTable[message]
+    return PfuiTranslationTable[message]
 end
 
 PfuiTranslator.I = PfuiTranslator:New()
