@@ -4,4 +4,4 @@ local B = using "[built-ins]" [[  PfuiGui = pfUI.gui  ]]
 
 local Namespacer = using "System.Namespacer"
 
-Namespacer:Bind("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui", B.PfuiGui)
+Namespacer:BindRawSymbol("Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui", B.PfuiGui)

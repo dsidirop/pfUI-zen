@@ -157,7 +157,7 @@ end
 -- file because it is used by the ProtosFactory standard-methods
 local NamespaceRegistrySingleton, HealthCheckerSingleton
 
---[[ PROTO FACTORIES ]] --
+--[[ PROTO FACTORIES ]]--
 
 local EnumsProtoFactory = {}
 do
@@ -723,7 +723,7 @@ do
 
 end
 
---[[ NAMESPACE REGISTRY ]] --
+--[[ NAMESPACE REGISTRY ]]--
 
 local NamespaceRegistry = _spawnSimpleMetatable()
 do
@@ -894,8 +894,7 @@ do
         self:BindImpl_(keyword, func, SRegistrySymbolTypes.AutorunKeyword)
     end
 
-    -- todo  rename this to :BindRawSymbol() for clarity
-    function NamespaceRegistry:Bind(keywordOrNamespacePath, rawSymbol) --@formatter:off
+    function NamespaceRegistry:BindRawSymbol(keywordOrNamespacePath, rawSymbol) --@formatter:off
         _setfenv(EScope.Function, self)
         
         _ = rawSymbol ~= nil                          or _throw_exception("the raw-symbol must not be nil (got %q)", _type(rawSymbol))
@@ -1156,7 +1155,7 @@ do
     end
 end
 
---[[ HEALTH-CHECKER ]] --
+--[[ HEALTH-CHECKER ]]--
 
 local HealthChecker = _spawnSimpleMetatable()
 do
@@ -1184,12 +1183,12 @@ do
     end
 end
 
---[[ SINGLETON INSTANCES ]] --
+--[[ SINGLETON INSTANCES ]]--
 
 HealthCheckerSingleton = HealthChecker:New()
 NamespaceRegistrySingleton = NamespaceRegistry:New()
 
---[[ EXPORTED SYMBOLS ]] --
+--[[ EXPORTED GLOBAL-SYMBOLS ]]--
 do
     -- using "x.y.z" 
     _g["ZENSHARP:USING"] = function(namespacePath)
@@ -1197,45 +1196,50 @@ do
         return NamespaceRegistrySingleton:Get(namespacePath)
     end
 
-    _g["ZENSHARP:BIND"] = function(namespacePath, externalSymbol)
-        return NamespaceRegistrySingleton:Bind(namespacePath, externalSymbol)
+    _g["ZENSHARP:BIND_RAW_SYMBOL"] = function(namespacePath, externalSymbol)
+        return NamespaceRegistrySingleton:BindRawSymbol(namespacePath, externalSymbol)
     end
 end
 
+--[[ EXPORTED CANON-KEYWORDS ]]--
+do
+    NamespaceRegistrySingleton:BindRawSymbol("System.Namespacer", NamespaceRegistrySingleton)
+    
+    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
 
-NamespaceRegistrySingleton:Bind("System.Namespacer", NamespaceRegistrySingleton)
+    -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
+    NamespaceRegistrySingleton:BindKeyword("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
--- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
-NamespaceRegistrySingleton:BindKeyword("[declare]",                   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [class]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",       function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
-NamespaceRegistrySingleton:BindKeyword("[declare] [static]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",  function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
+        local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
 
-local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
-    local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
+        return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
+    end
 
-    return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
+    NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    -- @formatter:on
 end
 
-NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+--[[ EXPORTED SRegistrySymbolTypes ]]--
+do
+    local AdvertisedSRegistrySymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.SRegistrySymbolTypes", SRegistrySymbolTypes.Enum)
+    for k, v in _pairs(SRegistrySymbolTypes) do -- this is the safest way to get the enum values to be advertised to the outside world
+        AdvertisedSRegistrySymbolTypes[k] = v
+    end
 
-NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-
-NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
--- @formatter:on
-
-local AdvertisedSRegistrySymbolTypes = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs("System.Namespacer.SRegistrySymbolTypes", SRegistrySymbolTypes.Enum)
-for k, v in _pairs(SRegistrySymbolTypes) do -- this is the only way to get the enum values to be advertised to the outside world
-    AdvertisedSRegistrySymbolTypes[k] = v
+    -- no need for this   the standardized enum metatable is already in place and it does the same job just fine
+    --
+    -- _setmetatable(AdvertisedSRegistrySymbolTypes, _getmetatable(SRegistrySymbolTypes))
 end
-
--- no need for this   the standardized enum metatable is already in place and it does the same job just fine
---
--- _setmetatable(AdvertisedSRegistrySymbolTypes, _getmetatable(SRegistrySymbolTypes))

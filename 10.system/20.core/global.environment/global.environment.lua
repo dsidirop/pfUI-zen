@@ -4,4 +4,4 @@ local using = globalEnvironment.assert(globalEnvironment["ZENSHARP:USING"])
 
 local Namespacer = using "System.Namespacer"
 
-Namespacer:Bind("System.Global", globalEnvironment)
+Namespacer:BindRawSymbol("System.Global", globalEnvironment)

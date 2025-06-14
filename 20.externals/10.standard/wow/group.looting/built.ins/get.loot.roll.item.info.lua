@@ -4,4 +4,4 @@ local B = using "[built-ins]" [[  GetLootRollItemInfo = GetLootRollItemInfo  ]]
 
 local Namespacer = using "System.Namespacer"
 
-Namespacer:Bind("Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo", B.GetLootRollItemInfo)
+Namespacer:BindRawSymbol("Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo", B.GetLootRollItemInfo)

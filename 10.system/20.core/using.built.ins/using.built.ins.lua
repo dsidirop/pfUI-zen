@@ -8,7 +8,7 @@ local _pairs = _assert(globalEnvironment.pairs)
 local _strsub = _assert(globalEnvironment.string.gsub)
 local _debugstack = _assert(globalEnvironment.debugstack)
 local _loadstring = _assert(globalEnvironment.loadstring or globalEnvironment.load)
-local _namespaceBinder = _assert(globalEnvironment["ZENSHARP:BIND"])
+local _namespaceBinder = _assert(globalEnvironment["ZENSHARP:BIND_RAW_SYMBOL"])
 
 local _getBuiltIns = function(builtInsString)
     if _type(builtInsString) ~= "string" then
