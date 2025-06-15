@@ -5,10 +5,10 @@
     <Include file="_namespaces.registry_\.xml"/>
     <Include file="_namespaces.system.headers_\.xml"/>
 
+    <Include file="scopify\.xml"/>
     <Include file="using.built.ins\.xml"/>
 
     <Include file="nils\.xml"/>
-    <Include file="scopify\.xml"/>
     
     <!-- keep classes.metatable this here -->
     <Include file="classes.metatable\.xml"/>

@@ -643,7 +643,7 @@ do
 
     function Entry:IsAbstractClassEntry()
         _setfenv(EScope.Function, self)
-        
+
         return _symbolType == SRegistrySymbolTypes.AbstractClass
     end
 
@@ -924,13 +924,13 @@ do
     --     _namespacer_bind("[declare] [class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --
-    function NamespaceRegistry:BindKeyword(keyword, rawSymbol) --@formatter:off
+    function NamespaceRegistry:BindKeyword(keyword, keywordFunc) --@formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")                                                             or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
-        _ = _type(rawSymbol) == "function" or _type(rawSymbol) == "table" or _type(rawSymbol) == "string" or _type(rawSymbol) == "number" or _throw_exception("the raw-symbol must be a function, table, string or number (got %q)", _type(rawSymbol)) --@formatter:on
+        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")                                                                     or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+        _ = _type(keywordFunc) == "function" or _type(keywordFunc) == "table" or _type(keywordFunc) == "string" or _type(keywordFunc) == "number" or _throw_exception("the raw-symbol must be a function, table, string or number (got %q)", _type(keywordFunc)) --@formatter:on
 
-        self:BindImpl_(keyword, rawSymbol, SRegistrySymbolTypes.Keyword)
+        self:BindImpl_(keyword, keywordFunc, SRegistrySymbolTypes.Keyword)
     end
 
     -- [healthcheck] uses this
@@ -1276,10 +1276,6 @@ do
         --    todo   in production builds these symbols should get obfuscated to something like  _g.ppzcn__<some_guid_here>__get
         return NamespaceRegistrySingleton:Get(namespacePath)
     end
-
-    _g["ZENSHARP:BIND_RAW_SYMBOL"] = function(namespacePath, rawExternalSymbol)
-        return NamespaceRegistrySingleton:BindRawSymbol(namespacePath, rawExternalSymbol)
-    end
 end
 
 --[[ EXPORTED CANON-KEYWORDS ]]--
@@ -1294,18 +1290,25 @@ do
         end
     end)
 
+    NamespaceRegistrySingleton:BindKeyword("[declare] [keyword]", function(keyword)
+        local keywordSnapshot = keyword -- vital
+        return function(keywordFunc)
+            NamespaceRegistrySingleton:BindKeyword(keywordSnapshot, keywordFunc)
+        end
+    end)
+
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
 
     -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
-    NamespaceRegistrySingleton:BindKeyword("[declare]",                    function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [class]",            function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract]",         function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class]", function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",        function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare]",                      function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",               function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [class]",              function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
-    NamespaceRegistrySingleton:BindKeyword("[declare] [static]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",     function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
 
     local function declareSymbolAndReturnBlenderCallback(namespacePath, symbolType)
         local protoEntrySnapshot = NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, symbolType)
