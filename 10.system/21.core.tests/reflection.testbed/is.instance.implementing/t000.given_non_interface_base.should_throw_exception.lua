@@ -5,7 +5,7 @@ local Exception  = using "System.Exceptions.Exception"
 
 local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Reflection.IsInstanceImplementing.Testbed" { "system", "core", "reflection", "is-instance-implementing" }
 
-TG:AddDynamicTheory("T000.Reflection.IsInstanceImplementing.GivenNonInterfaceInterface.ShouldThrowException", -- @formatter:off
+TG:AddDynamicTheory("T000.Reflection.IsInstanceImplementing.GivenNonInterfaceBase.ShouldThrowException", -- @formatter:off
         function()
             return {
                 ["REF.IIMPL.GNIB.STE.0000"] = { ClassInstance = 10, --[[not an instance]]                                          Interface = ( using "[declare] [interface]" "REF.IIMPL.GNIB.STE.0000.IFoo"  ) },

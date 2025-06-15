@@ -1,4 +1,4 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
-    <Include file="t000.given_non_interface_interface.should_throw_exception.lua"/>
+    <Include file="t000.given_non_interface_base.should_throw_exception.lua"/>
     <Include file="t010.given_various_direct_inheritance_pairs.should_return_expected_verdict.lua"/>
 </Ui>
