@@ -1019,7 +1019,7 @@ do
                 return nil
             end
 
-            _throw_exception("namespace/keyword %q has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
+            _throw_exception("namespace/keyword [%s] has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
 
         --if entry:IsPartialEntry() then -- dont   use "[healthcheck] [all]" to find out about dangling partial entries
