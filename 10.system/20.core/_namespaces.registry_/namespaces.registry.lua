@@ -613,6 +613,7 @@ do
         return _symbolType == SRegistrySymbolTypes.Enum
                 or _symbolType == SRegistrySymbolTypes.Interface
                 or _symbolType == SRegistrySymbolTypes.StaticClass
+                or _symbolType == SRegistrySymbolTypes.AbstractClass
                 or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
@@ -725,6 +726,17 @@ do
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
 
+    local AbstractClasses_SystemReservedMemberNames_ForDirectMembers = {
+        ["base"]                = "base",
+        ["asBase"]              = "asBase",
+        ["__call"]              = "__call",
+        ["__index"]             = "__index",
+        ["Instantiate"]         = "Instantiate",
+        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
+    }
+    local AbstractClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
+    }
+
     function Entry:GetSpecialReservedNames()
         _setfenv(EScope.Function, self)
 
@@ -742,6 +754,10 @@ do
 
         if _symbolType == SRegistrySymbolTypes.Interface then
             return Interface_SystemReservedMemberNames_ForDirectMembers, Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore
+        end
+
+        if _symbolType == SRegistrySymbolTypes.AbstractClass then
+            return AbstractClasses_SystemReservedMemberNames_ForDirectMembers, AbstractClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore
         end
 
         _throw_exception("GetSpecialReservedNames() is not implemented for symbol-type %q (how did this even happen btw?)", _symbolType)
@@ -1116,7 +1132,13 @@ do
         local targetSymbolProto_asBaseProp = targetSymbolProto.asBase or {}
 
         targetSymbolProto.base = targetSymbolProto_baseProp
-        targetSymbolProto.asBase = targetSymbolProto_asBaseProp
+        targetSymbolProto.asBase = targetSymbolProto_asBaseProp --@formatter:off
+
+        local targetIsEnum           = protoTidbits:IsEnumEntry()
+        local targetIsInterface      = protoTidbits:IsInterfaceEntry()
+        local targetIsStaticClass    = protoTidbits:IsStaticClassEntry()
+        local targetIsAbstractClass  = protoTidbits:IsAbstractClassEntry()
+        local targetIsNonStaticClass = protoTidbits:IsNonStaticClassEntry() --@formatter:on
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
@@ -1138,10 +1160,10 @@ do
             local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()
             local mixinIsAbstractClass  = mixinProtoTidbits:IsAbstractClassEntry()
             local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
-            _ = (not targetIsEnum           or mixinIsEnum           or mixinIsStaticClass                      ) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = (not targetIsInterface      or mixinIsInterface                                                 ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = (not targetIsStaticClass    or mixinIsStaticClass    or mixinIsInterface                        ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = (not targetIsNonStaticClass or mixinIsNonStaticClass or mixinIsAbstractClass or mixinIsInterface) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an abstract-class or an interface - cannot mix it into a non-static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
+            _ = (not targetIsEnum                                           or mixinIsEnum           or mixinIsStaticClass                      ) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = (not targetIsInterface                                      or mixinIsInterface                                                 ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = (not targetIsStaticClass                                    or mixinIsStaticClass    or mixinIsInterface                        ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            _ = ((not targetIsNonStaticClass and not targetIsAbstractClass) or mixinIsNonStaticClass or mixinIsAbstractClass or mixinIsInterface) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an abstract-class or an interface - cannot mix it in the blend", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
 
             mixinProtoTidbits:MarkEmployedAsParentClass()
 
@@ -1294,6 +1316,7 @@ do
     NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
     NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
