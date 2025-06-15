@@ -927,8 +927,8 @@ do
     function NamespaceRegistry:BindKeyword(keyword, keywordFunc) --@formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")                                                                     or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
-        _ = _type(keywordFunc) == "function" or _type(keywordFunc) == "table" or _type(keywordFunc) == "string" or _type(keywordFunc) == "number" or _throw_exception("the raw-symbol must be a function, table, string or number (got %q)", _type(keywordFunc)) --@formatter:on
+        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")   or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+        _ = _type(keywordFunc) == "function"                                    or _throw_exception("the keyword-func must be a function (got %q)", _type(keywordFunc)) --@formatter:on
 
         self:BindImpl_(keyword, keywordFunc, SRegistrySymbolTypes.Keyword)
     end
