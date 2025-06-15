@@ -8,7 +8,7 @@ TG:AddDynamicTheory("T040.Inheritance.Abstraction.GivenAttemptToInstantiateAbstr
             return {
                 ["INH.ABS.GATIAC.ST.010"] = {
                     Action = function()
-                        local AbstractFoo = using "[declare] [abstract]" "INH.ABS.GATIAC.ST.010.AbstractFoo"
+                        local AbstractFoo = using "[declare] [abstract] [class]" "INH.ABS.GATIAC.ST.010.AbstractFoo"
 
                         function AbstractFoo:New()
                             return self:Instantiate()
@@ -40,6 +40,26 @@ TG:AddDynamicTheory("T040.Inheritance.Abstraction.GivenAttemptToInstantiateAbstr
                     ErrorGlob = ""
                             .. "*[NR.NSCPF.SI.020]*"
                             .. "*[INH.ABS.GATIAC.ST.020.AbstractFoo2]*"
+                },
+
+                ["INH.ABS.GATIAC.ST.030"] = {
+                    Action = function()
+                        local AbstractFoo1 = using "[declare] [abstract] [class]" "INH.ABS.GATIAC.ST.030.AbstractFoo1"
+
+                        local AbstractFoo2 = using "[declare] [abstract] [class] [blend]" "INH.ABS.GATIAC.ST.030.AbstractFoo2" {
+                            ["AbstractFoo1"] = AbstractFoo1,
+                        }
+
+                        function AbstractFoo2:New()
+                            return self:Instantiate()
+                        end
+
+                        AbstractFoo2:New() -- this should throw        
+                    end,
+
+                    ErrorGlob = ""
+                            .. "*[NR.NSCPF.SI.020]*"
+                            .. "*[INH.ABS.GATIAC.ST.030.AbstractFoo2]*"
                 },
             }
         end,

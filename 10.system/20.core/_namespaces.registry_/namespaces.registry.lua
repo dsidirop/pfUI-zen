@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _rawset, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -19,14 +19,14 @@ local _g, _assert, _rawset, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gs
     local _strfind = _assert(_g.string.find)
     local _rawequal = _assert(_g.rawequal)
     local _stringify = _assert(_g.tostring)
-    local _tblInsert = _assert(_g.table.insert)
     local _tblConcat = _assert(_g.table.concat)
     local _debugstack = _assert(_g.debugstack)
+    local _tableInsert = _assert(_g.table.insert)
     local _tableRemove = _assert(_g.table.remove)
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _rawset, _tblInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g["ZENSHARP:USING"] then
@@ -208,30 +208,7 @@ do
 
     function InterfacesProtoFactory.Spawn()
         CommonMetaTable_ForAllInterfaceProtos = CommonMetaTable_ForAllInterfaceProtos or _spawnSimpleMetatable({
-            __newindex = function(proto, key, value)
-                _setfenv(EScope.Function, proto)
-
-                -- _g.print(_format("[InterfacesProtoFactory.__newindex] New method added on interface-proto %q with key %q and value %q", _stringify(proto), _stringify(key), _stringify(value)))
-
-                if _type(value) ~= "function" then -- .base and .asBase go here
-                    _rawset(proto, key, value)
-                    return
-                end
-
-                _rawset(proto, key, function(self)
-                    local Throw = NamespaceRegistrySingleton:Get("System.Exceptions.Throw")
-                    local NotImplementedException = NamespaceRegistrySingleton:Get("System.Exceptions.NotImplementedException")
-
-                    local associatedClassNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(self)
-                    local associatedInterfaceNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(proto)
-
-                    Throw(NotImplementedException:New(
-                            associatedClassNamespace == nil
-                                    and _format("Interface method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key))
-                                    or _format("Interface method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key), _stringify(associatedClassNamespace))
-                    ))
-                end)
-            end,
+            __newindex = InterfacesProtoFactory.StandardNewIndexFunc_,
         })
 
         local newInterfaceProto = _spawnSimpleMetatable()
@@ -239,6 +216,31 @@ do
         return _setmetatable(newInterfaceProto, CommonMetaTable_ForAllInterfaceProtos)
 
         -- 00  __index needs to be preset like this   otherwise we run into errors in runtime
+    end
+    
+    function InterfacesProtoFactory.StandardNewIndexFunc_(proto, key, value)
+        _setfenv(EScope.Function, proto)
+
+        -- _g.print(_format("[InterfacesProtoFactory.__newindex] New method added on interface-proto %q with key %q and value %q", _stringify(proto), _stringify(key), _stringify(value)))
+
+        if key == "base" or key == "asBase" or _type(value) ~= "function" then -- .base and .asBase go here
+            _rawset(proto, key, value)
+            return
+        end
+
+        _rawset(proto, key, function(self)
+            local Throw = NamespaceRegistrySingleton:Get("System.Exceptions.Throw")
+            local NotImplementedException = NamespaceRegistrySingleton:Get("System.Exceptions.NotImplementedException")
+
+            local associatedClassNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(self)
+            local associatedInterfaceNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(proto)
+
+            Throw(NotImplementedException:New(
+                    associatedClassNamespace == nil
+                            and _format("Interface method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key))
+                            or _format("Interface method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedInterfaceNamespace), _stringify(key), _stringify(associatedClassNamespace))
+            ))
+        end)
     end
 end
 
@@ -279,9 +281,12 @@ local NonStaticClassProtoFactory = {} -- serves both non-static-classes and abst
 do
     local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
 
-    function NonStaticClassProtoFactory.Spawn()
+    function NonStaticClassProtoFactory.Spawn(isAbstract)
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
-            Instantiate         = NonStaticClassProtoFactory.StandardInstantiator_,
+            __newindex = isAbstract
+                    and NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_
+                    or NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
+            Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
         })
 
@@ -296,6 +301,65 @@ do
 
         -- 00   based on practical experiments it seems that in wow-lua the __call function doesnt work if we place it
         --      in CachedMetaTable_ForAllNonStaticClassProtos    but it does work if it is placed directly in newClassProto
+    end
+
+    function NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_(classProto, key, value)
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
+
+        local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
+        
+        _ = pendingAttributesArraySnapshot == nil or _type(value) == "function" or _throw_exception("[NR.NSCPF.SNIF.FAC.010] Abstract class [%s] supports Attributes on functions but member %q is not a function", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+
+        if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
+            _rawset(classProto, key, value)
+            return
+        end
+
+        if NonStaticClassProtoFactory.TryPopMethodAttribute_AbstractMethod_(pendingAttributesArraySnapshot) then
+            _rawset(classProto, key, function(self)
+                local Throw = NamespaceRegistrySingleton:Get("System.Exceptions.Throw")
+                local NotImplementedException = NamespaceRegistrySingleton:Get("System.Exceptions.NotImplementedException")
+
+                local associatedClassNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(self)
+                local associatedAbstractClassNamespace = NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)
+
+                Throw(NotImplementedException:New(
+                        associatedClassNamespace == nil
+                                and _format("Abstract method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key))
+                                or _format("Abstract method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key), _stringify(associatedClassNamespace))
+                ))
+            end)
+        end
+        
+        if _next(pendingAttributesArraySnapshot) ~= nil then
+            _throw_exception("[NR.NSCPF.SNIF.FAC.030] The following Attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_tblConcat(pendingAttributesArraySnapshot, "\n- ")))
+        end
+    end
+
+    function NonStaticClassProtoFactory.TryPopMethodAttribute_AbstractMethod_(pendingAttributesArraySnapshot)
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
+
+        _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table")
+
+        local found = false
+        for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
+            if attributeSpecs:IsAbstract() then
+                found = true
+                _tableRemove(pendingAttributesArraySnapshot, i)
+            end
+        end
+
+        return found
+    end
+    
+    -- todo   here we could add support for Attribute ->  using [[autocall]]
+    function NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_(classProto, key, value)
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
+
+        local pendingAttributesSnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
+        _ = pendingAttributesSnapshot == nil or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Non-abstract-classes do not support any Attributes but the following Attributes were found around %q:\n\n%s", key, "- " .. _stringify(_tblConcat(pendingAttributesSnapshot, "\n- ")))
+        
+        _rawset(classProto, key, value)
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
@@ -431,6 +495,44 @@ do
     end
 end
 
+--[[ METHOD ATTRIBUTES ]]--
+
+local SMethodAttributeTypes = EnumsProtoFactory.Spawn()
+do --@formatter:off
+    SMethodAttributeTypes.Abstract = "abstract"
+    SMethodAttributeTypes.Autocall = "autocall"
+end --@formatter:off
+
+
+local MethodAttribute = _spawnSimpleMetatable() -- proto symbol tidbits
+do
+    function MethodAttribute:New(attributeType)
+        _setfenv(EScope.Function, self)
+
+        _ = _type(attributeType) ~= "table" or  _throw_exception("[NR.MA.CTOR.010] attributeType is not of type SMethodAttributeTypes ( got %q )", _stringify(_type(attributeType)))
+
+        local instance = {
+            _attributeType = attributeType
+        }
+
+        return _setmetatable(instance, self)
+    end
+    
+    function MethodAttribute:IsAbstract()
+        _setfenv(EScope.Function, self)
+
+        return self._attributeType == SMethodAttributeTypes.Abstract
+    end
+    
+    function MethodAttribute:GetType()
+        _setfenv(EScope.Function, self)
+
+        return _attributeType
+    end
+end
+
+--[[ PROTO-SYMBOLS TIDBITS ]]--
+
 local Entry = _spawnSimpleMetatable() -- proto symbol tidbits
 do
     local function _dudFieldPluggerFunc(upcomingInstance)
@@ -472,9 +574,11 @@ do
 
         _ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q - how did this happen?)", _type(_namespacePath))
         _ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string (how did this happen?)")
-        _ = _symbolType ~= nil or _throw_exception("[[NR.ENT.HC.020] symbolType must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
+        _ = _symbolType ~= nil or _throw_exception("[NR.ENT.HC.020] symbolType must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
         _ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.030] symbolProto must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
 
+        self:UnwireNewIndexInterception()
+        
         local errorsAccumulatorArray = optionalErrorsAccumulatorArray or {}
 
         self:HealthcheckPartiality_(errorsAccumulatorArray)
@@ -483,11 +587,21 @@ do
         return errorsAccumulatorArray
     end
 
+    function Entry:UnwireNewIndexInterception()
+        _setfenv(EScope.Function, self)
+        
+        if _symbolType ~= SRegistrySymbolTypes.Interface and _symbolType ~= SRegistrySymbolTypes.AbstractClass and _symbolType ~= SRegistrySymbolTypes.NonStaticClass then
+            return
+        end
+        
+        _symbolProto.__newindex = nil
+    end
+
     function Entry:HealthcheckPartiality_(errorsAccumulatorArray)
         _setfenv(EScope.Function, self)
 
         if _isForPartial then
-            _tblInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCP.010] symbol [%s] is still partial - did you forget to add its core definition to finalize it?", _namespacePath))
+            _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCP.010] symbol [%s] is still partial - did you forget to add its core definition to finalize it?", _namespacePath))
         end
     end
 
@@ -514,7 +628,7 @@ do
                     for interfaceMethodName, interfaceMethod in _pairs(entry:GetSymbolProto()) do
                         for _, protoMethod in _pairs(_symbolProto) do
                             if _rawequal(interfaceMethod, protoMethod) then
-                                _tblInsert(missingMethods, "      - [" .. entry:GetNamespace() .. ":" .. interfaceMethodName .. "()]")
+                                _tableInsert(missingMethods, "      - [" .. entry:GetNamespace() .. ":" .. interfaceMethodName .. "()]")
                             end
                         end
                     end
@@ -523,7 +637,7 @@ do
         end
 
         if _next(missingMethods) then
-            _tblInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tblConcat(missingMethods, "\n")))
+            _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tblConcat(missingMethods, "\n")))
         end
     end
 
@@ -780,9 +894,9 @@ do
         _setfenv(EScope.Function, self)
 
         local instance = {
+            _pendingAttributes                     = nil,
             _namespaces_registry                   = {},
             _reflection_registry                   = {}, -- proto tidbits like namespace, symbol-type, is-for-partial, fields-plugger-callback etc
-
             _mostRecentlyDefinedSymbolProto        = nil, -- the most recently defined symbol proto           needed by ChainSetFieldPluggerFuncForNonStaticClassProto()
             _mostRecentlyDefinedSymbolProtoTidbits = nil, -- the most recently defined symbol proto-tidbits   needed by ChainSetFieldPluggerFuncForNonStaticClassProto()
         }
@@ -1043,6 +1157,29 @@ do
         return _reflection_registry[symbolProto]
     end
 
+    function NamespaceRegistry:QueueAttribute(attributeSpecs)
+        _setfenv(EScope.Function, self)
+        
+        _ = _type(attributeSpecs) == "table" or _throw_exception("[NR.QD.010] AttributeSpecs must be a table (got %q)", _type(attributeSpecs))
+
+        _pendingAttributesArray = _pendingAttributesArray or {}
+        _tableInsert(_pendingAttributesArray, attributeSpecs)
+    end
+    
+    function NamespaceRegistry:PopAllPendingAttributes()
+        _setfenv(EScope.Function, self)
+
+        if _pendingAttributesArray == nil then
+            return nil
+        end
+        
+        local snapshot = _pendingAttributesArray -- order
+
+        _pendingAttributesArray = nil -- order
+        
+        return snapshot
+    end
+
     function NamespaceRegistry:TryGetNamespaceIfInstanceOrProto(instanceOrProto)
         _setfenv(EScope.Function, self)
 
@@ -1297,15 +1434,18 @@ do
         end
     end)
 
+    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]", function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.Abstract)) end)
+
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
 
     -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
     NamespaceRegistrySingleton:BindKeyword("[declare]",                      function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",               function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [class]",              function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+
     NamespaceRegistrySingleton:BindKeyword("[declare] [abstract]",           function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class]",   function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [interface]",          function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Interface            ) end)
 
     NamespaceRegistrySingleton:BindKeyword("[declare] [static]",             function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class]",     function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
@@ -1319,8 +1459,10 @@ do
     NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class] [blend]",    function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
 
     NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
