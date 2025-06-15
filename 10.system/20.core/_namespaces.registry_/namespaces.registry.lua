@@ -378,7 +378,7 @@ do
             for _, mixinProto in _pairs(classProto.asBase) do
 
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinProto)
-                if mixinProtoTidbits ~= nil and mixinProtoTidbits:IsNonStaticClassEntry() then
+                if mixinProtoTidbits ~= nil and (mixinProtoTidbits:IsNonStaticClassEntry() or mixinProtoTidbits:IsAbstractClassEntry()) then
                     upcomingInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(mixinProto, mixinProtoTidbits, upcomingInstance) -- vital order    depth first
                 end
 
@@ -453,7 +453,7 @@ do
             _symbolProto              = symbolProto,
             _isForPartial             = _nilCoalesce(isForPartial, false),
             _namespacePath            = namespacePath,
-            _fieldPluggerCallbackFunc = symbolType == SRegistrySymbolTypes.NonStaticClass
+            _fieldPluggerCallbackFunc = (symbolType == SRegistrySymbolTypes.NonStaticClass or symbolType == SRegistrySymbolTypes.AbstractClass)
                     and _dudFieldPluggerFunc  -- placeholder
                     or nil,
 
@@ -530,7 +530,7 @@ do
     function Entry:GetFieldPluggerCallbackFunc()
         _setfenv(EScope.Function, self)
 
-        _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType)
+        _ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType)
 
         return _fieldPluggerCallbackFunc
     end
@@ -538,8 +538,8 @@ do
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _type(func) == "function"                          or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
-        _ = _symbolType == SRegistrySymbolTypes.NonStaticClass or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes but the proto of %q is of type %q", _namespacePath, _symbolType) -- @formatter:on
+        _ = _type(func) == "function"                                                                                 or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
+        _ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType) -- @formatter:on
 
         if _fieldPluggerCallbackFunc == nil then
             _fieldPluggerCallbackFunc = func

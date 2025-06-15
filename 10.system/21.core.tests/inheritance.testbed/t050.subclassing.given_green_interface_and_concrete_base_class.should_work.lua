@@ -53,13 +53,40 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
 
                 do
                     local Fields = using "System.Classes.Fields"
+
+                    local Class = using "[declare] [abstract]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Gring"
+
+                    function Class:New()
+                        Scopify(EScopes.Function, self)
+
+                        return self:Instantiate()
+                    end
+
+                    Fields(function(upcomingInstance)
+                        upcomingInstance._gringA = 1
+                        upcomingInstance._gringB = 2
+
+                        return upcomingInstance
+                    end)
+
+                    function Class:Gring()
+                        return true
+                    end
+                end
+
+                -------
+
+                do
+                    local Fields = using "System.Classes.Fields"
                     
                     local Zong = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
+                    local Gring = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Gring"
                     local IPing = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
                     local Class = using "[declare] [blend]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
                         ["Zong"]  = Zong,
                         ["IPing"] = IPing,
+                        ["Gring"] = Gring,
                     }
 
                     function Class:New()
@@ -74,17 +101,20 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
 
                         U.Should.Be.PlainlyEqual(newInstance._a, 1)
                         U.Should.Be.PlainlyEqual(newInstance._b, 10)
+                        U.Should.Be.PlainlyEqual(newInstance._gringA, 1)
+                        U.Should.Be.PlainlyEqual(newInstance._gringB, 2)
                         
                         U.Should.Be.True(Metatable.Get(newInstance).__index == Metatable.Get(newInstance))
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance))
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).base)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Zong)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Gring)
                         -- U.Should.Not.Be.Nil(newInstance.base) -- these should be offlimits and any attempt to access them should generate an exception
                         -- U.Should.Not.Be.Nil(newInstance.asBase) -- these should be offlimits and any attempt to access them should generate an exception
 
-                        newInstance = newInstance.asBase.Zong.New(newInstance) --     order   notice that we are calling it as .New() instead of :New()
-                        -- newInstance = newInstance.asBase.Bram.New(newInstance) --  order   that is intentional because we want to call the base constructor
+                        newInstance = newInstance.asBase.Zong.New(newInstance) --   order   notice that we are calling it as .New() instead of :New()
+                        newInstance = newInstance.asBase.Gring.New(newInstance) --  order   that is intentional because we want to call the base constructor
 
                         newInstance._sum = newInstance._a + newInstance._b -- finally the constructor can work its own magic after all super-constructors have been invoked above
 
@@ -92,6 +122,7 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                     end
 
                     function Class:Chaching()
+                        return true
                     end
 
                     Fields(function(upcomingInstance)
@@ -108,7 +139,9 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                 do
                     local Foobar = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar"
                     
-                    FoobarInstance = Foobar:New()    
+                    FoobarInstance = Foobar:New()
+
+                    FoobarInstance:Gring()
                 end                
             end
 
@@ -132,5 +165,6 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
             U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong)
             U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong.Zang)
             U.Should.Not.Be.Nil(FoobarInstance.asBase.IPing)
+            U.Should.Not.Be.Nil(FoobarInstance.asBase.Gring)
         end
 )
