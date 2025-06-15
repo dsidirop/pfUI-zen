@@ -16,7 +16,9 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                 -------
 
                 do
-                    local _ = using "[declare] [interface]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+                    local IPingTagInterface = using "[declare] [interface]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
+
+                    function IPingTagInterface:Chaching() end
                 end
                 
                 -------
@@ -89,11 +91,16 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         return newInstance
                     end
 
+                    function Class:Chaching()
+                    end
+
                     Fields(function(upcomingInstance)
                         upcomingInstance._b = 10
                         upcomingInstance._sum = 0
                         return upcomingInstance
                     end)
+
+                    -- using "[healthcheck] [all]" -- this should not throw
                 end
                 
                 ------
