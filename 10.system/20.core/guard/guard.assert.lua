@@ -397,8 +397,8 @@ do
         return proto
     end
 
-    function Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, optionalArgumentName)
-        if not Reflection.IsNonStaticClassProtoOrInterfaceProto(proto) then
+    function Guard.Assert.IsInheritanceCapableProto(proto, optionalArgumentName)
+        if not Reflection.IsInheritanceCapableProto(proto) then
             Throw(ValueIsOfInappropriateTypeException:New(proto, optionalArgumentName, "non-static-class proto or interface proto"))
         end
 

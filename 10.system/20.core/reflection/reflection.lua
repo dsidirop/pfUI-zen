@@ -50,7 +50,7 @@ function Reflection.GetInfo(valueOrClassInstanceOrProto)
     if protoTidbits ~= nil then
         local proto = protoTidbits:GetSymbolProto()
         local overallSymbolType = Reflection.ConvertSRegistrySymbolTypeToSType_(protoTidbits:GetRegistrySymbolType(), valueOrClassInstanceOrProto)
-        local isActuallyClassInstance = overallSymbolType == STypes.NonStaticClass and valueOrClassInstanceOrProto ~= proto
+        local isActuallyClassInstance = (overallSymbolType == STypes.NonStaticClass or overallSymbolType == STypes.AbstractClass or overallSymbolType == STypes.Interface) and valueOrClassInstanceOrProto ~= proto
 
         return overallSymbolType, protoTidbits:GetNamespace(), proto, isActuallyClassInstance
     end
@@ -68,6 +68,10 @@ function Reflection.ConvertSRegistrySymbolTypeToSType_(registrySymbolType, value
         return STypes.Enum
     end
     
+    if registrySymbolType == SRegistrySymbolTypes.AbstractClass then
+        return STypes.AbstractClass
+    end
+
     if registrySymbolType == SRegistrySymbolTypes.NonStaticClass then
         return STypes.NonStaticClass
     end
@@ -172,7 +176,7 @@ function Reflection.IsNilOrTableOrString(value)
 end
 
 function Reflection.IsInstanceOf(object, desiredParentProto)
-    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
+    Guard.Assert.IsInheritanceCapableProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
 
     local _, _, proto, isClassInstance = Reflection.GetInfo(object)
     if not isClassInstance then
@@ -183,8 +187,8 @@ function Reflection.IsInstanceOf(object, desiredParentProto)
 end
 
 function Reflection.IsSubProtoOf(proto, desiredParentProto)
-    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, "proto was expected to be a non-static-class-proto or an interface but it's not")
-    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an interface but it's not")
+    Guard.Assert.IsInheritanceCapableProto(proto, "proto was expected to be a non-static-class-proto or an abstract-class-proto or an interface but it's not")
+    Guard.Assert.IsInheritanceCapableProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an abstract-class-proto or an interface but it's not")
 
     if proto == desiredParentProto then -- optimization
         return true
@@ -208,7 +212,7 @@ function Reflection.IsSubProtoOf(proto, desiredParentProto)
                 return true
             end
 
-            if Reflection.IsNonStaticClassProtoOrInterfaceProto(mixinKey) then
+            if Reflection.IsInheritanceCapableProto(mixinKey) then
                 TablesHelper.Append(queue, mixinKey) -- append enqueue
             end
         end
@@ -229,7 +233,7 @@ function Reflection.IsInstanceImplementing(classInstance, desiredInterfaceProto)
 end
 
 function Reflection.IsProtoImplementing(proto, desiredInterfaceProto)
-    Guard.Assert.IsNonStaticClassProtoOrInterfaceProto(proto, "proto")
+    Guard.Assert.IsInheritanceCapableProto(proto, "proto")
     Guard.Assert.IsInterfaceProto(desiredInterfaceProto, "desiredInterfaceProto")
 
     local queue = { proto }
@@ -250,7 +254,7 @@ function Reflection.IsProtoImplementing(proto, desiredInterfaceProto)
                 return true
             end
 
-            if Reflection.IsNonStaticClassProtoOrInterfaceProto(mixinKey) then
+            if Reflection.IsInheritanceCapableProto(mixinKey) then
                 TablesHelper.Append(queue, mixinKey) -- append enqueue
             end
         end
@@ -283,14 +287,20 @@ function Reflection.IsInterfaceProto(object)
     return Reflection.GetInfo(object) == STypes.Interface
 end
 
+function Reflection.IsAbstractClassProto(object)
+    return Reflection.GetInfo(object) == STypes.AbstractClass
+end
+
 function Reflection.IsNonStaticClassProto(object)
     return Reflection.GetInfo(object) == STypes.NonStaticClass
 end
 
-function Reflection.IsNonStaticClassProtoOrInterfaceProto(object)
+function Reflection.IsInheritanceCapableProto(object)
     local type = Reflection.GetInfo(object)
     
-    return type == STypes.NonStaticClass or type == STypes.Interface
+    return type == STypes.Interface
+            or type == STypes.AbstractClass
+            or type == STypes.NonStaticClass
 end
 
 function Reflection.TryGetNamespaceIfClassInstance(object)

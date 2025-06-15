@@ -18,4 +18,5 @@ STypes.Keyword         = "keyword"
 
 STypes.Interface       = "interface" 
 STypes.StaticClass     = "static-class"
+STypes.AbstractClass   = "abstract-class"
 STypes.NonStaticClass  = "non-static-class" -- @formatter:on
