@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -11,6 +11,7 @@ local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _
     local _getn = _assert(_g.table.getn)
     local _gsub = _assert(_g.string.gsub)
     local _pairs = _assert(_g.pairs)
+    local _ipairs = _assert(_g.ipairs)
     local _rawset = _assert(_g.rawset)
     local _unpack = _assert(_g.unpack)
     local _strlen = _assert(_g.string.len)
@@ -26,7 +27,7 @@ local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g["ZENSHARP:USING"] then
@@ -279,28 +280,41 @@ end
 
 local NonStaticClassProtoFactory = {} -- serves both non-static-classes and abstract-classes too!
 do
+    local CachedMetaTable_ForAllAbstractClassProtos
     local CachedMetaTable_ForAllNonStaticClassProtos -- this can be shared really    saves us some loading time and memory too
 
     function NonStaticClassProtoFactory.Spawn(isAbstract)
-        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
-            __newindex = isAbstract
-                    and NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_
-                    or NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
+        CachedMetaTable_ForAllAbstractClassProtos = CachedMetaTable_ForAllAbstractClassProtos or _spawnSimpleMetatable({
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
+
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_,
+        })
+
+        CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
+            Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
+            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
+
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
         })
 
         local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            _          = { },
-            __call     = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --00 must be here
-            __tostring = nil, -- todo
+            _ = { },
+            __call = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
+            __tostring = nil -- not isAbstract and NonStaticClassProtoFactory.ToString_ or nil, --00 must be here
         })
 
-        return _setmetatable(newClassProto, CachedMetaTable_ForAllNonStaticClassProtos)
+        return _setmetatable(newClassProto, isAbstract
+                and CachedMetaTable_ForAllAbstractClassProtos
+                or CachedMetaTable_ForAllNonStaticClassProtos
+        )
 
         -- 00   based on practical experiments it seems that in wow-lua the __call function doesnt work if we place it
         --      in CachedMetaTable_ForAllNonStaticClassProtos    but it does work if it is placed directly in newClassProto
+        --
+        --      also note that abstract classes dont need the __call defined because that is only relevant for non-abstract classes
+        --      same holds for __tostring in the future
     end
 
     function NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_(classProto, key, value)
@@ -308,7 +322,7 @@ do
 
         local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
         
-        _ = pendingAttributesArraySnapshot == nil or _type(value) == "function" or _throw_exception("[NR.NSCPF.SNIF.FAC.010] Abstract class [%s] supports Attributes on functions but member %q is not a function", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+        _ = pendingAttributesArraySnapshot == nil or _type(value) == "function" or _throw_exception("[NR.NSCPF.SNIF.FAC.010] Abstract class [%s] supports attributes on functions but member %q is not a function", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
 
         if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
             _rawset(classProto, key, value)
@@ -357,19 +371,19 @@ do
         _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
         local pendingAttributesSnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
-        _ = pendingAttributesSnapshot == nil or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Non-abstract-classes do not support any Attributes but the following Attributes were found around %q:\n\n%s", key, "- " .. _stringify(_tblConcat(pendingAttributesSnapshot, "\n- ")))
+        _ = pendingAttributesSnapshot == nil or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Class [%s] is a non-abstract-class and doesn't support attributes on %q", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
         
         _rawset(classProto, key, value)
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
         local variadicsArray = arg
-        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes are expected to define these as :New() and :__Call__()
-        local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   respectively  ( not as .New() or .__Call__()! )
+        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes (both static and non-static) are expected to define these
+        local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
 
         local hasConstructorFunction = _type(ownNewFuncSnapshot) == "function"
         local hasImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
-        _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[__call()] Cannot call class() because the symbol lacks both methods :New() and :__Call__()")
+        _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
 
         if hasImplicitCallFunction then
             -- has priority over :new()
@@ -483,8 +497,12 @@ do
             return StaticClassProtoFactory.Spawn()
         end
 
-        if symbolType == SRegistrySymbolTypes.AbstractClass or symbolType == SRegistrySymbolTypes.NonStaticClass then
-            return NonStaticClassProtoFactory.Spawn()
+        if symbolType == SRegistrySymbolTypes.NonStaticClass then
+            return NonStaticClassProtoFactory.Spawn(false)
+        end
+
+        if symbolType == SRegistrySymbolTypes.AbstractClass then
+            return NonStaticClassProtoFactory.Spawn(true)
         end
 
         if symbolType == SRegistrySymbolTypes.Interface then

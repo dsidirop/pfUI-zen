@@ -13,7 +13,7 @@ TG:AddDynamicTheory("T020.Inheritance.Abstraction.GivenPartialParentAbstract.Sho
                             ["Foo"] = AFoo, -- AFoo is still partial so this should throw
                         }        
                     end,
-
+                    
                     ErrorGlob = "*[NR.BM.064]*"
                 },
 

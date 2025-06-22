@@ -20,6 +20,8 @@ if U then
 
     U.TestsEngine:RunAllTestGroups()
 
+    -- U.TestsEngine:RunSpecificTest("T021.Inheritance.Abstraction.GivenUnimplementedMethods.ShouldThrowExceptionOnCallAttempts")
+
     -- U.TestsEngine:RunSpecificTest("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePairs.ShouldReturnExpectedVerdict")
 
     -- U.TestsEngine:RunTestGroup("System.Guard.Assert.IsBooleanizable")

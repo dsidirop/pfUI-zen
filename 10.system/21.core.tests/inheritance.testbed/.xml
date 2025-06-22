@@ -17,6 +17,7 @@
     <!-- ABSTRACTION RED TESTS -->
     <Include file="t040.abstraction.given_attempt_to_instantiate_abstract_class.should_throw.lua"/>
     <Include file="t041.abstraction.given_partial_parent_abstract.should_throw.lua"/>
+    <Include file="t042.abstraction.given_unimplemented_methods.should_throw_exception_on_call_attempts.lua"/>
 
     <!-- SUBCLASSING GREEN TESTS -->
     <Include file="t050.subclassing.given_green_interface_and_concrete_base_class.should_work.lua"/>

@@ -54,7 +54,7 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                 do
                     local Fields = using "System.Classes.Fields"
 
-                    local Class = using "[declare] [abstract]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Gring"
+                    local Class = using "[declare] [abstract]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.AGring"
 
                     function Class:New()
                         Scopify(EScopes.Function, self)
@@ -80,13 +80,13 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                     local Fields = using "System.Classes.Fields"
                     
                     local Zong = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Zong"
-                    local Gring = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Gring"
+                    local AGring = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.AGring"
                     local IPing = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
                     local Class = using "[declare] [blend]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
                         ["Zong"]  = Zong,
                         ["IPing"] = IPing,
-                        ["Gring"] = Gring,
+                        ["AGring"] = AGring,
                     }
 
                     function Class:New()
@@ -109,12 +109,12 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).base)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase)
                         U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Zong)
-                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.Gring)
+                        U.Should.Not.Be.Nil(Metatable.Get(newInstance).asBase.AGring)
                         -- U.Should.Not.Be.Nil(newInstance.base) -- these should be offlimits and any attempt to access them should generate an exception
                         -- U.Should.Not.Be.Nil(newInstance.asBase) -- these should be offlimits and any attempt to access them should generate an exception
 
                         newInstance = newInstance.asBase.Zong.New(newInstance) --   order   notice that we are calling it as .New() instead of :New()
-                        newInstance = newInstance.asBase.Gring.New(newInstance) --  order   that is intentional because we want to call the base constructor
+                        newInstance = newInstance.asBase.AGring.New(newInstance) --  order   that is intentional because we want to call the base constructor
 
                         newInstance._sum = newInstance._a + newInstance._b -- finally the constructor can work its own magic after all super-constructors have been invoked above
 
@@ -165,6 +165,6 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
             U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong)
             U.Should.Not.Be.Nil(FoobarInstance.asBase.Zong.Zang)
             U.Should.Not.Be.Nil(FoobarInstance.asBase.IPing)
-            U.Should.Not.Be.Nil(FoobarInstance.asBase.Gring)
+            U.Should.Not.Be.Nil(FoobarInstance.asBase.AGring)
         end
 )
