@@ -27,7 +27,7 @@ function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
     Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
-    local instance = self:Instantiate():ChainSetDefaultCall(self.TryTranslate) --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
+    local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
     instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenAddonTranslator:NewForActiveUILanguage()) -- todo   get this from di
     instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslator.I                           ) -- todo   get this from di
@@ -39,6 +39,7 @@ end
 --
 --     _translationsService("foobar")   <=>   _translationsService:TryTranslate("foobar")
 --
+using "[autocall]"
 function TranslationsService:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(
             self._zenAddonTranslator:Translate(message), --         order

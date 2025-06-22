@@ -308,8 +308,7 @@ do
         })
 
         local newStaticClassProto = _spawnSimpleMetatable({
-            -- Instantiate         = StaticClassProtoFactory.StandardInstantiator_, --        no point for static-classes
-            -- ChainSetDefaultCall = StaticClassProtoFactory.StandardChainSetDefaultCall_, -- no point for static-classes    
+            -- Instantiate         = StaticClassProtoFactory.StandardInstantiator_, -- no point for static-classes    
         })
 
         return _setmetatable(newStaticClassProto, CommonMetaTable_ForAllStaticClassProtos)
@@ -340,7 +339,6 @@ do
         CachedMetaTable_ForAllAbstractClassProtos = CachedMetaTable_ForAllAbstractClassProtos or _spawnSimpleMetatable({
             New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
-            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
             __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_,
         })
@@ -348,7 +346,6 @@ do
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
             New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
-            ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
             __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
         })
@@ -469,15 +466,6 @@ do
         )
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
-    end
-
-    function NonStaticClassProtoFactory.StandardChainSetDefaultCall_(classProto, defaultCallMethod) -- @formatter:off
-        _ = _type(classProto) == "table"           or _throw_exception("classProto was expected to be a table")
-        _ = _type(defaultCallMethod) == "function" or _throw_exception("defaultCallMethod was expected to be a function") -- @formatter:on
-
-        classProto.__Call__ = defaultCallMethod
-
-        return classProto
     end
 
     function NonStaticClassProtoFactory.StandardDefaultConstructor_(self)       
@@ -877,7 +865,6 @@ do
         ["__call"]              = "__call",
         ["__index"]             = "__index",
         -- ["Instantiate"]      = "Instantiate",
-        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local StaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
@@ -888,7 +875,6 @@ do
         ["__call"]              = "__call",
         ["__index"]             = "__index",
         ["Instantiate"]         = "Instantiate",
-        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local NonStaticClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
@@ -899,7 +885,6 @@ do
         ["__call"]              = "__call",
         ["__index"]             = "__index",
         ["Instantiate"]         = "Instantiate",
-        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
     }
     local Interfaces_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
@@ -910,7 +895,7 @@ do
         ["__call"]              = "__call",
         ["__index"]             = "__index",
         ["Instantiate"]         = "Instantiate",
-        ["ChainSetDefaultCall"] = "ChainSetDefaultCall",
+        
     }
     local AbstractClasses_SystemReservedStaticMemberNames_ForMembersOfUnderscore = {
     }
