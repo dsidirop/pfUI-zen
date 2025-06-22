@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawset, _tableInsert, _tableConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -50,6 +50,18 @@ local function _spawnSimpleMetatable(mt)
     mt = mt or {}
     mt.__index = mt.__index or mt
     return mt
+end
+
+local function _stringJoinTableValues(dictionary, separator)
+    _ = _type(dictionary) == "table" or _throw_exception("dictionary must be a table")
+    _ = _type(separator) == "string" or _throw_exception("separator must be a string")
+
+    local result = {}
+    for _, v in _ipairs(dictionary) do
+        _tableInsert(result, _stringify(v))
+    end
+
+    return _tableConcat(result, separator)
 end
 
 local function _stringStartsWith(input, desiredPrefix)
@@ -157,7 +169,48 @@ end
 
 -- the NamespaceRegistrySingleton has to be defined at the top of the
 -- file because it is used by the ProtosFactory standard-methods
-local NamespaceRegistrySingleton, HealthCheckerSingleton
+local NamespaceRegistrySingleton, HealthCheckerSingleton, SMethodAttributeTypes, SRegistrySymbolTypes
+
+--[[ METHOD ATTRIBUTES]]
+
+local MethodAttribute = _spawnSimpleMetatable() -- proto symbol tidbits
+do
+    function MethodAttribute:New(attributeType)
+        _setfenv(EScope.Function, self)
+
+        _ = _type(attributeType) ~= "table" or  _throw_exception("[NR.MA.CTOR.010] attributeType is not of type SMethodAttributeTypes ( got %q )", _stringify(_type(attributeType)))
+
+        local instance = {
+            _attributeType = attributeType
+        }
+
+        return _setmetatable(instance, self)
+    end
+
+    function MethodAttribute:IsAbstract()
+        _setfenv(EScope.Function, self)
+
+        return self._attributeType == SMethodAttributeTypes.Abstract
+    end
+
+    function MethodAttribute:IsAutoCall()
+        _setfenv(EScope.Function, self)
+
+        return self._attributeType == SMethodAttributeTypes.AutoCall
+    end
+
+    function MethodAttribute:GetType()
+        _setfenv(EScope.Function, self)
+
+        return _attributeType
+    end
+
+    function MethodAttribute:__tostring()
+        _setfenv(EScope.Function, self)
+
+        return _attributeType
+    end
+end
 
 --[[ PROTO FACTORIES ]]--
 
@@ -285,6 +338,7 @@ do
 
     function NonStaticClassProtoFactory.Spawn(isAbstract)
         CachedMetaTable_ForAllAbstractClassProtos = CachedMetaTable_ForAllAbstractClassProtos or _spawnSimpleMetatable({
+            New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
@@ -292,6 +346,7 @@ do
         })
 
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
+            New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
             ChainSetDefaultCall = NonStaticClassProtoFactory.StandardChainSetDefaultCall_,
 
@@ -329,7 +384,9 @@ do
             return
         end
 
-        if NonStaticClassProtoFactory.TryPopMethodAttribute_AbstractMethod_(pendingAttributesArraySnapshot) then
+        local isMethodMarkedAsAbstract = NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, SMethodAttributeTypes.Abstract) ~= nil
+
+        if isMethodMarkedAsAbstract then
             _rawset(classProto, key, function(self)
                 local Throw = NamespaceRegistrySingleton:Get("System.Exceptions.Throw")
                 local NotImplementedException = NamespaceRegistrySingleton:Get("System.Exceptions.NotImplementedException")
@@ -339,41 +396,54 @@ do
 
                 Throw(NotImplementedException:New(
                         associatedClassNamespace == nil
-                                and _format("Abstract method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key))
-                                or _format("Abstract method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key), _stringify(associatedClassNamespace))
+                                and _format("[NR.NSCPF.SNIF.FAC.020] Abstract method [%s:%s()] is not implemented (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key))
+                                or _format("[NR.NSCPF.SNIF.FAC.025] Abstract method [%s:%s()] is not implemented in [%s] (did you forget to override it?)", _stringify(associatedAbstractClassNamespace), _stringify(key), _stringify(associatedClassNamespace))
                 ))
             end)
         end
         
         if _next(pendingAttributesArraySnapshot) ~= nil then
-            _throw_exception("[NR.NSCPF.SNIF.FAC.030] The following Attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_tblConcat(pendingAttributesArraySnapshot, "\n- ")))
+            _throw_exception("[NR.NSCPF.SNIF.FAC.030] The following attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_stringJoinTableValues(pendingAttributesArraySnapshot, "\n- ")))
         end
     end
 
-    function NonStaticClassProtoFactory.TryPopMethodAttribute_AbstractMethod_(pendingAttributesArraySnapshot)
+    function NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_(classProto, key, value)
         _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
-        _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table")
+        local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
+        _ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+
+        if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
+            _rawset(classProto, key, value)
+            return
+        end
+
+        local isMethodMarkedAsAutoCall = NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
+        if isMethodMarkedAsAutoCall then
+            classProto.__call = value
+            _rawset(classProto, key, value)
+        end
+
+        if _next(pendingAttributesArraySnapshot) ~= nil then
+            _throw_exception("[NR.NSCPF.SNIF.FNSC.030] The following attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_stringJoinTableValues(pendingAttributesArraySnapshot, "\n- ")))
+        end
+    end
+
+    function NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, desiredType) --@formatter:off
+        _setfenv(EScope.Function, NonStaticClassProtoFactory)
+
+        _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
+        _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
 
         local found = false
         for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
-            if attributeSpecs:IsAbstract() then
+            if attributeSpecs:GetType() == desiredType then
                 found = true
                 _tableRemove(pendingAttributesArraySnapshot, i)
             end
         end
 
         return found
-    end
-    
-    -- todo   here we could add support for Attribute ->  using [[autocall]]
-    function NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_(classProto, key, value)
-        _setfenv(EScope.Function, NonStaticClassProtoFactory)
-
-        local pendingAttributesSnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
-        _ = pendingAttributesSnapshot == nil or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Class [%s] is a non-abstract-class and doesn't support attributes on %q", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
-        
-        _rawset(classProto, key, value)
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
@@ -387,7 +457,7 @@ do
 
         if hasImplicitCallFunction then
             -- has priority over :new()
-            return ownCallFuncSnapshot(-- 00
+            return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
                     _unpack(variadicsArray)
             )
@@ -408,6 +478,10 @@ do
         classProto.__Call__ = defaultCallMethod
 
         return classProto
+    end
+
+    function NonStaticClassProtoFactory.StandardDefaultConstructor_(self)       
+        return self:Instantiate()
     end
 
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off
@@ -469,7 +543,7 @@ do
     end
 end
 
-local SRegistrySymbolTypes = EnumsProtoFactory.Spawn()
+SRegistrySymbolTypes = EnumsProtoFactory.Spawn()
 do --@formatter:off
     SRegistrySymbolTypes.Enum = "enum"
     SRegistrySymbolTypes.Interface = "interface"
@@ -481,6 +555,14 @@ do --@formatter:off
     SRegistrySymbolTypes.AutorunKeyword = "autorun-keyword" --  [healthcheck]* and friends
 
     SRegistrySymbolTypes.RawSymbol = "raw-symbol" --  external libraries from third party devs that are given an internal namespace (think of this like C# binding to java or swift libs)
+end --@formatter:off
+
+--[[ METHOD ATTRIBUTES ]]--
+
+SMethodAttributeTypes = EnumsProtoFactory.Spawn()
+do --@formatter:off
+    SMethodAttributeTypes.Abstract = "abstract"
+    SMethodAttributeTypes.AutoCall = "autocall"
 end --@formatter:off
 
 local ProtosFactory = {}
@@ -510,42 +592,6 @@ do
         end
 
         return {} -- raw-3rd-party-symbols and keywords
-    end
-end
-
---[[ METHOD ATTRIBUTES ]]--
-
-local SMethodAttributeTypes = EnumsProtoFactory.Spawn()
-do --@formatter:off
-    SMethodAttributeTypes.Abstract = "abstract"
-    SMethodAttributeTypes.Autocall = "autocall"
-end --@formatter:off
-
-
-local MethodAttribute = _spawnSimpleMetatable() -- proto symbol tidbits
-do
-    function MethodAttribute:New(attributeType)
-        _setfenv(EScope.Function, self)
-
-        _ = _type(attributeType) ~= "table" or  _throw_exception("[NR.MA.CTOR.010] attributeType is not of type SMethodAttributeTypes ( got %q )", _stringify(_type(attributeType)))
-
-        local instance = {
-            _attributeType = attributeType
-        }
-
-        return _setmetatable(instance, self)
-    end
-    
-    function MethodAttribute:IsAbstract()
-        _setfenv(EScope.Function, self)
-
-        return self._attributeType == SMethodAttributeTypes.Abstract
-    end
-    
-    function MethodAttribute:GetType()
-        _setfenv(EScope.Function, self)
-
-        return _attributeType
     end
 end
 
@@ -655,7 +701,7 @@ do
         end
 
         if _next(missingMethods) then
-            _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tblConcat(missingMethods, "\n")))
+            _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tableConcat(missingMethods, "\n")))
         end
     end
 
@@ -1414,7 +1460,7 @@ do
         -- add more healthchecks here in the future ...
 
         if _next(errorsAccumulatorArray) then
-            _throw_exception("[NR.HCR.RN.020] Healthcheck failed with the following errors:\n\n%s", _tblConcat(errorsAccumulatorArray, "\n\n"))
+            _throw_exception("[NR.HCR.RN.020] Healthcheck failed with the following errors:\n\n%s", _tableConcat(errorsAccumulatorArray, "\n\n"))
         end
     end
 end
@@ -1452,11 +1498,12 @@ do
         end
     end)
 
-    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]", function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.Abstract)) end)
+    -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
+    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]",          function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.Abstract  )) end)
+    NamespaceRegistrySingleton:BindAutorunKeyword("[autocall]",          function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.AutoCall  )) end)
 
-    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton) end)
+    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton)                                           end)
 
-    -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed 
     NamespaceRegistrySingleton:BindKeyword("[declare]",                      function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",               function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [class]",              function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
