@@ -12,7 +12,8 @@ local Exception = using "System.Exceptions.Exception"
 
 local Throw = using "[declare] [static]" "System.Exceptions.Throw"
 
-function Throw:__Call__(exception)
+using "[autocall]"
+function Throw:Do(exception)
     Guard.Assert.Explained.IsInstanceOf(exception, Exception, "[THR.CLL.010]", "exception")
 
     if exception ~= nil and exception.ChainSetStacktrace ~= nil then

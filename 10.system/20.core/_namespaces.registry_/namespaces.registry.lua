@@ -98,6 +98,21 @@ local function _stringStartsWith(input, desiredPrefix)
     return startIndex == 1
 end
 
+local function _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, desiredType) --@formatter:off
+    _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
+    _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
+
+    local found = false
+    for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
+        if attributeSpecs:GetType() == desiredType then
+            found = true
+            _tableRemove(pendingAttributesArraySnapshot, i)
+        end
+    end
+
+    return found
+end
+
 local function _stringEndsWith(input, desiredPostfix)
     _ = _type(input) == "string" or _throw_exception("input must be a string")
     _ = _type(desiredPostfix) == "string" or _throw_exception("desiredPrefix must be a string")
@@ -305,6 +320,7 @@ do
     function StaticClassProtoFactory.Spawn()
         CommonMetaTable_ForAllStaticClassProtos = CommonMetaTable_ForAllStaticClassProtos or _spawnSimpleMetatable({
             __call = StaticClassProtoFactory.OnProtoCalledAsFunction_, -- needed by static-class utilities like Throw.__Call__() so as for them to work properly
+            __newindex = StaticClassProtoFactory.StandardNewIndexFunc_,
         })
 
         local newStaticClassProto = _spawnSimpleMetatable({
@@ -327,6 +343,28 @@ do
                 staticClassProto, --          vital to pass the static-class-proto to the call-function to ensure proper parameter order considering that
                 _unpack(variadicsArray) --    static-classes are supposed to define this as :__Call__() ( not as .__Call__() despite being in a static-class! )
         )
+    end
+
+    function StaticClassProtoFactory.StandardNewIndexFunc_(classProto, key, value)
+        _setfenv(EScope.Function, StaticClassProtoFactory)
+
+        local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
+        _ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+
+        if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
+            _rawset(classProto, key, value)
+            return
+        end
+
+        local isMethodMarkedAsAutoCall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
+        if isMethodMarkedAsAutoCall then
+            classProto.__Call__ = value
+            _rawset(classProto, key, value)
+        end
+
+        if _next(pendingAttributesArraySnapshot) ~= nil then
+            _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.030] The following attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_stringJoinTableValues(pendingAttributesArraySnapshot, "\n- ")))
+        end
     end
 end
 
@@ -381,7 +419,7 @@ do
             return
         end
 
-        local isMethodMarkedAsAbstract = NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, SMethodAttributeTypes.Abstract) ~= nil
+        local isMethodMarkedAsAbstract = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Abstract) ~= nil
 
         if isMethodMarkedAsAbstract then
             _rawset(classProto, key, function(self)
@@ -415,7 +453,7 @@ do
             return
         end
 
-        local isMethodMarkedAsAutoCall = NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
+        local isMethodMarkedAsAutoCall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
         if isMethodMarkedAsAutoCall then
             classProto.__call = value
             _rawset(classProto, key, value)
@@ -424,23 +462,6 @@ do
         if _next(pendingAttributesArraySnapshot) ~= nil then
             _throw_exception("[NR.NSCPF.SNIF.FNSC.030] The following attributes for [%s:%s()] are not supported:\n\n%s", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key), "- " .. _stringify(_stringJoinTableValues(pendingAttributesArraySnapshot, "\n- ")))
         end
-    end
-
-    function NonStaticClassProtoFactory.TryPopMethodAttributesOfType_(pendingAttributesArraySnapshot, desiredType) --@formatter:off
-        _setfenv(EScope.Function, NonStaticClassProtoFactory)
-
-        _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
-        _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
-
-        local found = false
-        for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
-            if attributeSpecs:GetType() == desiredType then
-                found = true
-                _tableRemove(pendingAttributesArraySnapshot, i)
-            end
-        end
-
-        return found
     end
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)

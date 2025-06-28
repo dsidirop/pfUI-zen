@@ -1,7 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
-
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]);local Scopify = using "System.Scopify";local EScopes = using "System.EScopes";Scopify(EScopes.Function, {}) -- @formatter:off
 
 local Nils    = using "System.Nils"
 local Guard   = using "System.Guard"
@@ -11,8 +8,6 @@ local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Tr
 local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- @formatter:on
 
 local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
-
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._zenAddonTranslator = nil

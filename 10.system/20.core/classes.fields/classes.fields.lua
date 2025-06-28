@@ -5,8 +5,9 @@ local Namespacer = using "System.Namespacer"
 
 local Fields = using "[declare] [static]" "System.Classes.Fields"
 
-function Fields:__Call__(classFieldPluggerCallbackFunc)
-    Guard.Assert.IsNotNil(classFieldPluggerCallbackFunc)
+using "[autocall]"
+function Fields:SetFieldPluggerFunc(classFieldPluggerCallbackFunc)
+    Guard.Assert.IsNotNil(classFieldPluggerCallbackFunc, "classFieldPluggerCallbackFunc")
     
     local proto, _ = Guard.Assert.Explained.IsNotNil(Namespacer:GetMostRecentlyDefinedSymbolProtoAndTidbits(), "seems no class is being defined at this moment - cannot plug fields into nothing")
 
