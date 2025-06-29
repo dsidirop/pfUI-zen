@@ -1349,6 +1349,8 @@ do
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
+        
+        -- todo   we should apply mixins in the following order    interface-mixins -> abstract-mixins -> concrete-mixins  to ensure that the concrete-mixins have the last say 
         for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do --@formatter:off
             _ = targetSymbolProto ~= specific_MixinProtoSymbol                                                 or _throw_exception("[NR.BM.050] mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
             _ = _type(specific_MixinNickname) == "string" and specific_MixinNickname ~= ""                     or _throw_exception("[NR.BM.051] mixin nicknamed %q has a nickname that is either not a string or its dud - its type is %q", specific_MixinNickname, _type(specific_MixinNickname))
@@ -1412,9 +1414,14 @@ do
                     if hasGreenName then
                         -- _g.print("****** [" .. _g.tostring(specific_MixinNickname) .. "] adding mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' to targetSymbolProto")
 
-                        targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones    
+                        if not (mixinIsInterface or mixinIsAbstractClass) or targetSymbolProto[specific_MixinMemberName] == nil then
+                            targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones
+                        end
 
-                        targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol
+                        if not (mixinIsInterface or mixinIsAbstractClass) or targetSymbolProto_baseProp[specific_MixinMemberName] == nil then
+                            targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol    
+                        end                        
+
                         targetSymbolProto_asBaseProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBase.<specific-mixin-nickname>.<specific-member-name>
                         -- else
                         --     _g.print("****** [" .. _g.tostring(mixinNickname) .. "] skipping mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' because it is a system-reserved name")
