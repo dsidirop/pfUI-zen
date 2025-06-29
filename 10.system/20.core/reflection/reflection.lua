@@ -338,6 +338,15 @@ function Reflection.IsNonStaticClassProto(allegedClassProto)
     return protoTidbits ~= nil and protoTidbits:IsNonStaticClassEntry()
 end
 
+function Reflection.TryGetNamespaceIfProto(allegedClassProto)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(allegedClassProto)
+    if protoTidbits == nil then
+        return nil
+    end
+
+    return protoTidbits:GetNamespace()
+end
+
 function Reflection.TryGetNamespaceIfNonStaticClassProto(allegedClassProto)
     local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(allegedClassProto)
     if protoTidbits == nil or not protoTidbits:IsNonStaticClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care

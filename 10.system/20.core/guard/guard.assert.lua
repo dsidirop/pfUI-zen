@@ -426,7 +426,7 @@ do
     --
     function Guard.Assert.IsInstanceOf(value, desiredClassProto, optionalArgumentName)
         if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
-            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")))
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
 
         return value
@@ -434,9 +434,41 @@ do
 
     function Guard.Assert.IsNilOrInstanceOf(value, desiredClassProto, optionalArgumentName)
         if value ~= nil and not Reflection.IsInstanceOf(value, desiredClassProto) then
-            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")))
+            Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")))
         end
 
         return value
+    end
+
+    function Guard.Assert.IsProtoImplementing(allegedProto, desiredInterfaceProto, optionalArgumentName)
+        if not Reflection.IsProtoImplementing(allegedProto, desiredInterfaceProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(allegedProto, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
+        end
+
+        return allegedProto
+    end
+
+    function Guard.Assert.IsNilOrProtoImplementing(allegedProto, desiredInterfaceProto, optionalArgumentName)
+        if allegedProto == nil or not Reflection.IsProtoImplementing(allegedProto, desiredInterfaceProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(allegedProto, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
+        end
+
+        return allegedProto
+    end
+    
+    function Guard.Assert.IsInstanceImplementing(allegedInstance, desiredInterfaceProto, optionalArgumentName)
+        if not Reflection.IsInstanceImplementing(allegedInstance, desiredInterfaceProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(allegedInstance, optionalArgumentName, "to be of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
+        end
+
+        return allegedInstance
+    end
+
+    function Guard.Assert.IsNilOrInstanceImplementing(allegedInstance, desiredInterfaceProto, optionalArgumentName)
+        if allegedInstance == nil or not Reflection.IsInstanceImplementing(allegedInstance, desiredInterfaceProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(allegedInstance, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
+        end
+
+        return allegedInstance
     end
 end

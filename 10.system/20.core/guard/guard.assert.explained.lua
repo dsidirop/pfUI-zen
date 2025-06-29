@@ -72,7 +72,7 @@ do
                     value,
                     customMessage,
                     optionalArgumentName,
-                    "to be of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")
+                    "to be of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")
             ))
         end
 
@@ -85,7 +85,7 @@ do
                     value,
                     customMessage,
                     optionalArgumentName,
-                    "to be nil or instance of type " .. (Reflection.TryGetNamespaceIfNonStaticClassProto(desiredClassProto) or "(desired proto is unknown!)")
+                    "to be nil or instance of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")
             ))
         end
 

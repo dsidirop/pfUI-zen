@@ -19,8 +19,8 @@ end)
 function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
-    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
+    Guard.Assert.IsNilOrTable(zenAddonTranslator, ZenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
+    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, PfuiTranslator, "pfuiTranslatorAsFallback")
 
     local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
