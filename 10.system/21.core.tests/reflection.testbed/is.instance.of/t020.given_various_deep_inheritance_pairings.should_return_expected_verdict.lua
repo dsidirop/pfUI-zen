@@ -13,7 +13,7 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
 
                 ["REF.IIO.GVDPIP.SREV.0000"] = (function()
                     local GrandChildException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0000.GrandChildException" {
-                        ["NotImplementedException"] = NotImplementedException,
+                        "NotImplementedException", NotImplementedException,
                     }
 
                     function GrandChildException:New()
@@ -31,10 +31,10 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
 
                 ["REF.IIO.GVDPIP.SREV.0010"] = (function()
                     local GrandChildException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandChildException" {
-                        ["Foobar"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
-                        ["GrandChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.Parent.GrandChildException" {
-                            ["ChildException"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandParent.ChildException" {
-                                ["NotImplementedException"] = NotImplementedException,
+                        "Foobar", using "[declare]" "REF.IIO.GVDPIP.SREV.0010.Parent.Foobar",
+                        "GrandChildException", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.Parent.GrandChildException" {
+                            "ChildException", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0010.GrandParent.ChildException" {
+                                "NotImplementedException", NotImplementedException,
                             },
                         },
                     }
@@ -54,14 +54,14 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
 
                 ["REF.IIO.GVDPIP.SREV.0020"] = (function()
                     local RandomClass = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.RandomClass" {
-                        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
-                            ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
-                                ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
+                        "Foo1", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo1" {
+                            "Bar1", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar1" {
+                                "Ping1", using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping1"
                             },
                         },
-                        ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo2" {
-                            ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar2" {
-                                ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping2"
+                        "Foo2", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.Parent.Foo2" {
+                            "Bar2", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Bar2" {
+                                "Ping2", using "[declare]" "REF.IIO.GVDPIP.SREV.0020.GrandParent.Ping2"
                             },
                         },
                     }
@@ -81,8 +81,8 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
                     local IFoo = using "[declare] [interface]" "REF.IIO.GVDPIP.SREV.0030.IFoo"
                     
                     local SomeClass = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.SomeClass" {
-                        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
-                            ["IFoo"] = IFoo,
+                        "Foo1", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0030.Parent.Foo1" {
+                            "IFoo", IFoo,
                         },
                     }
 
@@ -99,14 +99,14 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
 
                 ["REF.IIO.GVDPIP.SREV.0040"] = (function()
                     local IrrelevantException = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.IrrelevantException" {
-                        ["Foo1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo1" {
-                            ["Bar1"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar1" {
-                                ["Ping1"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping1"
+                        "Foo1", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo1" {
+                            "Bar1", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar1" {
+                                "Ping1", using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping1"
                             },
                         },
-                        ["Foo2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo2" {
-                            ["Bar2"] = using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar2" {
-                                ["Ping2"] = using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping2"
+                        "Foo2", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.Parent.Foo2" {
+                            "Bar2", using "[declare] [blend]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Bar2" {
+                                "Ping2", using "[declare]" "REF.IIO.GVDPIP.SREV.0040.GrandParent.Ping2"
                             },
                         },
                     }

@@ -9,14 +9,11 @@ TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow"
             -- ACT
             function action()
                 _ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow.Foo" {
-                    ["Bar"] = {
-                        a = 1,
-                        b = 2,
-                    },
+                    { "Bar", { a = 1, b = 2 } },
                 }
             end
 
             -- ASSERT
-            U.Should.Throw(action, "*[NR.BM.060]*")
+            U.Should.Throw(action, "*[NR.BM.020]*")
         end
 )

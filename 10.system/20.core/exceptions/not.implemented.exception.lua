@@ -7,7 +7,7 @@ local EScopes   = using "System.EScopes"
 local Exception = using "System.Exceptions.Exception"
 
 local Class = using "[declare] [blend]" "System.Exceptions.NotImplementedException" { --@formatter:on
-    ["Exception"] = Exception
+    "Exception", Exception
 }
 
 Scopify(EScopes.Function, {})

@@ -13,7 +13,7 @@ TG:AddFact("T010.Inheritance.Subclassing.GivenAttemptToAmendClassPreviouslyUsedA
                     local Foo = using "[declare]" "T010.Inheritance.Subclassing.GivenAttemptToAmendClassPreviouslyUsedAsParent.ShouldThrow.Foo"
 
                     local _ = using "[declare] [blend]" "T010.Inheritance.Subclassing.GivenAttemptToAmendClassPreviouslyUsedAsParent.ShouldThrow.Bar" {
-                        ["Foo"] = Foo,
+                        "Foo", Foo
                     }
                 end
 

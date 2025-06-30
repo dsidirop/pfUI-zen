@@ -9,7 +9,7 @@ TG:AddFact("T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAt
                 local Foo = using "[declare]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo"
 
                 local _ = using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar" {
-                    ["Foo"] = Foo,
+                    "Foo", Foo
                 }
             end
 
@@ -18,7 +18,7 @@ TG:AddFact("T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAt
                 local Bar = using "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar"
 
                 using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo [Partial]" {
-                    ["Bar"] = Bar, -- circular dependency
+                    "Bar", Bar -- circular dependency
                 }
             end
 

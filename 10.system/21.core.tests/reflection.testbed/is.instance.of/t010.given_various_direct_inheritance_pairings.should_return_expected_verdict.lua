@@ -46,8 +46,8 @@ TG:AddDynamicTheory("T010.Reflection.IsInstanceOf.GivenVariousDirectInheritanceP
                         end
 
                         local Class = using "[declare] [blend]" "REF.IIO.GVDRIP.SREV.0040.Subclass" {
-                            ["BaseFoo1"]          = BaseFoo1,
-                            ["SomeOtherBaseFoo2"] = SomeOtherBaseFoo2,
+                            "BaseFoo1", BaseFoo1,
+                            "SomeOtherBaseFoo2", SomeOtherBaseFoo2,
                         }
                         
                         function Class:New()

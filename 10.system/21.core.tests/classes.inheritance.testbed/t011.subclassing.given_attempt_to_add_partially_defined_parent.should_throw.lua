@@ -11,7 +11,7 @@ TG:AddFact("T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent
                 local Foo = using "[declare]" "T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow.Foo [Partial]"
 
                 local _ = using "[declare] [blend]" "T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow.Bar" {
-                    ["Foo"] = Foo,
+                    "Foo", Foo
                 }
             end
 

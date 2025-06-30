@@ -1,6 +1,6 @@
 ﻿local EScope = { EGlobal = 0, EFunction = 1 }
 
-local _g, _assert, _rawset, _tableInsert, _tableConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
+local _g, _assert, _rawset, _tableInsert, _tableConcat, _tableSort, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _, _next = (function()
     local _g = assert(_G or getfenv(0))
     local _assert = assert
     local _setfenv = _assert(_g.setfenv)
@@ -20,14 +20,15 @@ local _g, _assert, _rawset, _tableInsert, _tableConcat, _rawequal, _type, _getn,
     local _strfind = _assert(_g.string.find)
     local _rawequal = _assert(_g.rawequal)
     local _stringify = _assert(_g.tostring)
-    local _tblConcat = _assert(_g.table.concat)
+    local _tableSort = _assert(_g.table.sort)
     local _debugstack = _assert(_g.debugstack)
+    local _tableConcat = _assert(_g.table.concat)
     local _tableInsert = _assert(_g.table.insert)
     local _tableRemove = _assert(_g.table.remove)
     local _setmetatable = _assert(_g.setmetatable)
     local _getmetatable = _assert(_g.getmetatable)
 
-    return _g, _assert, _rawset, _tableInsert, _tblConcat, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
+    return _g, _assert, _rawset, _tableInsert, _tableConcat, _tableSort, _rawequal, _type, _getn, _gsub, _pairs, _ipairs, _tableRemove, _unpack, _format, _strlen, _strsub, _strfind, _stringify, _setfenv, _debugstack, _setmetatable, _getmetatable, _next
 end)()
 
 if _g["ZENSHARP:USING"] then
@@ -1326,20 +1327,21 @@ do
         return impl_(mixinProtoSymbol, targetSymbolProto, 0)
     end
 
+
     function NamespaceRegistry:BlendMixins(targetSymbolProto, namedMixins)
         _setfenv(EScope.Function, self)
 
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto) --@formatter:off
-        _ = protoTidbits ~= nil            or _throw_exception("[NR.BM.000] targetSymbolProto is not a symbol-proto")
-        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto to be blended must be a class/interface/enum (symbol-type=%q)", protoTidbits:GetRegistrySymbolType())
-        _ = _type(namedMixins) == "table"  or _throw_exception("[NR.BM.005] namedMixins must be a table")
-        _ = _next(namedMixins) ~= nil      or _throw_exception("[NR.BM.010] namedMixins must not be an empty table") --@formatter:on
+        _ = protoTidbits ~= nil            or _throw_exception("[NR.BM.000] targetSymbolProto [%q] is not a symbol-proto", protoTidbits:GetNamespace())
+        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto [%q] must be a class/interface/enum to be blendable (symbol-type=%q)", protoTidbits:GetNamespace(), protoTidbits:GetRegistrySymbolType())
+        
+        namedMixins = NamespaceRegistry.ConvertNamedMixinsToNameValuePairs_(protoTidbits:GetNamespace(), namedMixins)
 
         local targetSymbolProto_baseProp = targetSymbolProto.base or {} -- create a .base and .asBase tables to hold per-mixin fields/methods
         local targetSymbolProto_asBaseProp = targetSymbolProto.asBase or {}
 
         targetSymbolProto.base = targetSymbolProto_baseProp
-        targetSymbolProto.asBase = targetSymbolProto_asBaseProp --@formatter:off
+        targetSymbolProto.asBase = targetSymbolProto_asBaseProp
 
         local targetIsEnum           = protoTidbits:IsEnumEntry()
         local targetIsInterface      = protoTidbits:IsInterfaceEntry()
@@ -1351,7 +1353,10 @@ do
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
         
         -- todo   we should apply mixins in the following order    interface-mixins -> abstract-mixins -> concrete-mixins  to ensure that the concrete-mixins have the last say 
-        for specific_MixinNickname, specific_MixinProtoSymbol in _pairs(namedMixins) do --@formatter:off
+        for i, mixinSpecs in _ipairs(namedMixins) do --@formatter:off
+            local specific_MixinNickname    = mixinSpecs.Name
+            local specific_MixinProtoSymbol = mixinSpecs.Proto
+
             _ = targetSymbolProto ~= specific_MixinProtoSymbol                                                 or _throw_exception("[NR.BM.050] mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
             _ = _type(specific_MixinNickname) == "string" and specific_MixinNickname ~= ""                     or _throw_exception("[NR.BM.051] mixin nicknamed %q has a nickname that is either not a string or its dud - its type is %q", specific_MixinNickname, _type(specific_MixinNickname))
             _ = _type(specific_MixinProtoSymbol) == "table"                                                    or _throw_exception("[NR.BM.052] mixin nicknamed %q has a proto-symbol that is not a table (type=%q)", specific_MixinNickname, _type(specific_MixinProtoSymbol))
@@ -1383,7 +1388,7 @@ do
                 targetSymbolProto_asBaseProp[specific_MixinNickname] = specific_MixinProtoSymbol -- completely overwrite any previous asBase[name]
             end
 
-            for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do --@formatter:off _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+            for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do --@formatter:off   _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
                 _ = _type(specific_MixinMemberName) == "string"                          or _throw_exception("[NR.BM.080] mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
                 _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("[NR.BM.081] mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
 
@@ -1432,6 +1437,92 @@ do
 
         return targetSymbolProto
     end
+
+    -- converts an array-table of named mixins into a name-value-pairs table
+    --
+    -- {
+    --     "mixinName1", mixinProtoSymbol1,
+    --     "mixinName2", mixinProtoSymbol2,
+    --     ...
+    -- }
+    --
+    -- gets converted to:
+    --
+    -- {
+    --     { Name = "mixinName1", Proto = mixinProtoSymbol1 },
+    --     { Name = "mixinName2", Proto = mixinProtoSymbol2 },
+    --     ...
+    -- }
+    function NamespaceRegistry.ConvertNamedMixinsToNameValuePairs_(targetSymbolProtoNamespace, namedMixinsArray) --@formatter:off
+        _setfenv(EScope.Function, NamespaceRegistry)
+        
+        _ = _type(namedMixinsArray) == "table"  or _throw_exception("[NR.BM.005] [%s] namedMixinsArray must be an array-table", targetSymbolProtoNamespace)
+        _ = _next(namedMixinsArray) ~= nil      or _throw_exception("[NR.BM.010] [%s] namedMixinsArray must not be an empty array", targetSymbolProtoNamespace)
+
+        local i = 1
+        local currentPair = { Name = nil, Proto = nil }
+        local transformedMixins = {}
+        for index, mixinNameOrProto in _pairs(namedMixinsArray) do
+            -- _g.print("** [" .. targetSymbolProtoNamespace .. "] processing mixin #" .. _stringify(i) .. " with value '" .. _stringify(mixinNameOrProto) .. "'")
+
+            if currentPair.Name == nil then
+                _ = _type(mixinNameOrProto) == "string" and mixinNameOrProto ~= "" or _throw_exception("[NR.BM.020] Upon trying to create blend for [%s], blend-item#%d was expected to be a non-dud mixin-nickname string but it was found to be %q (type=%q)", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
+
+                currentPair.Name = mixinNameOrProto -- the first item in the pair is the name
+
+            else
+                local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinNameOrProto)
+
+                _ = mixinProtoTidbits ~= nil or _throw_exception("[NR.BM.030] Upon trying to create blend for [%s], blend-item#%d was expected to be a proto but it is not", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
+
+                currentPair.Proto = mixinNameOrProto --           order    the second item in the pair is the proto-symbol
+                _tableInsert(transformedMixins, currentPair) --   order
+                currentPair = { Name = nil, Proto = nil } --      order    reset the pair for the next iteration
+            end
+
+            i = i + 1            
+        end
+    
+        _tableSort(transformedMixins, NamespaceRegistry.NamedMixinsSortingFunc_)
+
+        return transformedMixins
+    end --@formatter:on
+    
+    function NamespaceRegistry.NamedMixinsSortingFunc_(a, b)
+        _setfenv(EScope.Function, NamespaceRegistry)
+
+        local protoTidbitsA = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(a.Proto)
+        local protoTidbitsB = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(b.Proto)
+        
+        _ = protoTidbitsA ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsA = nil (how?)", _stringify(a))
+        _ = protoTidbitsB ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsB = nil (how?)", _stringify(b))
+
+        local typeA = protoTidbitsA:GetRegistrySymbolType()
+        local typeB = protoTidbitsB:GetRegistrySymbolType()
+        if typeA == typeB then
+            return protoTidbitsA:GetNamespace() < protoTidbitsB:GetNamespace() -- sort by namespace if types are the same
+        end
+
+        local scoreA = NamespaceRegistry.GetMixinProtoSortingScore_(typeA)
+        local scoreB = NamespaceRegistry.GetMixinProtoSortingScore_(typeB)
+
+        return scoreA < scoreB or (scoreA == scoreB and protoTidbitsA:GetNamespace() < protoTidbitsB:GetNamespace())
+    end
+    
+    function NamespaceRegistry.GetMixinProtoSortingScore_(protoType) --@formatter:off
+        _setfenv(EScope.Function, NamespaceRegistry)
+        
+        return     protoType == SRegistrySymbolTypes.NonStaticClass    and 90 -- must be appear last in the sorted-array
+               or  protoType == SRegistrySymbolTypes.StaticClass       and 80
+               or  protoType == SRegistrySymbolTypes.AbstractClass     and 70
+               or  protoType == SRegistrySymbolTypes.Interface         and 60 -- must appear at the beginning of the sorted-array
+
+               or  protoType == SRegistrySymbolTypes.Enum              and 50 -- these shouldnt appear but just in case ... 
+               or  protoType == SRegistrySymbolTypes.Keyword           and 40
+               or  protoType == SRegistrySymbolTypes.RawSymbol         and 20
+               or  protoType == SRegistrySymbolTypes.AutorunKeyword    and 30
+               or  10 -- this is a fallback for any other type that we might not have accounted for
+    end --@formatter:on
 
     function NamespaceRegistry:PrintOut()
         _setfenv(EScope.Function, self)
@@ -1534,16 +1625,16 @@ do
         return function(namedMixinsToAdd) return NamespaceRegistrySingleton:BlendMixins(protoEntrySnapshot, namedMixinsToAdd) end -- currying essentially
     end
 
-    NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                       function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",                function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                 ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface            ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [blend]",                      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass      ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [enum] [blend]",               function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Enum                ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [class] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.NonStaticClass      ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [interface] [blend]",          function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.Interface           ) end)
 
-    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [blend]",            function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class] [blend]",    function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass        ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [blend]",           function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass       ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [abstract] [class] [blend]",   function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.AbstractClass       ) end)
 
-    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",              function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
-    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",      function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass          ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [blend]",             function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass         ) end)
+    NamespaceRegistrySingleton:BindKeyword("[declare] [static] [class] [blend]",     function(namespacePath) return declareSymbolAndReturnBlenderCallback(namespacePath, SRegistrySymbolTypes.StaticClass         ) end)
     -- @formatter:on
 end
 

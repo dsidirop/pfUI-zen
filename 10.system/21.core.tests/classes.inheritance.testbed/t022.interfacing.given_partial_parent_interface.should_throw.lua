@@ -10,7 +10,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenPartialParentInterface.Sh
                         local IFoo = using "[declare] [interface]" "INH.INTF.GPPI.ST.010.IFoo [Partial]"
 
                         local _ = using "[declare] [blend]" "INH.INTF.GPPI.ST.010.Bar" {
-                            ["Foo"] = IFoo, -- IFoo is still partial so this should throw
+                            "Foo", IFoo -- IFoo is still partial so this should throw
                         }        
                     end,
 
@@ -20,11 +20,11 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenPartialParentInterface.Sh
                 ["INH.INTF.GPPI.ST.020"] = {
                     Action = function()
                         local IFoo = using "[declare] [interface] [blend]" "INH.INTF.GPPI.ST.020.IFoo [Partial]" {
-                            ["IPing"] = using "[declare] [interface]" "INH.INTF.GPPI.ST.020.IPing",
+                            "IPing", using "[declare] [interface]" "INH.INTF.GPPI.ST.020.IPing"
                         }
 
                         local _ = using "[declare] [blend]" "INH.INTF.GPPI.ST.020.Bar" {
-                            ["Foo"] = IFoo, -- IFoo is still partial so this should throw
+                            "Foo", IFoo -- IFoo is still partial so this should throw
                         }
                     end,
 

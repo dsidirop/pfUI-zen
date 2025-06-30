@@ -5,7 +5,7 @@ local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes" --             @formatter:on
 
 local Class = using "[declare] [blend]" "System.Exceptions.ValueAlreadySetException" {
-    ["Exception"] = using "System.Exceptions.Exception",
+    "Exception", using "System.Exceptions.Exception",
 }
 
 Scopify(EScopes.Function, {})

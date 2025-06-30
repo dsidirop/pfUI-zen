@@ -27,7 +27,7 @@ TG:AddDynamicTheory("T040.Inheritance.Abstraction.GivenAttemptToInstantiateAbstr
                         local AbstractFoo1 = using "[declare] [abstract]" "INH.ABS.GATIAC.ST.020.AbstractFoo1"
 
                         local AbstractFoo2 = using "[declare] [abstract] [blend]" "INH.ABS.GATIAC.ST.020.AbstractFoo2" {
-                            ["AbstractFoo1"] = AbstractFoo1,
+                            "AbstractFoo1", AbstractFoo1
                         }
 
                         function AbstractFoo2:New()
@@ -47,7 +47,7 @@ TG:AddDynamicTheory("T040.Inheritance.Abstraction.GivenAttemptToInstantiateAbstr
                         local AbstractFoo1 = using "[declare] [abstract] [class]" "INH.ABS.GATIAC.ST.030.AbstractFoo1"
 
                         local AbstractFoo2 = using "[declare] [abstract] [class] [blend]" "INH.ABS.GATIAC.ST.030.AbstractFoo2" {
-                            ["AbstractFoo1"] = AbstractFoo1,
+                            "AbstractFoo1", AbstractFoo1
                         }
 
                         function AbstractFoo2:New()

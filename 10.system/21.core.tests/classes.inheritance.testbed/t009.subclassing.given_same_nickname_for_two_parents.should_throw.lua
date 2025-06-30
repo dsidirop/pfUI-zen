@@ -12,14 +12,14 @@ TG:AddFact("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldTh
                 local Foo1 = using "[declare]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Foo1"
 
                 local _ = using "[declare] [blend]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Bar [Partial]" {
-                    ["Foo"] = Foo1,
+                    "Foo", Foo1
                 }
 
                 -- in another partial file we continue adding to the Bar definition ...
                 local Foo2 = using "[declare]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Foo2"
 
                 local _ = using "[declare] [blend]" "T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow.Bar [Partial]" {
-                    ["Foo"] = Foo2, -- same key should cause an exception
+                    "Foo", Foo2 -- same key should cause an exception
                 }
             end
 

@@ -15,7 +15,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                         end
 
                         local Bar = using "[declare] [blend]" "INH.ABS.GUM.STEOCA.010.Bar" {
-                            ["Foo"] = AFoo,
+                            "Foo", AFoo
                         }
 
                         function Bar:New()
@@ -43,11 +43,11 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                         end
 
                         local AFoo2 = using "[declare] [abstract] [blend]" "INH.ABS.GUM.STEOCA.020.AFoo2" {
-                            ["Foo1"] = AFoo1,
+                            "Foo1", AFoo1
                         }
 
                         local Bar = using "[declare] [blend]" "INH.ABS.GUM.STEOCA.020.Bar" {
-                            ["Foo2"] = AFoo2,
+                            "Foo2", AFoo2
                         }
 
                         function Bar:New()
@@ -74,11 +74,11 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                         end
 
                         local AFoo2 = using "[declare] [abstract] [blend]" "INH.ABS.GUM.STEOCA.030.AFoo2" {
-                            ["Foo1"] = AFoo1,
+                            "Foo1", AFoo1
                         }
 
                         local Bar = using "[declare] [blend]" "INH.ABS.GUM.STEOCA.030.Bar" {
-                            ["Foo2"] = AFoo2,
+                            "Foo2", AFoo2
                         }
 
                         function Bar:New()

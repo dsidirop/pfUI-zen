@@ -14,7 +14,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                         end
 
                         local Bar = using "[declare] [blend]" "INH.INTF.GUM.SFH.010.Bar" {
-                            ["Foo"] = IFoo,
+                            "Foo", IFoo
                         }
 
                         function Bar:New()
@@ -40,11 +40,11 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                         end
 
                         local IFoo2 = using "[declare] [interface] [blend]" "INH.INTF.GUM.SFH.020.IFoo2" {
-                            ["Foo1"] = IFoo1,
+                            "Foo1", IFoo1
                         }
 
                         local Bar = using "[declare] [blend]" "INH.INTF.GUM.SFH.020.Bar" {
-                            ["Foo2"] = IFoo2,
+                            "Foo2", IFoo2
                         }
 
                         function Bar:New()

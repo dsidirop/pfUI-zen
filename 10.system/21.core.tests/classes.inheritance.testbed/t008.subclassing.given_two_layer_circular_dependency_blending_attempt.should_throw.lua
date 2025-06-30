@@ -9,15 +9,15 @@ TG:AddFact("T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlending
                 local GreatGrandParent = using "[declare]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent"
 
                 local GrantParent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GrantParent" {
-                    ["GGParent"] = GreatGrandParent,
+                    "GGParent", GreatGrandParent
                 }
 
                 local Parent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.Parent" {
-                    ["GParent"] = GrantParent,
+                    "GParent", GrantParent
                 }
 
                 local GreatGrandChild = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild" {
-                    ["Parent"] = Parent,
+                    "Parent", Parent
                 }
             end
 
@@ -26,7 +26,7 @@ TG:AddFact("T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlending
                 local GreatGrandChild = using "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild"
 
                 local GreatGrandParent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent [Partial]" {
-                    ["GrandChild"] = GreatGrandChild,
+                    "GrandChild", GreatGrandChild
                 }
             end
 

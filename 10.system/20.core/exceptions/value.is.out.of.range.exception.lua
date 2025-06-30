@@ -7,7 +7,7 @@ local Reflection         = using "System.Reflection"
 local StringsHelper      = using "System.Helpers.Strings" --             @formatter:on
 
 local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOutOfRangeException" {
-    ["Exception"] = using "System.Exceptions.Exception",
+    "Exception", using "System.Exceptions.Exception",
 }
 
 Scopify(EScopes.Function, {})

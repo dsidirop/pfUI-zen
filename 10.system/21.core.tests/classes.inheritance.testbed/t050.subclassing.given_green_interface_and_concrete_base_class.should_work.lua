@@ -84,9 +84,9 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                     local IPing = using "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.IPingTagInterface"
                     
                     local Class = using "[declare] [blend]" "T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork.Foobar" {
-                        ["Zong"]  = Zong,
-                        ["IPing"] = IPing,
-                        ["AGring"] = AGring,
+                        "Zong", Zong,
+                        "IPing", IPing,
+                        "AGring", AGring
                     }
 
                     function Class:New()
