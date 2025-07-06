@@ -1,40 +1,47 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local B = using "[built-ins]" [[
-    ProtectedCall = pcall
-]]
+local B = using "[built-ins]" [[  ProtectedCall = pcall  ]]
 
 local Guard              = using "System.Guard" --                                                    @formatter:off
 local Scopify            = using "System.Scopify"
 local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
+local Fields             = using "System.Classes.Fields"
 
 local A                  = using "System.Helpers.Arrays"
 
-local Rethrow                          = using "System.Exceptions.Rethrow"
-local Exception                        = using "System.Exceptions.Exception"
+local Throw              = using "System.Exceptions.Throw"
+local Exception          = using "System.Exceptions.Exception"
+
 local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
 
-local Class = using "[declare]" "System.Try [Partial]"
-
-
-Class.ProtectedCall = B.ProtectedCall
+local Class = using "[declare]" "System.Try"
 
 Scopify(EScopes.Function, {})
 
-Class.ExceptionsDeserializationFactorySingleton = ExceptionsDeserializationFactory:New()
+Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
-function Class:New(action, exceptionsDeserializationFactory)
+Fields(function(upcomingInstance)
+    upcomingInstance._action                           = nil
+    upcomingInstance._allExceptionHandlers             = nil
+    upcomingInstance._exceptionsDeserializationFactory = nil
+
+    return upcomingInstance
+end)
+
+function Class:New(action, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsFunction(action, "action")
-    Guard.Assert.IsNilOrInstanceOf(exceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
+    
+    local instance = self:Instantiate()
+    
+    instance._action                           = action
+    instance._allExceptionHandlers             = {}
+    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance.DefaultExceptionsDeserializationFactory
 
-    return self:Instantiate({
-        _action = action,
-        _allExceptionHandlers = {},
-        _exceptionsDeserializationFactory = exceptionsDeserializationFactory or Class.ExceptionsDeserializationFactorySingleton,
-    })
+    return instance
 end
 
 -- for specific exceptions
@@ -42,11 +49,11 @@ function Class:Catch(specificExceptionTypeOrExceptionNamespaceString, specificEx
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsFunction(specificExceptionHandler, "specificExceptionHandler")
-    Guard.Assert.IsNamespaceStringOrRegisteredClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
+    Guard.Assert.IsNamespaceStringOrRegisteredNonStaticClassProto(specificExceptionTypeOrExceptionNamespaceString, "specificExceptionTypeOrExceptionNamespaceString")
 
     local exceptionNamespaceString = Reflection.IsString(specificExceptionTypeOrExceptionNamespaceString)
             and specificExceptionTypeOrExceptionNamespaceString
-            or Reflection.TryGetNamespaceIfClassProto(specificExceptionTypeOrExceptionNamespaceString)
+            or Reflection.TryGetNamespaceIfNonStaticClassProto(specificExceptionTypeOrExceptionNamespaceString)
 
     Guard.Assert.IsUnset(_allExceptionHandlers[exceptionNamespaceString], "Exception handler for " .. exceptionNamespaceString)
 
@@ -58,7 +65,7 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnedValuesArray = { Class.ProtectedCall(_action) }
+    local returnedValuesArray = { B.ProtectedCall(_action) }
 
     local success = A.PopFirst(returnedValuesArray)
     if success then
@@ -66,20 +73,19 @@ function Class:Run()
     end
 
     local exceptionMessage = A.PopFirst(returnedValuesArray)
-    local exception = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
-    
-    local properExceptionHandler = self:GetAppropriateExceptionHandler_(exception)
+    local deserializedException = _exceptionsDeserializationFactory:DeserializeFromRawExceptionMessage(exceptionMessage)
+    local properExceptionHandler = self:GetAppropriateExceptionHandler_(deserializedException)
     if properExceptionHandler ~= nil then
-        return properExceptionHandler(exception)
+        return properExceptionHandler(deserializedException)
     end
 
-    Rethrow(exception) -- 10
+    Throw(deserializedException) -- 10 no catch block matched  rethrowing then!
 
     -- 00  raw errors also fall through here   by raw errors we mean errors like calling a non existent function or dividing by zero etc
     -- 10  its crucial to bubble the exception upwards if there is no handler in this particular try/catch block
 end
 
-Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfClassProto(Exception)
+Class.NamespaceOfBasePlatformException = Reflection.TryGetNamespaceIfNonStaticClassProto(Exception)
 function Class:GetAppropriateExceptionHandler_(exception)
     Scopify(EScopes.Function, self)
 

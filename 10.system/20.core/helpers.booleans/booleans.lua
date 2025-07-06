@@ -1,10 +1,10 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Guard = using "System.Guard"
 local Reflection = using "System.Reflection"
 local StringsHelper = using "System.Helpers.Strings"
 
-local Class = using "[declare]" "System.Helpers.Booleans [Partial]"
+local Class = using "[declare] [static]" "System.Helpers.Booleans"
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil

@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local T = using "System.Helpers.Tables" -- @formatter:off
 
@@ -6,6 +6,8 @@ local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local Event    = using "System.Event"
+local Fields   = using "System.Classes.Fields"
+
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
 local PfuiRoll                                 = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Roll"
@@ -13,20 +15,33 @@ local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
+Scopify(EScopes.Function, {})
+
+Fields(function(upcomingInstance)
+    upcomingInstance._active = false
+    upcomingInstance._hookApplied = false
+
+    upcomingInstance._rollIdsEncounteredCache = nil
+    upcomingInstance._eventPendingLootItemGamblingDetected = nil
+
+    return upcomingInstance
+end)
+
 function Class:New()
     Scopify(EScopes.Function, self)
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _active = false,
-        _hookApplied = false,
-        _rollIdsEncounteredCache = LRUCache:New {
-            MaxSize = 10,
-            TrimRatio = 0.25,
-            MaxLifespanPerEntryInSeconds = 5 * 60,
-        },
+    instance._active = false
+    instance._hookApplied = false
+    instance._rollIdsEncounteredCache = LRUCache:New {
+        MaxSize                      = 10,
+        TrimRatio                    = 0.25,
+        MaxLifespanPerEntryInSeconds = 5 * 60,
+    }
+    instance._eventPendingLootItemGamblingDetected = Event:New()
 
-        _eventPendingLootItemGamblingDetected = Event:New(),
-    })
+    return instance
 end
 
 function Class:StartListening()

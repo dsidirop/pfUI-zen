@@ -1,23 +1,33 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
-
-local Guard = using "System.Guard"
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local GreeniesAutolooterAggregate = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 
+Scopify(EScopes.Function, {})
+
+Fields(function(upcomingInstance)
+    upcomingInstance._settings = nil -- this is set via :SetSettings()
+    upcomingInstance._isRunning = false
+    upcomingInstance._greeniesAutolooterAggregate = nil
+
+    return upcomingInstance
+end)
+
 function Class:New(greeniesAutolooterAggregate)
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        _settings = nil,
-
-        _isRunning = false,
-        _greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New(), -- todo  use di
-    })
+    local instance = self:Instantiate()
+    
+    instance._greeniesAutolooterAggregate = greeniesAutolooterAggregate or GreeniesAutolooterAggregate:New() -- todo  use di
+    
+    return instance
 end
 
 Class.I = Class:New() -- todo   get rid off of this singleton once we have DI in place

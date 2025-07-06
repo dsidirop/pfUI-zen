@@ -1,9 +1,12 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
+local Nils = using "System.Nils"
 local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
+
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
@@ -14,14 +17,22 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settin
 
 Scopify(EScopes.Function, {})
 
+Fields(function(upcomingInstance)
+    upcomingInstance._userPreferencesEntity = nil
+
+    return upcomingInstance
+end)
+
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    dbcontextReadonly = Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") or DBContext:New() -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") -- todo  remove this later on in favour of DI
 
-    return self:Instantiate({
-        _userPreferencesEntity = dbcontextReadonly.Settings.UserPreferences,
-    })
+    local instance = self:Instantiate()
+    
+    instance._userPreferencesEntity = Nils.Coalesce(dbcontextReadonly, DBContext:New()).Settings.UserPreferences
+    
+    return instance
 end
 
 -- @return UserPreferencesDto
@@ -38,8 +49,8 @@ function Class:GetAllUserPreferences()
 
     return UserPreferencesDto -- todo   automapper (with precondition-validators!)
             :New()
-            :ChainSetGreeniesGrouplootingAutomation_Mode(mode)
-            :ChainSetGreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
+            :ChainSet_GreeniesGrouplootingAutomation_Mode(mode)
+            :ChainSet_GreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
 
     --00 todo   whenever we detect a corruption in the database we auto-sanitive it but on top of that we should also update error-metrics and log it too
 end

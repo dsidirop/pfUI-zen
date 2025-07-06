@@ -1,0 +1,4 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    <Include file="t010.given_various_direct_inheritance_pairings.should_return_expected_verdict.lua"/>
+    <Include file="t020.given_various_deep_inheritance_pairings.should_return_expected_verdict.lua"/>
+</Ui>

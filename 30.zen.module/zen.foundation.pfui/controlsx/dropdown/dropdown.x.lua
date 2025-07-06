@@ -1,10 +1,12 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
 local Event = using "System.Event"
+local Fields = using "System.Classes.Fields"
+
 local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local SelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
 
@@ -16,23 +18,42 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.UI.Pfui.ControlsX.
 
 Scopify(EScopes.Function, {})
 
+Fields(function(upcomingInstance)
+    upcomingInstance._nativePfuiControl = nil
+
+    upcomingInstance._caption = ""
+    upcomingInstance._menuItems = {}
+    upcomingInstance._menuEntryValuesToIndexes = {}
+    upcomingInstance._menuIndexesToMenuValuesArray = {}
+
+    upcomingInstance._oldValue = nil
+    upcomingInstance._singlevalue = {}
+    upcomingInstance._valuekeyname = "dummy_keyname_for_value"
+
+    upcomingInstance._eventSelectionChanged = nil
+
+    return upcomingInstance
+end)
+
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        _nativePfuiControl = nil,
+    local instance = self:Instantiate()
 
-        _caption = nil,
-        _menuItems = {},
-        _menuEntryValuesToIndexes = {},
-        _menuIndexesToMenuValuesArray = {},
+    instance._nativePfuiControl = nil
 
-        _oldValue = nil,
-        _singlevalue = {},
-        _valuekeyname = "dummy_keyname_for_value",
+    instance._caption = ""
+    instance._menuItems = {}
+    instance._menuEntryValuesToIndexes = {}
+    instance._menuIndexesToMenuValuesArray = {}
 
-        _eventSelectionChanged = Event:New(),
-    })
+    instance._oldValue = nil
+    instance._singlevalue = {}
+    instance._valuekeyname = "dummy_keyname_for_value"
+
+    instance._eventSelectionChanged = Event:New()
+    
+    return instance
 end
 
 function Class:ChainSetCaption(caption)
@@ -62,7 +83,7 @@ function Class:Initialize()
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(_menuItems, "_menuItems")
-    Guard.Assert.IsString(_caption, "_caption")
+    Guard.Assert.IsNonDudString(_caption, "_caption")
 
     _nativePfuiControl = PfuiGui.CreateConfig(
             function()

@@ -1,9 +1,7 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local B = using "[built-ins]" [[ Time = time ]]
 
-local Class = using "[declare]" "System.Time [Partial]"
+local Class = using "[declare] [static]" "System.Time"
 
-function Class.Now()
-    return B.Time()
-end
+Class.Now = B.Time

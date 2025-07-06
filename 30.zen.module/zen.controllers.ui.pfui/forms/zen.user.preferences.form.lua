@@ -1,10 +1,12 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify  = using "System.Scopify" -- @formatter:off
 local EScopes  = using "System.EScopes"
 
 local Guard = using "System.Guard"
 local Event = using "System.Event"
+
+local Fields = using "System.Classes.Fields"
 
 local PfuiGui                         = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
@@ -20,26 +22,37 @@ local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilio
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
+Fields(function(upcomingInstance)
+    upcomingInstance._t = nil
+    upcomingInstance._ui = {
+        -- these are initialized when the :Initialize() is invoked after the constructor
+        frmContainer                                   = nil,
+        lblGrouplootSectionHeader                      = nil,
+        ddlGreeniesGrouplootingAutomation_mode         = nil,
+        ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
+    }
+
+    upcomingInstance._commandsEnabled = false
+    upcomingInstance._eventRequestingCurrentUserPreferences = nil
+
+    return upcomingInstance
+end)
+
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
 function Class:New(translationService)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsNilOrTable(translationService, "translationService")
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _t = translationService,
-
-        _ui = {
-            frmContainer = nil,
-            lblGrouplootSectionHeader = nil,
-            ddlGreeniesGrouplootingAutomation_mode = nil,
-            ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
-        },
-
-        _commandsEnabled = false,
-        _eventRequestingCurrentUserPreferences = Event:New(),
-    })
+    instance._t = translationService
+    instance._commandsEnabled = false
+    instance._eventRequestingCurrentUserPreferences = Event:New()
+    -- upcomingInstance._ui = ... <- this is initialized in the :Initialize() method which must be called separately
+    
+    return instance
 end
 
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
@@ -62,10 +75,10 @@ function Class:Initialize()
     Scopify(EScopes.Function, self)
 
     PfuiGui.CreateGUIEntry(-- 00
-            _t("Thirdparty"),
-            _t("Zen", "|cFF7FFFD4"),
+            _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
+            _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
             function()
-                self:InitializeControls_() --                   order
+                self:InitializeControls_() --                   order   from the [partial]
                 self:OnRequestingCurrentUserPreferences_() --   order
             end
     )
@@ -107,11 +120,11 @@ function Class:ApplyNewUserPreferences_(newUserPreferences)
 
     _commandsEnabled = false --00
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:GetGreeniesGrouplootingAutomation_Mode()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
         _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:GetGreeniesGrouplootingAutomation_ActOnKeybind()) then
+    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
         _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 

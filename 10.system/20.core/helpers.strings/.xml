@@ -7,6 +7,7 @@
     <Include file="strings.length.lua"/>
     <Include file="strings.format.lua"/>
     <Include file="strings.stringify.lua"/>
+    <Include file="strings.starts.with.lua"/>
     <Include file="strings.isdudstring.lua"/>
     <Include file="strings.touppercase.lua"/>
     <Include file="strings.substring.via.range.lua"/>

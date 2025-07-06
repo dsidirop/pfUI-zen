@@ -1,31 +1,29 @@
-local _g, _assert, _type, _print, _strlen, _format, _setfenv, _tableGetn, _setmetatable = (function()
+local VWoWUnit, _g, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable = (function()
 	local _g = assert(_G or getfenv(0))
 	local _assert = assert
 	local _setfenv = _assert(_g.setfenv)
 	_setfenv(1, {})
 
+	_g.VWoWUnit = _g.VWoWUnit or {} -- dont introduce a local variable here    it will cause bugs
+
 	local _type = _assert(_g.type)
-	local _print = _assert(_g.print)
-	local _strlen = _assert(_g.string.len)
-	local _format = _assert(_g.string.format)
+    local _pfui = _assert(_g.pfUI)
 	local _tableGetn = _assert(_g.table.getn)
 	local _setmetatable = _assert(_g.setmetatable)
 
-	return _g, _assert, _type, _print, _strlen, _format, _setfenv, _tableGetn, _setmetatable
+	return _g.VWoWUnit, _g, _assert, _type, _pfui, _setfenv, _tableGetn, _setmetatable
 end)()
 
 _setfenv(1, {})
 
-local VWoWUnit = _g.VWoWUnit or {}
-_g.VWoWUnit = VWoWUnit
-_g = nil
+local TestsRunnerEngine = {} -- local to this file only and instantiated only once at the bottom of this file
 
-local _Engine = {} -- local to this file only and instantiated only once at the bottom of this file
-
-function _Engine:New()
+function TestsRunnerEngine:New()
 	local instance = {
 		_testTags = {},
 		_testGroups = {},
+
+		_logger = VWoWUnit.DefaultLogger
 	}
 
 	_setmetatable(instance, self)
@@ -36,40 +34,71 @@ end
 
 --[[ Run ]]--
 
-function _Engine:RunAllTestGroups()
+function TestsRunnerEngine:RunAllTestGroups()
 	_setfenv(1, self)
+    
+    self:OnTestRoundCommencing_()
 
-	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
-		_print("** Running test-group " .. group:GetName())
-		group:Run()
-		_print("")
+	for _, testsGroup in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+		_logger:LogInfo("** [" .. testsGroup:GetName() .. "] Running test-group ...")
+        testsGroup:Run()
+		_logger:LogInfo("")
 	end
+
+    self:OnTestRoundCompleted_()
 	
 	-- 00  we want to ensure that tests with short names like system.exceptions to be run before tests with long names like pavilion.xyz.foo.bar 
 end
 
-function _Engine:RunTestGroup(testGroupName)
+function TestsRunnerEngine:RunTestGroup(testGroupName)
 	_setfenv(1, self)
+
+    self:OnTestRoundCommencing_()
 	
 	local group = _testGroups[testGroupName]
 	if not group then
-		VWoWUnit.Raise_(_format("test group %q does not exist", testGroupName))
+		_logger:LogError("** [" .. testGroupName .. "] doesn't exist - ignoring it")
+		return
 	end
 
-	group:Run()
+    group:Run()
+
+    self:OnTestRoundCompleted_()
 end
 
-function _Engine:RunTestGroupsByTag(tagName)
+function TestsRunnerEngine:RunTestGroupsByTag(tagName)
 	_setfenv(1, self)
 
-	for _, group in _Engine.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
+    self:OnTestRoundCommencing_()
+
+    _logger:LogInfo("** [tag:" .. tagName .. "] Running tests tagged with it ...")
+    
+	for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testTags[tagName]) do
 		group:Run()
 	end
+
+    self:OnTestRoundCompleted_()
+end
+
+function TestsRunnerEngine:RunSpecificTest(testName)
+    _setfenv(1, self)
+
+    self:OnTestRoundCommencing_()
+
+    local test = self:GetSpecificTest_(testName)
+    if not test then
+        _logger:LogError("** [" .. testName .. "] doesn't exist - ignoring it")
+        return
+    end
+
+    test:Run()
+
+    self:OnTestRoundCompleted_()
 end
 
 --[[ Registry ]]--
 
-function _Engine:CreateOrUpdateGroup(options)
+function TestsRunnerEngine:CreateOrUpdateGroup(options)
 	_setfenv(1, self)
 	
 	_assert(_type(options) == "table")
@@ -82,13 +111,13 @@ function _Engine:CreateOrUpdateGroup(options)
 	return group
 end
 
-function _Engine:GetGroup(name)
+function TestsRunnerEngine:GetGroup(name)
 	_setfenv(1, self)
 	
 	return _testGroups[name]
 end
 
-function _Engine:AssociateTestGroupWithTags(group, tags)
+function TestsRunnerEngine:AssociateTestGroupWithTags(group, tags)
 	_setfenv(1, self)
 
 	_assert(_type(tags) == "table")
@@ -104,9 +133,142 @@ function _Engine:AssociateTestGroupWithTags(group, tags)
 	return self
 end
 
+--[[ ZENSHARP ]]--
+
+function TestsRunnerEngine:BindZenSharpKeywords(optionalTestgroupKeyword)
+    _setfenv(1, self)
+    
+    _testgroupKeyword = optionalTestgroupKeyword or "[testgroup]"
+
+    local using = _assert(_g["ZENSHARP:USING"])
+
+    local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
+
+    local vwowunitSnapshot = VWoWUnit
+    Namespacer:BindKeyword(_testgroupKeyword, function(name)
+        local testGroup = vwowunitSnapshot.TestsEngine:CreateOrUpdateGroup { Name = name }
+
+        return testGroup, vwowunitSnapshot
+    end)
+
+    Namespacer:BindKeyword(_testgroupKeyword .. " [tagged]", function(name)
+        local testGroup = vwowunitSnapshot.TestsEngine:CreateOrUpdateGroup { Name = name }
+
+        return function(tags)
+            vwowunitSnapshot.TestsEngine:AssociateTestGroupWithTags(testGroup, tags)
+            return testGroup, vwowunitSnapshot
+        end
+    end)
+end
+
+function TestsRunnerEngine:UnbindZenSharpKeywords()
+    _setfenv(1, self)
+
+    if not _testgroupKeyword then
+        return
+    end
+
+    local using = _assert(_g["ZENSHARP:USING"])
+
+    local Namespacer = using "System.Namespacer" -- if zensharp hasnt been loaded yet this will error out as intended
+
+    Namespacer:UnbindKeyword(_testgroupKeyword)
+    Namespacer:UnbindKeyword(_testgroupKeyword .. " [tagged]")
+end
+
 -- private space
 
-function _Engine:GetsertGroup_(name)
+function TestsRunnerEngine:OnTestRoundCommencing_()
+    _setfenv(1, self)
+
+    self:EnsurePfuiChatInterceptorsArePluggedIn_()
+end
+
+local _pfuiChatInterceptorsGotPluggedIn = false
+function TestsRunnerEngine:EnsurePfuiChatInterceptorsArePluggedIn_()
+    _setfenv(1, self)
+
+    if _pfuiChatInterceptorsGotPluggedIn then
+        return
+    end
+    
+    _pfuiChatInterceptorsGotPluggedIn  = true
+    
+    if _type(_pfui) ~= "table" then
+        return
+    end
+    
+    if _type(_pfui.chat) ~= "table" then
+        return
+    end
+    
+    if _type(_pfui.chat.URLPattern) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLFuncs) ~= "table" then
+        return
+    end
+
+    _pfui.chat.URLPattern.VWoWUnitTestCases = {
+        ["rx"] = "%[([_A-Za-z0-9-]+)%.([^%s%]]+)%]",
+        ["fm"] = "%s.%s"
+    }
+
+    _pfui.chat.URLFuncs.VWoWUnitTestCases = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+        return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitTestCases.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    end
+
+    _pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths = {
+        ["rx"] = "([\\._A-Za-z0-9-]+:[0-9]+): ",
+        ["fm"] = "%s"
+    }
+
+    _pfui.chat.URLFuncs.VWoWUnitStackTraceFilePaths = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+        return _pfui.chat:FormatLink(_pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths.fm, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    end
+end
+
+function TestsRunnerEngine:OnTestRoundCompleted_()
+    _setfenv(1, self)
+
+    self:EnsurePfuiChatInterceptorsAreUnplugged_()
+end
+
+
+function TestsRunnerEngine:EnsurePfuiChatInterceptorsAreUnplugged_()
+    _setfenv(1, self)
+
+    if not _pfuiChatInterceptorsGotPluggedIn then
+        return
+    end
+
+    _pfuiChatInterceptorsGotPluggedIn = false
+
+    if _type(_pfui) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLPattern) ~= "table" then
+        return
+    end
+
+    if _type(_pfui.chat.URLFuncs) ~= "table" then
+        return
+    end
+
+    _pfui.chat.URLPattern.VWoWUnitTestCases = nil
+    _pfui.chat.URLFuncs.VWoWUnitTestCases = nil
+
+    _pfui.chat.URLPattern.VWoWUnitStackTraceFilePaths = nil
+    _pfui.chat.URLFuncs.VWoWUnitStackTraceFilePaths = nil
+end
+
+function TestsRunnerEngine:GetsertGroup_(name)
 	_setfenv(1, self)
 
 	_assert(_type(name) == "string" and name ~= "")
@@ -120,19 +282,19 @@ function _Engine:GetsertGroup_(name)
 	return group
 end
 
-function _Engine.GetGroupTablePairsOrderedByGroupNames_(testGroups)
-	_setfenv(1, _Engine)
+function TestsRunnerEngine:GetSpecificTest_(testName)
+    _setfenv(1, self)
 
-	if testGroups == nil then
-		return {}
-	end
+    _assert(_type(testName) == "string" and testName ~= "")
 
-	return VWoWUnit.Utilities.GetTablePairsOrderedByKeys(testGroups, function(a, b)
-		local lengthA = _strlen(a) -- 00
-		local lengthB = _strlen(b)
+    for _, group in VWoWUnit.Utilities.GetGroupTablePairsOrderedByGroupNames_(_testGroups) do
+        local test = group:GetTest(testName)
+        if test then
+            return test
+        end
+    end
 
-		return lengthA < lengthB or (lengthA == lengthB and a < b)
-	end)
+    return nil
 end
 
-VWoWUnit.TestsEngine = _Engine:New()
+VWoWUnit.TestsEngine = TestsRunnerEngine:New() -- single instance

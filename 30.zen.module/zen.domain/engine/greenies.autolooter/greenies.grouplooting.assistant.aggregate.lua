@@ -1,10 +1,10 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) --@formatter:off
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off
 
 local Guard        = using "System.Guard"
 local Scopify      = using "System.Scopify"
 local EScopes      = using "System.EScopes"
--- local Console      = using "System.Console"
 
+local Fields       = using "System.Classes.Fields"
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
 local GroupLootGamblingService = using "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
@@ -20,6 +20,19 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.Gree
 
 Scopify(EScopes.Function, {})
 
+Fields(function(upcomingInstance)
+    upcomingInstance._settings = nil
+
+    upcomingInstance._isRunning = false
+    upcomingInstance._pendingLootGamblingRequests = nil
+
+    upcomingInstance._modifierKeysListener = nil
+    upcomingInstance._groupLootingListener = nil
+    upcomingInstance._groupLootGamblingService = nil
+
+    return upcomingInstance
+end)
+
 function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)
 
@@ -27,19 +40,23 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
 
-    return self:Instantiate({
-        _settings = nil,
+    local instance = self:Instantiate()
 
-        _isRunning = false,
-        _pendingLootGamblingRequests = LRUCache:New {
-            MaxSize = 20,
-            MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
-        },
+    -- instance._settings = nil -- set independently through :SetSettings()
+    instance._isRunning = false
+    instance._pendingLootGamblingRequests = LRUCache:New {
+        MaxSize                      = 20,
+        MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
+    }
 
-        _modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1), --todo   refactor this later on so that this gets injected through DI
-        _groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New(), --todo   refactor this later on so that this gets injected through DI
-        _groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New(), --todo   refactor this later on so that this gets injected through DI
-    })
+    instance._modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1) --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New() --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New() --todo   refactor this later on so that this gets injected through DI
+
+    return instance
+
+    -- todo   strictly speaking these listeners do not belong in the aggregate   they should be moved at
+    -- todo   the engine level    they should just dispatch commands that should be handled by the aggregate
 end
 
 function Class:IsRunning()
@@ -167,7 +184,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     _modifierKeysListener:EventModifierKeysStatesChanged_Subscribe(ModifierKeysListener_ModifierKeysStatesChanged_, self) --  order
     _modifierKeysListener:Start()
 
-    -- todo   add take into account CANCEL_LOOT_ROLL event at some point
+    -- todo   take into account CANCEL_LOOT_ROLL event at some point
 end
 
 function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
@@ -252,7 +269,7 @@ end
 function Class:SubmitSameResponseToAllItemGamblingRequests_(gamblingIds, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsArray(gamblingIds, "gamblingIds")
+    Guard.Assert.IsTableray(gamblingIds, "gamblingIds")
     Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, desiredLootGamblingBehaviour, "desiredLootGamblingBehaviour")
 
     _groupLootGamblingService:SubmitSameResponseToAllItemGamblingRequests(

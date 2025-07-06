@@ -1,27 +1,31 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
-local Guard = using "System.Guard"
+local Nils    = using "System.Nils"
+local Guard   = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
-local Reflection = using "System.Reflection"
-local Validation = using "System.Validation"
+
+local Fields             = using "System.Classes.Fields"
 local ExceptionUtilities = using "System.Exceptions.Utilities"
 
-local Class = using "[declare]" "System.Exceptions.Exception [Partial]"
+local Class = using "[declare]" "System.Exceptions.Exception" -- @formatter:on
 
 Scopify(EScopes.Function, {})
+
+Fields(function(upcomingInstance)
+    upcomingInstance._message = nil
+    upcomingInstance._stacktrace = ""
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end)
 
 function Class:New(message)
     Scopify(EScopes.Function, self)
    
     Guard.Assert.IsNilOrNonDudString(message, "message")
 
-    return self:Instantiate({
-        _message = nil,
-        _stacktrace = "",
-
-        _stringified = nil,
-    }):ChainSetMessage(message)
+    return self:Instantiate():ChainSetMessage(message)
 end
 
 function Class:GetMessage()
@@ -40,9 +44,9 @@ end
 function Class:ChainSetMessage(message)
     Scopify(EScopes.Function, self)
 
-    Validation.Assert(Reflection.IsNilOrString(message), "message must be a string or nil")
+    Guard.Assert.IsNilOrString(message, "message")
 
-    _message = message or "(exception message not available)"
+    _message = Nils.Coalesce(message, "(no exception message available)")
     _stringified = nil
 
     return self
@@ -52,9 +56,9 @@ end
 function Class:ChainSetStacktrace(stacktrace)
     Scopify(EScopes.Function, self)
 
-    Validation.Assert(Reflection.IsNilOrString(stacktrace), "stacktrace must be a string or nil")
+    Guard.Assert.IsNilOrString(stacktrace, "stacktrace")
 
-    _stacktrace = stacktrace or ""
+    _stacktrace = Nils.Coalesce(stacktrace, "")
     _stringified = nil
 
     return self
@@ -70,4 +74,3 @@ function Class:ToString()
     _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
     return _stringified
 end
-Class.__tostring = Class.ToString

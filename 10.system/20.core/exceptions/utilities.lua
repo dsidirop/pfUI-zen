@@ -1,15 +1,15 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify    = using "System.Scopify" --           @formatter:off
 local EScopes    = using "System.EScopes"
 local Reflection = using "System.Reflection" --        @formatter:on
 
-local Utilities = using "[declare]" "System.Exceptions.Utilities [Partial]"
+local Utilities = using "[declare] [static]" "System.Exceptions.Utilities"
 
 function Utilities.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Utilities)
 
-    return "[" .. (Reflection.TryGetNamespaceIfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(exception message not available)")
+    return "[" .. (Reflection.TryGetNamespaceIfClassInstance(exception) or "(unknown exception - how!?)") .. "] " .. (exception:GetMessage() or "(no exception message available)")
             .. "\n\n--------------[ Stacktrace ]--------------\n"
             .. (exception:GetStacktrace() or "(stacktrace not available)")
             .. "------------[ End Stacktrace ]------------\n "

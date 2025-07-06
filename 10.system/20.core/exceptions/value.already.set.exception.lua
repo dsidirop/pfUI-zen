@@ -1,104 +1,26 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Guard              = using "System.Guard" --                            @formatter:off
+local Guard              = using "System.Guard" --               @formatter:off
 local Scopify            = using "System.Scopify"
-local EScopes            = using "System.EScopes"
-local Reflection         = using "System.Reflection"
-local ExceptionUtilities = using "System.Exceptions.Utilities" --             @formatter:on
+local EScopes            = using "System.EScopes" --             @formatter:on
 
-local Class = using "[declare]" "System.Exceptions.ValueAlreadySetException [Partial]"
+local Class = using "[declare] [blend]" "System.Exceptions.ValueAlreadySetException" {
+    "Exception", using "System.Exceptions.Exception",
+}
 
 Scopify(EScopes.Function, {})
 
 function Class:New(optionalArgumentName)
     Scopify(EScopes.Function, self)
-  
+
     Guard.Assert.IsNilOrNonDudString(optionalArgumentName, "optionalArgumentName")
 
-    return self:Instantiate({
-        _message = Class.FormulateMessage_(optionalArgumentName),
-        _stacktrace = "",
+    local newInstance = self:Instantiate()
 
-        _stringified = nil
-    })
+    return Class.base.New(
+            newInstance,
+            optionalArgumentName == nil
+                    and "Property/field has already been set"
+                    or "'" .. optionalArgumentName .. "' has already been set"
+    )
 end
-
--- getters
-function Class:GetMessage()
-    Scopify(EScopes.Function, self)
-
-    return _message
-end
-
-function Class:GetStacktrace()
-    Scopify(EScopes.Function, self)
-
-    return _stacktrace
-end
-
--- setters   used by the exception-deserialization-factory
-function Class:ChainSetMessage(message)
-    Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsNilOrNonDudString(message, "message")
-
-    _message = message or "(exception message not available)"
-    _stringified = nil
-    
-    return self
-end
-
--- this is called by throw() right before actually throwing the exception 
-function Class:ChainSetStacktrace(stacktrace)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsNilOrNonDudString(stacktrace, "stacktrace")
-
-    _stacktrace = stacktrace or ""
-    _stringified = nil
-
-    return self
-end
-
-function Class:ToString()
-    Scopify(EScopes.Function, self)
-
-    if _stringified ~= nil then
-        return _stringified
-    end
-
-    _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
-    return _stringified
-end
-Class.__tostring = Class.ToString
-
--- private space
-function Class.FormulateMessage_(optionalArgumentName)
-    Scopify(EScopes.Function, Class)
-
-    local message = optionalArgumentName == nil
-            and "Property/field has already been set"
-            or "'" .. optionalArgumentName .. "' has already been set"
-
-    return message
-end
-
-function Class.GetExpectationMessage_(optionalExpectationOrExpectedType)
-    Scopify(EScopes.Function, Class)
-
-    if optionalExpectationOrExpectedType == nil or optionalExpectationOrExpectedType == "" then
-        return nil
-    end
-
-    if Reflection.IsString(optionalExpectationOrExpectedType) then
-        return optionalExpectationOrExpectedType
-    end
-
-    local namespace = Reflection.TryGetNamespaceIfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
-    if namespace ~= nil then
-        return namespace
-    end
-
-    return optionalExpectationOrExpectedType
-end
-

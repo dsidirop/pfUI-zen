@@ -1,0 +1,36 @@
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+
+local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
+
+TG:AddFact("T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow",
+        function()
+            -- ARRANGE
+            do
+                local GreatGrandParent = using "[declare]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent"
+
+                local GrantParent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GrantParent" {
+                    "GGParent", GreatGrandParent
+                }
+
+                local Parent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.Parent" {
+                    "GParent", GrantParent
+                }
+
+                local GreatGrandChild = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild" {
+                    "Parent", Parent
+                }
+            end
+
+            -- ACT
+            function action()
+                local GreatGrandChild = using "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandChild"
+
+                local GreatGrandParent = using "[declare] [blend]" "T008.Inheritance.Subclassing.GivenTwoLayerCircularDependencyBlendingAttempt.ShouldThrow.GreatGrandParent [Partial]" {
+                    "GrandChild", GreatGrandChild
+                }
+            end
+
+            -- ASSERT    we dont get [NR.BM.053] here because [NR.ASR.HNBEAPCY.010] gets detected first by merit of the fact that we are trying amend a class that was already used as a parent beforehand!
+            U.Should.Throw(action, "*[NR.ASR.HNBEAPCY.010]*")
+        end
+)

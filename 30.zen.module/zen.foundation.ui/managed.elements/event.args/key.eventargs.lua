@@ -1,50 +1,48 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _stringLength, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-    _setfenv(1, {})
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _stringLength = _assert(_g.string.len)
-    local _setmetatable = _assert(_g.setmetatable)
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _stringLength, _setmetatable
-end)()
+local EKeyEventType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType"
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs"
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local EKeyEventType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Enums.EKeyEventType")
+Scopify(EScopes.Function, Class)
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs")
+Fields(function(upcomingInstance)
+    upcomingInstance._key = ""
+    upcomingInstance._eventType = nil
+    upcomingInstance._hasModifierAlt = false
+    upcomingInstance._hasModifierShift = false
+    upcomingInstance._hasModifierControl = false
+
+    upcomingInstance._stringified = nil
+
+    return upcomingInstance
+end)
 
 function Class:New(key, hasModifierAlt, hasModifierShift, hasModifierControl, eventType)
     Scopify(EScopes.Function, self)
 
-    _assert(key == nil or _type(key) == "string" and _stringLength(key) <= 1)
-    _assert(_type(hasModifierAlt) == "boolean")
-    _assert(_type(hasModifierShift) == "boolean")
-    _assert(_type(hasModifierControl) == "boolean")
-    _assert(EKeyEventType:IsValid(eventType))
+    Guard.Assert.IsNilOrStringOfMaxLength(key, 1, "key")
 
-    return self:Instantiate({
-        _key = key or "",
-        _eventType = eventType,
-        _hasModifierAlt = hasModifierAlt,
-        _hasModifierShift = hasModifierShift,
-        _hasModifierControl = hasModifierControl,
+    Guard.Assert.IsBoolean(hasModifierAlt, "hasModifierAlt")
+    Guard.Assert.IsBoolean(hasModifierShift, "hasModifierShift")
+    Guard.Assert.IsBoolean(hasModifierControl, "hasModifierControl")
+    Guard.Assert.IsEnumValue(EKeyEventType, eventType, "eventType")
 
-        _stringified = nil,
-    })
+    local instance = self:Instantiate()
+
+    instance._key = key or ""
+    instance._eventType = eventType
+    instance._hasModifierAlt = hasModifierAlt
+    instance._hasModifierShift = hasModifierShift
+    instance._hasModifierControl = hasModifierControl
+
+    return instance
 end
 
 function Class:GetType()
@@ -79,29 +77,29 @@ end
 
 function Class:ToString()
     Scopify(EScopes.Function, self)
-    
+
     if _stringified then
         return _stringified
     end
-    
+
     local result = ""
 
     if _hasModifierControl then
         result = "Ctrl"
     end
-    
+
     if _hasModifierAlt then
         result = result == ""
                 and "Alt"
                 or (result .. "+Alt")
     end
-    
+
     if _hasModifierShift then
         result = result == ""
                 and "Shift"
                 or (result .. "+Shift")
     end
-    
+
     if _key then
         result = result == ""
                 and _key
@@ -111,5 +109,4 @@ function Class:ToString()
     _stringified = result
     return result
 end
-Class.__tostring = Class.ToString
 

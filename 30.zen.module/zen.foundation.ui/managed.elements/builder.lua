@@ -1,54 +1,39 @@
-﻿local _assert, _setfenv, _type, _getn, _, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
-    _setfenv(1, {})
+local Guard = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local WoWUIParent = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent"
+local WoWCreateFrame = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local ManagedElement = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element"
+local SWoWElementType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType" 
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Builder" -- @formatter:on
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-
-local WoWUIParent = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent")
-local WoWCreateFrame = _importer("Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame")
-
-local ManagedElement = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element")
-local SWoWElementType = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType") 
-
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Builder")
+Scopify(EScopes.Function, {})
 
 function Class:New(other)
     Scopify(EScopes.Function, self)
     
-    _assert(other == nil or _type(other) == "table", "other must be nil or a table")
+    Guard.Assert.IsNilOrTable(other, "other")
 
     other = other or {}
+    
+    local instance = self:Instantiate()
+    
+    instance._elementType = other._elementType or SWoWElementType.Frame
 
-    return self:Instantiate({
-        _elementType = other._elementType or SWoWElementType.Frame,
-        
-        _name = other._name,
-        _frameStrata = other._frameStrata,
-        _desiredParentElement = other._desiredParentElement,
-        _propagateKeyboardInput = other._propagateKeyboardInput,
-        _keystrokeListenerEnabled = other._keystrokeListenerEnabled,
-        _useWowUIRootFrameAsParent = other._useWowUIRootFrameAsParent,
-        _namedXmlFramesToInheritFrom = other._namedXmlFramesToInheritFrom,
-    })
+    instance._name = other._name
+    instance._frameStrata = other._frameStrata
+    instance._desiredParentElement = other._desiredParentElement
+    instance._propagateKeyboardInput = other._propagateKeyboardInput
+    instance._keystrokeListenerEnabled = other._keystrokeListenerEnabled
+    instance._useWowUIRootFrameAsParent = other._useWowUIRootFrameAsParent
+    instance._namedXmlFramesToInheritFrom = other._namedXmlFramesToInheritFrom
+    
+    return instance
 end
 
 function Class:Build()
@@ -90,8 +75,8 @@ end
 
 function Class:WithType(frameType)
     Scopify(EScopes.Function, self)
-
-    _assert(SWoWElementType:IsValid(frameType), "frameType should be SWoWElementType (frameType = " .. (frameType or "nil") .. ")")
+    
+    Guard.Assert.IsEnumValue(SWoWElementType, frameType, "frameType")
     
     local clone = Class:New(self)
     clone._elementType = frameType
@@ -103,6 +88,8 @@ function Class:WithFrameStrata(value)
     Scopify(EScopes.Function, self)
 
     _assert(_type(value) == "string", "frame-strata must be a string")
+    
+    Guard.Assert.IsString(value, "value")
 
     local clone = Class:New(self)
     clone._frameStrata = value
@@ -112,8 +99,8 @@ end
 
 function Class:WithKeystrokeListenerEnabled(onOrOff)
     Scopify(EScopes.Function, self)
-
-    _assert(_type(onOrOff) == "boolean", "value must be a boolean")
+    
+    Guard.Assert.IsBoolean(onOrOff, "onOrOff")
 
     local clone = Class:New(self)
     clone._keystrokeListenerEnabled = onOrOff
@@ -124,7 +111,7 @@ end
 function Class:WithName(name)
     Scopify(EScopes.Function, self)
 
-    _assert(name == nil or _type(name) == "string", "name must nil or a string")
+    Guard.Assert.IsNilOrString(name, "name")
     
     local clone = Class:New(self)
     clone._name = name
@@ -135,7 +122,7 @@ end
 function Class:WithParentElement(parentElement)
     Scopify(EScopes.Function, self)
 
-    _assert(parentElement == nil or _type(parentElement) == "table", "parentElement must be nil or a table")
+    Guard.Assert.IsNilOrTable(parentElement, "parentElement")
     
     local clone = Class:New(self)
     clone._desiredParentElement = parentElement
@@ -146,7 +133,7 @@ end
 function Class:WithPropagateKeyboardInput(propagateKeyboardInput)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(propagateKeyboardInput) == "boolean", "propagateKeyboardInput must be a boolean")
+    Guard.Assert.IsBoolean(propagateKeyboardInput, "propagateKeyboardInput")
     
     local clone = Class:New(self)
     clone._propagateKeyboardInput = propagateKeyboardInput
@@ -157,7 +144,7 @@ end
 function Class:WithUseWowUIRootFrameAsParent(useWowUIRootFrameAsParent)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(useWowUIRootFrameAsParent) == "boolean", "useWowUIRootFrameAsParent must be a boolean")
+    Guard.Assert.IsBoolean(useWowUIRootFrameAsParent, "useWowUIRootFrameAsParent")
     
     local clone = Class:New(self)
     clone._useWowUIRootFrameAsParent = useWowUIRootFrameAsParent
@@ -165,11 +152,10 @@ function Class:WithUseWowUIRootFrameAsParent(useWowUIRootFrameAsParent)
     return clone
 end
 
-
 function Class:WithNamedXmlFramesToInheritFrom(namedXmlFramesToInheritFrom)
     Scopify(EScopes.Function, self)
 
-    _assert(namedXmlFramesToInheritFrom == nil or _type(namedXmlFramesToInheritFrom) == "string", "namedXmlFramesToInheritFrom must be nil or a comma-separated string")
+    Guard.Assert.IsNilOrTable(namedXmlFramesToInheritFrom, "namedXmlFramesToInheritFrom")
 
     local clone = Class:New(self)
     clone._namedXmlFramesToInheritFrom = namedXmlFramesToInheritFrom

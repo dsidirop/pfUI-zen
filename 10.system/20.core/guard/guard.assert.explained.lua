@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify = using "System.Scopify" --@formatter:off
 local EScopes = using "System.EScopes"
@@ -6,17 +6,17 @@ local EScopes = using "System.EScopes"
 local Reflection   = using "System.Reflection"
 local TablesHelper = using "System.Helpers.Tables"
 
-local Throw                               = using("System.Exceptions.Throw")
-local ValueCannotBeNilException           = using("System.Exceptions.ValueCannotBeNilException")
-local ValueIsOutOfRangeException          = using("System.Exceptions.ValueIsOutOfRangeException")
-local ValueIsOfInappropriateTypeException = using("System.Exceptions.ValueIsOfInappropriateTypeException") --@formatter:on
+local Throw                               = using "System.Exceptions.Throw"
+local ValueCannotBeNilException           = using "System.Exceptions.ValueCannotBeNilException"
+local ValueIsOutOfRangeException          = using "System.Exceptions.ValueIsOutOfRangeException"
+local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException" --@formatter:on
 
-local Guard = using "[declare]" "System.Guard [Partial]"
+local Guard = using "[declare] [static]" "System.Guard [Partial]"
 
 Scopify(EScopes.Function, {})
 
 do
-    Guard.Assert.Explained = using "[declare]" "System.Guard.Assert.Explained"
+    Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained"
     
     function Guard.Assert.Explained.IsString(value, customMessage)
         if not Reflection.IsString(value) then
@@ -58,13 +58,34 @@ do
         return value
     end
 
+    function Guard.Assert.Explained.IsInterfaceProto(proto, customMessage)
+        if not Reflection.IsInterfaceProto(proto) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
+        end
+
+        return proto
+    end
+
     function Guard.Assert.Explained.IsInstanceOf(value, desiredClassProto, customMessage, optionalArgumentName)
         if value == nil or not Reflection.IsInstanceOf(value, desiredClassProto) then
             Throw(ValueIsOfInappropriateTypeException:NewWithMessage(
                     value,
                     customMessage,
                     optionalArgumentName,
-                    "to be of type " .. (Reflection.TryGetNamespaceIfClassProto(desiredClassProto) or "(desired proto is unknown!)")
+                    "to be of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")
+            ))
+        end
+
+        return value
+    end
+
+    function Guard.Assert.Explained.IsNilOrInstanceOf(value, desiredClassProto, customMessage, optionalArgumentName)
+        if value ~= nil and not Reflection.IsInstanceOf(value, desiredClassProto) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(
+                    value,
+                    customMessage,
+                    optionalArgumentName,
+                    "to be nil or instance of type " .. (Reflection.TryGetNamespaceIfProto(desiredClassProto) or "(desired proto is unknown!)")
             ))
         end
 

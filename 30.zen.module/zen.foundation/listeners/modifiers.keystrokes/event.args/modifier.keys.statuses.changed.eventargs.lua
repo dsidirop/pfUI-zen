@@ -1,12 +1,24 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
 Scopify(EScopes.Function, {})
+
+Fields(function(upcomingInstance)
+    upcomingInstance._stringifiedCached = nil
+
+    upcomingInstance._hasModifierAlt = nil
+    upcomingInstance._hasModifierShift = nil
+    upcomingInstance._hasModifierControl = nil
+
+    return upcomingInstance
+end)
 
 function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
     Scopify(EScopes.Function, self)
@@ -15,12 +27,13 @@ function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
     Guard.Assert.IsBoolean(hasModifierShift, "hasModifierShift")
     Guard.Assert.IsBoolean(hasModifierControl, "hasModifierControl")
     
-    return self:Instantiate({
-        _stringified = nil,
-        _hasModifierAlt = hasModifierAlt,
-        _hasModifierShift = hasModifierShift,
-        _hasModifierControl = hasModifierControl,
-    })
+    local instance = self:Instantiate()
+
+    instance._hasModifierAlt = hasModifierAlt
+    instance._hasModifierShift = hasModifierShift
+    instance._hasModifierControl = hasModifierControl
+
+    return instance
 end
 
 function Class:HasModifierAlt()
@@ -44,8 +57,8 @@ end
 function Class:ToString()
     Scopify(EScopes.Function, self)
     
-    if _stringified then
-        return _stringified
+    if _stringifiedCached ~= nil then
+        return _stringifiedCached
     end
     
     local result = ""
@@ -66,7 +79,7 @@ function Class:ToString()
                 or (result .. "+Shift")
     end
 
-    _stringified = result
+    _stringifiedCached = result
     return result
 end
 Class.__tostring = Class.ToString

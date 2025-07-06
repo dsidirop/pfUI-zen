@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -6,7 +6,7 @@ local Reflection = using "System.Reflection"
 
 local StringsHelper = using "System.Helpers.Strings"
 
-local Utilities = using "[declare]" "System.Guard.Utilities"
+local Utilities = using "[declare] [static]" "System.Guard.Utilities"
 
 Scopify(EScopes.Function, {})
 

@@ -1,0 +1,5 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    <Include file="e.wow.item.quality.lua"/>
+    <Include file="e.wow.gambling.response.type.lua"/>
+    <Include file="e.wow.looting.ineligibility.reason.type.lua"/>
+</Ui>

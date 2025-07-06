@@ -1,11 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Scopify            = using("System.Scopify") --                          @formatter:off
-local EScopes            = using("System.EScopes")
-local Reflection         = using("System.Reflection")
+local Scopify            = using "System.Scopify" --                          @formatter:off
+local EScopes            = using "System.EScopes"
+local Reflection         = using "System.Reflection"
 
-local Exception          = using("System.Exceptions.Exception")
-local StringsHelper      = using("System.Helpers.Strings") --                  @formatter:on
+local Exception          = using "System.Exceptions.Exception"
+local StringsHelper      = using "System.Helpers.Strings" --                  @formatter:on
 
 local Class = using "[declare]" "System.Try.ExceptionsDeserializationFactory"
 
@@ -30,8 +30,8 @@ function Class:DeserializeFromRawExceptionMessage(rawExceptionMessage)
 
     rawExceptionMessage = StringsHelper.Trim(rawExceptionMessage)
     
-    local stacktrace = self.ParseStacktraceString_(rawExceptionMessage)
-    local message, exceptionType = self.ParseExceptionMessageHeader_(rawExceptionMessage)
+    local stacktrace = _.ParseStacktraceString_(rawExceptionMessage)
+    local message, exceptionType = _.ParseExceptionMessageHeader_(rawExceptionMessage)
     
     return exceptionType:New()
                         :ChainSetMessage(message)
@@ -39,7 +39,7 @@ function Class:DeserializeFromRawExceptionMessage(rawExceptionMessage)
 end
 
 -- private space
-function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
+function Class._.ParseExceptionMessageHeader_(rawExceptionMessage)
     Scopify(EScopes.Function, Class)
 
     local firstLine = StringsHelper.Split(rawExceptionMessage, "\n", 1)[1]
@@ -58,7 +58,7 @@ function Class.ParseExceptionMessageHeader_(rawExceptionMessage)
     -- 20   [Some.Namespace.To.XYZException] Blah blah exception message                      -> Blah blah exception message 
 end
 
-function Class.ParseStacktraceString_(rawExceptionMessage)
+function Class._.ParseStacktraceString_(rawExceptionMessage)
     Scopify(EScopes.Function, Class)
 
     rawExceptionMessage = StringsHelper.Trim(rawExceptionMessage)

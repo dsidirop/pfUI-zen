@@ -1,0 +1,45 @@
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+
+local Guard = using "System.Guard"
+
+local TG, U = using "[testgroup] [tagged]" "System.Guard.Assert.IsTableray" { "system", "guard", "guard-check", "guard-check-tablerays" }
+
+TG:AddTheory("T000.Guard.Assert.IsTableray.GivenGreenInput.ShouldReturnTrue",
+        {
+            ["GRD.SRT.ITR.GGI.SNT.0000"] = { MaxIndexToCheck = nil, Value = {} },
+            ["GRD.SRT.ITR.GGI.SNT.0010"] = { MaxIndexToCheck = nil, Value = { 10, } },
+            ["GRD.SRT.ITR.GGI.SNT.0020"] = { MaxIndexToCheck = nil, Value = { 10, 20 } },
+            ["GRD.SRT.ITR.GGI.SNT.0030"] = { MaxIndexToCheck = nil, Value = { 10, 20, 30 } },
+            ["GRD.SRT.ITR.GGI.SNT.0040"] = { MaxIndexToCheck = nil, Value = { 30, 10, 20 } },
+            ["GRD.SRT.ITR.GGI.SNT.0050"] = { MaxIndexToCheck = nil, Value = { "a", { x = 3 }, 20 } },
+            ["GRD.SRT.ITR.GGI.SNT.0060"] = { MaxIndexToCheck = 4, Value = { 10, 20, 30, 40, 50, x = 70, 60, 80 } }, -- the istableray() function intentionally checks only the first few elements
+        },
+        function(options)
+            -- ACT + ASSERT
+            local result = U.Should.Not.Throw(function()
+                return Guard.Assert.IsTableray(options.Value, "options.Value", options.MaxIndexToCheck)
+            end)
+
+            U.Should.Be.TypeOfTable(result)
+        end
+)
+
+TG:AddTheory("T000.Guard.Assert.IsTableray.GivenRedInput.ShouldThrow",
+        {
+            ["GRD.SRT.ITR.GRI.ST.0000"] = { Value = nil },
+            ["GRD.SRT.ITR.GRI.ST.0010"] = { Value = 1.5 },
+            ["GRD.SRT.ITR.GRI.ST.0020"] = { Value = "abc" },
+            ["GRD.SRT.ITR.GRI.ST.0030"] = { Value = { x = 123 } },
+            ["GRD.SRT.ITR.GRI.ST.0040"] = { Value = { 1, x = 123, 2 } },
+            ["GRD.SRT.ITR.GRI.ST.0050"] = { Value = { 1, x = 123, 3 } },
+            ["GRD.SRT.ITR.GRI.ST.0060"] = { Value = function()
+                return 123
+            end },
+        },
+        function(options)
+            -- ACT + ASSERT
+            U.Should.Throw(function()
+                Guard.Assert.IsTableray(options.Value, "options.Value")
+            end)
+        end
+)

@@ -1,6 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Metatable = using "[declare]" "System.Classes.Metatable [Partial]"
+local Metatable = using "[declare] [static]" "System.Classes.Metatable"
 
 local B = using "[built-ins]" [[
     SetMetatable = setmetatable,

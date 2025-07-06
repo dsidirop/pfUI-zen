@@ -1,13 +1,14 @@
-local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local B = using "[built-ins]" [[   StringSubstitute = string.gsub   ]]
 
+local Nils = using "System.Nils"
 local Table = using "System.Table"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
+local StringsHelper = using "[declare] [static]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
     Scopify(EScopes.Function, StringsHelper)
@@ -20,7 +21,7 @@ function StringsHelper.Split(input, optionalDelimiter, optionalMaxChunksCount)
         return {}
     end
 
-    local pattern = "([^" .. (optionalDelimiter or ",") .. "]+)"
+    local pattern = "([^" .. Nils.Coalesce(optionalDelimiter, ",") .. "]+)"
 
     local fields = {}
     B.StringSubstitute(

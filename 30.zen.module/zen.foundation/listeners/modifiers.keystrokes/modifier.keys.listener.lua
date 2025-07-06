@@ -1,9 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
-local Guard   = using "System.Guard"
-local Event   = using "System.Event"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Guard  = using "System.Guard"
+local Event  = using "System.Event"
+local Fields = using "System.Classes.Fields"
 
 local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
@@ -16,18 +18,32 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listene
 
 Scopify(EScopes.Function, {})
 
+Fields(function(upcomingInstance)
+    upcomingInstance._timer = nil
+
+    upcomingInstance._wantedActive = false
+    upcomingInstance._mustEmitOnFreshStart = false
+
+    upcomingInstance._lastEventArgsEmitted = nil
+    upcomingInstance._eventModifierKeysStatesChanged = nil
+
+    return upcomingInstance
+end)
+
 function Class:New(timer)
     Scopify(EScopes.Function, self)
+    
+    local instance = self:Instantiate()
 
-    return self:Instantiate({
-        _timer = timer or Timer:New(0.1), -- todo di this as a singleton when di comes to town
+    instance._timer = timer or Timer:New(0.1) -- todo di this as a singleton when di comes to town
 
-        _wantedActive = false,
-        _mustEmitOnFreshStart = false,
+    instance._wantedActive = false
+    instance._mustEmitOnFreshStart = false
 
-        _lastEventArgs = nil,
-        _eventModifierKeysStatesChanged = Event:New(),
-    })
+    instance._lastEventArgs = nil
+    instance._eventModifierKeysStatesChanged = Event:New()
+
+    return instance
 end
 
 function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)

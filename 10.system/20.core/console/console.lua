@@ -1,63 +1,23 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
-local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
 
-local A = using "System.Helpers.Arrays"
-local T = using "System.Helpers.Tables"
-local S = using "System.Helpers.Strings"
-
+local GenericTextWriter = using "System.IO.GenericTextWriter"
 local WoWUIGlobalFrames = using "System.Externals.WoW.UI.GlobalFrames"
 
-local Console = using "[declare]" "System.Console [Partial]"
-
-Console.Writer = using "[declare]" "System.Console.Writer [Partial]"
+local Console = using "[declare] [static]" "System.Console" -- @formatter:on
 
 Scopify(EScopes.Function, {})
 
-function Console.Writer:New(nativeWriteCallback)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsFunction(nativeWriteCallback, "nativeWriteCallback")
-    
-    return self:Instantiate({
-        _nativeWriteCallback = nativeWriteCallback
-    })
-end
-
-function Console.Writer:WriteFormatted(format, ...)
-    local variadicsArray = arg
-    
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsString(format, "format")
-
-    if T.IsNilOrEmpty(variadicsArray) then --optimization
-        _nativeWriteCallback(format)
-        return
+local function SpawnOptimalWriteCallback(chatFrame, standardPrefix)
+    local chatFrameAddMessage = chatFrame.AddMessage
+    return function(message_)
+        return chatFrameAddMessage(chatFrame, standardPrefix .. message_) 
     end
-
-    _nativeWriteCallback(S.Format(format, A.Unpack(variadicsArray)))
-end
-
-function Console.Writer:Write(message)
-    Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsString(message, "message")
-
-    _nativeWriteCallback(message)
-end
-
-function Console.Writer:WriteLine(message)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsString(message, "message")
-
-    _nativeWriteCallback(message .. "\n")
 end
 
 -- @formatter:off
-Console.Out   = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(S.Format("|cffffff55%s", message)) end)
-Console.Error = Console.Writer:New(function(message) WoWUIGlobalFrames.DefaultChatFrame:AddMessage(S.Format("|cffff5555%s", message)) end)
+Console.Out   = GenericTextWriter:New(SpawnOptimalWriteCallback(WoWUIGlobalFrames.DefaultChatFrame, "|cffffff55"))
+Console.Error = GenericTextWriter:New(SpawnOptimalWriteCallback(WoWUIGlobalFrames.DefaultChatFrame, "|cffff5555"))
 -- @formatter:on

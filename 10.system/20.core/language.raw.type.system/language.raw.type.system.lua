@@ -1,10 +1,10 @@
-local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local B = using "[built-ins]" [[ GetRawType = type ]]
 
 local SRawTypes = using "System.Language.SRawTypes"
 
-local RawTypeSystem = using "[declare]" "System.Language.RawTypeSystem [Partial]"
+local RawTypeSystem = using "[declare] [static]" "System.Language.RawTypeSystem"
 
 RawTypeSystem.GetRawType = B.GetRawType 
 

@@ -1,36 +1,50 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]);local Scopify = using "System.Scopify";local EScopes = using "System.EScopes";Scopify(EScopes.Function, {}) -- @formatter:off
 
-local Guard = using "System.Guard" -- @formatter:off
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
+local Nils    = using "System.Nils"
+local Guard   = using "System.Guard"
+local Fields  = using "System.Classes.Fields"
 
 local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Translator"
 local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- @formatter:on
 
 local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
 
-Scopify(EScopes.Function, {})
+Fields(function(upcomingInstance)
+    upcomingInstance._zenAddonTranslator = nil
+    upcomingInstance._pfuiTranslatorAsFallback = nil
+
+    return upcomingInstance
+end)
 
 function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator")
-    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
-    return self:WithDefaultCall(self.Translate):Instantiate({ --@formatter:off
-        _zenAddonTranslator        = zenAddonTranslator       or ZenAddonTranslator:NewForActiveUILanguage(),  -- todo   get this from di
-        _pfuiTranslatorAsFallback  = pfuiTranslatorAsFallback or PfuiTranslator.I,                             -- todo   get this from di
-    }) --@formatter:on
+    Guard.Assert.IsNilOrTable(zenAddonTranslator, ZenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
+    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, PfuiTranslator, "pfuiTranslatorAsFallback")
+
+    local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
+
+    instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenAddonTranslator:NewForActiveUILanguage()) -- todo   get this from di
+    instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslator.I                           ) -- todo   get this from di
+
+    return instance --@formatter:on
 end
 
-function TranslationsService:Translate(message, optionalColor) -- 00
-    message = self._zenAddonTranslator:Translate(message) or self._pfuiTranslatorAsFallback:Translate(message) or message
+--  this method is the default :__Call__ method so the following calls are equivalent
+--
+--     _translationsService("foobar")   <=>   _translationsService:TryTranslate("foobar")
+--
+using "[autocall]"
+function TranslationsService:TryTranslate(message, optionalColor)
+    message = Nils.Coalesce(
+            self._zenAddonTranslator:Translate(message), --         order
+            self._pfuiTranslatorAsFallback:Translate(message), --   order
+            message
+    )
 
     if not optionalColor then
         return message
     end
-    
+
     return optionalColor .. message .. "|r"
-    
-    --00   this method is the default call method so it can be called via _t("some message") 
 end

@@ -1,6 +1,6 @@
-local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local Table = using "[declare]" "System.Table [Partial]"
+local Table = using "[declare] [static]" "System.Table"
 
 local B = using "[built-ins]" [[
     TableSort   = table.sort,

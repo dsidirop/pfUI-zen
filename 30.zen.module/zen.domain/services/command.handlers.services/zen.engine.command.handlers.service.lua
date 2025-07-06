@@ -1,8 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
+local Nils     = using "System.Nils"
 local Guard    = using "System.Guard" 
 local Scopify  = using "System.Scopify"
 local EScopes  = using "System.EScopes"
+
+local Fields = using "System.Classes.Fields"
 
 local ZenEngine              = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 local ZenEngineSettings      = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngineSettings"
@@ -15,13 +18,24 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.CommandingS
 
 Scopify(EScopes.Function, {})
 
+Fields(function(upcomingInstance)
+    upcomingInstance._zenEngineSingleton = nil
+    upcomingInstance._userPreferencesService = nil
+
+    return upcomingInstance
+end)
+
 function Class:New(userPreferencesService)
     Scopify(EScopes.Function, self)
-
-    return self:Instantiate({
-        _zenEngineSingleton = ZenEngine.I, --todo   refactor this later on so that this gets injected through DI        
-        _userPreferencesService = userPreferencesService or UserPreferencesService:NewWithDBContext(),
-    })
+    
+    Guard.Assert.IsNilOrTable(userPreferencesService, "userPreferencesService")
+    
+    local instance = self:Instantiate()
+    
+    instance._zenEngineSingleton = ZenEngine.I --todo   refactor this later on so that this gets injected through DI
+    instance._userPreferencesService = Nils.Coalesce(userPreferencesService, UserPreferencesService:NewWithDBContext())
+    
+    return instance
 end
 
 function Class:Handle_RestartEngineCommand(_)
@@ -32,8 +46,8 @@ function Class:Handle_RestartEngineCommand(_)
     local zenEngineSettings = ZenEngineSettings:New()
 
     zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
-                     :ChainSetMode(userPreferencesDto:GetGreeniesGrouplootingAutomation_Mode())
-                     :ChainSetActOnKeybind(userPreferencesDto:GetGreeniesGrouplootingAutomation_ActOnKeybind())
+                     :ChainSetMode(userPreferencesDto:Get_GreeniesGrouplootingAutomation_Mode())
+                     :ChainSetActOnKeybind(userPreferencesDto:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
     
     -- todo   add more settings-sections here
 

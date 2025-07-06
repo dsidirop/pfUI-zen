@@ -1,59 +1,53 @@
-﻿local _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off
 
-    _setfenv(1, {})
+local Scopify      = using "System.Scopify"
+local EScopes      = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Guard  = using "System.Guard"
+local Fields = using "System.Classes.Fields"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local DBContext                          = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
+local QueryableService                   = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
+local WriteableService                   = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.WriteableService"
+local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork"
+local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable" --@formatter:on
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service"
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
+Scopify(EScopes.Function, {})
 
-local DBContext = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext")
-local QueryableService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService")
-local WriteableService = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.WriteableService")
-local UserPreferencesUnitOfWork = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork")
-local UserPreferencesRepositoryQueryable = _importer("Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.RepositoryQueryable")
+Fields(function(upcomingInstance)
+    upcomingInstance._serviceQueryable = nil
+    upcomingInstance._serviceWriteable = nil
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.Service")
+    return upcomingInstance
+end)
 
-function Class:NewWithDBContext(dbcontext)
+function Class:NewWithDBContext(optionalDbContext)
     Scopify(EScopes.Function, self)
 
-    _assert(dbcontext == nil or _type(dbcontext) == "table")
+    Guard.Assert.IsNilOrTable(optionalDbContext, "optionalDbContext")
 
-    dbcontext = dbcontext or DBContext:New()
+    optionalDbContext = optionalDbContext or DBContext:New()
 
     return self:New(
-            QueryableService:New(UserPreferencesRepositoryQueryable:New(dbcontext)),
-            WriteableService:New(UserPreferencesUnitOfWork:New(dbcontext))
+            QueryableService:New(UserPreferencesRepositoryQueryable:New(optionalDbContext)),
+            WriteableService:New(UserPreferencesUnitOfWork:New(optionalDbContext))
     )
 end
 
 function Class:New(serviceQueryable, serviceWriteable)
     Scopify(EScopes.Function, self)
 
-    _assert(_type(serviceQueryable) == "table")
-    _assert(_type(serviceWriteable) == "table")
+    Guard.Assert.IsTable(serviceQueryable, "serviceQueryable")
+    Guard.Assert.IsTable(serviceWriteable, "serviceWriteable")
 
-    return self:Instantiate({
-        _serviceQueryable = serviceQueryable,
-        _serviceWriteable = serviceWriteable,
-    })
+    local instance = self:Instantiate()
+
+    instance._serviceQueryable = serviceQueryable
+    instance._serviceWriteable = serviceWriteable
+
+    return instance
 end
 
 function Class:GetAllUserPreferences()

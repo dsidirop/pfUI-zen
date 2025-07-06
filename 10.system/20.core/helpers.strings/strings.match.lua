@@ -1,4 +1,4 @@
-local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
@@ -6,7 +6,7 @@ local EScopes = using "System.EScopes"
 
 local A = using "System.Helpers.Arrays"
 
-local StringsHelper = using "[declare]" "System.Helpers.Strings [Partial]"
+local StringsHelper = using "[declare] [static]" "System.Helpers.Strings [Partial]"
 
 function StringsHelper.Match(input, patternString, ...)
     local variadicsArray = arg

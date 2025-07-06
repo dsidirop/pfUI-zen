@@ -1,18 +1,17 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local B = using "[built-ins]" [[
     Next     = next,
     Unpack   = unpack,
     RawGet   = rawget,
-    
-    GetPairs        = pairs,
-    GetIndexedPairs = ipairs,
 
     TableCount  = table.getn,
     TableInsert = table.insert,
+
+    TableGetPairs        = pairs,
+    TableGetIndexedPairs = ipairs,
 ]]
 
-local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
@@ -20,17 +19,17 @@ local Reflection = using "System.Reflection"
 
 local Metatable = using "System.Classes.Metatable"
 
-local TablesHelper = using "[declare]" "System.Helpers.Tables [Partial]"
+local TablesHelper = using "[declare] [static]" "System.Helpers.Tables"
 
 Scopify(EScopes.Function, { })
 
-TablesHelper.GetPairs = B.GetPairs
-TablesHelper.GetIndexedPairs = B.GetIndexedPairs
+TablesHelper.GetPairs = B.TableGetPairs
+TablesHelper.GetIndexedPairs = B.TableGetIndexedPairs
 
 function TablesHelper.Clear(tableInstance)
     Guard.Assert.IsTable(tableInstance, "tableInstance")
 
-    for k in B.GetTablePairs(tableInstance) do
+    for k in TablesHelper.GetPairs(tableInstance) do
         tableInstance[k] = nil
     end
 end
@@ -63,10 +62,46 @@ function TablesHelper.Clone(tableInstance, seen)
 end
 
 function TablesHelper.Append(table, value)
-    Guard.Assert.IsTable(table)
-    Guard.Assert.IsNotNil(value)
+    Guard.Assert.IsTable(table, "table")
+    Guard.Assert.IsNotNil(value, "value")
 
     return B.TableInsert(table, value)
+end
+
+function TablesHelper.Insert(table, value, index)
+    Guard.Assert.IsTable(table, "table")
+    Guard.Assert.IsNotNil(value, "value")
+    Guard.Assert.IsPositiveNumber(index, "index")
+
+    return B.TableInsert(table, value, index)
+end
+
+function TablesHelper.Dequeue(table)
+    Guard.Assert.IsTable(table, "table")
+
+    local firstKey = B.Next(table)
+    if firstKey == nil then
+        return nil
+    end
+
+    local value = table[firstKey]
+    table[firstKey] = nil
+
+    return value
+end
+
+function TablesHelper.Pop(table)
+    Guard.Assert.IsTable(table, "table")
+
+    local lastIndex = B.TableCount(table)
+    if lastIndex == 0 then
+        return nil
+    end
+
+    local value = table[lastIndex]
+    table[lastIndex] = nil
+
+    return value
 end
 
 function TablesHelper.AnyOrNil(tableInstance)

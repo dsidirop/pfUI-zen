@@ -1,37 +1,41 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../Ui.xsd">
     <!-- order  -->
-    <Include file="namespace.registry\.xml"/>
-    <Include file="core.symbols.namespaces\.xml"/>
+    <Include file="__version__\.xml"/>
 
-    <Include file="using.built.ins\.xml"/>
-    
-    <Include file="global.environment\.xml"/>
-    <Include file="nils\.xml"/>
+    <Include file="_namespaces.registry_\.xml"/>
+    <Include file="_namespaces.system.headers_\.xml"/>
+
     <Include file="scopify\.xml"/>
-    <Include file="validation\.xml"/>
+    <Include file="using.built.ins\.xml"/>
+
+    <Include file="nils\.xml"/>
     
+    <!-- keep classes.metatable this here -->
     <Include file="classes.metatable\.xml"/>
+    
     <Include file="language.raw.type.system\.xml"/>
     
     <Include file="iterators\.xml"/>
     <Include file="default.chat.frame\.xml"/>
 
-    <Include file="classes.instantiator\.xml"/>
+    <Include file="classes.fields\.xml"/>
 
     <Include file="math\.xml"/>
     <Include file="time\.xml"/>
 
     <Include file="table\.xml"/>
-    
-    <Include file="reflection\.xml"/>
-    <Include file="exceptions\.xml"/>
 
+    <!-- the guard.* stuff need to be loaded before exception-classes kick-in -->
     <Include file="guard\.xml"/>
-    
+    <Include file="reflection\.xml"/>
     <Include file="helpers.arrays\.xml"/>
     <Include file="helpers.tables\.xml"/>
     <Include file="helpers.strings\.xml"/>
     <Include file="helpers.booleans\.xml"/>
+
+    <Include file="exceptions\.xml"/>
+
+    <Include file="io\.xml"/>
     
     <Include file="event\.xml"/>
     <Include file="console\.xml"/>

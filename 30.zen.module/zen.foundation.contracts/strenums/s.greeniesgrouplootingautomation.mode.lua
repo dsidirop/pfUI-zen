@@ -1,6 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
-local SGreeniesGrouplootingAutomationMode = using "[declare:enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
+local SGreeniesGrouplootingAutomationMode = using "[declare] [enum]" "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 
 SGreeniesGrouplootingAutomationMode.JustPass = "just_pass"
 SGreeniesGrouplootingAutomationMode.RollNeed = "roll_need"

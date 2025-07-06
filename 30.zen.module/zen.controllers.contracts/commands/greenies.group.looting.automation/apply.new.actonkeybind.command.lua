@@ -1,38 +1,24 @@
-﻿local _assert, _setfenv, _type, _getn, _, _, _unpack, _pairs, _importer, _namespacer, _setmetatable = (function()
-    local _g = assert(_G or getfenv(0))
-    local _assert = assert
-    local _setfenv = _assert(_g.setfenv)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off
 
-    _setfenv(1, {})
+local Guard   = using "System.Guard"
+local Scopify = using "System.Scopify"
+local EScopes = using "System.EScopes"
 
-    local _type = _assert(_g.type)
-    local _getn = _assert(_g.table.getn)
-    local _error = _assert(_g.error)
-    local _print = _assert(_g.print)
-    local _pairs = _assert(_g.pairs)
-    local _unpack = _assert(_g.unpack)
-    local _importer = _assert(_g.pvl_namespacer_get)
-    local _namespacer = _assert(_g.pvl_namespacer_add)
-    local _setmetatable = _assert(_g.setmetatable)
+local Fields  = using "System.Classes.Fields"
 
-    return _assert, _setfenv, _type, _getn, _error, _print, _unpack, _pairs, _importer, _namespacer, _setmetatable
-end)()
+local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
-_setfenv(1, {})
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
-local Scopify = _importer("System.Scopify")
-local EScopes = _importer("System.EScopes")
-local SGreeniesGrouplootingAutomationActOnKeybind = _importer("Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind")
+Fields(function(upcomingInstance)
+    upcomingInstance._old = nil
+    upcomingInstance._new = nil
 
-local Class = _namespacer("Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand")
+    return upcomingInstance
+end)
 
 function Class:New()
-    Scopify(EScopes.Function, self)
-
-    return self:Instantiate({
-        _old = nil,
-        _new = nil,
-    })
+    return self:Instantiate()
 end
 
 function Class:GetOldValue()
@@ -50,9 +36,7 @@ end
 function Class:ChainSetOld(old)
     Scopify(EScopes.Function, self)
 
-    _assert(old == nil or SGreeniesGrouplootingAutomationActOnKeybind:IsValid(old))
-
-    _old = old
+    _old = Guard.Assert.IsNilOrEnumValue(SGreeniesGrouplootingAutomationActOnKeybind, old, "old")
 
     return self
 end
@@ -60,9 +44,7 @@ end
 function Class:ChainSetNew(new)
     Scopify(EScopes.Function, self)
 
-    _assert(SGreeniesGrouplootingAutomationActOnKeybind:IsValid(new))
-
-    _new = new
+    _new = Guard.Assert.IsNilOrEnumValue(SGreeniesGrouplootingAutomationActOnKeybind, new, "new")
 
     return self
 end

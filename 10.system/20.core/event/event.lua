@@ -1,21 +1,27 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get)
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
 
 local Guard = using "System.Guard"
 local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes"
+
+local Fields = using "System.Classes.Fields"
 local TablesHelper = using "System.Helpers.Tables"
 
-local Class = using "[declare]" "System.Event [Partial]"
+local Class = using "[declare]" "System.Event"
 
 Scopify(EScopes.Function, {})
+
+Fields(function(upcomingInstance)
+    upcomingInstance._handlers = {}
+    upcomingInstance._handlersJustOnce = {}
+
+    return upcomingInstance
+end)
 
 function Class:New()
     Scopify(EScopes.Function, self)
 
-    return self:Instantiate({
-        _handlers = {},
-        _handlersJustOnce = {}
-    })
+    return self:Instantiate()
 end
 
 local NoOwner = {}
@@ -101,7 +107,7 @@ function Class:Raise(sender, eventArgs)
 
     for k, v in TablesHelper.GetPairs(_handlers) do
         if v and v ~= NoOwner then -- v is the owning class-instance of the handler
-            k(v, sender, eventArgs)
+            k(v, sender, eventArgs)  -- todo  introduce an option to call event-handlers using pcall() so as to suppress and log any exceptions from handlers 
         else
             k(sender, eventArgs)
         end

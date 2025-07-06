@@ -1,8 +1,9 @@
-﻿local using = assert((_G or getfenv(0) or {}).pvl_namespacer_get) -- @formatter:off
+﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
 
 local B = using "[built-ins]" [[
-    Getn        = table.getn,
     Unpack      = unpack,
+
+    Getn        = table.getn,
     TableInsert = table.insert,
     TableRemove = table.remove,
 ]]
@@ -10,7 +11,7 @@ local B = using "[built-ins]" [[
 local Nils  = using "System.Nils"
 local Guard = using "System.Guard"
 
-local Class = using "[declare]" "System.Helpers.Arrays [Partial]" -- @formatter:on
+local Class = using "[declare] [static]" "System.Helpers.Arrays" -- @formatter:on
 
 function Class.Count(array)
     Guard.Assert.IsTable(array, "array")
