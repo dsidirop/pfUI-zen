@@ -142,7 +142,7 @@ function VWoWUnit.Should.Be.PlainlyEqual(a, b)
 		return
 	end
 
-	VWoWUnit.Raise_(_format("[Should.Be.PlainlyEqual()] Expected the two values to be plainly-equal but they're not (got %q which is not equal to %q)", _tostring(a), _tostring(b)))
+	VWoWUnit.Raise_(_format("[Should.Be.PlainlyEqual()] Expected the two values to be plainly-equal but they're not: %q (%s) vS %q (%s)", _tostring(a), _tostring(_type(a)), _tostring(b), _tostring(_type(b))))
 end
 
 function VWoWUnit.Should.Be.Equivalent(a, b)

@@ -384,24 +384,26 @@ do
 
     function NonStaticClassProtoFactory.Spawn(isAbstract)
         CachedMetaTable_ForAllAbstractClassProtos = CachedMetaTable_ForAllAbstractClassProtos or _spawnSimpleMetatable({
-            New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
+            New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_,
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_
         })
 
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
-            New = NonStaticClassProtoFactory.StandardDefaultConstructor_,
+            New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_
         })
 
         local newClassProto = _spawnSimpleMetatable({
             --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            _ = { },
-            __call = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
-            __tostring = nil -- not isAbstract and NonStaticClassProtoFactory.ToString_ or nil, --00 must be here
+            ToString = NonStaticClassProtoFactory.Standard_ToStringMethod,
+
+            _          = { },
+            __call     = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
+            __tostring = NonStaticClassProtoFactory.Standard__tostring
         })
 
         return _setmetatable(newClassProto, isAbstract
@@ -486,17 +488,21 @@ do
         local hasImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
         _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
 
+        if variadicsArray ~= nil then
+            variadicsArray = _unpack(variadicsArray)
+        end
+
         if hasImplicitCallFunction then
             -- has priority over :new()
             return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                    _unpack(variadicsArray)
+                    variadicsArray
             )
         end
 
         return ownNewFuncSnapshot(
                 classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                _unpack(variadicsArray)
+                variadicsArray
         )
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
@@ -504,6 +510,31 @@ do
 
     function NonStaticClassProtoFactory.StandardDefaultConstructor_(self)       
         return self:Instantiate()
+    end
+
+    function NonStaticClassProtoFactory.Standard_ToStringMethod(classInstance)
+        return NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classInstance)
+    end
+
+    function NonStaticClassProtoFactory.Standard__tostring(classInstance)
+        local variadicsArray = arg
+        local ownToStringFunc = classInstance.ToString
+
+        if _type(ownToStringFunc) == "function" then
+            if variadicsArray ~= nil then
+                variadicsArray = _unpack(variadicsArray)
+            end
+
+            return _stringify(ownToStringFunc( -- 00
+                classInstance, -- vital to pass the classproto/instance to the call-function
+                variadicsArray
+            ))
+        end
+
+        return "" --10 
+
+        -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
+        -- 10  should be impossible but just in case   we cannot use _stringify() here because it will cause an infinite recursion
     end
 
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off

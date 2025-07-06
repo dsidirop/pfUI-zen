@@ -16,9 +16,9 @@ if U then
 
     -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Trace) -- for debugging
     -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Error) -- for debugging
-    U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Warn) -- for debugging
+    -- U.DefaultLogger:ChainSetOption_MinLogLevel(U.ELogLevels.Warn) -- for debugging
 
-    U.TestsEngine:RunAllTestGroups()
+    -- U.TestsEngine:RunAllTestGroups()
 
     -- U.TestsEngine:RunSpecificTest("T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow")
 
@@ -41,4 +41,6 @@ if U then
     -- U.TestsEngine:RunTestGroupsByTag("get-info")
 
     -- U.TestsEngine:RunTestGroupsByTag("fields")
+    
+    U.TestsEngine:RunTestGroupsByTag("tostring")
 end

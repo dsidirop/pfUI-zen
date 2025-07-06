@@ -14,6 +14,7 @@
     <Include file="using.built.ins.testbed\.xml"/>
 
     <Include file="classes.fields.testbed\.xml"/>
+    <Include file="classes.tostring.testbed\.xml"/>
     <Include file="classes.attributes.testbed\.xml"/>
     <Include file="classes.inheritance.testbed\.xml"/>
 
