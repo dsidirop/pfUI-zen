@@ -196,7 +196,6 @@ function Class:ToString()
 
     return s .. " }"
 end
-Class.__tostring = Class.ToString
 
 function Class:Cleanup()
     Scopify(EScopes.Function, self)

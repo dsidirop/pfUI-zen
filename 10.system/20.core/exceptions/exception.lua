@@ -74,4 +74,3 @@ function Class:ToString()
     _stringified = ExceptionUtilities.FormulateFullExceptionMessage(self)
     return _stringified
 end
-Class.__tostring = Class.ToString

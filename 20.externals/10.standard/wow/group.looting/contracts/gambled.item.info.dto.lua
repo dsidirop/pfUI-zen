@@ -262,5 +262,3 @@ function Class:ToString()
             self:GetDisenchantIneligibilityReasonType()            
     ) --@formatter:on
 end
-Class.__tostring = Class.ToString
-

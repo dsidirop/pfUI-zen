@@ -109,5 +109,4 @@ function Class:ToString()
     _stringified = result
     return result
 end
-Class.__tostring = Class.ToString
 
