@@ -85,7 +85,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                             return self:Instantiate()
                         end
                         
-                        using "[healthcheck] [all]" -- this should throw
+                        using "[healthcheck]" -- this should throw
                     end,
 
                     ErrorGlob = ""

@@ -21,7 +21,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                             return self:Instantiate()
                         end
 
-                        using "[healthcheck] [all]" -- this should throw        
+                        using "[healthcheck]" -- this should throw        
                     end,
 
                     ErrorGlob = ""
@@ -51,7 +51,7 @@ TG:AddDynamicTheory("T020.Inheritance.Interfacing.GivenUnimplementedMethods.Shou
                             return self:Instantiate()
                         end
 
-                        using "[healthcheck] [all]" -- this should throw
+                        using "[healthcheck]" -- this should throw
                     end,
 
                     ErrorGlob = ""

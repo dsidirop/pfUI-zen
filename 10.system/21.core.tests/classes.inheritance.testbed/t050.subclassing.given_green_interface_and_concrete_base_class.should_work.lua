@@ -131,7 +131,7 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         return upcomingInstance
                     end)
 
-                    -- using "[healthcheck] [all]" -- this should not throw
+                    using "[healthcheck]" -- this should not throw
                 end
                 
                 ------
