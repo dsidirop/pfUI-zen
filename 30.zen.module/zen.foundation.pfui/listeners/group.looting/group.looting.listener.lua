@@ -1,9 +1,7 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local T = using "System.Helpers.Tables" -- @formatter:off
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Event    = using "System.Event"
 local Fields   = using "System.Classes.Fields"
@@ -15,7 +13,6 @@ local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Pfui.Listeners.GroupLooting.Listener"
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._active = false

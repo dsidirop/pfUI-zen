@@ -1,7 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
-
-local Scopify = using "System.Scopify" --@formatter:off
-local EScopes = using "System.EScopes"
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local Reflection   = using "System.Reflection"
 local TablesHelper = using "System.Helpers.Tables"
@@ -13,7 +10,6 @@ local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfIn
 
 local Guard = using "[declare] [static]" "System.Guard [Partial]"
 
-Scopify(EScopes.Function, {})
 
 do
     Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained"

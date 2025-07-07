@@ -1,14 +1,11 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
 
 local StringsHelper = using "System.Helpers.Strings"
 
 local Utilities = using "[declare] [static]" "System.Guard.Utilities"
 
-Scopify(EScopes.Function, {})
 
 function Utilities.IsBooleanizable(value)
     Scopify(EScopes.Function, Utilities)

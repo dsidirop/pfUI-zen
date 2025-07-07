@@ -1,15 +1,12 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Scopify            = using "System.Scopify" --                          @formatter:off
-local EScopes            = using "System.EScopes"
 local Reflection         = using "System.Reflection"
 
 local Exception          = using "System.Exceptions.Exception"
-local StringsHelper      = using "System.Helpers.Strings" --                  @formatter:on
+local StringsHelper      = using "System.Helpers.Strings" --@formatter:on
 
 local Class = using "[declare]" "System.Try.ExceptionsDeserializationFactory"
 
-Scopify(EScopes.Function, {})
 
 function Class:New()
     Scopify(EScopes.Function, self)

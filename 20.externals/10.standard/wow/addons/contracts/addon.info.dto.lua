@@ -1,16 +1,12 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
-
-local Scopify      = using "System.Scopify" --@formatter:off
-local EScopes      = using "System.EScopes"
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local Guard        = using "System.Guard"
 local Fields       = using "System.Classes.Fields"
 
-local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNotLoadableReason" --  @formater:on
+local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNotLoadableReason"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto" --@formater:on
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._title = ""

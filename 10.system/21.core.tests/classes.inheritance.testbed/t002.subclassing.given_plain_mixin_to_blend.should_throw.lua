@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Classes.Inheritance.Testbed" { "system", "system-core", "classes", "inheritance" }
 

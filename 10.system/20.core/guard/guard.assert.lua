@@ -1,7 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
-
-local Scopify = using "System.Scopify" --                                                                          @formatter:off
-local EScopes = using "System.EScopes"
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local Iterators      = using "System.Iterators"
 local Reflection     = using "System.Reflection"
@@ -12,11 +9,10 @@ local Throw                               = using "System.Exceptions.Throw"
 local ValueAlreadySetException            = using "System.Exceptions.ValueAlreadySetException"
 local ValueCannotBeNilException           = using "System.Exceptions.ValueCannotBeNilException"
 local ValueIsOutOfRangeException          = using "System.Exceptions.ValueIsOutOfRangeException"
-local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException" --     @formatter:on
+local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException" --@formatter:on
 
 local Guard = using "[declare] [static]" "System.Guard"
 
-Scopify(EScopes.Function, {})
 
 do
     Guard.Assert = using "[declare] [static]" "System.Guard.Assert"

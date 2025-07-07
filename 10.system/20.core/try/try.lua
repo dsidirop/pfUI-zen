@@ -1,10 +1,8 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local B = using "[built-ins]" [[  ProtectedCall = pcall  ]]
 
-local Guard              = using "System.Guard" --                                                    @formatter:off
-local Scopify            = using "System.Scopify"
-local EScopes            = using "System.EScopes"
+local Guard              = using "System.Guard"
 local Reflection         = using "System.Reflection"
 local Fields             = using "System.Classes.Fields"
 
@@ -13,11 +11,10 @@ local A                  = using "System.Helpers.Arrays"
 local Throw              = using "System.Exceptions.Throw"
 local Exception          = using "System.Exceptions.Exception"
 
-local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --       @formatter:on
+local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializationFactory" --@formatter:on
 
 local Class = using "[declare]" "System.Try"
 
-Scopify(EScopes.Function, {})
 
 Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 

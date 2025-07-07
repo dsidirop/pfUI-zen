@@ -1,4 +1,4 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local B = using "[built-ins]" [[
     Next     = next,
@@ -13,8 +13,6 @@ local B = using "[built-ins]" [[
 ]]
 
 local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 local Reflection = using "System.Reflection"
 
 local Metatable = using "System.Classes.Metatable"

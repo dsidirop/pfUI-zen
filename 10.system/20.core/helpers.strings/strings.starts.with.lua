@@ -1,5 +1,4 @@
-local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
-
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 local B = using "[built-ins]"    [[
     StringSub    = string.sub,
     StringFind   = string.find,
@@ -11,7 +10,6 @@ local StringFind   = B.StringFind
 local StringLength = B.StringLength
 
 local Guard   = using "System.Guard"
-local Scopify = using "System.Scopify"
 local EScopes = using "System.EScopes" -- @formatter:on
 
 local StringsHelper = using "[declare] [static]" "System.Helpers.Strings [Partial]"

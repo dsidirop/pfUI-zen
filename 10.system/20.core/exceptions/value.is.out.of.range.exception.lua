@@ -1,16 +1,13 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Guard              = using "System.Guard" --                       @formatter:off
-local Scopify            = using "System.Scopify"
-local EScopes            = using "System.EScopes"
+local Guard              = using "System.Guard"
 local Reflection         = using "System.Reflection"
-local StringsHelper      = using "System.Helpers.Strings" --             @formatter:on
+local StringsHelper      = using "System.Helpers.Strings" --@formatter:on
 
 local Class = using "[declare] [blend]" "System.Exceptions.ValueIsOutOfRangeException" {
     "Exception", using "System.Exceptions.Exception",
 }
 
-Scopify(EScopes.Function, {})
 
 function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedType)
     Scopify(EScopes.Function, self)

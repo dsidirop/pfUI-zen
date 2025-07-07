@@ -1,12 +1,10 @@
-local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 using "[healthcheck] [all]"
 
 local S = using "System.Helpers.Strings"
 
 local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Throw = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
@@ -24,8 +22,7 @@ local UserPreferencesForm = using "Pavilion.Warcraft.Addons.Zen.Controllers.UI.P
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.Zen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()
-    Scopify(EScopes.Function, {})
-
+    
     local addon = {
         folderName = "pfUI-Zen",
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"

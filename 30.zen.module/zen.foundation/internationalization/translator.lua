@@ -1,7 +1,5 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
@@ -11,10 +9,8 @@ local Localization            = using "Pavilion.Warcraft.Addons.Zen.Externals.Wo
 local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 
--- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
-local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator"
+local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._properTranslationTable = nil

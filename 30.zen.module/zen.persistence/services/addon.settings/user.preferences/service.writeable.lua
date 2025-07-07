@@ -1,8 +1,5 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
-
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 local Guard   = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local PfuiZenDbContext                            = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
 local UserPreferencesUnitOfWork                   = using "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork"
@@ -11,7 +8,6 @@ local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Add
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.WriteableService" -- @formatter:on
 
-Scopify(EScopes.Function, {})
 
 function Class:New(userPreferencesUnitOfWork)
     Scopify(EScopes.Function, self)

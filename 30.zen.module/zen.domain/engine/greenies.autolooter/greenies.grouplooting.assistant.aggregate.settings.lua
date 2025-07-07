@@ -1,8 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local Guard   = using "System.Guard" -- @formatter:off
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Fields = using "System.Classes.Fields"
 
@@ -11,7 +9,6 @@ local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Add
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.GreeniesGrouplootingAssistant.AggregateSettings"
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._mode = nil --         SGreeniesGrouplootingAutomationMode

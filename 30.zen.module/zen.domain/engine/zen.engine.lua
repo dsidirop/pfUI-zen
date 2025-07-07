@@ -1,7 +1,5 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
@@ -10,7 +8,6 @@ local GreeniesAutolooterAggregate = using "Pavilion.Warcraft.Addons.Zen.Domain.E
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._settings = nil -- this is set via :SetSettings()

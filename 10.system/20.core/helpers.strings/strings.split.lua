@@ -1,12 +1,10 @@
-local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local B = using "[built-ins]" [[   StringSubstitute = string.gsub   ]]
 
 local Nils = using "System.Nils"
 local Table = using "System.Table"
 local Guard = using "System.Guard"
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local StringsHelper = using "[declare] [static]" "System.Helpers.Strings [Partial]"
 

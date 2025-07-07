@@ -1,10 +1,8 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Scopify    = using "System.Scopify" --           @formatter:off
-local EScopes    = using "System.EScopes"
-local Reflection = using "System.Reflection" --        @formatter:on
+local Reflection = using "System.Reflection"
 
-local Utilities = using "[declare] [static]" "System.Exceptions.Utilities"
+local Utilities = using "[declare] [static]" "System.Exceptions.Utilities" --@formatter:on
 
 function Utilities.FormulateFullExceptionMessage(exception)
     Scopify(EScopes.Function, Utilities)

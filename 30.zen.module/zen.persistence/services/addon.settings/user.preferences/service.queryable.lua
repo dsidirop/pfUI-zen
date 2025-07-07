@@ -1,7 +1,5 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Nils = using "System.Nils"
 local Guard = using "System.Guard"
@@ -11,7 +9,6 @@ local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Zen.P
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._userPreferencesRepositoryQueryable = nil

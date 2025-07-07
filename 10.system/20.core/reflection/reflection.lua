@@ -1,11 +1,8 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) --@formatter:off
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local S          = using "System.Helpers.Strings"
-
 local Math       = using "System.Math"
 local Guard      = using "System.Guard"
-local Scopify    = using "System.Scopify"
-local EScopes    = using "System.EScopes"
 
 local TablesHelper = using "System.Helpers.Tables"
 
@@ -21,7 +18,6 @@ local NotImplementedException = using "System.Exceptions.NotImplementedException
 
 local Reflection = using "[declare] [static]" "System.Reflection" --@formatter:on
 
-Scopify(EScopes.Function, {})
 
 Reflection.IsNil = RawTypeSystem.IsNil
 Reflection.IsTable = RawTypeSystem.IsTable

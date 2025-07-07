@@ -2,10 +2,7 @@
 ----
 ---- inspired by https://github.com/kenshinx/Lua-LRU-Cache
 
-local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
-
-local Scopify      = using "System.Scopify" --           @formatter:off
-local EScopes      = using "System.EScopes"
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local Time         = using "System.Time" 
 local Nils         = using "System.Nils"
@@ -14,11 +11,10 @@ local Table        = using "System.Table"
 local Fields       = using "System.Classes.Fields"
 
 local T            = using "System.Helpers.Tables"
-local S            = using "System.Helpers.Strings" --  @formatter:on
+local S            = using "System.Helpers.Strings"
 
-local Class = using "[declare]" "Pavilion.DataStructures.LRUCache"
+local Class = using "[declare]" "Pavilion.DataStructures.LRUCache" --@formatter:on
 
-Scopify(EScopes.Function, {})
 
 Class._.DefaultOptions = {
     MaxSize                      = 100,

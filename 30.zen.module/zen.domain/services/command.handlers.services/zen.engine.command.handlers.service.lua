@@ -1,10 +1,7 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]) -- @formatter:off
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Nils     = using "System.Nils"
-local Guard    = using "System.Guard" 
-local Scopify  = using "System.Scopify"
-local EScopes  = using "System.EScopes"
-
+local Nils   = using "System.Nils"
+local Guard  = using "System.Guard" 
 local Fields = using "System.Classes.Fields"
 
 local ZenEngine              = using "Pavilion.Warcraft.Addons.Zen.Domain.Engine.ZenEngine"
@@ -16,7 +13,6 @@ local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilio
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService" -- @formatter:on
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._zenEngineSingleton = nil

@@ -1,7 +1,5 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local Scopify = using "System.Scopify"
-local EScopes = using "System.EScopes"
 
 local Nils = using "System.Nils"
 local Guard = using "System.Guard"
@@ -12,7 +10,6 @@ local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.Zen.Persistenc
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.Settings.UserPreferences.UnitOfWork"
 
-Scopify(EScopes.Function, {})
 
 Fields(function(upcomingInstance)
     upcomingInstance._dbcontext = nil

@@ -1,9 +1,6 @@
-﻿local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"])
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Guard        = using "System.Guard" --@formatter:off
-local Scopify      = using "System.Scopify"
-local EScopes      = using "System.EScopes"
-
+local Guard             = using "System.Guard"
 local AddonInfoDto      = using "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto"
 local WoWGetAddonInfo   = using "Pavilion.Warcraft.Addons.BuiltIns.GetAddonInfo"
 
@@ -11,7 +8,6 @@ local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNo
 
 local Service = using "[declare]" "Pavilion.Warcraft.Addons.AddonsService"
 
-Scopify(EScopes.Function, {})
 
 function Service:New()
     return self:Instantiate()
