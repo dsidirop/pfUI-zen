@@ -2,4 +2,4 @@
 
 local PfuiGui = using "[built-in]" "pfUI.gui"
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.PfuiGui" (PfuiGui) -- todo   turn this kind of stuff into class-based services that conform to interfaces
+using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.Native.PfuiGui" (PfuiGui) -- todo   turn this kind of stuff into class-based services that conform to interfaces

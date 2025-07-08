@@ -1,10 +1,10 @@
 --[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
+local ComboTranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.ComboTranslationsService"
 
-local TG, U = using "[testgroup]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService.Tests"
+local TG, U = using "[testgroup]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.ComboTranslationsService.Tests"
 
-TG:AddTheory("T005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
+TG:AddTheory("T005.ComboTranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
         {
             ["TS.TTWDC.GVT.STS.010"] = {
                 Text           = "Foobar",
@@ -31,7 +31,7 @@ TG:AddTheory("T005.TranslationsService.TryTranslateWithDefaultCall.GivenValidTra
                 end
             }
 
-            local translationsService = TranslationsService:New(zenAddonTranslatorMock, pfuiTranslatorAsFallbackMock)
+            local translationsService = ComboTranslationsService:New(zenAddonTranslatorMock, pfuiTranslatorAsFallbackMock)
 
             -- ACT
             local action = function()

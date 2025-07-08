@@ -2,4 +2,4 @@
 
 local PfUI = using "[built-in]" [[  pfUI  ]]
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.Pfui" (PfUI)
+using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.Native.Pfui" (PfUI)

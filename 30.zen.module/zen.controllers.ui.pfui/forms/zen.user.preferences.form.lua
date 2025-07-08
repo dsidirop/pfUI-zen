@@ -5,7 +5,7 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
-local PfuiGui                         = using "Pavilion.Warcraft.Addons.Pfui.PfuiGui"
+local PfuiGui                         = using "Pavilion.Warcraft.Addons.Pfui.Native.PfuiGui"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.Zen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"

@@ -9,12 +9,12 @@ local Guard = using "System.Guard"
 local Throw = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Pfui = using "Pavilion.Warcraft.Addons.Pfui.Pfui"
-local PfuiGui = using "Pavilion.Warcraft.Addons.Pfui.PfuiGui"
+local Pfui = using "Pavilion.Warcraft.Addons.Pfui.Native.Pfui"
+local PfuiGui = using "Pavilion.Warcraft.Addons.Pfui.Native.PfuiGui"
 local Enumerable = using "Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable"
 
 local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
-local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
+local ComboTranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.ComboTranslationsService"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
@@ -51,7 +51,7 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
     end
 
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(TranslationsService:New())
+                :New(ComboTranslationsService:New())
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")

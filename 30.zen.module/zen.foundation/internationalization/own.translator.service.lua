@@ -10,7 +10,7 @@ local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization
 local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Pfui.PfuiConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 
-local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
+local ZenOwnTranslatorService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.OwnTranslatorService" -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenOwnTranslatorService and move it into its own separate subfolder
 
 
 Fields(function(upcomingInstance)
@@ -20,7 +20,7 @@ Fields(function(upcomingInstance)
 end)
 
 
-function ZenAddonTranslator:NewForActiveUILanguage()
+function ZenOwnTranslatorService:NewForActiveUILanguage()
     Scopify(EScopes.Function, self)
 
     local uiLanguage = Nils.Coalesce(PfuiConfigurationReader.I:TryGetLanguageSetting(), LocalizationInfoService.I:GetUILocale())
@@ -28,7 +28,7 @@ function ZenAddonTranslator:NewForActiveUILanguage()
     return self:New(uiLanguage)
 end
 
-function ZenAddonTranslator:New(targetLanguage)
+function ZenOwnTranslatorService:New(targetLanguage)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNonDudString(targetLanguage, "targetLanguage")
@@ -44,6 +44,6 @@ function ZenAddonTranslator:New(targetLanguage)
     return instance
 end
 
-function ZenAddonTranslator:Translate(message)
+function ZenOwnTranslatorService:Translate(message)
     return self._properTranslationTable[message] -- we intentionally avoid coalescing to 'message' here   its vital to return nil if the translation is not found
 end

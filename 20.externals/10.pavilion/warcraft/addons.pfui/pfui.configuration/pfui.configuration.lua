@@ -2,4 +2,4 @@
 
 local PfuiConfiguration = using "[built-in]" [[  pfUI.env.C  ]]
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.PfuiConfiguration" (PfuiConfiguration)
+using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.Native.PfuiConfiguration" (PfuiConfiguration)

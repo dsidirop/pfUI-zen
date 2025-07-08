@@ -4,10 +4,10 @@ local Nils    = using "System.Nils"
 local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
-local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Pfui.PfuiTranslator"
-local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- @formatter:on
+local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Pfui.PfuiTranslatorService"
+local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.OwnTranslatorService" -- @formatter:on
 
-local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.ComboTranslationsService"
 
 Fields(function(upcomingInstance)
     upcomingInstance._zenAddonTranslator = nil
@@ -16,7 +16,7 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-function TranslationsService:New(zenAddonTranslator, pfuiTranslatorAsFallback)
+function Class:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNilOrTable(zenAddonTranslator, ZenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
@@ -35,7 +35,7 @@ end
 --     _translationsService("foobar")   <=>   _translationsService:TryTranslate("foobar")
 --
 using "[autocall]"
-function TranslationsService:TryTranslate(message, optionalColor)
+function Class:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(
             self._zenAddonTranslator:Translate(message), --         order
             self._pfuiTranslatorAsFallback:Translate(message), --   order
