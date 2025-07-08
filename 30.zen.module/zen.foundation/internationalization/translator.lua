@@ -5,7 +5,8 @@ local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local Localization            = using "Pavilion.Warcraft.Foundation.Localization"
+local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService"
+
 local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 
@@ -22,7 +23,7 @@ end)
 function ZenAddonTranslator:NewForActiveUILanguage()
     Scopify(EScopes.Function, self)
 
-    local uiLanguage = Nils.Coalesce(PfuiConfigurationReader.I:GetLanguageSetting(), Localization.GetLocale())
+    local uiLanguage = Nils.Coalesce(PfuiConfigurationReader.I:GetLanguageSetting(), LocalizationInfoService.I:GetUILocale())
 
     return self:New(uiLanguage)
 end
