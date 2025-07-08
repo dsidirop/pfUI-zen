@@ -4,7 +4,7 @@ local Nils    = using "System.Nils"
 local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
-local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Translator"
+local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Pfui.PfuiTranslator"
 local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- @formatter:on
 
 local TranslationsService = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"

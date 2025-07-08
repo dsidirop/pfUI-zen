@@ -5,7 +5,7 @@ local Nils = using "System.Nils"
 local Fields = using "System.Classes.Fields"
 
 local Schema = using "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1"
-local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Configuration"
+local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Pfui.PfuiConfiguration"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Persistence.EntityFramework.PfuiZen.DBContext"
 

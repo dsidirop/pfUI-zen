@@ -7,7 +7,7 @@ local Fields = using "System.Classes.Fields"
 
 local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService"
 
-local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
+local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Pfui.PfuiConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 
 local ZenAddonTranslator = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translator" -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenAddonTranslator and move it into its own separate subfolder
@@ -23,7 +23,7 @@ end)
 function ZenAddonTranslator:NewForActiveUILanguage()
     Scopify(EScopes.Function, self)
 
-    local uiLanguage = Nils.Coalesce(PfuiConfigurationReader.I:GetLanguageSetting(), LocalizationInfoService.I:GetUILocale())
+    local uiLanguage = Nils.Coalesce(PfuiConfigurationReader.I:TryGetLanguageSetting(), LocalizationInfoService.I:GetUILocale())
 
     return self:New(uiLanguage)
 end
