@@ -8,7 +8,7 @@ local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAlt
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
 local IsControlKeyDown = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown"
 
-local Timer = using "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer"
+local Timer                                = using "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer"
 local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" -- @formatter:on
