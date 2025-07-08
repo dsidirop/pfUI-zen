@@ -1,13 +1,13 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local Try                                    = using "System.Try" --                                                                          @formatter:off
-local EWowItemQuality                        = using "Pavilion.Warcraft.Enums.EWowItemQuality"
-local GambledItemInfoDto                     = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
+local EWowItemQuality                        = using "Pavilion.Warcraft.Foundation.Enums.EWowItemQuality"
+local GambledItemInfoDto                     = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto"
 
 local ValueIsOutOfRangeException             = using "System.Exceptions.ValueIsOutOfRangeException"
 local ValueHasInappropriateTypeException     = using "System.Exceptions.ValueIsOfInappropriateTypeException"
 
-local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
+local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
 TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.ShouldProperlyErrorOut",
         function()

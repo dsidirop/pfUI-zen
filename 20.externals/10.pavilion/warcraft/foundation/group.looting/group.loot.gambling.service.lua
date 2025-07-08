@@ -5,13 +5,13 @@ local T = using "System.Helpers.Tables"
 local Guard        = using "System.Guard"
 local Fields       = using "System.Classes.Fields"
 
-local WoWRollOnLoot            = using "Pavilion.Warcraft.GroupLooting.BuiltIns.RollOnLoot"
-local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.GroupLooting.BuiltIns.GetLootRollItemInfo"
+local WoWRollOnLoot            = using "Pavilion.Warcraft.Foundation.Natives.GroupLooting.RollOnLoot"
+local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Foundation.Natives.GroupLooting.GetLootRollItemInfo"
 
-local GambledItemInfoDto       = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
-local EWowGamblingResponseType = using "Pavilion.Warcraft.Enums.EWowGamblingResponseType" -- @formatter:on
+local GambledItemInfoDto       = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto"
+local EWowGamblingResponseType = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType" -- @formatter:on
 
-local Service = using "[declare]" "Pavilion.Warcraft.GroupLooting.GroupLootGamblingService"
+local Service = using "[declare]" "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
 
 
 Fields(function(upcomingInstance)

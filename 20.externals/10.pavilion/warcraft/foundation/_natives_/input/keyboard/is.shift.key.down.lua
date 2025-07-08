@@ -6,4 +6,4 @@ local function IsShiftKeyDownBooleanized()
     return WowNativeIsShiftKeyDown() == 1
 end
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown" (IsShiftKeyDownBooleanized)
+using "[declare] [bind]" "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsShiftKeyDown" (IsShiftKeyDownBooleanized)

@@ -7,9 +7,9 @@ local Fields       = using "System.Classes.Fields"
 local StringsHelper   = using "System.Helpers.Strings"
 local BooleansHelper  = using "System.Helpers.Booleans"
 
-local EWowItemQuality = using "Pavilion.Warcraft.Enums.EWowItemQuality"
+local EWowItemQuality = using "Pavilion.Warcraft.Foundation.Enums.EWowItemQuality"
 
-local Class = using "[declare]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto" --@formater:on
+local Class = using "[declare]" "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto" --@formater:on
 
 
 Fields(function(upcomingInstance) --@formatter:off

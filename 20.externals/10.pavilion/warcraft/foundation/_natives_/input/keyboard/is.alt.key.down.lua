@@ -6,4 +6,4 @@ local function IsAltKeyDownBooleanized()
     return WowNativeIsAltKeyDown() == 1
 end
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown" (IsAltKeyDownBooleanized)
+using "[declare] [bind]" "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsAltKeyDown" (IsAltKeyDownBooleanized)

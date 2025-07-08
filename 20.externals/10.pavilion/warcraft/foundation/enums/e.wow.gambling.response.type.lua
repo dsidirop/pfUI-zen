@@ -1,6 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local EWowGamblingResponseType = using "[declare] [enum]" "Pavilion.Warcraft.Enums.EWowGamblingResponseType" -- aka roll-mode
+local EWowGamblingResponseType = using "[declare] [enum]" "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType" -- aka roll-mode
 
 EWowGamblingResponseType.Pass = 0
 EWowGamblingResponseType.Need = 1

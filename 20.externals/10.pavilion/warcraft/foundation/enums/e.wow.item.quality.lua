@@ -1,6 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local EWowItemQuality = using "[declare] [enum]" "Pavilion.Warcraft.Enums.EWowItemQuality" -- @formatter:off
+local EWowItemQuality = using "[declare] [enum]" "Pavilion.Warcraft.Foundation.Enums.EWowItemQuality" -- @formatter:off
 
 EWowItemQuality.Poor        = 0 --    grey      https://wowwiki-archive.fandom.com/wiki/API_ITEM_QUALITY_COLORS
 EWowItemQuality.Common      = 1 --    white

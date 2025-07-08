@@ -2,11 +2,11 @@
 
 local Guard             = using "System.Guard"
 local AddonInfoDto      = using "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto"
-local WoWGetAddonInfo   = using "Pavilion.Warcraft.Addons.BuiltIns.GetAddonInfo"
+local WoWGetAddonInfo   = using "Pavilion.Warcraft.Foundation.Natives.GetAddonInfo"
 
-local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNotLoadableReason" -- @formatter:on
+local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Foundation.Enums.SWoWAddonNotLoadableReason" -- @formatter:on
 
-local Service = using "[declare]" "Pavilion.Warcraft.Addons.AddonsService"
+local Service = using "[declare]" "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 
 
 function Service:New()

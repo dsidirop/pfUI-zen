@@ -5,7 +5,7 @@ local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local Localization            = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
+local Localization            = using "Pavilion.Warcraft.Foundation.Localization"
 local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.ConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.Translations.All" --@formatter:on
 

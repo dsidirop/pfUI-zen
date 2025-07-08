@@ -4,9 +4,9 @@ local Guard  = using "System.Guard"
 local Event  = using "System.Event"
 local Fields = using "System.Classes.Fields"
 
-local IsAltKeyDown     = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsAltKeyDown"
-local IsShiftKeyDown   = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsShiftKeyDown"
-local IsControlKeyDown = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown"
+local IsAltKeyDown     = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsAltKeyDown"
+local IsShiftKeyDown   = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsShiftKeyDown"
+local IsControlKeyDown = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsControlKeyDown"
 
 local Timer                                = using "Pavilion.Warcraft.Addons.Zen.Foundation.Time.Timer"
 local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.Zen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"

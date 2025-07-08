@@ -3,7 +3,7 @@
 local Guard        = using "System.Guard"
 local Fields       = using "System.Classes.Fields"
 
-local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Strenums.SWoWAddonNotLoadableReason"
+local SWoWAddonNotLoadableReason = using "Pavilion.Warcraft.Foundation.Enums.SWoWAddonNotLoadableReason"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Contracts.AddonInfoDto" --@formater:on
 

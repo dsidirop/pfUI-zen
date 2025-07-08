@@ -1,11 +1,11 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
 local S                                     = using "System.Helpers.Strings" --                                                               @formatter:off
-local EWowItemQuality                       = using "Pavilion.Warcraft.Enums.EWowItemQuality"
-local GambledItemInfoDto                    = using "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto"
-local EWoWLootingIneligibilityReasonType    = using "Pavilion.Warcraft.Enums.EWoWLootingIneligibilityReasonType"
+local EWowItemQuality                       = using "Pavilion.Warcraft.Foundation.Enums.EWowItemQuality"
+local GambledItemInfoDto                    = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto"
+local EWoWLootingIneligibilityReasonType    = using "Pavilion.Warcraft.Foundation.Enums.EWoWLootingIneligibilityReasonType"
 
-local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
+local TG, U = using "[testgroup] [tagged]" "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto.Tests" { "pavilion", "grouplooting" } -- @formatter:on
 
 TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.ShouldConstructSuccessfully",
         function()

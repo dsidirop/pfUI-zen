@@ -3,7 +3,7 @@
 local B = using "[built-ins]" [[ GetLocale = GetLocale ]]
 
 
-local Localization = using "[declare] [static]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.Localization"
+local Localization = using "[declare] [static]" "Pavilion.Warcraft.Foundation.Localization"
 
 
 Localization.GetLocale = B.GetLocale

@@ -1,8 +1,8 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 local Guard = using "System.Guard"
 
-local WoWUIParent = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.UIParent"
-local WoWCreateFrame = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame"
+local WoWUIParent = using "Pavilion.Warcraft.Foundation.Natives.UI.UIParent"
+local WoWCreateFrame = using "Pavilion.Warcraft.Foundation.Natives.UI.CreateFrame"
 
 local ManagedElement = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Element"
 local SWoWElementType = using "Pavilion.Warcraft.Addons.Zen.Foundation.UI.ManagedElements.Strenums.SWoWElementType" 

@@ -5,7 +5,7 @@ local Global = using "System.Global"
 local Fields = using "System.Classes.Fields"
 
 local Event          = using "System.Event"
-local WoWCreateFrame = using "Pavilion.Warcraft.Addons.Zen.Externals.WoW.CreateFrame"
+local WoWCreateFrame = using "Pavilion.Warcraft.Foundation.Natives.UI.CreateFrame"
 
 -- todo   it would make sense to have a timer-factory so that it will generate the best possible
 -- todo   timer for the underlying platform   newer wow clients do support C_Timer afterall 

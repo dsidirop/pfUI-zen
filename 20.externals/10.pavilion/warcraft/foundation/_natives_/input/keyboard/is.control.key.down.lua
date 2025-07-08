@@ -6,4 +6,4 @@ local function IsControlKeyDownBooleanized()
     return WowNativeIsControlKeyDown() == 1
 end
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Zen.Externals.WoW.IsControlKeyDown" (IsControlKeyDownBooleanized)
+using "[declare] [bind]" "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsControlKeyDown" (IsControlKeyDownBooleanized)

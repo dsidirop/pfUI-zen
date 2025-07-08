@@ -13,7 +13,7 @@ local Pfui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui"
 local PfuiGui = using "Pavilion.Warcraft.Addons.Zen.Externals.Pfui.Gui"
 local Enumerable = using "Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable"
 
-local AddonsService = using "Pavilion.Warcraft.Addons.AddonsService"
+local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local TranslationsService = using "Pavilion.Warcraft.Addons.Zen.Foundation.Internationalization.TranslationsService"
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.Zen.Domain.CommandingServices.ZenEngineCommandHandlersService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.Zen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
