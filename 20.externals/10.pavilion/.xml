@@ -3,6 +3,5 @@
     <Include file="data.structures\.xml"/>
     <Include file="mta.lualinq\.xml"/>
 
-    <Include file="pfui\.xml"/>
-    <Include file="wow\.xml"/>
+    <Include file="warcraft\.xml"/>
 </Ui>
