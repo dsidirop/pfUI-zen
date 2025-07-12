@@ -19,8 +19,8 @@ end)
 function Class:New(zenAddonTranslator, pfuiTranslatorAsFallback)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(zenAddonTranslator, ZenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
-    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, PfuiTranslator, "pfuiTranslatorAsFallback")
+    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
+    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
 
     local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
@@ -37,8 +37,8 @@ end
 using "[autocall]"
 function Class:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(
-            self._zenAddonTranslator:Translate(message), --         order
-            self._pfuiTranslatorAsFallback:Translate(message), --   order
+            self._zenAddonTranslator:TryTranslate(message), --         order
+            self._pfuiTranslatorAsFallback:TryTranslate(message), --   order
             message
     )
 
