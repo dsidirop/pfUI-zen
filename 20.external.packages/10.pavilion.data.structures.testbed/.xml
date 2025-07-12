@@ -1,0 +1,8 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../Ui.xsd">
+    <!-- ordering -->
+    <Include file="_setup_\.xml"/>
+
+    <Include file="lru.cache.testbed\.xml"/>
+
+    <Include file="_teardown_\.xml"/>
+</Ui>

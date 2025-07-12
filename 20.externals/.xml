@@ -1,5 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
-    <!-- ordering -->
-    <Include file="10.pavilion\.xml"/>
-    <Include file="11.pavilion.tests\.xml"/>
-</Ui>
