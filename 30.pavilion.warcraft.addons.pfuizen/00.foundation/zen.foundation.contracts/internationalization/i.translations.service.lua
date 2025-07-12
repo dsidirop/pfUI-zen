@@ -2,5 +2,5 @@
 
 local ITranslationsService = using "[declare] [interface]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslationsService"
 
-function ITranslationsService:Translate(message)
+function ITranslationsService:TryTranslate(message)
 end

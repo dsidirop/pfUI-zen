@@ -44,6 +44,6 @@ function ZenOwnTranslatorService:New(targetLanguage)
     return instance
 end
 
-function ZenOwnTranslatorService:Translate(message)
+function ZenOwnTranslatorService:TryTranslate(message)
     return self._properTranslationTable[message] -- we intentionally avoid coalescing to 'message' here   its vital to return nil if the translation is not found
 end

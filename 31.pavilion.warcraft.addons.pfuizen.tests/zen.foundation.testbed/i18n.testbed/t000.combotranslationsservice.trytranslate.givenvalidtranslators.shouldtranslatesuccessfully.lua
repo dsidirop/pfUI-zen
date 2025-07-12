@@ -20,13 +20,13 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
         function(options)
             -- ARRANGE
             local zenAddonTranslatorMock = {
-                Translate = function(_, _)
+                TryTranslate = function(_, _)
                     return nil
                 end
             }
 
             local pfuiTranslatorAsFallbackMock = {
-                Translate = function(_, message)
+                TryTranslate = function(_, message)
                     return "(Translated) " .. message
                 end
             }

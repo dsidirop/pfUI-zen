@@ -8,7 +8,7 @@ function PfuiTranslatorService:New()
     return self:Instantiate()
 end
 
-function PfuiTranslatorService:Translate(message)
+function PfuiTranslatorService:TryTranslate(message)
     return PfuiTranslationTable[message]
 end
 
