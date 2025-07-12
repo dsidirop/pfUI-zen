@@ -1,6 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Classes.Fields.Testbed" { "system", "system-core", "classes", "autocall" }
+local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Fields.Testbed"
 
 TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork",
         function()
@@ -8,9 +8,16 @@ TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWo
 
             -- ACT
             function action()
-                local Class = using "[declare]" "T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork.Foobar"
+                local IFooInterface = using "[declare] [interface]" "T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork.IFooInterface"
+                
+                function IFooInterface:Ping()
+                end
+                
+                local Class = using "[declare] [blend]" "T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork.Foobar" {
+                    "IFooInterface", IFooInterface
+                }
 
-                using "[autocall]"
+                using "[autocall]" "Ping"
                 function Class:Ping()
                     return "ping"
                 end

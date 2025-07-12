@@ -34,7 +34,7 @@ end
 --
 --     _translationsService("foobar")   <=>   _translationsService:TryTranslate("foobar")
 --
-using "[autocall]"
+using "[autocall]" "TryTranslate"
 function Class:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(
             self._zenAddonTranslator:TryTranslate(message), --         order

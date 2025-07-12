@@ -12,7 +12,7 @@ local Exception = using "System.Exceptions.Exception"
 
 local Throw = using "[declare] [static]" "System.Exceptions.Throw"
 
-using "[autocall]"
+using "[autocall]" "Do"
 function Throw:Do(exception)
     Guard.Assert.Explained.IsInstanceOf(exception, Exception, "[THR.CLL.010]", "exception")
 

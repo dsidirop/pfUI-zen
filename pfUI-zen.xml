@@ -3,8 +3,8 @@
 
     <!-- testing-framework -->
     <Include file="00.testing\.xml"/>
-    
-    <!-- system + packages -->    
+
+    <!-- system + packages -->
     <Include file="10.system\.xml"/>
     <Include file="20.external.packages\.xml"/>
 
