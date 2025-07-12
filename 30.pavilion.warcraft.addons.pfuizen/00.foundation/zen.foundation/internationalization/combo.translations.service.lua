@@ -5,7 +5,7 @@ local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
 local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
-local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService" -- @formatter:on
+local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" -- @formatter:on
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
 
