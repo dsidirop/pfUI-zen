@@ -3,11 +3,11 @@
     <Include file="00.testing\.xml"/>
     <Include file="10.system\.xml"/>
     <Include file="20.externals\.xml"/>
-    <Include file="30.zen.module\.xml"/>
+    <Include file="30.pavilion.warcraft.addons.pfuizen\.xml"/>
 
     <!-- tests -->
     <Include file="20.externals\21.standard.tests\.xml"/>
-    <Include file="31.zen.module.tests\.xml"/>
+    <Include file="31.pavilion.warcraft.addons.pfuizen.tests\.xml"/>
 
     <!-- keep last -->
     <Include file="00.testing\tests.runner.lua"/>
