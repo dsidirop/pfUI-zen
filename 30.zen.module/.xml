@@ -1,26 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
     <!-- ordering is important here -->
-
-    <!-- 00 contracts -->
-    <Include file="zen.foundation.contracts\.xml"/>
-    <Include file="zen.controllers.contracts\.xml"/>
-    <Include file="zen.persistence.contracts\.xml"/>
-    <Include file="zen.domain.contracts\.xml"/>
-
-    <!-- 10 foundation -->
-    <Include file="zen.foundation\.xml"/>
-    <Include file="zen.foundation.ui\.xml"/>
-    <Include file="zen.foundation.pfui\.xml"/>
-
-    <!-- 20 persistence -->
-    <Include file="zen.persistence\.xml"/>
-
-    <!-- 30 domain -->
-    <Include file="zen.domain\.xml"/>
-
-    <!-- 40 controllers -->
-    <Include file="zen.controllers.ui.native\.xml"/>
-    <Include file="zen.controllers.ui.pfui\.xml"/>
+    <Include file="00.foundation\.xml"/>
+    <Include file="05.persistence\.xml"/>
+    <Include file="10.domain\.xml"/>
+    <Include file="20.mediators\.xml"/>
+    <Include file="30.controllers\.xml"/>
 
     <!-- 50 module initializer -->
     <Include file="module.initializer.lua"/>
