@@ -4,10 +4,14 @@ local Nils    = using "System.Nils"
 local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
-local PfuiTranslator     = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
-local ZenAddonTranslator = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" -- @formatter:on
+local ITranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
+local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" -- @formatter:on
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService" {
+    "ITranslatorService", ITranslatorService
+}
 
 Fields(function(upcomingInstance)
     upcomingInstance._zenAddonTranslator = nil
@@ -24,8 +28,8 @@ function Class:New(zenAddonTranslator, pfuiTranslatorAsFallback)
 
     local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
-    instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenAddonTranslator:NewForActiveUILanguage()) -- todo   get this from di
-    instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslator.I                           ) -- todo   get this from di
+    instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenOwnTranslatorService:NewForActiveUILanguage()) --   todo   get this from di
+    instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslatorService.I                           ) -- todo   get this from di
 
     return instance --@formatter:on
 end
