@@ -2,7 +2,7 @@
 
 local PfuiTranslationTable = using "[built-in]" [[ pfUI.env.T or {} ]]
 
-local PfuiTranslatorService = using "[declare]" "Pavilion.Warcraft.Addons.Pfui.PfuiTranslatorService"
+local PfuiTranslatorService = using "[declare]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
 
 function PfuiTranslatorService:New()
     return self:Instantiate()

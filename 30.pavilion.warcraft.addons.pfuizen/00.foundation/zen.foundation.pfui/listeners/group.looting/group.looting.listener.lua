@@ -8,7 +8,7 @@ local Fields   = using "System.Classes.Fields"
 
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
 
-local PfuiRoll                                 = using "Pavilion.Warcraft.Addons.Pfui.Native.PfuiRoll"
+local PfuiRoll                                 = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiRoll"
 local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.Listener"

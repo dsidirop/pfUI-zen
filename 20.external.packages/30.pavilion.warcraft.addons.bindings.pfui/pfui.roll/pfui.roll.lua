@@ -2,5 +2,5 @@
 
 local PfuiRoll = using "[built-in]" [[  pfUI.roll  ]]
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.Pfui.Native.PfuiRoll" (PfuiRoll) -- todo   turn this kind of stuff into class-based services that conform to interfaces
+using "[declare] [bind]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiRoll" (PfuiRoll) -- todo   turn this kind of stuff into class-based services that conform to interfaces
 

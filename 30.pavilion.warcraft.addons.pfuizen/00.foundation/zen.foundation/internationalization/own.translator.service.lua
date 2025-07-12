@@ -7,7 +7,7 @@ local Fields = using "System.Classes.Fields"
 
 local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService"
 
-local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Pfui.PfuiConfigurationReader"
+local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.Translations.All" --@formatter:on
 
 local ZenOwnTranslatorService = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService" -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenOwnTranslatorService and move it into its own separate subfolder
