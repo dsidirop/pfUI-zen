@@ -2,30 +2,25 @@
 
 local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Fields.Testbed"
 
-TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork",
+TG:AddFact("T010.Classes.AutocallAttr.GivenStrayAutocallAttribute.ShouldError",
         function()
             -- ARRANGE
 
             -- ACT
             function action()
-                local IFooInterface = using "[declare] [interface]" "T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork.IFooInterface"
+                local IFooInterface = using "[declare] [interface]" "T010.Classes.AutocallAttr.GivenStrayAutocallAttribute.ShouldError.IFooInterface"
                 
                 function IFooInterface:Ping()
                 end
                 
-                local Class = using "[declare] [blend]" "T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWork.Foobar" {
+                local Class = using "[declare] [blend]" "T010.Classes.AutocallAttr.GivenStrayAutocallAttribute.ShouldError.Foobar" {
                     "IFooInterface", IFooInterface
                 }
 
                 using "[autocall]" "Ping"
-                function Class:Ping()
-                    return "ping"
-                end
-
-                using "[autocall]" "Pong"
-                function Class:Pong()
-                    return "pong"
-                end
+                -- missing the class:method here ...
+                
+                local NextClass = using "[declare]" "T010.Classes.AutocallAttr.GivenStrayAutocallAttribute.ShouldError.NextClass" -- should error out due to the stray autocall attribute
 
                 local instance = Class:New()
 
@@ -33,8 +28,6 @@ TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWo
             end
 
             -- ASSERT
-            local result = U.Should.Not.Throw(action)
-
-            U.Should.Be.PlainlyEqual(result, "pong")
+            U.Should.Throw(action, "*[NR.ASR.NSPA.010]*")
         end
 )

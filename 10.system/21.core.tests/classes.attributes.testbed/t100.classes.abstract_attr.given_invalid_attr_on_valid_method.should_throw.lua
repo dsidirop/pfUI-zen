@@ -1,14 +1,14 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Classes.Fields.Testbed" { "system", "system-core", "classes", "autocall" }
+local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Fields.Testbed"
 
-TG:AddFact("T010.Classes.Attributes.GivenInvalidAttributeOnValidMethod.ShouldThrow",
+TG:AddFact("T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow",
         function()
             -- ARRANGE
 
             -- ACT
             function action()
-                local Class = using "[declare]" "T010.Classes.Attributes.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar"
+                local Class = using "[declare]" "T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar"
 
                 using "[abstract]" -- invalid
                 function Class:Ping()
@@ -17,6 +17,6 @@ TG:AddFact("T010.Classes.Attributes.GivenInvalidAttributeOnValidMethod.ShouldThr
             end
 
             -- ASSERT
-            U.Should.Throw(action, "*[NR.NSCPF.SNIF.FNSC.030]*[T010.Classes.Attributes.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar:Ping()]*")
+            U.Should.Throw(action, "*[NR.NSCPF.SNIF.FNSC.030]*[T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar:Ping()]*")
         end
 )

@@ -1,5 +1,12 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+
     <Include file="_.lua"/>
-    <Include file="t000.classes.attributes.given_autocall_attr_on_valid_method.should_work.lua"/>
-    <Include file="t010.classes.attributes.given_invalid_attr_on_valid_method.should_throw.lua"/>
+
+    <Include file="t000.classes.autocall_attr.given_autocall_attr_on_valid_method.should_work.lua"/>
+    <Include file="t010.classes.autocall_attr.given_stray_autocall_attr.should_throw.lua"/>
+    <Include file="t020.classes.autocall_attr.given_mismatched_autocall_attr.should_throw.lua"/>
+    <Include file="t025.classes.autocall_attr.given_mismatched_autocall_attr.should_throw.lua"/>
+
+    <Include file="t100.classes.abstract_attr.given_invalid_attr_on_valid_method.should_throw.lua"/>
+
 </Ui>
