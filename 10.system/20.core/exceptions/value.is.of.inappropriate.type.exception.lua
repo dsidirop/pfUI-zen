@@ -65,7 +65,7 @@ function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
         return optionalExpectationOrExpectedType
     end
 
-    local namespace = Reflection.TryGetNamespaceIfClassProto(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
+    local namespace = Reflection.TryGetNamespace(optionalExpectationOrExpectedType) -- this is to account for enums and strenums
     if namespace ~= nil then
         return namespace
     end
