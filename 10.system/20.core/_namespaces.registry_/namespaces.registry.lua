@@ -1074,9 +1074,12 @@ do
     end
 
     NamespaceRegistry.Assert = {}
+    NamespaceRegistry.Assert.NoStrayPendingAttributes = function()
+        _ = NamespaceRegistrySingleton:PopAllPendingAttributes() == nil or _throw_exception("[NR.ASR.NSPA.010] There are stray attributes that were not applied to any symbol - did you forget to apply them?")
+    end
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath) --@formatter:off
-        _ = _type(namespacePath) == "string"                                                      or _throw_exception("the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
-        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        _ = _type(namespacePath) == "string"                                                      or _throw_exception("[NR.ASR.NPIH.010] the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
+        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("[NR.ASR.NPIH.020] namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == SRegistrySymbolTypes.Enum
@@ -1085,7 +1088,7 @@ do
                 or symbolType == SRegistrySymbolTypes.AbstractClass
                 or symbolType == SRegistrySymbolTypes.NonStaticClass
 
-        _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
+        _ = isDeclarableSymbol or _throw_exception("[NR.ASR.STIFDS.010] the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
@@ -1142,6 +1145,7 @@ do
         _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NoStrayPendingAttributes()
         NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol(symbolType)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
@@ -1297,6 +1301,7 @@ do
         _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NoStrayPendingAttributes()
 
         local entry = _namespaces_registry[namespacePath]
         if entry == nil then
