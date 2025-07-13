@@ -10,13 +10,13 @@ TG:AddFact("T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldT
             function action()
                 local Class = using "[declare]" "T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar"
 
-                using "[abstract]" -- invalid
+                using "[abstract]" "Ping" -- invalid
                 function Class:Ping()
                     return "ping"
                 end
             end
 
             -- ASSERT
-            U.Should.Throw(action, "*[NR.NSCPF.SNIF.FNSC.030]*[T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar:Ping()]*")
+            U.Should.Throw(action, "*[NR.MA.NFABST.CTOR.015]*[T100.Classes.AbstractAttr.GivenInvalidAttributeOnValidMethod.ShouldThrow.Foobar:Ping()]*")
         end
 )
