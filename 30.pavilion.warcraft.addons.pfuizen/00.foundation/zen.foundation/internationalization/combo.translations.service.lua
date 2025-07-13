@@ -14,22 +14,22 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Founda
 }
 
 Fields(function(upcomingInstance)
-    upcomingInstance._zenAddonTranslator = nil
-    upcomingInstance._pfuiTranslatorAsFallback = nil
+    upcomingInstance._zenOwnTranslatorService = nil
+    upcomingInstance._pfuiTranslatorAsFallbackService = nil
 
     return upcomingInstance
 end)
 
-function Class:New(zenAddonTranslator, pfuiTranslatorAsFallback)
+function Class:New(zenOwnTranslatorService, pfuiTranslatorAsFallbackService)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(zenAddonTranslator, "zenAddonTranslator") -- todo    employ type-checking here using interfaces
-    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallback, "pfuiTranslatorAsFallback")
+    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallbackService, "pfuiTranslatorAsFallbackService")
+    Guard.Assert.IsNilOrInstanceImplementing(zenOwnTranslatorService, ITranslatorService, "zenOwnTranslatorService")
 
     local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 
-    instance._zenAddonTranslator       = Nils.Coalesce(zenAddonTranslator,       ZenOwnTranslatorService:NewForActiveUILanguage()) --   todo   get this from di
-    instance._pfuiTranslatorAsFallback = Nils.Coalesce(pfuiTranslatorAsFallback, PfuiTranslatorService.I                           ) -- todo   get this from di
+    instance._zenOwnTranslatorService         = Nils.Coalesce(zenOwnTranslatorService,         ZenOwnTranslatorService:NewForActiveUILanguage()) -- todo   get this from di
+    instance._pfuiTranslatorAsFallbackService = Nils.Coalesce(pfuiTranslatorAsFallbackService, PfuiTranslatorService.I)                          -- todo   get this from di
 
     return instance --@formatter:on
 end
@@ -41,8 +41,8 @@ end
 using "[autocall]" "TryTranslate"
 function Class:TryTranslate(message, optionalColor)
     message = Nils.Coalesce(
-            self._zenAddonTranslator:TryTranslate(message), --         order
-            self._pfuiTranslatorAsFallback:TryTranslate(message), --   order
+            self._zenOwnTranslatorService:TryTranslate(message), --           order
+            self._pfuiTranslatorAsFallbackService:TryTranslate(message), --   order
             message
     )
 
