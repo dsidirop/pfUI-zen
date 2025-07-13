@@ -3,6 +3,7 @@
 local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
+local Console = using "System.Console"
 
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
@@ -20,7 +21,7 @@ end)
 function Class:New(userPreferencesRepositoryQueryable)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(userPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
+    Guard.Assert.IsNilOrInstanceOf(userPreferencesRepositoryQueryable, UserPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
 
     local instance = self:Instantiate()
 

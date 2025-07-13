@@ -22,7 +22,7 @@ end)
 function Class:New(userPreferencesUnitOfWork)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(userPreferencesUnitOfWork, "userPreferencesUnitOfWork")
+    Guard.Assert.IsNilOrInstanceOf(userPreferencesUnitOfWork, UserPreferencesUnitOfWork, "userPreferencesUnitOfWork")
     
     local instance = self:Instantiate()
     

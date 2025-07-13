@@ -3,64 +3,55 @@
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local DBContext                          = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.DBContext"
-local QueryableService                   = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
-local WriteableService                   = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.WriteableService"
+local PfuiDBContext                      = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.DBContext"
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
+local UserPreferencesQueryableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
+local UserPreferencesWriteableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.WriteableService"
+
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.Service" { --@formatter:on
+    "UserPreferencesQueryableService", UserPreferencesQueryableService,
+    "UserPreferencesWriteableService", UserPreferencesWriteableService,
+
     "IUserPreferencesService", using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService"
 }
 
-Fields(function(upcomingInstance)
-    upcomingInstance._serviceQueryable = nil
-    upcomingInstance._serviceWriteable = nil
-
-    return upcomingInstance
-end)
-
-function Class:NewWithDBContext(optionalDbContext)
+function Class:NewWithDBContext(optionalDbContext) -- todo  get rid of this once we get DI going
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(optionalDbContext, "optionalDbContext")
+    Guard.Assert.IsNilOrInstanceOf(optionalDbContext, PfuiDBContext, "optionalDbContext")
 
-    optionalDbContext = optionalDbContext or DBContext:New()
+    optionalDbContext = optionalDbContext or PfuiDBContext:New()
 
-    return self:New(
-            QueryableService:New(UserPreferencesRepositoryQueryable:New(optionalDbContext)),
-            WriteableService:New(UserPreferencesUnitOfWork:New(optionalDbContext))
+    return Class:New(
+        UserPreferencesUnitOfWork:New(optionalDbContext)
+        UserPreferencesRepositoryQueryable:New(optionalDbContext),
     )
 end
 
-function Class:New(serviceQueryable, serviceWriteable)
+function Class:New(userPreferencesUnitOfWork, userPreferencesRepositoryQueryable)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsTable(serviceQueryable, "serviceQueryable")
-    Guard.Assert.IsTable(serviceWriteable, "serviceWriteable")
+    Guard.Assert.IsInstanceOf(userPreferencesUnitOfWork, UserPreferencesUnitOfWork, "userPreferencesUnitOfWork")
+    Guard.Assert.IsInstanceOf(userPreferencesRepositoryQueryable, UserPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
 
     local instance = self:Instantiate()
 
-    instance._serviceQueryable = serviceQueryable
-    instance._serviceWriteable = serviceWriteable
+    instance.asBase.UserPreferencesWriteableService.New(instance, userPreferencesUnitOfWork)
+    instance.asBase.UserPreferencesQueryableService.New(instance, userPreferencesRepositoryQueryable)
 
     return instance
 end
 
-function Class:GetAllUserPreferences()
-    Scopify(EScopes.Function, self)
 
-    return _serviceQueryable:GetAllUserPreferences()
-end
-
-function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
-    Scopify(EScopes.Function, self)
-
-    return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateMode(value)
-end
-
-function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
-    Scopify(EScopes.Function, self)
-
-    return _serviceWriteable:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
-end
+-- provided by the base classes
+--
+-- function Class:GetAllUserPreferences()
+-- end
+-- 
+-- function Class:GreeniesGrouplootingAutomation_UpdateMode(value)
+-- end
+-- 
+-- function Class:GreeniesGrouplootingAutomation_UpdateActOnKeybind(value)
+-- end
