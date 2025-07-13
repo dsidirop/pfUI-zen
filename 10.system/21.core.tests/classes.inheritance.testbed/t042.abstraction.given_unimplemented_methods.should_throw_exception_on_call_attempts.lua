@@ -9,7 +9,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                     Action = function()
                         local AFoo = using "[declare] [abstract]" "INH.ABS.GUM.STEOCA.010.AFoo"
 
-                        using "[abstract]"
+                        using "[abstract]" "Ping"
                         function AFoo:Ping(a, b, c)
                             -- Throw(NotImplementedException:New()) -- this is not needed because the infrastructure already auto-sets the methods properly 
                         end
@@ -37,7 +37,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                     Action = function()
                         local AFoo1 = using "[declare] [abstract]" "INH.ABS.GUM.STEOCA.020.AFoo1"
 
-                        using "[abstract]"
+                        using "[abstract]" "Ping"
                         function AFoo1:Ping(a, b, c)
                             -- Throw(NotImplementedException:New()) -- this is not needed because the infrastructure already auto-sets the methods properly
                         end
@@ -68,7 +68,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                     Action = function()
                         local AFoo1 = using "[declare] [abstract]" "INH.ABS.GUM.STEOCA.030.AFoo1"
 
-                        using "[abstract]"
+                        using "[abstract]" "Ping"
                         function AFoo1:Ping(a, b, c)
                             -- Throw(NotImplementedException:New()) -- this is not needed because the infrastructure already auto-sets the methods properly
                         end

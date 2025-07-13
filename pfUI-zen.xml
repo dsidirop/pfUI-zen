@@ -1,13 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   Ui.xsd">
     <!-- order -->
-    <Include file="00.testing\.xml"/>
-    <Include file="10.system\.xml"/>
-    <Include file="20.externals\.xml"/>
-    <Include file="30.zen.module\.xml"/>
 
-    <!-- tests -->
-    <Include file="20.externals\21.standard.tests\.xml"/>
-    <Include file="31.zen.module.tests\.xml"/>
+    <!-- testing-framework -->
+    <Include file="00.testing\.xml"/>
+
+    <!-- system + packages -->
+    <Include file="10.system\.xml"/>
+    <Include file="20.external.packages\.xml"/>
+
+    <!-- addon-core itself -->
+    <Include file="30.pavilion.warcraft.addons.pfuizen\.xml"/>
+    <Include file="31.pavilion.warcraft.addons.pfuizen.tests\.xml"/>
 
     <!-- keep last -->
     <Include file="00.testing\tests.runner.lua"/>

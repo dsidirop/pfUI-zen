@@ -103,15 +103,15 @@ local function _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, des
     _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
     _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
 
-    local found = false
+    local lastMatchingAttributeSpecs
     for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
         if attributeSpecs:GetType() == desiredType then
-            found = true
+            lastMatchingAttributeSpecs = attributeSpecs
             _tableRemove(pendingAttributesArraySnapshot, i)
         end
     end
 
-    return found
+    return lastMatchingAttributeSpecs
 end
 
 local function _stringEndsWith(input, desiredPostfix)
@@ -191,41 +191,89 @@ local SMethodAttributeTypes
 local HealthCheckerSingleton
 local NamespaceRegistrySingleton
 
---[[ METHOD ATTRIBUTES]]
+--[[ METHOD-ATTRIBUTE-SPECS ]]
 
-local MethodAttribute = _spawnSimpleMetatable() -- proto symbol tidbits
+local MethodAttributeSpecs = _spawnSimpleMetatable()
 do
-    function MethodAttribute:New(attributeType)
+    function MethodAttributeSpecs:NewForAbstract(targetMethodName)
         _setfenv(EScope.Function, self)
 
-        _ = _type(attributeType) ~= "table" or  _throw_exception("[NR.MA.CTOR.010] attributeType is not of type SMethodAttributeTypes ( got %q )", _stringify(_type(attributeType)))
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+
+        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFABST.CTOR.010] Cannot process 'abstract' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        _ = latestTidbits:IsAbstractClassEntry()                           or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'abstract' attribute on [%s:%s()] because the target is not an abstract class (did you forget to define it as an abstract class?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFABST.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
+        _ = latestProto[targetMethodName] == nil                           or _throw_exception("[NR.MA.NFABST.CTOR.030] Cannot apply 'abstract' attribute on [%s:%s()] because it is already defined (defined in the parent class maybe?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
 
         local instance = {
-            _attributeType = attributeType
+            _attributeType    = SMethodAttributeTypes.Abstract,
+            
+            _targetProto      = latestProto,
+            _targetMethodName = targetMethodName,
         }
 
         return _setmetatable(instance, self)
     end
 
-    function MethodAttribute:IsAbstract()
+    function MethodAttributeSpecs:NewForAutocall(targetMethodName) --@formatter:off
+        _setfenv(EScope.Function, self)
+
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+
+        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        _ = latestTidbits:IsInterfaceEntry()                               or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
+
+        latestProto[targetMethodName] = nil --00 crucial
+
+        local instance = {
+            _attributeType    = SMethodAttributeTypes.Autocall,
+            
+            _targetProto      = latestProto,
+            _targetMethodName = targetMethodName,
+        }
+
+        return _setmetatable(instance, self)
+        
+        --00   absolutely vital to remove any pre-defined method from any parent class so that the __newindex will be triggered
+        --
+        --     using "[autocall]" "Ping" -- this will set Class.Ping = nil so that ClassL:Ping() below will trigger the __newindex
+        --     function Class:Ping()
+        --        return "ping"
+        --     end
+    end
+
+    function MethodAttributeSpecs:IsAbstract()
         _setfenv(EScope.Function, self)
 
         return self._attributeType == SMethodAttributeTypes.Abstract
     end
 
-    function MethodAttribute:IsAutoCall()
+    function MethodAttributeSpecs:IsAutocall()
         _setfenv(EScope.Function, self)
 
-        return self._attributeType == SMethodAttributeTypes.AutoCall
+        return self._attributeType == SMethodAttributeTypes.Autocall
     end
 
-    function MethodAttribute:GetType()
+    function MethodAttributeSpecs:GetType()
         _setfenv(EScope.Function, self)
 
         return _attributeType
     end
 
-    function MethodAttribute:__tostring()
+    function MethodAttributeSpecs:GetTargetProto()
+        _setfenv(EScope.Function, self)
+    
+        return _targetProto
+    end
+
+    function MethodAttributeSpecs:GetTargetMethodName()
+        _setfenv(EScope.Function, self)
+
+        return _targetMethodName
+    end
+
+    function MethodAttributeSpecs:__tostring()
         _setfenv(EScope.Function, self)
 
         return _attributeType
@@ -365,8 +413,13 @@ do
             return
         end
 
-        local isMethodMarkedAsAutoCall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
-        if isMethodMarkedAsAutoCall then
+        local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
+        if autocallAttributeSpecs ~= nil then
+            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
+            ) --@formatter:on
+
             classProto.__Call__ = value
             _rawset(classProto, key, value)
         end
@@ -468,8 +521,13 @@ do
             return
         end
 
-        local isMethodMarkedAsAutoCall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.AutoCall) ~= nil
-        if isMethodMarkedAsAutoCall then
+        local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
+        if autocallAttributeSpecs ~= nil then
+            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SNIF.FNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
+            ) --@formatter:on
+
             classProto.__call = value
             _rawset(classProto, key, value)
         end
@@ -615,7 +673,7 @@ end --@formatter:off
 SMethodAttributeTypes = EnumsProtoFactory.Spawn()
 do --@formatter:off
     SMethodAttributeTypes.Abstract = "abstract"
-    SMethodAttributeTypes.AutoCall = "autocall"
+    SMethodAttributeTypes.Autocall = "autocall"
 end --@formatter:off
 
 local ProtosFactory = {}
@@ -1026,9 +1084,12 @@ do
     end
 
     NamespaceRegistry.Assert = {}
+    NamespaceRegistry.Assert.NoStrayPendingAttributes = function()
+        _ = NamespaceRegistrySingleton:PopAllPendingAttributes() == nil or _throw_exception("[NR.ASR.NSPA.010] There are stray attributes that were not applied to any symbol - did you forget to apply them?")
+    end
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath) --@formatter:off
-        _ = _type(namespacePath) == "string"                                                      or _throw_exception("the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
-        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        _ = _type(namespacePath) == "string"                                                      or _throw_exception("[NR.ASR.NPIH.010] the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
+        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("[NR.ASR.NPIH.020] namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == SRegistrySymbolTypes.Enum
@@ -1037,7 +1098,7 @@ do
                 or symbolType == SRegistrySymbolTypes.AbstractClass
                 or symbolType == SRegistrySymbolTypes.NonStaticClass
 
-        _ = isDeclarableSymbol or _throw_exception("the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
+        _ = isDeclarableSymbol or _throw_exception("[NR.ASR.STIFDS.010] the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
@@ -1094,6 +1155,7 @@ do
         _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NoStrayPendingAttributes()
         NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol(symbolType)
 
         local sanitizedNamespacePath, isForPartial = NamespaceRegistry.SanitizeNamespacePath_(namespacePath)
@@ -1159,7 +1221,7 @@ do
     --
     --     _namespacer_bind("Foo.Bar",           function(x) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
     --     _namespacer_bind("[declare] [class]", function(namespace) [...] end) <- yes the raw-symbol-proto might be just a function or an int or whatever
-    --     _namespacer_bind("Pavilion.Warcraft.Addons.Zen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
+    --     _namespacer_bind("Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable",   _mta_lualinq_enumerable)
     --
     function NamespaceRegistry:BindKeyword(keyword, keywordFunc) --@formatter:off
         _setfenv(EScope.Function, self)
@@ -1249,6 +1311,7 @@ do
         _setfenv(EScope.Function, self)
 
         NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NoStrayPendingAttributes()
 
         local entry = _namespaces_registry[namespacePath]
         if entry == nil then
@@ -1285,7 +1348,7 @@ do
         
         _ = _type(attributeSpecs) == "table" or _throw_exception("[NR.QD.010] AttributeSpecs must be a table (got %q)", _type(attributeSpecs))
 
-        _pendingAttributesArray = _pendingAttributesArray or {}
+        _pendingAttributesArray = _pendingAttributesArray or {} -- order   keep this last
         _tableInsert(_pendingAttributesArray, attributeSpecs)
     end
     
@@ -1654,12 +1717,12 @@ do
         end
     end)
 
-    -- @formatter:off   todo   also introduce [declare] [partial] [declare] [testbed] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
-    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]",          function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.Abstract  )) end)
-    NamespaceRegistrySingleton:BindAutorunKeyword("[autocall]",          function() NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:New(SMethodAttributeTypes.AutoCall  )) end)
+    -- @formatter:off   todo   also introduce [declare] [partial] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
+    NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAutocall(targetMethodName)) end)
+    NamespaceRegistrySingleton:BindKeyword("[abstract]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract(targetMethodName)) end)
 
-    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",       function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
-    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]", function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
+    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",           function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
+    NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]",     function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
 
     NamespaceRegistrySingleton:BindKeyword("[declare]",                      function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.NonStaticClass       ) end)
     NamespaceRegistrySingleton:BindKeyword("[declare] [enum]",               function(namespacePath) return NamespaceRegistrySingleton:UpsertSymbolProtoSpecs(namespacePath, SRegistrySymbolTypes.Enum                 ) end)

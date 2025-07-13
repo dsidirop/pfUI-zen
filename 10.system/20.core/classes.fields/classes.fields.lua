@@ -5,7 +5,7 @@ local Namespacer = using "System.Namespacer"
 
 local Fields = using "[declare] [static]" "System.Classes.Fields"
 
-using "[autocall]"
+using "[autocall]" "SetFieldPluggerFunc"
 function Fields:SetFieldPluggerFunc(classFieldPluggerCallbackFunc)
     Guard.Assert.IsNotNil(classFieldPluggerCallbackFunc, "classFieldPluggerCallbackFunc")
     
