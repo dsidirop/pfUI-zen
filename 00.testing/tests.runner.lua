@@ -20,6 +20,8 @@ if U then
 
     U.TestsEngine:RunAllTestGroups()
 
+    -- U.TestsEngine:RunTestGroupsByTag("get-namespace")
+
     -- U.TestsEngine:RunSpecificTest("T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow")
 
     -- U.TestsEngine:RunSpecificTest("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePairs.ShouldReturnExpectedVerdict")
