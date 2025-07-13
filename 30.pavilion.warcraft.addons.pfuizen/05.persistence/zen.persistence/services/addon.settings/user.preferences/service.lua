@@ -9,7 +9,9 @@ local WriteableService                   = using "Pavilion.Warcraft.Addons.PfuiZ
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.Service" --@formatter:on
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.Service" { --@formatter:on
+    "IUserPreferencesService", using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService"
+}
 
 Fields(function(upcomingInstance)
     upcomingInstance._serviceQueryable = nil
