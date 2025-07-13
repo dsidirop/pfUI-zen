@@ -26,7 +26,7 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
             function ZenAddonTranslatorMock:TryTranslate(_)
                 return nil
             end
-        
+
             ----
 
             local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"

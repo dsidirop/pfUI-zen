@@ -191,11 +191,11 @@ local SMethodAttributeTypes
 local HealthCheckerSingleton
 local NamespaceRegistrySingleton
 
---[[ METHOD ATTRIBUTES]]
+--[[ METHOD-ATTRIBUTE-SPECS ]]
 
-local MethodAttribute = _spawnSimpleMetatable() -- proto symbol tidbits
+local MethodAttributeSpecs = _spawnSimpleMetatable()
 do
-    function MethodAttribute:NewForAbstract()
+    function MethodAttributeSpecs:NewForAbstract()
         _setfenv(EScope.Function, self)
 
         local instance = {
@@ -206,7 +206,7 @@ do
         return _setmetatable(instance, self)
     end
 
-    function MethodAttribute:NewForAutocall(targetMethodName) --@formatter:off
+    function MethodAttributeSpecs:NewForAutocall(targetMethodName) --@formatter:off
         _setfenv(EScope.Function, self)
 
         _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
@@ -219,31 +219,31 @@ do
         return _setmetatable(instance, self)
     end
 
-    function MethodAttribute:IsAbstract()
+    function MethodAttributeSpecs:IsAbstract()
         _setfenv(EScope.Function, self)
 
         return self._attributeType == SMethodAttributeTypes.Abstract
     end
 
-    function MethodAttribute:IsAutocall()
+    function MethodAttributeSpecs:IsAutocall()
         _setfenv(EScope.Function, self)
 
         return self._attributeType == SMethodAttributeTypes.Autocall
     end
 
-    function MethodAttribute:GetType()
+    function MethodAttributeSpecs:GetType()
         _setfenv(EScope.Function, self)
 
         return _attributeType
     end
 
-    function MethodAttribute:GetTargetMethodName()
+    function MethodAttributeSpecs:GetTargetMethodName()
         _setfenv(EScope.Function, self)
 
         return _targetMethodName
     end
 
-    function MethodAttribute:__tostring()
+    function MethodAttributeSpecs:__tostring()
         _setfenv(EScope.Function, self)
 
         return _attributeType
@@ -1688,8 +1688,8 @@ do
     end)
 
     -- @formatter:off   todo   also introduce [declare] [partial] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
-    NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:NewForAutocall(targetMethodName)) end)
-    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]",              function()                 NamespaceRegistrySingleton:QueueAttribute(MethodAttribute:NewForAbstract())                 end)
+    NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAutocall(targetMethodName)) end)
+    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]",              function()                 NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract())                 end)
 
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",           function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]",     function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
