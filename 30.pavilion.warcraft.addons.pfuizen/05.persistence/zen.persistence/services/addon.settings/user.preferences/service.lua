@@ -3,7 +3,8 @@
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiDBContext                      = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.DBContext"
+local PfuiDBContext                      = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
+
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 

@@ -5,7 +5,7 @@ local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiZenDbContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.DBContext"
+local PfuiZenDbContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
 local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"

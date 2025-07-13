@@ -8,7 +8,7 @@ local Fields = using "System.Classes.Fields"
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local DBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.DBContext"
+local DBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
 local UserPreferencesDto = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
@@ -32,7 +32,7 @@ function Class:New(dbcontextReadonly)
     return instance
 end
 
--- @return UserPreferencesDto
+--- @return UserPreferencesDto
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
