@@ -1590,7 +1590,7 @@ do
             else
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinNameOrProto)
 
-                _ = mixinProtoTidbits ~= nil or _throw_exception("[NR.BM.030] Upon trying to create blend for [%s], blend-item#%d was expected to be a proto but it is not", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
+                _ = mixinProtoTidbits ~= nil or _throw_exception("[NR.BM.030] Upon trying to create blend for [%s], blend-item#%d was expected to be a proto but it is not (type=%q)", targetSymbolProtoNamespace, i, _type(mixinNameOrProto))
 
                 currentPair.Proto = mixinNameOrProto --           order    the second item in the pair is the proto-symbol
                 _tableInsert(transformedMixins, currentPair) --   order
