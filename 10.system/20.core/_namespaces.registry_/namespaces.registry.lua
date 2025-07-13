@@ -922,7 +922,9 @@ do
     function Entry:IsClassEntry()
         _setfenv(EScope.Function, self)
 
-        return _symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.StaticClass
+        return _symbolType == SRegistrySymbolTypes.StaticClass
+            or _symbolType == SRegistrySymbolTypes.AbstractClass
+            or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
     function Entry:IsStaticClassEntry()
