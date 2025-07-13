@@ -11,11 +11,11 @@ local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Persisten
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Domain.CommandingServices.ZenEngineCommandHandlersService" -- @formatter:on
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService" -- @formatter:on
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._zenEngineSingleton = nil
+    upcomingInstance._zenEngineSingleton = nil -- todo   get rid of these when we replace this service with a proper mediator that employs command-handlers once we have the DI system in place
     upcomingInstance._userPreferencesService = nil
 
     return upcomingInstance
