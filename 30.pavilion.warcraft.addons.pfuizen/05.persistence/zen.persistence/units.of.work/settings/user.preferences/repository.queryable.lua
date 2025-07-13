@@ -8,14 +8,15 @@ local Fields = using "System.Classes.Fields"
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local DBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
+local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
 local UserPreferencesDto = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._userPreferencesEntity = nil
+    upcomingInstance._dbcontextReadonly = nil
+    upcomingInstance._userPreferencesLocalEntity = nil -- cached
 
     return upcomingInstance
 end)
@@ -23,11 +24,11 @@ end)
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(dbcontextReadonly, "dbcontextReadonly") -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrInstanceOf(dbcontextReadonly, PfuiZenDBContext, "dbcontextReadonly") -- todo  remove this later on in favour of DI
 
     local instance = self:Instantiate()
     
-    instance._userPreferencesEntity = Nils.Coalesce(dbcontextReadonly, DBContext:New()).Settings.UserPreferences
+    instance._dbcontextReadonly = Nils.Coalesce(dbcontextReadonly, PfuiZenDBContext:New())
     
     return instance
 end
@@ -36,18 +37,36 @@ end
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local mode = SGreeniesGrouplootingAutomationMode:IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
-            and _userPreferencesEntity.GreeniesGrouplootingAutomation.Mode
-            or SGreeniesGrouplootingAutomationMode.Greed
+    local userPreferencesLocalEntity = self:GetUserPreferencesLocalEntity_()
 
-    local actOnKeybind = SGreeniesGrouplootingAutomationActOnKeybind:IsValid(_userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
-            and _userPreferencesEntity.GreeniesGrouplootingAutomation.ActOnKeybind
-            or SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
+    -- todo   introduce ValidateCoalesce() in enums to avoid bugs with ternary operators
+    local mode = not SGreeniesGrouplootingAutomationMode:IsValid(userPreferencesLocalEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
+            and SGreeniesGrouplootingAutomationMode.Greed
+            or userPreferencesLocalEntity.GreeniesGrouplootingAutomation.Mode
+
+    local actOnKeybind = not SGreeniesGrouplootingAutomationActOnKeybind:IsValid(userPreferencesLocalEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
+            and SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
+            or userPreferencesLocalEntity.GreeniesGrouplootingAutomation.ActOnKeybind
 
     return UserPreferencesDto -- todo   automapper (with precondition-validators!)
             :New()
             :ChainSet_GreeniesGrouplootingAutomation_Mode(mode)
             :ChainSet_GreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
 
-    --00 todo   whenever we detect a corruption in the database we auto-sanitive it but on top of that we should also update error-metrics and log it too
+    --00 todo   whenever we detect a corruption in the database we auto-sanitise it but on top of that we should also update error-metrics and log it too
+end
+
+
+-- PRIVATES
+
+function Class:GetUserPreferencesLocalEntity_()
+    Scopify(EScopes.Function, self)
+
+    if _userPreferencesLocalEntity ~= nil then
+        return _userPreferencesLocalEntity
+    end
+
+    _userPreferencesLocalEntity = instance._dbcontextReadonly.Settings.UserPreferences -- we intentionally avoid deep-cloning here
+
+    return _userPreferencesLocalEntity
 end

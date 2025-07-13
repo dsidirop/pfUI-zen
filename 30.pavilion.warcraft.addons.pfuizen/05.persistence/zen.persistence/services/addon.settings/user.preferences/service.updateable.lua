@@ -3,7 +3,7 @@
 local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
-local PfuiZenDbContext                            = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
+local PfuiZenDbContext                            = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
 local UserPreferencesUnitOfWork                   = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"

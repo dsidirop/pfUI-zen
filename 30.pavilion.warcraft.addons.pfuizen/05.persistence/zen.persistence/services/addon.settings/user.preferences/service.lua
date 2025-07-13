@@ -3,7 +3,7 @@
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiDBContext                      = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiDBContext"
+local PfuiZenDBContext                   = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
 
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
@@ -21,13 +21,13 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persis
 function Class:NewWithDBContext(optionalDbContext) -- todo  get rid of this once we get DI going
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(optionalDbContext, PfuiDBContext, "optionalDbContext")
+    Guard.Assert.IsNilOrInstanceOf(optionalDbContext, PfuiZenDBContext, "optionalDbContext")
 
-    optionalDbContext = optionalDbContext or PfuiDBContext:New()
+    optionalDbContext = optionalDbContext or PfuiZenDBContext:New()
 
     return Class:New(
-        UserPreferencesUnitOfWork:New(optionalDbContext)
-        UserPreferencesRepositoryQueryable:New(optionalDbContext),
+        UserPreferencesUnitOfWork:New(optionalDbContext),
+        UserPreferencesRepositoryQueryable:New(optionalDbContext)
     )
 end
 
