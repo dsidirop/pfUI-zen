@@ -21,6 +21,11 @@ TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWo
                 function Class:Ping()
                     return "ping"
                 end
+            
+                using "[autocall]" "Pong"
+                function Class:Pong()
+                    return "pong"
+                end
 
                 local instance = Class:New()
 
@@ -30,6 +35,6 @@ TG:AddFact("T000.Classes.Attributes.GivenAutoCallAttributeOnValidMethod.ShouldWo
             -- ASSERT
             local result = U.Should.Not.Throw(action)
 
-            U.Should.Be.PlainlyEqual(result, "ping")
+            U.Should.Be.PlainlyEqual(result, "pong")
         end
 )
