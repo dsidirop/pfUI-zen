@@ -103,15 +103,15 @@ local function _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, des
     _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
     _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
 
-    local found = false
+    local lastMatchingAttributeSpecs
     for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
         if attributeSpecs:GetType() == desiredType then
-            found = true
+            lastMatchingAttributeSpecs = attributeSpecs
             _tableRemove(pendingAttributesArraySnapshot, i)
         end
     end
 
-    return found
+    return lastMatchingAttributeSpecs
 end
 
 local function _stringEndsWith(input, desiredPostfix)
@@ -209,14 +209,28 @@ do
     function MethodAttributeSpecs:NewForAutocall(targetMethodName) --@formatter:off
         _setfenv(EScope.Function, self)
 
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+
+        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.CTOR.010] Cannot process autocall attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
         _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
+
+        latestProto[targetMethodName] = nil --00 crucial
 
         local instance = {
             _attributeType    = SMethodAttributeTypes.Autocall,
+            
+            _targetProto      = latestProto,
             _targetMethodName = targetMethodName,
         }
 
         return _setmetatable(instance, self)
+        
+        --00   absolutely vital to remove any pre-defined method from any parent class so that the __newindex will be triggered
+        --
+        --     using "[autocall]" "Ping" -- this will set Class.Ping = nil so that ClassL:Ping() below will trigger the __newindex
+        --     function Class:Ping()
+        --        return "ping"
+        --     end
     end
 
     function MethodAttributeSpecs:IsAbstract()
@@ -235,6 +249,12 @@ do
         _setfenv(EScope.Function, self)
 
         return _attributeType
+    end
+
+    function MethodAttributeSpecs:GetTargetProto()
+        _setfenv(EScope.Function, self)
+    
+        return _targetProto
     end
 
     function MethodAttributeSpecs:GetTargetMethodName()
@@ -383,8 +403,13 @@ do
             return
         end
 
-        local isMethodMarkedAsAutocall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall) ~= nil
-        if isMethodMarkedAsAutocall then
+        local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
+        if autocallAttributeSpecs ~= nil then
+            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
+            ) --@formatter:on
+
             classProto.__Call__ = value
             _rawset(classProto, key, value)
         end
@@ -486,8 +511,13 @@ do
             return
         end
 
-        local isMethodMarkedAsAutocall = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall) ~= nil
-        if isMethodMarkedAsAutocall then
+        local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
+        if autocallAttributeSpecs ~= nil then
+            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SNIF.FNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
+                _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
+            ) --@formatter:on
+
             classProto.__call = value
             _rawset(classProto, key, value)
         end
@@ -1303,23 +1333,8 @@ do
         
         _ = _type(attributeSpecs) == "table" or _throw_exception("[NR.QD.010] AttributeSpecs must be a table (got %q)", _type(attributeSpecs))
 
-        if attributeSpecs:IsAutocall() then -- order   keep this first
-            local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
-
-            _ = latestProto ~= nil or _throw_exception("[NR.QD.020] Cannot process autocall attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-            
-            latestProto[attributeSpecs:GetTargetMethodName()] = nil --00 crucial 
-        end
-
         _pendingAttributesArray = _pendingAttributesArray or {} -- order   keep this last
         _tableInsert(_pendingAttributesArray, attributeSpecs)
-    
-        --00   absolutely vital to remove any pre-defined method from any parent class so that the __newindex will be triggered
-        --
-        --     using "[autocall]" "Ping" -- this will set Class.Ping = nil so that ClassL:Ping() below will trigger the __newindex
-        --     function Class:Ping()
-        --        return "ping"
-        --     end
     end
     
     function NamespaceRegistry:PopAllPendingAttributes()
