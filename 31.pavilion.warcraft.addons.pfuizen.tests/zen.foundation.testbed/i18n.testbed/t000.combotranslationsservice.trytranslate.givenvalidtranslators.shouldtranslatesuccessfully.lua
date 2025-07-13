@@ -17,21 +17,23 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
                 ExpectedResult = "|cFF00FF00(Translated) Foobar|r",
             },
         },
-        function(options)
+        function(options, subTestcaseName)
             -- ARRANGE
-            local zenAddonTranslatorMock = {
-                TryTranslate = function(_, _)
-                    return nil
-                end
+            local ZenAddonTranslatorMock = using "[declare] [blend]" (subTestcaseName .. ".T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.ShouldTranslateSuccessfully.ZenAddonTranslatorMock") {
+                "ITranslatorService", using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
             }
 
-            local pfuiTranslatorAsFallbackMock = {
-                TryTranslate = function(_, message)
-                    return "(Translated) " .. message
-                end
-            }
+            function ZenAddonTranslatorMock:TryTranslate(_)
+                return nil
+            end
+        
+            local PfuiTranslatorAsFallbackMock = using "[declare]" (subTestcaseName .. ".T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.ShouldTranslateSuccessfully.PfuiTranslatorAsFallbackMock")
 
-            local translationsService = ComboTranslationsService:New(zenAddonTranslatorMock, pfuiTranslatorAsFallbackMock)
+            function PfuiTranslatorAsFallbackMock:TryTranslate(message)
+                return "(Translated) " .. message
+            end
+
+            local translationsService = ComboTranslationsService:New(ZenAddonTranslatorMock:New(), PfuiTranslatorAsFallbackMock:New())
 
             -- ACT
             local action = function()
