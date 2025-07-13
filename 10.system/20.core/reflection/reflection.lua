@@ -318,6 +318,15 @@ function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     return symbolProto
 end
 
+function Reflection.TryGetNamespace(value)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
+    if protoTidbits == nil then
+        return nil
+    end
+
+    return protoTidbits:GetNamespace()
+end
+
 -- covers both non-static-classes and static-classes
 function Reflection.TryGetNamespaceIfClassProto(value)
     local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
