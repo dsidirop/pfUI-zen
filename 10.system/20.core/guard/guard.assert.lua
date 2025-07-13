@@ -445,7 +445,7 @@ do
     end
 
     function Guard.Assert.IsNilOrProtoImplementing(allegedProto, desiredInterfaceProto, optionalArgumentName)
-        if allegedProto == nil or not Reflection.IsProtoImplementing(allegedProto, desiredInterfaceProto) then
+        if allegedProto ~= nil and not Reflection.IsProtoImplementing(allegedProto, desiredInterfaceProto) then
             Throw(ValueIsOfInappropriateTypeException:New(allegedProto, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
         end
 
@@ -461,7 +461,7 @@ do
     end
 
     function Guard.Assert.IsNilOrInstanceImplementing(allegedInstance, desiredInterfaceProto, optionalArgumentName)
-        if allegedInstance == nil or not Reflection.IsInstanceImplementing(allegedInstance, desiredInterfaceProto) then
+        if allegedInstance ~= nil and not Reflection.IsInstanceImplementing(allegedInstance, desiredInterfaceProto) then
             Throw(ValueIsOfInappropriateTypeException:New(allegedInstance, optionalArgumentName, "to be nil or of type " .. (Reflection.TryGetNamespaceIfProto(desiredInterfaceProto) or "(desired interface is unknown!)")))
         end
 
