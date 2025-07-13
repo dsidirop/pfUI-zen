@@ -195,12 +195,21 @@ local NamespaceRegistrySingleton
 
 local MethodAttributeSpecs = _spawnSimpleMetatable()
 do
-    function MethodAttributeSpecs:NewForAbstract()
+    function MethodAttributeSpecs:NewForAbstract(targetMethodName)
         _setfenv(EScope.Function, self)
+
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+
+        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFABST.CTOR.010] Cannot process 'abstract' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        _ = latestTidbits:IsAbstractClassEntry()                           or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'abstract' attribute on [%s:%s()] because the target is not an abstract class (did you forget to define it as an abstract class?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFABST.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
+        _ = latestProto[targetMethodName] == nil                           or _throw_exception("[NR.MA.NFABST.CTOR.030] Cannot apply 'abstract' attribute on [%s:%s()] because it is already defined (defined in the parent class maybe?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
 
         local instance = {
             _attributeType    = SMethodAttributeTypes.Abstract,
-            _targetMethodName = "",
+            
+            _targetProto      = latestProto,
+            _targetMethodName = targetMethodName,
         }
 
         return _setmetatable(instance, self)
@@ -211,8 +220,9 @@ do
 
         local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
 
-        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.CTOR.010] Cannot process autocall attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
+        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        _ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
 
         latestProto[targetMethodName] = nil --00 crucial
 
@@ -1709,7 +1719,7 @@ do
 
     -- @formatter:off   todo   also introduce [declare] [partial] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
     NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAutocall(targetMethodName)) end)
-    NamespaceRegistrySingleton:BindAutorunKeyword("[abstract]",              function()                 NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract())                 end)
+    NamespaceRegistrySingleton:BindKeyword("[abstract]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract(targetMethodName)) end)
 
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",           function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]",     function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
