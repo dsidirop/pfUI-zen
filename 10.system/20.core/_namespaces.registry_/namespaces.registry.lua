@@ -221,7 +221,7 @@ do
         local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
 
         _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-        _ = latestTidbits:IsInterfaceEntry()                               or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
         _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
 
         latestProto[targetMethodName] = nil --00 crucial
@@ -922,7 +922,9 @@ do
     function Entry:IsClassEntry()
         _setfenv(EScope.Function, self)
 
-        return _symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.StaticClass
+        return _symbolType == SRegistrySymbolTypes.StaticClass
+            or _symbolType == SRegistrySymbolTypes.AbstractClass
+            or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
     function Entry:IsStaticClassEntry()

@@ -262,15 +262,19 @@ end
 function Reflection.TryGetNamespaceWithFallbackToRawType(object) --00
 
     return Reflection.TryGetNamespaceIfClassInstance(object) --   order    
-            or Reflection.TryGetNamespaceIfClassProto(object) --  order
+            or Reflection.TryGetNamespace(object) --              order
             or RawTypeSystem.GetRawType(object) --                order    keep last
 
     -- 00  the object might be anything
     --
     --         nil
-    --         a class-instance
-    --         a class-proto
-    --         a static-class-proto
+    --         class-instance
+    --         class-proto
+    --         static-class-proto
+    --         abstract-class-proto
+    --         enum-proto
+    --         strenum-proto
+    --         interface-proto
     --         or just a mere raw type (number, string, boolean, function, table)
     --
 end
@@ -318,9 +322,18 @@ function Reflection.TryGetProtoViaClassNamespace(namespacePath)
     return symbolProto
 end
 
+function Reflection.TryGetNamespace(symbolProto)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(symbolProto)
+    if protoTidbits == nil then
+        return nil
+    end
+
+    return protoTidbits:GetNamespace()
+end
+
 -- covers both non-static-classes and static-classes
-function Reflection.TryGetNamespaceIfClassProto(value)
-    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(value)
+function Reflection.TryGetNamespaceIfClassProto(symbolProto)
+    local protoTidbits = Namespacer:TryGetProtoTidbitsViaSymbolProto(symbolProto)
     if protoTidbits == nil or not protoTidbits:IsClassEntry() then -- if the proto is found but it doesnt belong to a class then we dont care
         return nil
     end

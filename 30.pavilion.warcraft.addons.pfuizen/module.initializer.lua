@@ -15,7 +15,7 @@ local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.
 
 local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Domain.CommandingServices.ZenEngineCommandHandlersService"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local UserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
