@@ -4,9 +4,11 @@ local Nils    = using "System.Nils"
 local Guard   = using "System.Guard"
 local Fields  = using "System.Classes.Fields"
 
-local ITranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
+local ITranslatorService      = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
+local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" -- @formatter:on
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService" {
@@ -23,8 +25,8 @@ end)
 function Class:New(zenOwnTranslatorService, pfuiTranslatorAsFallbackService)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(pfuiTranslatorAsFallbackService, "pfuiTranslatorAsFallbackService")
     Guard.Assert.IsNilOrInstanceImplementing(zenOwnTranslatorService, ITranslatorService, "zenOwnTranslatorService")
+    Guard.Assert.IsNilOrInstanceImplementing(pfuiTranslatorAsFallbackService, IPfuiTranslatorService, "pfuiTranslatorAsFallbackService")
 
     local instance = self:Instantiate() --@formatter:off   vital   we want _translationsService("foobar") to call _translationsService:TryTranslate("foobar")!
 

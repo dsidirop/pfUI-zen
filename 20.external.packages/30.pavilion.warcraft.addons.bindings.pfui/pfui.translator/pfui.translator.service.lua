@@ -2,7 +2,11 @@
 
 local PfuiTranslationTable = using "[built-in]" [[ pfUI.env.T or {} ]]
 
-local PfuiTranslatorService = using "[declare]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
+local IPfuiTranslatorService = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+
+local PfuiTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService" {
+    "IPfuiTranslatorService", IPfuiTranslatorService
+}
 
 function PfuiTranslatorService:New()
     return self:Instantiate()
@@ -12,4 +16,4 @@ function PfuiTranslatorService:TryTranslate(message)
     return PfuiTranslationTable[message]
 end
 
-PfuiTranslatorService.I = PfuiTranslatorService:New()
+PfuiTranslatorService.I = PfuiTranslatorService:New() -- todo  get this from DI
