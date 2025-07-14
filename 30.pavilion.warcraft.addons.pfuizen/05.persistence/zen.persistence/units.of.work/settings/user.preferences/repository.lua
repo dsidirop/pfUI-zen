@@ -3,21 +3,21 @@
 local Guard = using "System.Guard"
 
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
-local UserPreferencesRepositoryWriteable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryWriteable"
+local UserPreferencesRepositoryUpdateable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryUpdateable"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository"
 
 
-function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryWriteable)
+function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryUpdateable)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(userPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
-    Guard.Assert.IsTable(userPreferencesRepositoryWriteable, "userPreferencesRepositoryWriteable")
+    Guard.Assert.IsTable(userPreferencesRepositoryUpdateable, "userPreferencesRepositoryUpdateable")
 
     local instance = self:Instantiate()
 
     instance._userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable
-    instance._userPreferencesRepositoryWriteable = userPreferencesRepositoryWriteable
+    instance._userPreferencesRepositoryUpdateable = userPreferencesRepositoryUpdateable
 
     return instance
 end
@@ -30,7 +30,7 @@ function Class:NewWithDBContext(dbcontext)
     local instance = self:Instantiate()
     
     instance._userPreferencesRepositoryQueryable = UserPreferencesRepositoryQueryable:New(dbcontext)
-    instance._userPreferencesRepositoryWriteable = UserPreferencesRepositoryWriteable:New(dbcontext)
+    instance._userPreferencesRepositoryUpdateable = UserPreferencesRepositoryUpdateable:New(dbcontext)
     
     return instance
 end
@@ -45,14 +45,14 @@ end
 function Class:HasChanges()
     Scopify(EScopes.Function, self)
 
-    return _userPreferencesRepositoryWriteable:HasChanges()
+    return _userPreferencesRepositoryUpdateable:HasChanges()
 end
 
 -- @return self
 function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     Scopify(EScopes.Function, self)
     
-    _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
+    _userPreferencesRepositoryUpdateable:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
     
     return self
 end
@@ -61,7 +61,7 @@ end
 function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
     Scopify(EScopes.Function, self)
 
-    _userPreferencesRepositoryWriteable:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
+    _userPreferencesRepositoryUpdateable:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
 
     return self
 end

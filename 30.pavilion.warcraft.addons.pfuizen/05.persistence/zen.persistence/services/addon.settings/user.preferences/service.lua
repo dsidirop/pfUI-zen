@@ -9,11 +9,11 @@ local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZ
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
 local UserPreferencesQueryableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
-local UserPreferencesWriteableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.WriteableService"
+local UserPreferencesUpdateableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.UpdateableService"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.Service" { --@formatter:on
     "UserPreferencesQueryableService", UserPreferencesQueryableService,
-    "UserPreferencesWriteableService", UserPreferencesWriteableService,
+    "UserPreferencesUpdateableService", UserPreferencesUpdateableService,
 
     "IUserPreferencesService", using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService"
 }
@@ -39,7 +39,7 @@ function Class:New(userPreferencesUnitOfWork, userPreferencesRepositoryQueryable
 
     local instance = self:Instantiate()
 
-    instance.asBase.UserPreferencesWriteableService.New(instance, userPreferencesUnitOfWork)
+    instance.asBase.UserPreferencesUpdateableService.New(instance, userPreferencesUnitOfWork)
     instance.asBase.UserPreferencesQueryableService.New(instance, userPreferencesRepositoryQueryable)
 
     return instance
