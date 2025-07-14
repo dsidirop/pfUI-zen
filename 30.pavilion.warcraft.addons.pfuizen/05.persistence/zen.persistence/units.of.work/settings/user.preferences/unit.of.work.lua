@@ -18,15 +18,17 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-function Class:New(dbcontext, userPreferencesRepository)
+function Class:New(dbcontext, userPreferencesRepository) -- we need both params because both need to be mockable for unit testing
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrTable(dbcontext, "dbcontext")
-    Guard.Assert.IsNilOrTable(userPreferencesRepository, "userPreferencesRepository")
+    Guard.Assert.IsNilOrInstanceOf(dbcontext, PfuiZenDbContext, "dbcontext") -- todo   use interfaces here
+    Guard.Assert.IsNilOrInstanceOf(userPreferencesRepository, UserPreferencesRepository, "userPreferencesRepository")
+
+    dbcontext = Nils.Coalesce(dbcontext, PfuiZenDbContext:New()) --keep this here
 
     local instance = self:Instantiate() -- @formatter:off
-    
-    instance._dbcontext                 = Nils.Coalesce(dbcontext,                 PfuiZenDbContext:New())
+
+    instance._dbcontext                 = dbcontext
     instance._userPreferencesRepository = Nils.Coalesce(userPreferencesRepository, UserPreferencesRepository:NewWithDBContext(dbcontext))
 
     return instance -- @formatter:on

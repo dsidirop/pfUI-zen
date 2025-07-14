@@ -16,8 +16,6 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Se
 
 Fields(function(upcomingInstance)
     upcomingInstance._dbcontextReadonly = nil
-    upcomingInstance._userPreferencesLocalEntity = nil -- cached
-
     return upcomingInstance
 end)
 
@@ -37,16 +35,16 @@ end
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local userPreferencesLocalEntity = self:GetUserPreferencesLocalEntity_()
+    local userPreferenceEntity = _dbcontextReadonly.Settings.UserPreferences
 
     -- todo   introduce ValidateCoalesce() in enums to avoid bugs with ternary operators
-    local mode = not SGreeniesGrouplootingAutomationMode:IsValid(userPreferencesLocalEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
+    local mode = not SGreeniesGrouplootingAutomationMode:IsValid(userPreferenceEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
             and SGreeniesGrouplootingAutomationMode.Greed
-            or userPreferencesLocalEntity.GreeniesGrouplootingAutomation.Mode
+            or userPreferenceEntity.GreeniesGrouplootingAutomation.Mode
 
-    local actOnKeybind = not SGreeniesGrouplootingAutomationActOnKeybind:IsValid(userPreferencesLocalEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
+    local actOnKeybind = not SGreeniesGrouplootingAutomationActOnKeybind:IsValid(userPreferenceEntity.GreeniesGrouplootingAutomation.ActOnKeybind) -- anticorruption layer
             and SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt
-            or userPreferencesLocalEntity.GreeniesGrouplootingAutomation.ActOnKeybind
+            or userPreferenceEntity.GreeniesGrouplootingAutomation.ActOnKeybind
 
     return UserPreferencesDto -- todo   automapper (with precondition-validators!)
             :New()
@@ -54,19 +52,4 @@ function Class:GetAllUserPreferences()
             :ChainSet_GreeniesGrouplootingAutomation_ActOnKeybind(actOnKeybind)
 
     --00 todo   whenever we detect a corruption in the database we auto-sanitise it but on top of that we should also update error-metrics and log it too
-end
-
-
--- PRIVATES
-
-function Class:GetUserPreferencesLocalEntity_()
-    Scopify(EScopes.Function, self)
-
-    if _userPreferencesLocalEntity ~= nil then
-        return _userPreferencesLocalEntity
-    end
-
-    _userPreferencesLocalEntity = instance._dbcontextReadonly.Settings.UserPreferences -- we intentionally avoid deep-cloning here
-
-    return _userPreferencesLocalEntity
 end
