@@ -35,7 +35,7 @@ end
 function Class:GetAllUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local userPreferenceEntity = _dbcontextReadonly.Settings.UserPreferences
+    local userPreferenceEntity = _dbcontextReadonly.Settings.UserPreferences.LoadAsNoTracking()
 
     -- todo   introduce ValidateCoalesce() in enums to avoid bugs with ternary operators
     local mode = not SGreeniesGrouplootingAutomationMode:IsValid(userPreferenceEntity.GreeniesGrouplootingAutomation.Mode) --00 anticorruption layer
