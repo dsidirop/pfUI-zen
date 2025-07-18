@@ -51,6 +51,8 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
+
+
 function Class:Load_Settings(asTracking)
     Scopify(EScopes.Function, self)
     
@@ -100,12 +102,10 @@ end
 function Class:SaveChanges()
     Scopify(EScopes.Function, self)
 
-    local rawAddonSettings = {}
-
-    -- @formatter:off
+    local rawAddonSettings = PfuiConfiguration[Schema.RootKeyname] or {} -- @formatter:off
+    
     rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode.Keyname]         = Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode
     rawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind.Keyname] = Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind
-    -- @formatter:on
 
-    PfuiConfiguration[Schema.RootKeyname] = rawAddonSettings
+    PfuiConfiguration[Schema.RootKeyname] = rawAddonSettings -- @formatter:on
 end
