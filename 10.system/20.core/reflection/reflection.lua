@@ -283,6 +283,10 @@ function Reflection.IsClassInstance(object)
     return Reflection.TryGetNamespaceIfClassInstance(object) ~= nil
 end
 
+function Reflection.IsEnumProto(object)
+    return Reflection.GetInfo(object) == STypes.Enum
+end
+
 function Reflection.IsInterfaceProto(object)
     return Reflection.GetInfo(object) == STypes.Interface
 end

@@ -3,7 +3,7 @@
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local SchemaV1 = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.Pfui.Zen.Schemas.SchemaV1"
+local SchemaV1 = using "[declare] [static]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Db.Schemas.SchemaV1"
 
 -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
 

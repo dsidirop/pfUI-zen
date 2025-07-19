@@ -21,11 +21,7 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-function Class:New()
-    Scopify(EScopes.Function, self)
-
-    return self:Instantiate()
-end
+-- GETTERS
 
 function Class:Get_GreeniesGrouplootingAutomation_Mode()
     Scopify(EScopes.Function, self)
@@ -38,6 +34,8 @@ function Class:Get_GreeniesGrouplootingAutomation_ActOnKeybind()
 
     return _greeniesGrouplootingAutomation.actOnKeybind
 end
+
+-- SETTERS
 
 function Class:ChainSet_GreeniesGrouplootingAutomation_Mode(value)
     Scopify(EScopes.Function, self)

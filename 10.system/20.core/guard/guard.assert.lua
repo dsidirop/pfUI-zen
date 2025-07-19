@@ -112,20 +112,32 @@ do
     end
 
     -- ENUMS
-    function Guard.Assert.IsEnumValue(enumType, value, optionalArgumentName)
-        if not enumType:IsValid(value) then
+    function Guard.Assert.IsEnumProto(enumTypeProto, optionalArgumentName)
+        if not Reflection.IsEnumProto(enumTypeProto) then
+            Throw(ValueIsOfInappropriateTypeException:New(enumTypeProto, optionalArgumentName, "enum proto"))
+        end
+
+        return enumTypeProto
+    end
+    
+    function Guard.Assert.IsEnumValue(enumTypeProto, value, optionalArgumentName)
+        -- Guard.Assert.IsEnumProto(enumTypeProto, "enumTypeProto")
+
+        if not enumTypeProto:IsValid(value) then
             Throw(ValueIsOfInappropriateTypeException:New(value, optionalArgumentName, "enum value"))
         end
 
         return value
     end
 
-    function Guard.Assert.IsNilOrEnumValue(enumType, value, optionalArgumentName)
+    function Guard.Assert.IsNilOrEnumValue(enumTypeProto, value, optionalArgumentName)
+        -- Guard.Assert.IsEnumProto(enumTypeProto, "enumTypeProto")
+
         if value == nil then
             return nil
         end
 
-        return Guard.Assert.IsEnumValue(enumType, value, optionalArgumentName)
+        return Guard.Assert.IsEnumValue(enumTypeProto, value, optionalArgumentName)
     end
 
     -- NUMBERS
