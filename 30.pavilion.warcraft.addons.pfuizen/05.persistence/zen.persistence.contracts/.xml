@@ -2,5 +2,7 @@
     <!-- order -->
     <Include file="00.settings\.xml"/>
     <Include file="05.db\.xml"/>
+    <Include file="10.entity.framework\.xml"/>
+    <Include file="20.units.of.work\.xml"/>
     <Include file="30.services\.xml"/>    
 </Ui>

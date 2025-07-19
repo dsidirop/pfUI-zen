@@ -3,7 +3,7 @@
 local IServiceQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IServiceQueryable"
 local IServiceUpdateable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IServiceUpdateable"
 
-local Class = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService" { --@formatter:on
+local IService = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService" { --@formatter:on
     "IServiceQueryable", IServiceQueryable,
     "IServiceUpdateable", IServiceUpdateable,
 }

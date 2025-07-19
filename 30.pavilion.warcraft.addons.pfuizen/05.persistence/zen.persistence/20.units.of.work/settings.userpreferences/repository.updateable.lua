@@ -4,12 +4,17 @@ local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
+local IUserPreferencesRepositoryUpdateable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.IRepositoryUpdateable"
+
 local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
+local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
 
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryUpdateable" -- @formatter:on
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryUpdateable" {
+    "IUserPreferencesRepositoryUpdateable", IUserPreferencesRepositoryUpdateable
+} -- @formatter:on
 
 
 Fields(function(upcomingInstance)
@@ -22,7 +27,7 @@ end)
 function Class:New(dbcontext)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(dbcontext, PfuiZenDBContext, "dbcontext") -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiZenDBContext, "dbcontext") -- todo  remove this later on in favour of DI
 
     local instance = self:Instantiate()
 

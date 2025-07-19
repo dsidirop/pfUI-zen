@@ -21,7 +21,7 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persis
 function Class:NewWithDBContext(optionalDbContext) -- todo  get rid of this once we get DI going
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(optionalDbContext, PfuiZenDBContext, "optionalDbContext")
+    Guard.Assert.IsNilOrInstanceImplementing(optionalDbContext, IPfuiZenDBContext, "optionalDbContext")
 
     optionalDbContext = optionalDbContext or PfuiZenDBContext:New()
 

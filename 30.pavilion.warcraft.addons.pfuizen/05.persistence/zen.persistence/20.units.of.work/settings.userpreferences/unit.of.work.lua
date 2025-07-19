@@ -5,10 +5,17 @@ local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiZenDbContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
-local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository"
+local IUnitOfWork = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.IUnitOfWork"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork"
+local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
+local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
+
+local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository"
+local IUserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.IRepository"
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.UnitOfWork" {
+    "IUnitOfWork", IUnitOfWork
+}
 
 
 Fields(function(upcomingInstance)
@@ -18,13 +25,14 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
+
 function Class:New(dbcontext, userPreferencesRepository) -- we need both params because both need to be mockable for unit testing
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(dbcontext, PfuiZenDbContext, "dbcontext") -- todo   use interfaces here
-    Guard.Assert.IsNilOrInstanceOf(userPreferencesRepository, UserPreferencesRepository, "userPreferencesRepository")
+    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiZenDBContext, "dbcontext")
+    Guard.Assert.IsNilOrInstanceImplementing(userPreferencesRepository, IUserPreferencesRepository, "userPreferencesRepository")
 
-    dbcontext = Nils.Coalesce(dbcontext, PfuiZenDbContext:New()) --keep this here
+    dbcontext = Nils.Coalesce(dbcontext, PfuiZenDBContext:New()) --keep this here
 
     local instance = self:Instantiate() -- @formatter:off
 

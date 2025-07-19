@@ -2,66 +2,43 @@
 
 local Guard = using "System.Guard"
 
+local IUserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.IRepository"
+
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
 local UserPreferencesRepositoryUpdateable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryUpdateable"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository"
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.Repository" {
+    "IUserPreferencesRepository", IUserPreferencesRepository,
+    
+    "UserPreferencesRepositoryQueryable", UserPreferencesRepositoryQueryable,
+    "UserPreferencesRepositoryUpdateable", UserPreferencesRepositoryUpdateable,
+}
 
 
-function Class:New(userPreferencesRepositoryQueryable, userPreferencesRepositoryUpdateable)
+function Class:NewWithDBContext(pfuiZenDbContext)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsTable(userPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
-    Guard.Assert.IsTable(userPreferencesRepositoryUpdateable, "userPreferencesRepositoryUpdateable")
+    Guard.Assert.IsTable(pfuiZenDbContext, "pfuiZenDbContext")
 
     local instance = self:Instantiate()
 
-    instance._userPreferencesRepositoryQueryable = userPreferencesRepositoryQueryable
-    instance._userPreferencesRepositoryUpdateable = userPreferencesRepositoryUpdateable
+    instance.asBase.UserPreferencesRepositoryQueryable.New(instance, pfuiZenDbContext)
+    instance.asBase.UserPreferencesRepositoryUpdateable.New(instance, pfuiZenDbContext)
 
-    return instance
-end
-
-function Class:NewWithDBContext(dbcontext)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsTable(dbcontext, "dbcontext")
-
-    local instance = self:Instantiate()
-    
-    instance._userPreferencesRepositoryQueryable = UserPreferencesRepositoryQueryable:New(dbcontext)
-    instance._userPreferencesRepositoryUpdateable = UserPreferencesRepositoryUpdateable:New(dbcontext)
-    
     return instance
 end
 
 -- @return UserPreferencesDto
-function Class:GetAllUserPreferences()
-    Scopify(EScopes.Function, self)
+-- function Class:GetAllUserPreferences()
+-- end
 
-    return _userPreferencesRepositoryQueryable:GetAllUserPreferences()
-end
-
-function Class:HasChanges()
-    Scopify(EScopes.Function, self)
-
-    return _userPreferencesRepositoryUpdateable:HasChanges()
-end
+-- function Class:HasChanges()
+-- end
 
 -- @return self
-function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
-    Scopify(EScopes.Function, self)
-    
-    _userPreferencesRepositoryUpdateable:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
-    
-    return self
-end
+-- function Class:GreeniesGrouplootingAutomation_ChainUpdateMode(value)
+-- end
 
 -- @return self
-function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
-    Scopify(EScopes.Function, self)
-
-    _userPreferencesRepositoryUpdateable:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
-
-    return self
-end
+-- function Class:GreeniesGrouplootingAutomation_ChainUpdateActOnKeybind(value)
+-- end

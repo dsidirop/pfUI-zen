@@ -6,6 +6,7 @@ local Fields = using "System.Classes.Fields"
 local Console = using "System.Console"
 
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Settings.UserPreferences.RepositoryQueryable"
+local IUserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.IRepositoryQueryable"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService" {
     "IQueryableService", using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IServiceQueryable"
@@ -21,7 +22,7 @@ end)
 function Class:New(userPreferencesRepositoryQueryable)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(userPreferencesRepositoryQueryable, UserPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
+    Guard.Assert.IsNilOrInstanceImplementing(userPreferencesRepositoryQueryable, IUserPreferencesRepositoryQueryable, "userPreferencesRepositoryQueryable")
 
     local instance = self:Instantiate()
 
