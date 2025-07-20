@@ -13,6 +13,8 @@ local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Add
 
 local UserPreferencesDto                                        = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 
+local ITranslatorService                                        = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
+
 local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
@@ -40,7 +42,7 @@ end)
 function Class:New(translationService)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNilOrTable(translationService, "translationService")
+    Guard.Assert.IsNilOrInstanceImplementing(translationService, ITranslatorService, "translationService")
     
     local instance = self:Instantiate()
 
