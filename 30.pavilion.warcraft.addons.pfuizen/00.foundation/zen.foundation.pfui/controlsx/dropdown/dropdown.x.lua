@@ -16,9 +16,12 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.Contro
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._nativePfuiControl = nil
+    upcomingInstance._nativePfuiControlFrame = nil
 
     upcomingInstance._caption = ""
+    upcomingInstance._xposNudging = 0
+    upcomingInstance._yposNudging = 0
+        
     upcomingInstance._menuItems = {}
     upcomingInstance._menuEntryValuesToIndexes = {}
     upcomingInstance._menuIndexesToMenuValuesArray = {}
@@ -37,7 +40,7 @@ function Class:New()
 
     local instance = self:Instantiate()
 
-    instance._nativePfuiControl = nil
+    instance._nativePfuiControlFrame = nil
 
     instance._caption = ""
     instance._menuItems = {}
@@ -76,13 +79,33 @@ function Class:ChainSetMenuItems(menuItems)
     return self
 end
 
+function Class:ChainSetCaptionXPositionNudging(xposNudging) -- +/-px horizontally from the default position
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNumber(xposNudging, "xposNudging")
+
+    _xposNudging = xposNudging
+
+    return self
+end
+
+function Class:ChainSetCaptionYPositionNudging(yposNudging) -- +/-px vertically from the default position
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNumber(yposNudging, "yposNudging")
+
+    _yposNudging = yposNudging
+
+    return self
+end
+
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(_menuItems, "_menuItems")
     Guard.Assert.IsNonDudString(_caption, "_caption")
 
-    _nativePfuiControl = PfuiGui.CreateConfig(
+    _nativePfuiControlFrame = PfuiGui.CreateConfig(
             function()
                 self:OnSelectionChanged_(
                         SelectionChangedEventArgs:New()
@@ -96,6 +119,12 @@ function Class:Initialize()
             "dropdown",
             _menuItems
     )
+    
+    if _xposNudging or _yposNudging then
+        local anchor, relativeControl, relativeAnchor, xpos, ypos = _nativePfuiControlFrame.caption:GetPoint()
+        
+        _nativePfuiControlFrame.caption:SetPoint(anchor, relativeControl, relativeAnchor, xpos + _xposNudging, ypos + _yposNudging)
+    end
 
     return self
 end
@@ -104,7 +133,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsString(optionValue, "optionValue")
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
 
     local index = _menuEntryValuesToIndexes[optionValue]
     if index == nil then
@@ -121,14 +150,14 @@ function Class:TrySetSelectedOptionByIndex(index)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveInteger(index, "index")
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
 
     if index > A.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
         return false
     end
 
-    if _nativePfuiControl.input.id == index then
+    if _nativePfuiControlFrame.input.id == index then
         return true -- already selected   nothing to do
     end
 
@@ -136,9 +165,9 @@ function Class:TrySetSelectedOptionByIndex(index)
     local originalValue = _singlevalue[_valuekeyname] --       order
 
     _singlevalue[_valuekeyname] = newValue --             order
-    _nativePfuiControl.input:SetSelection(index) --       order
+    _nativePfuiControlFrame.input:SetSelection(index) --       order
 
-    Guard.Assert.Explained.IsTrue(_nativePfuiControl.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
+    Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
     self:OnSelectionChanged_(
             SelectionChangedEventArgs:New() -- 00
@@ -166,9 +195,9 @@ end
 function Class:Show()
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
     
-    _nativePfuiControl:Show()
+    _nativePfuiControlFrame:Show()
 
     return self
 end
@@ -176,9 +205,9 @@ end
 function Class:Hide()
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControl, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
 
-    _nativePfuiControl:Hide()
+    _nativePfuiControlFrame:Hide()
 
     return self
 end
