@@ -10,14 +10,11 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI
 function Class:InitializeControls_()
     Scopify(EScopes.Function, self)
 
-    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t("Grouploot Automation"), nil, nil, "header")
-    _ui.lblGrouplootSectionHeader:SetHeight(20)
+    _ui.frmAreaContainer:SetScript("OnShow", function() self:OnShown_() end) -- note:   _ui.frmAreaContainer == _ui.lblGrouplootSectionHeader:GetParent():GetParent():GetParent()
 
-    _ui.frmContainer = _ui.lblGrouplootSectionHeader:GetParent()
-    _ui.frmContainer.objectCount = _ui.frmContainer.objectCount - 1 -- vital for lblGrouplootSectionHeader to be positioned properly
-    _ui.frmContainer:SetScript("OnShow", function()
-        self:OnShown_()
-    end)
+    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t("Grouploot Automation"), nil, nil, "header")
+    _ui.lblGrouplootSectionHeader:SetHeight(30)
+    -- _ui.lblGrouplootSectionHeader:GetParent().objectCount = _ui.lblGrouplootSectionHeader:GetParent().objectCount - 1
 
     _ui.ddlGreeniesGrouplootingAutomation_mode = PfuiDropdownX:New() --@formatter:off
                                                               :ChainSetCaption(_t("On |cFF228B22Greens|r"))

@@ -32,6 +32,8 @@ Fields(function(upcomingInstance)
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
         frmContainer                                   = nil,
+        frmAreaContainer                               = nil,
+        
         lblGrouplootSectionHeader                      = nil,
         ddlGreeniesGrouplootingAutomation_mode         = nil,
         ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
@@ -82,7 +84,7 @@ end
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
-    _pfuiMainSettingsFormGuiFactory:TrySpawnNewNestedTabFrameWithArea( --00
+    _ui.frmContainer, _ui.frmAreaContainer = _pfuiMainSettingsFormGuiFactory:TrySpawnNewNestedTabFrameWithArea( --00
         _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
         _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
         function()
