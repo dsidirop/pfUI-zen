@@ -16,7 +16,7 @@ do
     
     function Guard.Assert.Explained.IsMereFrame(object, customMessage)
         if not Reflection.IsMereFrame(object) then
-            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
         end
         
         return object

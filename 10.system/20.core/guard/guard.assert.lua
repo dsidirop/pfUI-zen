@@ -17,6 +17,14 @@ local Guard = using "[declare] [static]" "System.Guard"
 do
     Guard.Assert = using "[declare] [static]" "System.Guard.Assert"
 
+    function Guard.Assert.IsMereFrame(object, optionalArgumentName)
+        if not Reflection.IsMereFrame(object) then
+            Throw(ValueIsOfInappropriateTypeException:New(object, optionalArgumentName, "frame"))
+        end
+        
+        return object
+    end
+
     function Guard.Assert.IsUnset(value, optionalArgumentName)
         if value ~= nil then
             Throw(ValueAlreadySetException:New(optionalArgumentName))

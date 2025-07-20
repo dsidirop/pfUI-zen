@@ -28,7 +28,7 @@ Reflection.IsFunction = RawTypeSystem.IsFunction
 Reflection.GetRawType = RawTypeSystem.GetRawType -- for the sake of completeness   just in case someone needs it
 
 function Reflection.IsMereFrame(object)
-    return object and RawTypeSystem.IsTable(object) and RawTypeSystem.IsFunction(object.IsObjectType) and object.IsObjectType("Frame")
+    return object and RawTypeSystem.IsTable(object) and RawTypeSystem.IsFunction(object.IsObjectType) and object:IsObjectType("Frame")
 end
 
 --- @return STypes, string, Proto, boolean   (type, namespace, proto, isClassInstance)
