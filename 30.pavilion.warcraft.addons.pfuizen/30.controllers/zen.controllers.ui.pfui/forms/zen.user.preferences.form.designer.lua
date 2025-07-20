@@ -24,6 +24,7 @@ function Class:InitializeControls_()
                                                                      SGreeniesGrouplootingAutomationMode.JustPass      .. ":" .. _t("Just '|cff888888Pass|r'"),
                                                                      SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t("Let me handle it myself"),
                                                               })
+                                                              :ChainSetCaptionXPositionNudging(17) -- nudge the caption a bit to the right
                                                               :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationMode_SelectionChanged_, self)
                                                               :Initialize() --@formatter:on
 
@@ -39,6 +40,7 @@ function Class:InitializeControls_()
                                                                              SGreeniesGrouplootingAutomationActOnKeybind.AltShift     .. ":" .. _t("Alt + Shift"),
                                                                              SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t("Ctrl + Alt + Shift"),
                                                                       })
+                                                                      :ChainSetCaptionXPositionNudging(17) -- nudge the caption a bit to the right
                                                                       :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_, self)
                                                                       :Initialize() --@formatter:on
 
