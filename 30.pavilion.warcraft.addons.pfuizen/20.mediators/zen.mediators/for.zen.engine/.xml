@@ -1,3 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    
+    <!-- order -->
+    <Include file="zen.engine.mediator.service.handle.rec.partial.lua"/>
+    <Include file="zen.engine.mediator.service.handle.ggaanmc.partial.lua"/>
+    <Include file="zen.engine.mediator.service.handle.ggaanaokc.partial.lua"/>
+
     <Include file="zen.engine.mediator.service.lua"/>
+
 </Ui>

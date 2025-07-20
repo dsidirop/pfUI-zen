@@ -12,12 +12,7 @@ local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Persisten
 
 local IUserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService"
 
-local RestartEngineCommand                                      = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
-local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
-local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
-
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService" -- @formatter:on
-
 
 Fields(function(upcomingInstance)
     upcomingInstance._zenEngineSingleton = nil -- todo   get rid of these when we replace this service with a proper mediator that employs command-handlers once we have the DI system in place
@@ -40,56 +35,3 @@ function Class:New(zenEngineSingleton, userPreferencesService)
     return instance
 end
 
-function Class:Handle_RestartEngineCommand(command)
-    Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsInstanceOf(command, RestartEngineCommand, "command")
-
-    local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
-
-    local zenEngineSettings = ZenEngineSettings:New()
-
-    zenEngineSettings:GetGreeniesGrouplootingAssistantAggregateSettings()
-                     :ChainSetMode(userPreferencesDto:Get_GreeniesGrouplootingAutomation_Mode())
-                     :ChainSetActOnKeybind(userPreferencesDto:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
-    
-    -- todo   add more settings-sections here
-
-    _zenEngineSingleton:Stop() -- todo   wrap this in a try-catch block to normalize exceptions
-                       :SetSettings(zenEngineSettings)
-                       :Start()
-
-    -- todo   raise side-effect domain-events here
-
-    return self
-end
-
-function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewModeCommand, "command")
-
-    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) --                     order
-
-    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order   todo   wrap this in a try-catch block to normalize exceptions
-    if success then
-        -- todo   raise side-effect domain-events here
-    end
-
-    return self
-end
-
-function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(command)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand, "command")
-
-    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
-
-    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateActOnKeybind(command:GetNewValue()) --  order
-    if success then
-        -- todo   raise side-effect domain-events here
-    end
-
-    return self
-end
