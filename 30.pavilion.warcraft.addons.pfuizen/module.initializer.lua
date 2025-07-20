@@ -9,12 +9,14 @@ local Guard = using "System.Guard"
 local Throw = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Pfui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui"
-local PfuiGui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
-local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
+local Enumerable                     = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
-local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
-local ComboTranslationsService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+local Pfui                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
+local PfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Gui.PfuiMainSettingsFormGuiFactory"
+
+local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
+local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
@@ -46,12 +48,8 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
         Throw(Exception:New(S.Format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
     end
 
-    if (not PfuiGui.CreateGUIEntry) then
-        Throw(Exception:New(S.Format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors)))
-    end
-
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(ComboTranslationsService:New())
+                :New(PfuiMainSettingsFormGuiFactory:New(), ComboTranslationsService:New())
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")

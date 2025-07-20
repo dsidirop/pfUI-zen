@@ -22,9 +22,25 @@ do
         return object
     end
     
+    function Guard.Assert.Explained.IsTable(value, customMessage)
+        if not Reflection.IsTable(value) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
+        end
+
+        return value
+    end
+    
+    function Guard.Assert.Explained.IsFunction(value, customMessage)
+        if not Reflection.IsFunction(value) then
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
+        end
+
+        return value
+    end
+
     function Guard.Assert.Explained.IsString(value, customMessage)
         if not Reflection.IsString(value) then
-            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+            Throw(ValueIsOfInappropriateTypeException:NewWithMessage(customMessage))
         end
         
         return value

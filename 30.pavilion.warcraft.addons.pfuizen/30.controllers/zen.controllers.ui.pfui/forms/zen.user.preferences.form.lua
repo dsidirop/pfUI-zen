@@ -1,11 +1,14 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
+local Nils  = using "System.Nils"
 local Guard = using "System.Guard"
 local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
-local PfuiGui                         = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
+local PfuiMainSettingsFormGuiFactory  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Gui.PfuiMainSettingsFormGuiFactory"
+local IPfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Gui.IPfuiMainSettingsFormGuiFactory"
+
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
@@ -19,10 +22,13 @@ local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilio
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
+
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
 Fields(function(upcomingInstance)
-    upcomingInstance._t = nil
+    upcomingInstance._t = nil    
+    upcomingInstance._pfuiMainSettingsFormGuiFactory = nil -- IPfuiMainSettingsFormGuiFactory
+    
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
         frmContainer                                   = nil,
@@ -39,16 +45,19 @@ end)
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(translationService)
+function Class:New(pfuiMainSettingsFormGuiFactory, translationService)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNilOrInstanceImplementing(translationService, ITranslatorService, "translationService")
-    
+    Guard.Assert.IsInstanceImplementing(translationService, ITranslatorService, "translationService")
+    Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiFactory, IPfuiMainSettingsFormGuiFactory, "pfuiMainSettingsFormGuiFactory")
+
     local instance = self:Instantiate()
 
-    instance._t = translationService
-    instance._commandsEnabled = false
+    instance._t = translationService    
+    instance._pfuiMainSettingsFormGuiFactory = pfuiMainSettingsFormGuiFactory
     instance._eventRequestingCurrentUserPreferences = Event:New()
+    
+    instance._commandsEnabled = false
     -- upcomingInstance._ui = ... <- this is initialized in the :Initialize() method which must be called separately
     
     return instance
@@ -73,13 +82,13 @@ end
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
-    PfuiGui.CreateGUIEntry(-- 00
-            _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
-            _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
-            function()
-                self:InitializeControls_() --                   order   from the [partial]
-                self:OnRequestingCurrentUserPreferences_() --   order
-            end
+    _pfuiMainSettingsFormGuiFactory:TrySpawnNewNestedTabFrameWithArea( --00
+        _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
+        _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
+        function()
+            self:InitializeControls_() --                   order   from the [partial]
+            self:OnRequestingCurrentUserPreferences_() --   order
+        end
     )
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
