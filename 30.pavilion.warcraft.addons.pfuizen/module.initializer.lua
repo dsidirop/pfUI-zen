@@ -12,7 +12,7 @@ local Exception = using "System.Exceptions.Exception"
 local Enumerable                     = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
 local Pfui                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
-local PfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Gui.PfuiMainSettingsFormGuiFactory"
+local PfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiFactory"
 
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"

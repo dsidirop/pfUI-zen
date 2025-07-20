@@ -12,7 +12,7 @@ local A = using "System.Helpers.Arrays"
 local T = using "System.Helpers.Tables"
 local S = using "System.Helpers.Strings"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.DropdownX"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.DropdownX" -- todo rename this to 'PfuiDropdownBuilder' and move it under packages
 
 
 Fields(function(upcomingInstance)

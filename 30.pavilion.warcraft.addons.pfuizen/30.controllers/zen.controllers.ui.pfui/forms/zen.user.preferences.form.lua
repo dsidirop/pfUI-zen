@@ -6,8 +6,7 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
-local PfuiMainSettingsFormGuiFactory  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Gui.PfuiMainSettingsFormGuiFactory"
-local IPfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Gui.IPfuiMainSettingsFormGuiFactory"
+local IPfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiFactory"
 
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 
@@ -49,20 +48,18 @@ end)
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
 function Class:New(pfuiMainSettingsFormGuiFactory, translationService)
     Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsInstanceImplementing(translationService, ITranslatorService, "translationService")
-    Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiFactory, IPfuiMainSettingsFormGuiFactory, "pfuiMainSettingsFormGuiFactory")
 
-    local instance = self:Instantiate()
+    local instance = self:Instantiate() --@formatter:off
 
-    instance._t = translationService    
-    instance._pfuiMainSettingsFormGuiFactory = pfuiMainSettingsFormGuiFactory
+    instance._t                                     = Guard.Assert.IsInstanceImplementing(translationService,             ITranslatorService,              "translationService")    
+    instance._pfuiMainSettingsFormGuiFactory        = Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiFactory, IPfuiMainSettingsFormGuiFactory, "pfuiMainSettingsFormGuiFactory")
     instance._eventRequestingCurrentUserPreferences = Event:New()
     
-    instance._commandsEnabled = false
-    -- upcomingInstance._ui = ... <- this is initialized in the :Initialize() method which must be called separately
+    instance._commandsEnabled = false --00
     
     return instance
+    
+    --00 instance._ui.xyz = ... <- this stuff get initialized in the :Initialize() method which must be called separately   @formatter:on
 end
 
 function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
@@ -84,14 +81,14 @@ end
 function Class:Initialize()
     Scopify(EScopes.Function, self)
 
-    _ui.frmContainer, _ui.frmAreaContainer = _pfuiMainSettingsFormGuiFactory:TrySpawnNewNestedTabFrameWithArea( --00
-        _t("Thirdparty"), --        reminder  this is just a shorthand for _t:TryTranslate("Thirdparty")
-        _t("Zen", "|cFF7FFFD4"), -- reminder  this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
-        function()
-            self:InitializeControls_() --                   order   from the [partial]
-            self:OnRequestingCurrentUserPreferences_() --   order
-        end
-    )
+    _ui.frmContainer, _ui.frmAreaContainer = _pfuiMainSettingsFormGuiFactory:SpawnNestedTabFrameWithAreaBuilder() --00
+        :ChainSet_RootTabFrameName(_t("Thirdparty")) --           reminder   this is just a shorthand for _t:TryTranslate("Thirdparty")
+        :ChainSet_NestedTabFrameName(_t("Zen", "|cFF7FFFD4")) --  reminder   this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
+        :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
+            self:InitializeControls_() --                         order   from the [partial]
+            self:OnRequestingCurrentUserPreferences_() --         order
+        end)
+        :Build()
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
     --     navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
