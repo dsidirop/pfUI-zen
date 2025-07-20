@@ -5,7 +5,7 @@ local Guard = using "System.Guard"
 local Event = using "System.Event"
 local Fields = using "System.Classes.Fields"
 
-local PfuiGui = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiGui"
+local PfuiGui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
 local SelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
 
 local A = using "System.Helpers.Arrays"

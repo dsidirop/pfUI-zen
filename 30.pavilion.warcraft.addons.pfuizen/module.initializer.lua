@@ -9,8 +9,8 @@ local Guard = using "System.Guard"
 local Throw = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Pfui = using "Pavilion.Warcraft.Addons.Bindings.Pfui.Pfui"
-local PfuiGui = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiGui"
+local Pfui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui"
+local PfuiGui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
 local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
 local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"

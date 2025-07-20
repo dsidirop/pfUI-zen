@@ -14,6 +14,14 @@ local Guard = using "[declare] [static]" "System.Guard [Partial]"
 do
     Guard.Assert.Explained = using "[declare] [static]" "System.Guard.Assert.Explained"
     
+    function Guard.Assert.Explained.IsMereFrame(object, customMessage)
+        if not Reflection.IsMereFrame(object) then
+            Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))
+        end
+        
+        return object
+    end
+    
     function Guard.Assert.Explained.IsString(value, customMessage)
         if not Reflection.IsString(value) then
             Throw(ValueIsOutOfRangeException:NewWithMessage(customMessage))

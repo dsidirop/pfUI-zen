@@ -9,7 +9,7 @@ local ITranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Co
 
 local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService"
 
-local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfigurationReader"
+local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiEnvConfigurationReader"
 local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.Translations.All" --@formatter:on
 
 local ZenOwnTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" { -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenOwnTranslatorService and move it into its own separate subfolder

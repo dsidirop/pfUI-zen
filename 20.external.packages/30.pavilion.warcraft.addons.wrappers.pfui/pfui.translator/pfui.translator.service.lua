@@ -2,9 +2,9 @@
 
 local PfuiTranslationTable = using "[built-in]" [[ pfUI.env.T or {} ]]
 
-local IPfuiTranslatorService = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+local IPfuiTranslatorService = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService"
 
-local PfuiTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService" {
+local PfuiTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService" {
     "IPfuiTranslatorService", IPfuiTranslatorService
 }
 

@@ -9,8 +9,8 @@ local TablesHelper = using "System.Helpers.Tables"
 
 local IPfuiZenDB   = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Db.IPfuiZenDB"
 
-local Schema            = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Db.Schemas.SchemaV1"
-local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfiguration"
+local Schema               = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Db.Schemas.SchemaV1"
+local PfuiEnvConfiguration = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiEnvConfiguration"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -28,7 +28,7 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persis
 function Class:TryLoadDocUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local rawAllAddonSettings = PfuiConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.v1"]
+    local rawAllAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.v1"]
 
     return { --@formatter:off
         GreeniesGrouplootingAutomation = {
@@ -46,7 +46,7 @@ function Class:UpdateDocUserPreferences(newUserPreferences)
     Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationMode, newUserPreferences.GreeniesGrouplootingAutomation.Mode, "newUserPreferences.GreeniesGrouplootingAutomation.Mode")
     Guard.Assert.IsEnumValue(SGreeniesGrouplootingAutomationActOnKeybind, newUserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind, "newUserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind")
 
-    local existingRawAddonSettings = PfuiConfiguration[Schema.RootKeyname] or {}
+    local existingRawAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname] or {}
     
     existingRawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode.Keyname] = newUserPreferences.GreeniesGrouplootingAutomation.Mode
     existingRawAddonSettings[Schema.Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind.Keyname] = newUserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind

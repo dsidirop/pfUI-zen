@@ -29,7 +29,7 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
 
             ----
 
-            local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+            local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService"
         
             local PfuiTranslatorAsFallbackMock = using "[declare] [blend]" (subTestcaseName .. ".T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.ShouldTranslateSuccessfully.PfuiTranslatorAsFallbackMock") {
                 "IPfuiTranslatorService", IPfuiTranslatorService

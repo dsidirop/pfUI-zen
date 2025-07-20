@@ -1,8 +1,8 @@
 --[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfiguration"
+local PfuiEnvConfiguration = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiEnvConfiguration"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfigurationReader"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiEnvConfigurationReader"
 
 
 function Class:New()
@@ -10,7 +10,7 @@ function Class:New()
 end
 
 function Class:TryGetLanguageSetting()
-    return (PfuiConfiguration.global or {}).language 
+    return (PfuiEnvConfiguration.global or {}).language 
 end
 
-Class.I = Class:New()
+Class.I = Class:New() -- todo  get this from CI

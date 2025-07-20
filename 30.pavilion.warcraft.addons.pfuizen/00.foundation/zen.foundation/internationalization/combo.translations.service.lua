@@ -6,8 +6,8 @@ local Fields  = using "System.Classes.Fields"
 
 local ITranslatorService      = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
 
-local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiTranslatorService"
-local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
+local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService"
 
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" -- @formatter:on
 

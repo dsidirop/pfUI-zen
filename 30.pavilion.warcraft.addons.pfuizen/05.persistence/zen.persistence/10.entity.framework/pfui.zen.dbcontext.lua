@@ -12,8 +12,6 @@ local PfuiZenDB         = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Db
 local IPfuiZenDB        = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Db.IPfuiZenDB"
 local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
 
-local PfuiConfiguration = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiConfiguration"
-
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext" { --[[@formatter:on]]
     "IPfuiZenDBContext", IPfuiZenDBContext,
 }

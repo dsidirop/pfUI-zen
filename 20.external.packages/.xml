@@ -8,5 +8,5 @@
     <Include file="20.pavilion.warcraft.foundation\.xml"/>
     <Include file="20.pavilion.warcraft.foundation.testbed\.xml"/>
     
-    <Include file="30.pavilion.warcraft.addons.bindings.pfui\.xml"/>
+    <Include file="30.pavilion.warcraft.addons.wrappers.pfui\.xml"/>
 </Ui>
