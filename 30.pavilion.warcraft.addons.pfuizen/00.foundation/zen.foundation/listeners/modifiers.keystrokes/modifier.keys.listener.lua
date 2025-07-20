@@ -98,8 +98,6 @@ function Class:EventModifierKeysStatesChanged_Unsubscribe(handler)
     return self
 end
 
-Class.I = Class:New() -- singleton   todo  remove this once di becomes available
-
 
 -- private space
 
@@ -175,3 +173,5 @@ function Class:Timer_Elapsed_(_, _)
     --@formatter:on
     --00  if the event handlers are ephimeral we might end up with no handlers in which case we have to stop the timer for the sake of efficiency 
 end
+
+Class.I = Class:New() -- singleton   todo  remove this once di becomes available

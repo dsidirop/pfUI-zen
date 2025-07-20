@@ -5,9 +5,14 @@ local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
 local ZenEngine              = using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.ZenEngine"
-local ZenEngineSettings      = using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.ZenEngineSettings"
+local IZenEngine             = using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Contracts.Engine.IZenEngine"
+
+local ZenEngineSettings      = using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Contracts.Engine.ZenEngineSettings"
 local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.Service"
 
+local IUserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Contracts.Services.AddonSettings.UserPreferences.IService"
+
+local RestartEngineCommand                                      = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
@@ -21,35 +26,40 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-function Class:New(userPreferencesService)
+function Class:New(zenEngineSingleton, userPreferencesService)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNilOrTable(userPreferencesService, "userPreferencesService")
+    Guard.Assert.IsNilOrInstanceImplementing(zenEngineSingleton, IZenEngine, "zenEngineSingleton")
+    Guard.Assert.IsNilOrInstanceImplementing(userPreferencesService, IUserPreferencesService, "userPreferencesService")
     
     local instance = self:Instantiate()
     
-    instance._zenEngineSingleton = ZenEngine.I --todo   refactor this later on so that this gets injected through DI
+    instance._zenEngineSingleton = Nils.Coalesce(zenEngineSingleton, ZenEngine.I) --todo   refactor this later on so that this gets injected through DI
     instance._userPreferencesService = Nils.Coalesce(userPreferencesService, UserPreferencesService:NewWithDBContext())
     
     return instance
 end
 
-function Class:Handle_RestartEngineCommand(_)
+function Class:Handle_RestartEngineCommand(command)
     Scopify(EScopes.Function, self)
+    
+    Guard.Assert.IsInstanceOf(command, RestartEngineCommand, "command")
 
     local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
 
     local zenEngineSettings = ZenEngineSettings:New()
 
-    zenEngineSettings:GetGreeniesAutolooterAggregateSettings()
+    zenEngineSettings:GetGreeniesGrouplootingAssistantAggregateSettings()
                      :ChainSetMode(userPreferencesDto:Get_GreeniesGrouplootingAutomation_Mode())
                      :ChainSetActOnKeybind(userPreferencesDto:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
     
     -- todo   add more settings-sections here
 
-    _zenEngineSingleton:Stop()
+    _zenEngineSingleton:Stop() -- todo   wrap this in a try-catch block to normalize exceptions
                        :SetSettings(zenEngineSettings)
                        :Start()
+
+    -- todo   raise side-effect domain-events here
 
     return self
 end
@@ -61,7 +71,7 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
 
     _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) --                     order
 
-    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order
+    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order   todo   wrap this in a try-catch block to normalize exceptions
     if success then
         -- todo   raise side-effect domain-events here
     end
