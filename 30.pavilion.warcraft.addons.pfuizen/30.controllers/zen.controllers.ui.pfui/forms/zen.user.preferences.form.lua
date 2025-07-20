@@ -141,24 +141,29 @@ function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
     _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
-
-    if _commandsEnabled then
-        ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
-                GreeniesGrouplootingAutomationApplyNewModeCommand:New()
-                                                        :ChainSetOld(ea:GetOldValue())
-                                                        :ChainSetNew(ea:GetNewValue())
-        )
+    if not _commandsEnabled then
+        return
     end
+    
+    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
+        GreeniesGrouplootingAutomationApplyNewModeCommand
+        :New()
+        :ChainSetOld(ea:GetOldValue())
+        :ChainSetNew(ea:GetNewValue())
+    )
 end
 
 function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
-    if _commandsEnabled then
-        ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
-                GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand:New()
-                                                                :ChainSetOld(ea:GetOldValue())
-                                                                :ChainSetNew(ea:GetNewValue())
-        )
+    if not _commandsEnabled then
+        return
     end
+
+    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
+        GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand
+        :New()
+        :ChainSetOld(ea:GetOldValue())
+        :ChainSetNew(ea:GetNewValue())
+    )
 end
