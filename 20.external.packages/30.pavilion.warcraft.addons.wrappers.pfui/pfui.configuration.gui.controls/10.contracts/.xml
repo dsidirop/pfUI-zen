@@ -3,6 +3,7 @@
     <Include file="i.pfui.gui.control.builder.lua"/>
     
     <!-- contracts -->
+    <Include file="header\.xml"/>
     <Include file="dropdown\.xml"/>
     
     <Include file="i.pfui.nested.tabframe.with.area.builder.lua"/>

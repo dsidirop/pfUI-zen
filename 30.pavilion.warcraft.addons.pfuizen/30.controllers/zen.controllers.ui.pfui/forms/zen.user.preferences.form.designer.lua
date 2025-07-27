@@ -1,7 +1,5 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local PfuiGui                                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
-
 local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
@@ -10,11 +8,13 @@ local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI
 function Class:InitializeControls_()
     Scopify(EScopes.Function, self)
 
-    _ui.frmAreaContainer:SetScript("OnShow", function() self:OnShown_() end) -- note:   _ui.frmAreaContainer == _ui.lblGrouplootSectionHeader:GetParent():GetParent():GetParent()
+    _ui.frmAreaContainer:SetScript("OnShow", function() self:OnShown_() end) -- note:   _ui.frmAreaContainer == _ui.hdrGrouplootSectionHeader:GetParent():GetParent():GetParent()
 
-    _ui.lblGrouplootSectionHeader = PfuiGui.CreateConfig(nil, _t("Grouploot Automation"), nil, nil, "header")
-    _ui.lblGrouplootSectionHeader:SetHeight(30)
-    -- _ui.lblGrouplootSectionHeader:GetParent().objectCount = _ui.lblGrouplootSectionHeader:GetParent().objectCount - 1
+    _ui.hdrGrouplootSectionHeader = _pfuiMainSettingsFormGuiFactory --@formatter:off
+                                                                :SpawnHeaderBuilder()
+                                                                :ChainSet_Caption(_t("Grouploot Automation"))
+                                                                :Build()
+                                                                :ChainSet_Height(30) --@formatter:on
 
     _ui.lddGreeniesGrouplootingAutomation_mode = _pfuiMainSettingsFormGuiFactory --@formatter:off
                                                                 :SpawnLabeledDropdownBuilder()

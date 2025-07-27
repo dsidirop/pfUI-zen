@@ -33,7 +33,7 @@ Fields(function(upcomingInstance)
         frmContainer                                   = nil,
         frmAreaContainer                               = nil,
         
-        lblGrouplootSectionHeader                      = nil,
+        hdrGrouplootSectionHeader                      = nil,
         lddGreeniesGrouplootingAutomation_mode         = nil,
         lddGreeniesGrouplootingAutomation_actOnKeybind = nil,
     }
@@ -148,7 +148,7 @@ end
 function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
-    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
+    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
     if not _commandsEnabled then
         return
     end

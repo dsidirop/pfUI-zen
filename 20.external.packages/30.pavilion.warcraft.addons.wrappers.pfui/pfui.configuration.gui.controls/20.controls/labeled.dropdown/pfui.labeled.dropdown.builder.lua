@@ -32,31 +32,10 @@ Fields(function(upcomingInstance)
     upcomingInstance._singlevalue = {}
     upcomingInstance._valuekeyname = "dummy_keyname_for_value"
 
-    upcomingInstance._eventSelectionChanged = nil
+    upcomingInstance._eventSelectionChanged = Event:New()
 
     return upcomingInstance
 end)
-
-function Class:New()
-    Scopify(EScopes.Function, self)
-
-    local instance = self:Instantiate()
-
-    instance._nativePfuiControlFrame = nil
-
-    instance._caption = ""
-    instance._menuItems = {}
-    instance._menuEntryValuesToIndexes = {}
-    instance._menuIndexesToMenuValuesArray = {}
-
-    instance._oldValue = nil
-    instance._singlevalue = {}
-    instance._valuekeyname = "dummy_keyname_for_value"
-
-    instance._eventSelectionChanged = Event:New()
-
-    return instance
-end
 
 function Class:ChainSet_Caption(caption)
     Scopify(EScopes.Function, self)
@@ -122,11 +101,10 @@ function Class:Build()
         "dropdown",
         _menuItems
     )
-    if _xposNudging or _yposNudging then
+    if _xposNudging or _yposNudging then -- todo  extract this on a base-class
         local anchor, relativeControl, relativeAnchor, xpos, ypos = _nativePfuiControlFrame.caption:GetPoint()
 
-        _nativePfuiControlFrame.caption:SetPoint(anchor, relativeControl, relativeAnchor, xpos + _xposNudging,
-            ypos + _yposNudging)
+        _nativePfuiControlFrame.caption:SetPoint(anchor, relativeControl, relativeAnchor, xpos + _xposNudging, ypos + _yposNudging)
     end
 
     return self -- todo  we should return a wrapped _nativePfuiControlFrame and move the :TrySetSelectedOptionByValue() and other methods in that wrapper
@@ -137,7 +115,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsString(optionValue, "optionValue")
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
 
     local index = _menuEntryValuesToIndexes[optionValue]
     if index == nil then
@@ -156,7 +134,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveInteger(index, "index")
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
 
     if index > A.Count(_menuIndexesToMenuValuesArray) then
         -- we dont want to subject this to an assertion
@@ -168,10 +146,10 @@ function Class:TrySetSelectedOptionByIndex(index)
     end
 
     local newValue = _menuIndexesToMenuValuesArray[index] --   order
-    local originalValue = _singlevalue[_valuekeyname]     --       order
+    local originalValue = _singlevalue[_valuekeyname]     --   order
 
-    _singlevalue[_valuekeyname] = newValue                --             order
-    _nativePfuiControlFrame.input:SetSelection(index)     --       order
+    _singlevalue[_valuekeyname] = newValue                --   order
+    _nativePfuiControlFrame.input:SetSelection(index)     --   order
 
     Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index,
         "failed to set the selection to option#" .. index .. " (how did this happen?)")
@@ -188,7 +166,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     --00  we have to emulate the selectionchanged event because the underlying pfui control doesnt fire it automatically on its own
 end
 
-function Class:SetVisibility(showNotHide)
+function Class:ChainSet_Visibility(showNotHide)
     Scopify(EScopes.Function, self)
 
     if showNotHide then
@@ -203,7 +181,7 @@ end
 function Class:Show()
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
 
     _nativePfuiControlFrame:Show()
 
@@ -213,7 +191,7 @@ end
 function Class:Hide()
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
+    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
 
     _nativePfuiControlFrame:Hide()
 

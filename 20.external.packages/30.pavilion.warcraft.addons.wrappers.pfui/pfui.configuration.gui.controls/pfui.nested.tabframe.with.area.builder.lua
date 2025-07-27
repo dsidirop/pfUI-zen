@@ -78,7 +78,7 @@ function Class:Build()
 end
 
 -- todo   move these to a base class
---function Class:SetVisibility(showNotHide)
+--function Class:ChainSet_Visibility(showNotHide)
 --    Scopify(EScopes.Function, self)
 --
 --    if showNotHide then
