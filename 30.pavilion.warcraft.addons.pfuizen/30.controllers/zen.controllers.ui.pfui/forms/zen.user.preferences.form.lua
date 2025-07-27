@@ -34,8 +34,8 @@ Fields(function(upcomingInstance)
         frmAreaContainer                               = nil,
         
         hdrGrouplootSectionHeader                      = nil,
-        lddGreeniesGrouplootingAutomation_mode         = nil,
-        lddGreeniesGrouplootingAutomation_actOnKeybind = nil,
+        lddGreeniesGrouplootingAutomation_Mode         = nil,
+        lddGreeniesGrouplootingAutomation_ActOnKeybind = nil,
     }
 
     upcomingInstance._commandsEnabled = false
@@ -127,12 +127,12 @@ function Class:ApplyNewUserPreferences_(newUserPreferences)
 
     _commandsEnabled = false --00
 
-    if not _ui.lddGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
-        _ui.lddGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
+    if not _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
+        _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
-        _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
+    if not _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
+        _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 
     _commandsEnabled = true
@@ -145,10 +145,10 @@ function Class:ApplyNewUserPreferences_(newUserPreferences)
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
+function Class:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
-    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
+    _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
     if not _commandsEnabled then
         return
     end
@@ -161,7 +161,7 @@ function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
     )
 end
 
-function Class:DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_(_, ea)
+function Class:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
     if not _commandsEnabled then

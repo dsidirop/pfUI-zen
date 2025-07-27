@@ -16,7 +16,7 @@ function Class:InitializeControls_()
                                                                 :Build()
                                                                 :ChainSet_Height(30) --@formatter:on
 
-    _ui.lddGreeniesGrouplootingAutomation_mode = _pfuiMainSettingsFormGuiFactory --@formatter:off
+    _ui.lddGreeniesGrouplootingAutomation_Mode = _pfuiMainSettingsFormGuiFactory --@formatter:off
                                                                 :SpawnLabeledDropdownBuilder()
                                                                 :ChainSet_Caption(_t("On |cFF228B22Greens|r"))
                                                                 :ChainSet_MenuItems({
@@ -26,10 +26,10 @@ function Class:InitializeControls_()
                                                                        SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t("Let me handle it myself"),
                                                                 })
                                                                 :ChainSet_CaptionXPositionNudging(17) -- nudge the caption a bit to the right
-                                                                :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationMode_SelectionChanged_, self)
+                                                                :EventSelectionChanged_Subscribe(self.lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_, self)
                                                                 :Build() --@formatter:on
 
-    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind = _pfuiMainSettingsFormGuiFactory --@formatter:off
+    _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind = _pfuiMainSettingsFormGuiFactory --@formatter:off
                                                                 :SpawnLabeledDropdownBuilder()
                                                                 :ChainSet_Caption(_t("Upon Pressing"))
                                                                 :ChainSet_MenuItems({
@@ -43,7 +43,7 @@ function Class:InitializeControls_()
                                                                        SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t("Ctrl + Alt + Shift"),
                                                                 })
                                                                 :ChainSet_CaptionXPositionNudging(17) -- nudge the caption a bit to the right
-                                                                :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_, self)
+                                                                :EventSelectionChanged_Subscribe(self.lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_, self)
                                                                 :Build() --@formatter:on
 
 end
