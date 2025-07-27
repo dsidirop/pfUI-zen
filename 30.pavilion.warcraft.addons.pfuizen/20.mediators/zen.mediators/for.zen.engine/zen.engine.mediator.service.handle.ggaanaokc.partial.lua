@@ -11,11 +11,11 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
 
     Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewModeCommand, "command")
 
-    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) --                     order
+    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) -- order   todo   suppress exceptions here   handlers advertise successes/failures through domain-events only!
 
-    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order   todo   wrap this in a try-catch block to normalize exceptions
+    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order
     if success then
-        -- todo   raise side-effect domain-events here
+        -- todo   raise success/failure domain-events here
     end
 
     return self
