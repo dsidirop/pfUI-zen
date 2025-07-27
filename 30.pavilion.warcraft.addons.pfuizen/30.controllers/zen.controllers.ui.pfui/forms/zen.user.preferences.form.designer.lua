@@ -1,7 +1,7 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local PfuiGui                                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
-local PfuiDropdownX                                     = using "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.DropdownX"
+
 local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
@@ -16,32 +16,34 @@ function Class:InitializeControls_()
     _ui.lblGrouplootSectionHeader:SetHeight(30)
     -- _ui.lblGrouplootSectionHeader:GetParent().objectCount = _ui.lblGrouplootSectionHeader:GetParent().objectCount - 1
 
-    _ui.ddlGreeniesGrouplootingAutomation_mode = PfuiDropdownX:New() --@formatter:off
-                                                              :ChainSetCaption(_t("On |cFF228B22Greens|r"))
-                                                              :ChainSetMenuItems({
-                                                                     SGreeniesGrouplootingAutomationMode.RollNeed      .. ":" .. _t("Roll '|cffff4500Need|r'"),
-                                                                     SGreeniesGrouplootingAutomationMode.RollGreed     .. ":" .. _t("Roll '|cffffd700Greed|r'"),
-                                                                     SGreeniesGrouplootingAutomationMode.JustPass      .. ":" .. _t("Just '|cff888888Pass|r'"),
-                                                                     SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t("Let me handle it myself"),
-                                                              })
-                                                              :ChainSetCaptionXPositionNudging(17) -- nudge the caption a bit to the right
-                                                              :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationMode_SelectionChanged_, self)
-                                                              :Initialize() --@formatter:on
+    _ui.lddGreeniesGrouplootingAutomation_mode = _pfuiMainSettingsFormGuiFactory --@formatter:off
+                                                                :SpawnLabeledDropdownBuilder()
+                                                                :ChainSet_Caption(_t("On |cFF228B22Greens|r"))
+                                                                :ChainSet_MenuItems({
+                                                                       SGreeniesGrouplootingAutomationMode.RollNeed      .. ":" .. _t("Roll '|cffff4500Need|r'"),
+                                                                       SGreeniesGrouplootingAutomationMode.RollGreed     .. ":" .. _t("Roll '|cffffd700Greed|r'"),
+                                                                       SGreeniesGrouplootingAutomationMode.JustPass      .. ":" .. _t("Just '|cff888888Pass|r'"),
+                                                                       SGreeniesGrouplootingAutomationMode.LetUserChoose .. ":" .. _t("Let me handle it myself"),
+                                                                })
+                                                                :ChainSet_CaptionXPositionNudging(17) -- nudge the caption a bit to the right
+                                                                :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationMode_SelectionChanged_, self)
+                                                                :Build() --@formatter:on
 
-    _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind = PfuiDropdownX:New() --@formatter:off
-                                                                      :ChainSetCaption(_t("Upon Pressing"))
-                                                                      :ChainSetMenuItems({
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Automatic    .. ":" .. _t("|cff888888(No Need to Press Anything)|r"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Alt          .. ":" .. _t("Alt"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Ctrl         .. ":" .. _t("Ctrl"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.Shift        .. ":" .. _t("Shift"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt      .. ":" .. _t("Ctrl + Alt"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift    .. ":" .. _t("Ctrl + Shift"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.AltShift     .. ":" .. _t("Alt + Shift"),
-                                                                             SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t("Ctrl + Alt + Shift"),
-                                                                      })
-                                                                      :ChainSetCaptionXPositionNudging(17) -- nudge the caption a bit to the right
-                                                                      :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_, self)
-                                                                      :Initialize() --@formatter:on
+    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind = _pfuiMainSettingsFormGuiFactory --@formatter:off
+                                                                :SpawnLabeledDropdownBuilder()
+                                                                :ChainSet_Caption(_t("Upon Pressing"))
+                                                                :ChainSet_MenuItems({
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.Automatic    .. ":" .. _t("|cff888888(No Need to Press Anything)|r"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.Alt          .. ":" .. _t("Alt"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.Ctrl         .. ":" .. _t("Ctrl"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.Shift        .. ":" .. _t("Shift"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.CtrlAlt      .. ":" .. _t("Ctrl + Alt"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.CtrlShift    .. ":" .. _t("Ctrl + Shift"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.AltShift     .. ":" .. _t("Alt + Shift"),
+                                                                       SGreeniesGrouplootingAutomationActOnKeybind.CtrlAltShift .. ":" .. _t("Ctrl + Alt + Shift"),
+                                                                })
+                                                                :ChainSet_CaptionXPositionNudging(17) -- nudge the caption a bit to the right
+                                                                :EventSelectionChanged_Subscribe(self.DdlGreeniesGrouplootingAutomationActOnKeybind_SelectionChanged_, self)
+                                                                :Build() --@formatter:on
 
 end

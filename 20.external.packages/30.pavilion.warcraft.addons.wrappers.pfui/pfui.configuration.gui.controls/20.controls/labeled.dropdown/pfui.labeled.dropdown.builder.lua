@@ -1,19 +1,21 @@
-﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Guard = using "System.Guard"
+local A                                 = using "System.Helpers.Arrays"
+local T                                 = using "System.Helpers.Tables"
+local S                                 = using "System.Helpers.Strings"
 
-local Event = using "System.Event"
-local Fields = using "System.Classes.Fields"
+local Guard                             = using "System.Guard"
 
-local PfuiGui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
-local SelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
+local Event                             = using "System.Event"
+local Fields                            = using "System.Classes.Fields"
 
-local A = using "System.Helpers.Arrays"
-local T = using "System.Helpers.Tables"
-local S = using "System.Helpers.Strings"
+local PfuiGui                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
+local IPfuiLabeledDropdownBuilder       = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Dropdown.IPfuiLabeledDropdownBuilder"
+local DropdownSelectionChangedEventArgs = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Dropdown.DropdownSelectionChangedEventArgs"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.DropdownX" -- todo rename this to 'PfuiDropdownBuilder' and move it under packages
-
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledDropdown.PfuiLabeledDropdownBuilder" { --[[@formatter:on]]
+    "IPfuiLabeledDropdownBuilder", IPfuiLabeledDropdownBuilder,
+}
 
 Fields(function(upcomingInstance)
     upcomingInstance._nativePfuiControlFrame = nil
@@ -21,7 +23,7 @@ Fields(function(upcomingInstance)
     upcomingInstance._caption = ""
     upcomingInstance._xposNudging = 0
     upcomingInstance._yposNudging = 0
-        
+
     upcomingInstance._menuItems = {}
     upcomingInstance._menuEntryValuesToIndexes = {}
     upcomingInstance._menuIndexesToMenuValuesArray = {}
@@ -52,13 +54,13 @@ function Class:New()
     instance._valuekeyname = "dummy_keyname_for_value"
 
     instance._eventSelectionChanged = Event:New()
-    
+
     return instance
 end
 
-function Class:ChainSetCaption(caption)
+function Class:ChainSet_Caption(caption)
     Scopify(EScopes.Function, self)
-    
+
     Guard.Assert.IsString(caption, "caption")
 
     _caption = caption
@@ -66,7 +68,7 @@ function Class:ChainSetCaption(caption)
     return self
 end
 
-function Class:ChainSetMenuItems(menuItems)
+function Class:ChainSet_MenuItems(menuItems)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(menuItems, "menuItems")
@@ -79,7 +81,7 @@ function Class:ChainSetMenuItems(menuItems)
     return self
 end
 
-function Class:ChainSetCaptionXPositionNudging(xposNudging) -- +/-px horizontally from the default position
+function Class:ChainSet_CaptionXPositionNudging(xposNudging) -- +/-px horizontally from the default position
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNumber(xposNudging, "xposNudging")
@@ -89,7 +91,7 @@ function Class:ChainSetCaptionXPositionNudging(xposNudging) -- +/-px horizontall
     return self
 end
 
-function Class:ChainSetCaptionYPositionNudging(yposNudging) -- +/-px vertically from the default position
+function Class:ChainSet_CaptionYPositionNudging(yposNudging) -- +/-px vertically from the default position
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNumber(yposNudging, "yposNudging")
@@ -99,36 +101,38 @@ function Class:ChainSetCaptionYPositionNudging(yposNudging) -- +/-px vertically 
     return self
 end
 
-function Class:Initialize()
+function Class:Build()
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsTable(_menuItems, "_menuItems")
     Guard.Assert.IsNonDudString(_caption, "_caption")
 
     _nativePfuiControlFrame = PfuiGui.CreateConfig(
-            function()
-                self:OnSelectionChanged_(
-                        SelectionChangedEventArgs:New()
-                                                 :ChainSetOld(_oldValue)
-                                                 :ChainSetNew(_singlevalue[_valuekeyname])
-                )
-            end,
-            _caption,
-            _singlevalue,
-            _valuekeyname,
-            "dropdown",
-            _menuItems
+        function()
+            self:OnSelectionChanged_(
+                DropdownSelectionChangedEventArgs
+                :New()
+                :ChainSet_Old(_oldValue)
+                :ChainSet_New(_singlevalue[_valuekeyname])
+            )
+        end,
+        _caption,
+        _singlevalue,
+        _valuekeyname,
+        "dropdown",
+        _menuItems
     )
-    
     if _xposNudging or _yposNudging then
         local anchor, relativeControl, relativeAnchor, xpos, ypos = _nativePfuiControlFrame.caption:GetPoint()
-        
-        _nativePfuiControlFrame.caption:SetPoint(anchor, relativeControl, relativeAnchor, xpos + _xposNudging, ypos + _yposNudging)
+
+        _nativePfuiControlFrame.caption:SetPoint(anchor, relativeControl, relativeAnchor, xpos + _xposNudging,
+            ypos + _yposNudging)
     end
 
-    return self
+    return self -- todo  we should return a wrapped _nativePfuiControlFrame and move the :TrySetSelectedOptionByValue() and other methods in that wrapper
 end
 
+-- todo   all these methods should be moved to the control class itself
 function Class:TrySetSelectedOptionByValue(optionValue)
     Scopify(EScopes.Function, self)
 
@@ -141,7 +145,9 @@ function Class:TrySetSelectedOptionByValue(optionValue)
     end
 
     local success = self:TrySetSelectedOptionByIndex(index)
-    Guard.Assert.Explained.IsTrue(success, "failed to set the selection to option '" .. optionValue .. "' (index=" .. index .. " - but how did this happen?)")
+    Guard.Assert.Explained.IsTrue(success,
+        "failed to set the selection to option '" ..
+        optionValue .. "' (index=" .. index .. " - but how did this happen?)")
 
     return true
 end
@@ -162,17 +168,19 @@ function Class:TrySetSelectedOptionByIndex(index)
     end
 
     local newValue = _menuIndexesToMenuValuesArray[index] --   order
-    local originalValue = _singlevalue[_valuekeyname] --       order
+    local originalValue = _singlevalue[_valuekeyname]     --       order
 
-    _singlevalue[_valuekeyname] = newValue --             order
-    _nativePfuiControlFrame.input:SetSelection(index) --       order
+    _singlevalue[_valuekeyname] = newValue                --             order
+    _nativePfuiControlFrame.input:SetSelection(index)     --       order
 
-    Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
+    Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index,
+        "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
     self:OnSelectionChanged_(
-            SelectionChangedEventArgs:New() -- 00
-                                     :ChainSetOld(originalValue)
-                                     :ChainSetNew(newValue)
+        DropdownSelectionChangedEventArgs -- 00
+        :New()
+        :ChainSet_Old(originalValue)
+        :ChainSet_New(newValue)
     )
 
     return true
@@ -196,7 +204,7 @@ function Class:Show()
     Scopify(EScopes.Function, self)
 
     Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control is not initialized - call Initialize() first")
-    
+
     _nativePfuiControlFrame:Show()
 
     return self

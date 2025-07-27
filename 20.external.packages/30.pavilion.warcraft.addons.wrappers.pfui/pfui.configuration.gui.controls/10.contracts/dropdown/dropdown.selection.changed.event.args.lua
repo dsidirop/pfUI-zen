@@ -7,7 +7,7 @@ local Guard = using "System.Guard"
 
 local Fields = using "System.Classes.Fields"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.UI.Pfui.ControlsX.Dropdown.SelectionChangedEventArgs"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Dropdown.DropdownSelectionChangedEventArgs"
 
 
 Fields(function(upcomingInstance)
@@ -35,7 +35,7 @@ function Class:GetNewValue()
     return _new
 end
 
-function Class:ChainSetOld(old)
+function Class:ChainSet_Old(old)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsNilOrString(old, "old")
@@ -45,7 +45,7 @@ function Class:ChainSetOld(old)
     return self
 end
 
-function Class:ChainSetNew(new)
+function Class:ChainSet_New(new)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsString(new, "new")

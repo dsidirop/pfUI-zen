@@ -34,8 +34,8 @@ Fields(function(upcomingInstance)
         frmAreaContainer                               = nil,
         
         lblGrouplootSectionHeader                      = nil,
-        ddlGreeniesGrouplootingAutomation_mode         = nil,
-        ddlGreeniesGrouplootingAutomation_actOnKeybind = nil,
+        lddGreeniesGrouplootingAutomation_mode         = nil,
+        lddGreeniesGrouplootingAutomation_actOnKeybind = nil,
     }
 
     upcomingInstance._commandsEnabled = false
@@ -127,12 +127,12 @@ function Class:ApplyNewUserPreferences_(newUserPreferences)
 
     _commandsEnabled = false --00
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
-        _ui.ddlGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
+    if not _ui.lddGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
+        _ui.lddGreeniesGrouplootingAutomation_mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
-    if not _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
-        _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
+    if not _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
+        _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 
     _commandsEnabled = true
@@ -148,7 +148,7 @@ end
 function Class:DdlGreeniesGrouplootingAutomationMode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
-    _ui.ddlGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
+    _ui.lddGreeniesGrouplootingAutomation_actOnKeybind:SetVisibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
     if not _commandsEnabled then
         return
     end

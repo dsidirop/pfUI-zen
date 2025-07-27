@@ -2,6 +2,7 @@
     <!-- order -->
     <Include file="00.raw.bindings\.xml"/>
     <Include file="10.contracts\.xml"/>
+    <Include file="20.controls\.xml"/>
 
     <Include file="pfui.nested.tabframe.with.area.builder.lua"/>
     <Include file="pfui.main.settings.form.gui.factory.lua"/>
