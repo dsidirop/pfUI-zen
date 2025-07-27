@@ -221,7 +221,7 @@ do
         local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
 
         _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-        _ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        _ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFAUTO.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the parent symbol is not a class", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
         _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
 
         latestProto[targetMethodName] = nil --00 crucial
@@ -926,6 +926,13 @@ do
             or _symbolType == SRegistrySymbolTypes.AbstractClass
             or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
+    
+    function Entry:IsInstantiatableClassEntry()
+        _setfenv(EScope.Function, self)
+        
+        return _symbolType == SRegistrySymbolTypes.AbstractClass
+            or _symbolType == SRegistrySymbolTypes.NonStaticClass
+    end
 
     function Entry:IsStaticClassEntry()
         _setfenv(EScope.Function, self)
@@ -1309,19 +1316,19 @@ do
     end
 
     -- importer()
-    function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
+    function NamespaceRegistry:Get(namespacePathOrKeyword, suppressExceptionIfNotFound)
         _setfenv(EScope.Function, self)
 
-        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePathOrKeyword)
         NamespaceRegistry.Assert.NoStrayPendingAttributes()
 
-        local entry = _namespaces_registry[namespacePath]
+        local entry = _namespaces_registry[namespacePathOrKeyword]
         if entry == nil then
             if suppressExceptionIfNotFound then
                 return nil
             end
 
-            _throw_exception("namespace/keyword [%s] has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
+            _throw_exception("namespace/keyword [%s] has not been registered.", namespacePathOrKeyword) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
 
         --if entry:IsPartialEntry() then -- dont   use "[healthcheck] [all]" to find out about dangling partial entries
@@ -1719,10 +1726,33 @@ do
         end
     end)
 
+    NamespaceRegistrySingleton:BindKeyword("[wrap]", function(wrapSpecsArray) --@formatter:off
+        _ = _type(wrapSpecsArray) == "table" or _throw_exception("[NR.BAK.005] 'wrap' must be given an array-table with exactly two items (got: %s)", _stringify(_type(wrapSpecsArray)))
+    
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+        _ = latestProto ~= nil or _throw_exception("[NR.BAK.010] Cannot process 'wrap' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+
+        local wrappedFieldName = wrapSpecsArray[1] -- the first item in the array is the field to wrap around
+        local targetMethodName = wrapSpecsArray[2] -- the second item in the array is the target method name
+        _ = _type(wrappedFieldName) == "string" and wrappedFieldName ~= "" or _throw_exception("[NR.BAK.020] wrappedFieldName must be a non-dud string ( got %q )", _stringify(_type(wrappedFieldName)))
+        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.BAK.025] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
+        _ = latestTidbits:IsInstantiatableClassEntry()                     or _throw_exception("[NR.BAK.035] Cannot apply 'wrap' attribute on [%s:%s()] because the parent symbol is not a non-static class", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
+        
+        latestProto[targetMethodName] = function (self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
+            local targetField = self[wrappedFieldName]
+            _ = _type(targetField) == "table" or _throw_exception("[NR.BAK.040] Cannot call wrapper-method [%s:%s()] because the wrapped field [%s] is not a table (yet?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName), _stringify(wrappedFieldName))
+
+            local targetMethod = targetField[targetMethodName]
+            _ = _type(targetMethod) == "function" or _throw_exception("[NR.BAK.045] Cannot call wrapper-method [%s:%s()] because the target method [%s] is not a function (yet?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName), _stringify(targetMethodName))
+
+            return targetMethod(targetField, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
+        end
+    end)
+
     -- @formatter:off   todo   also introduce [declare] [partial] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
     NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAutocall(targetMethodName)) end)
     NamespaceRegistrySingleton:BindKeyword("[abstract]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract(targetMethodName)) end)
-
+    
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",           function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]",     function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
 
