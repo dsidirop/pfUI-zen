@@ -5,8 +5,8 @@ local Fields = using "System.Classes.Fields"
 
 local RawPfuiGui = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiNestedTabFrameWithAreaBuilder" {
-    "IPfuiNestedTabFrameWithAreaBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiNestedTabFrameWithAreaBuilder",
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.NestedTabFrameWithArea.PfuiNestedTabFrameWithAreaBuilder" {
+    "IPfuiNestedTabFrameWithAreaBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.NestedTabFrameWithArea.IPfuiNestedTabFrameWithAreaBuilder",
 }
 
 

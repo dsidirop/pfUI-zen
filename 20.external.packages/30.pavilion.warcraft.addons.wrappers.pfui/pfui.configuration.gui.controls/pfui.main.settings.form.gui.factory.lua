@@ -4,7 +4,7 @@ local Guard = using "System.Guard"
 
 local PfuiHeaderBuilder                 = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.Header.PfuiHeaderBuilder"
 local PfuiLabeledDropdownBuilder        = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledDropdown.PfuiLabeledDropdownBuilder"
-local PfuiNestedTabFrameWithAreaBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiNestedTabFrameWithAreaBuilder"
+local PfuiNestedTabFrameWithAreaBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.NestedTabFrameWithArea.PfuiNestedTabFrameWithAreaBuilder"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiFactory" { --[[@formatter:on]]
     "IPfuiMainSettingsFormGuiFactory", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiFactory",

@@ -2,11 +2,10 @@
     <!-- order -->
     <Include file="i.pfui.gui.control.builder.lua"/>
     
-    <!-- contracts -->
+    <!-- controls-specific contracts -->
     <Include file="header\.xml"/>
     <Include file="dropdown\.xml"/>
-    
-    <Include file="i.pfui.nested.tabframe.with.area.builder.lua"/>
+    <Include file="nested.tabframe.with.area\.xml"/>
 
     <!-- keep last -->
     <Include file="i.pfui.main.settings.form.gui.factory.lua"/>

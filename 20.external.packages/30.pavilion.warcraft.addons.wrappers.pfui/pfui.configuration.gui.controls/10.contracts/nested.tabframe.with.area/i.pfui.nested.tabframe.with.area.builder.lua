@@ -11,7 +11,7 @@
 --- @note  **__________ pfUI nested-tab-frames ___________________ ( pfUI.gui.frames[][*] _______ p.e. "Zen" ______ )  <-- you get this one**
 --- @note    ______________ pfUI area-frame of nested-tab-frame _______ ( pfUI.gui.frames[][*].area __ p.e. zen-config ui-controls_ )
 --- <br/>
-local Class = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiNestedTabFrameWithAreaBuilder" {
+local Class = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.NestedTabFrameWithArea.IPfuiNestedTabFrameWithAreaBuilder" {
     "IPfuiGuiControlBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiGuiControlBuilder",
 }
 
