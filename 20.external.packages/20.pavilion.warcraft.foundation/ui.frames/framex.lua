@@ -31,3 +31,26 @@ function Class:GetRawWowFrame()
     return self._rawWoWFrame
 end
 
+-- extra pavilion methods on the frame
+
+function Class:ChainSet_Height(height)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsPositiveNumber(height, "height")
+
+    _rawWoWFrame:SetHeight(height)
+
+    return self
+end
+
+function Class:ChainSet_Visibility(showNotHide)
+    Scopify(EScopes.Function, self)
+
+    if showNotHide then
+        _rawWoWFrame:Show()
+    else
+        _rawWoWFrame:Hide()
+    end
+
+    return self
+end

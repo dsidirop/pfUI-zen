@@ -1,9 +1,11 @@
-﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
+﻿--[[@formatter:off]] local _G = assert((_G or getfenv(0) or {})); local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 local Guard               = using "System.Guard"
 local Fields              = using "System.Classes.Fields"
 
 local PfuiGui             = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
+
+local FrameX              = using "Pavilion.Warcraft.Foundation.UI.Frames.FrameX"
 local IPfuiHeaderBuilder  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Header.IPfuiHeaderBuilder"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.Header.PfuiHeaderBuilder" { --[[@formatter:on]]
@@ -12,7 +14,6 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.
 
 Fields(function(upcomingInstance)
     upcomingInstance._caption = nil
-    upcomingInstance._nativePfuiControlFrame = nil
 
     return upcomingInstance
 end)
@@ -32,7 +33,7 @@ function Class:Build()
 
     Guard.Assert.IsNonDudString(_caption, "_caption")
 
-    _nativePfuiControlFrame = PfuiGui.CreateConfig(
+    local rawWowFrame = PfuiGui.CreateConfig(
         nil, -- todo   explore when this 'ufunc' is getting fired   I suspect its when it is shown or first-shown
         _caption,
         nil, -- ignored
@@ -40,49 +41,5 @@ function Class:Build()
         "header" -- hardcoded
     )
 
-    return self -- todo  we should return a wrapped _nativePfuiControlFrame and move the :ChainSet_Visibility() and other methods in that wrapper
-end
-
--- todo   all these methods should be moved to the control class itself
-function Class:ChainSet_Height(height)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsPositiveNumber(height, "height")
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
-
-    _nativePfuiControlFrame:SetHeight(height)
-
-    return self
-end
-
-function Class:ChainSet_Visibility(showNotHide)
-    Scopify(EScopes.Function, self)
-
-    if showNotHide then
-        self:Show()
-    else
-        self:Hide()
-    end
-
-    return self
-end
-
-function Class:Show()
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
-
-    _nativePfuiControlFrame:Show()
-
-    return self
-end
-
-function Class:Hide()
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.Explained.IsNotNil(_nativePfuiControlFrame, "control has not beed built - call Build() first")
-
-    _nativePfuiControlFrame:Hide()
-
-    return self
+    return FrameX:New(rawWowFrame)
 end

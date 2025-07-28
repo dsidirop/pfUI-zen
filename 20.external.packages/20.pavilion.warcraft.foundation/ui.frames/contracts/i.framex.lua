@@ -4,6 +4,8 @@ local IFrameX = using "[declare] [interface]" "Pavilion.Warcraft.Foundation.UI.F
 
 -- pavilion extra methods
 function IFrameX:GetRawWowFrame() end;
+function IFrameX:ChainSet_Height(height) end;
+function IFrameX:ChainSet_Visibility(showNotHide) end;
 
 -- from 'Frame' itself
 function IFrameX:Hide() end;
