@@ -20,7 +20,7 @@ TG:AddDynamicTheory("T020.Inheritance.Abstraction.GivenPartialParentAbstract.Sho
                 ["INH.ABS.GPPA.ST.020"] = {
                     Action = function()
                         local AFoo = using "[declare] [abstract] [blend]" "INH.ABS.GPPA.ST.020.AFoo [Partial]" {
-                            "IPing", using "[declare] [abstract]" "INH.ABS.GPPA.ST.020.IPing"
+                            "APing", using "[declare] [abstract]" "INH.ABS.GPPA.ST.020.APing"
                         }
 
                         local _ = using "[declare] [blend]" "INH.ABS.GPPA.ST.020.Bar" {

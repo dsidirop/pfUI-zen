@@ -7,8 +7,8 @@ local Fields   = using "System.Classes.Fields"
 local IFrameX = using "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.IFrameX"
 
 local IPfuiGuiBaseControlBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.BaseBuilder.IPfuiGuiBaseControlBuilder"
-
--- [abstract] 
+ 
+-- [abstract]
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.BaseBuilder.PfuiGuiBaseControlBuilder" { --[[@formatter:on]]
     "IPfuiGuiBaseControlBuilder", IPfuiGuiBaseControlBuilder,
 }
@@ -93,6 +93,6 @@ function Class:Build()
         :ChainApply_NudgingXY(_xposNudging, _yposNudging)
 end
 
-using "[abstract]"
+-- using "[abstract]" "BuildImpl"
 function Class:BuildImpl()
 end

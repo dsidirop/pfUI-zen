@@ -1619,7 +1619,7 @@ do
         local protoTidbitsB = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(b.Proto)
         
         _ = protoTidbitsA ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsA = nil (how?)", _stringify(a))
-        _ = protoTidbitsB ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsB = nil (how?)", _stringify(b))
+        _ = protoTidbitsB ~= nil or _throw_exception("[NR.BM.NMSF.020] [%s] protoTidbitsB = nil (how?)", _stringify(b))
 
         local typeA = protoTidbitsA:GetRegistrySymbolType()
         local typeB = protoTidbitsB:GetRegistrySymbolType()
@@ -1635,16 +1635,15 @@ do
     
     function NamespaceRegistry.GetMixinProtoSortingScore_(protoType) --@formatter:off
         _setfenv(EScope.Function, NamespaceRegistry)
-        
-        return     protoType == SRegistrySymbolTypes.NonStaticClass    and 90 -- must be appear last in the sorted-array
-               or  protoType == SRegistrySymbolTypes.StaticClass       and 80
-               or  protoType == SRegistrySymbolTypes.AbstractClass     and 70
-               or  protoType == SRegistrySymbolTypes.Interface         and 60 -- must appear at the beginning of the sorted-array
 
-               or  protoType == SRegistrySymbolTypes.Enum              and 50 -- these shouldnt appear but just in case ... 
-               or  protoType == SRegistrySymbolTypes.Keyword           and 40
-               or  protoType == SRegistrySymbolTypes.RawSymbol         and 20
+        return     protoType == SRegistrySymbolTypes.RawSymbol         and 20 -- these shouldnt appear but just in case ...
                or  protoType == SRegistrySymbolTypes.AutorunKeyword    and 30
+               or  protoType == SRegistrySymbolTypes.Keyword           and 40
+               or  protoType == SRegistrySymbolTypes.Enum              and 50 
+               or  protoType == SRegistrySymbolTypes.Interface         and 60 -- <- must appear at the beginning of the sorted-array
+               or  protoType == SRegistrySymbolTypes.AbstractClass     and 70
+               or  protoType == SRegistrySymbolTypes.StaticClass       and 80
+               or  protoType == SRegistrySymbolTypes.NonStaticClass    and 90 -- <- must appear last in the sorted-array
                or  10 -- this is a fallback for any other type that we might not have accounted for
     end --@formatter:on
 

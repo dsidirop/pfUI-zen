@@ -10,8 +10,8 @@
 
     <!-- addon-core itself -->
     <Include file="30.pavilion.warcraft.addons.pfuizen\.xml"/>
-<!--    <Include file="31.pavilion.warcraft.addons.pfuizen.tests\.xml"/>-->
+    <Include file="31.pavilion.warcraft.addons.pfuizen.tests\.xml"/>
 
     <!-- keep last -->
-<!--    <Include file="00.testing\tests.runner.lua"/>-->
+    <Include file="00.testing\tests.runner.lua"/>
 </Ui>
