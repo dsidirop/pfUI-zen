@@ -123,9 +123,7 @@ function Class:TrySetSelectedOptionByValue(optionValue)
     end
 
     local success = self:TrySetSelectedOptionByIndex(index)
-    Guard.Assert.Explained.IsTrue(success,
-        "failed to set the selection to option '" ..
-        optionValue .. "' (index=" .. index .. " - but how did this happen?)")
+    Guard.Assert.Explained.IsTrue(success, "failed to set the selection to option '" .. optionValue .. "' (index=" .. index .. " - but how did this happen?)")
 
     return true
 end
@@ -151,8 +149,7 @@ function Class:TrySetSelectedOptionByIndex(index)
     _singlevalue[_valuekeyname] = newValue                --   order
     _nativePfuiControlFrame.input:SetSelection(index)     --   order
 
-    Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index,
-        "failed to set the selection to option#" .. index .. " (how did this happen?)")
+    Guard.Assert.Explained.IsTrue(_nativePfuiControlFrame.input.id == index, "failed to set the selection to option#" .. index .. " (how did this happen?)")
 
     self:OnSelectionChanged_(
         DropdownSelectionChangedEventArgs -- 00

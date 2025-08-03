@@ -7,6 +7,10 @@ function IFrameX:GetRawWowFrame() end;
 function IFrameX:ChainSet_Height(height) end;
 function IFrameX:ChainSet_Visibility(showNotHide) end;
 
+function IFrameX:ChainApply_NudgingX(xNudge) end;
+function IFrameX:ChainApply_NudgingY(yNudge) end;
+function IFrameX:ChainApply_NudgingXY(xNudge, yNudge) end;
+
 -- from 'Frame' itself
 function IFrameX:Hide() end;
 function IFrameX:Show() end;
