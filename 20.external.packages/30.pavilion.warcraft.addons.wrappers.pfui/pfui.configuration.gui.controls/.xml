@@ -4,5 +4,5 @@
     <Include file="10.contracts\.xml"/>
     <Include file="20.controls\.xml"/>
 
-    <Include file="pfui.main.settings.form.gui.factory.lua"/>
+    <Include file="pfui.main.settings.form.gui.controls.factory.lua"/>
 </Ui>

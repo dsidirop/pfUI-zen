@@ -8,7 +8,7 @@ local Class = using "[declare] [static]" "System.Helpers.Booleans"
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
     _ = defaultValueWhenValueIsNil == nil
-            and Guard.Assert.IsBooleanizable(value)
+            and (Guard.Assert.IsBooleanizable(value) or true) -- its vital to have the 'or true' here otherwise the code will call Guard.Assert.IsNilOrBooleanizable() too! 
             or Guard.Assert.IsNilOrBooleanizable(value)
     
     if value == nil then
@@ -16,6 +16,7 @@ function Class.Booleanize(value, defaultValueWhenValueIsNil)
     end
 
     if Reflection.IsString(value) then --00
+        value = StringsHelper.Trim(value)
         value = StringsHelper.ToUppercase(value)
 
         return     value == "1" --     @formatter:off

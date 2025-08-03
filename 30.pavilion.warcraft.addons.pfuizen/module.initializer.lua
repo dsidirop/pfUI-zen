@@ -4,15 +4,14 @@ using "[healthcheck] [all]"
 
 local S = using "System.Helpers.Strings"
 
-local Guard = using "System.Guard"
-
-local Throw = using "System.Exceptions.Throw"
+local Guard     = using "System.Guard"
+local Throw     = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Enumerable                     = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
+local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
-local Pfui                           = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
-local PfuiMainSettingsFormGuiFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiFactory"
+local Pfui                                   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
+local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiControlsFactory"
 
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
@@ -24,7 +23,7 @@ local UserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()
-    
+
     local addon = {
         folderName = "pfUI-Zen",
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
@@ -49,7 +48,7 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
     end
 
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(PfuiMainSettingsFormGuiFactory:New(), ComboTranslationsService:New())
+                :New(PfuiMainSettingsFormGuiControlsFactory:New(), ComboTranslationsService:New())
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")

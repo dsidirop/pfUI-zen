@@ -90,6 +90,19 @@ function TablesHelper.Dequeue(table)
     return value
 end
 
+function TablesHelper.ConvertTablerayIntoKeysToIndexesTable(tableray)
+    Guard.Assert.IsTable(tableray, "tableray")
+
+    local keysToIndexes = {}
+    for index, value in B.TableGetIndexedPairs(tableray) do
+        if value ~= nil then
+            keysToIndexes[value] = index
+        end
+    end
+
+    return keysToIndexes
+end
+
 function TablesHelper.Pop(table)
     Guard.Assert.IsTable(table, "table")
 

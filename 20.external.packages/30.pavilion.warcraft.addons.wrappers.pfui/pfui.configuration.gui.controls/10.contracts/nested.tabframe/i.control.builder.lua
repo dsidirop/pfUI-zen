@@ -11,16 +11,12 @@
 --- @note  **__________ pfUI nested-tab-frames ___________________ ( pfUI.gui.frames[][*] _______ p.e. "Zen" ______ )  <-- you get this one**
 --- @note    ______________ pfUI area-frame of nested-tab-frame _______ ( pfUI.gui.frames[][*].area __ p.e. zen-config ui-controls_ )
 --- <br/>
-local Class = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.NestedTabFrameWithArea.IPfuiNestedTabFrameWithAreaBuilder" {
-    "IPfuiGuiControlBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiGuiControlBuilder",
+local Class = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.NestedTabFrameWithArea.IPfuiNestedTabFrameWithAreaControlBuilder" {
+    "IPfuiGuiBaseControlBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.BaseBuilder.IPfuiGuiBaseControlBuilder",
 }
 
---- @param rootTabFrameName string The name of the root tab frame to which the new nested tab frame will be added.
-function Class:ChainSet_RootTabFrameName(rootTabFrameName)
-end
-
---- @param nestedTabFrameName string The name of the nested tab frame to be created.
-function Class:ChainSet_NestedTabFrameName(nestedTabFrameName)
+--- @param rootTabFrameName string the name of the root tab frame to which the new nested tab frame will be added.
+function Class:ChainSet_ParentRootTabFrameName(rootTabFrameName)
 end
 
 --- @param optionalAreaPopulatorWhenFirstShownFunc function|nil An optional function that is meant to populate the area-frame with controls when it is first shown.

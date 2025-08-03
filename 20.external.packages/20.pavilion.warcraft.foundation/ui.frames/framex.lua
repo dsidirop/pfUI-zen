@@ -46,6 +46,8 @@ end
 
 function Class:ChainSet_Visibility(showNotHide)
     Scopify(EScopes.Function, self)
+    
+    Guard.Assert.IsNotNil(_rawWoWFrame, "_rawWoWFrame")
 
     if showNotHide then
         _rawWoWFrame:Show()
