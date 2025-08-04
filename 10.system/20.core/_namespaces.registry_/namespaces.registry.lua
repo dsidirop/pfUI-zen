@@ -797,12 +797,9 @@ do
         _ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.ENT.HCI.010] namespaceRegistry must be a table (got %q)", _type(namespaceRegistry))
         _ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.ENT.HCI.020] errorsAccumulatorArray must be a table (got %q)", _type(errorsAccumulatorArray))
 
-        if _symbolType ~= SRegistrySymbolTypes.NonStaticClass then
-            -- _g.print("[Entry.HealthcheckInheritance.010]")
-            return -- we want to healthcheck any non-static-class that is based on inheritance
+        if _symbolType ~= SRegistrySymbolTypes.NonStaticClass and _symbolType ~= SRegistrySymbolTypes.AbstractClass then
+            return -- we only want to healthcheck any non-static-classes + abstracts-classes that are based on inheritance
         end
-
-        -- _g.print("[Entry.HealthcheckInheritance.020]")
 
         local missingMethods = {}
         for mixinNicknameOrProto, _ in _pairs(_symbolProto.asBase or {}) do
