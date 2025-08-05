@@ -24,6 +24,8 @@ TG:AddFact("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldTh
             end
 
             -- ASSERT
+            U.Should.Throw(function() _ = using "[healthcheck]" end, "*[NR.ENT.HCP.010]*") -- vital  todo we should support removing faulty classes altogether
+
             U.Should.Throw(action, "*[NR.BM.062]*")
         end
 )

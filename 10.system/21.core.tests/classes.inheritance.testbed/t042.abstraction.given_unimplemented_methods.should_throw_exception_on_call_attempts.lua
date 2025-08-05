@@ -91,9 +91,10 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                 end,
 
                 ErrorGlob = ""
+                    .. "*[NR.HCR.RN.020]*"
                     .. "*[NR.ENT.HCI.010]*"
                     .. "*[INH.ABS.GUM.STEOCA.030.Bar]*"
-                    .. "*[INH.ABS.GUM.STEOCA.030.AFoo2:Ping()]*"
+                    .. "*[INH.ABS.GUM.STEOCA.030.AFoo1:Ping()]*"
             },
 
             ["INH.ABS.GUM.STEOCA.040"] = {
@@ -103,8 +104,8 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                     function IFoo1:Ping(a, b, c)
                     end
 
-                    local Bar = using "[declare] [blend]" "INH.ABS.GUM.STEOCA.040.Bar" {
-                        "IFoo1", IFoo1
+                    local Bar = using "[declare] [abstract] [blend]" "INH.ABS.GUM.STEOCA.040.Bar" {
+                        "IFoo1", IFoo1,
                     }
 
                     function Bar:New()
@@ -119,12 +120,41 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
                     .. "*[INH.ABS.GUM.STEOCA.040.Bar]*"
                     .. "*[INH.ABS.GUM.STEOCA.040.IFoo1:Ping()]*"
             },
+            
+            --["INH.ABS.GUM.STEOCA.050"] = {
+            --    Action = function()
+            --        local IFoo1 = using "[declare] [interface]" "INH.ABS.GUM.STEOCA.050.IFoo1"
+            --
+            --        function IFoo1:Ping(a, b, c)
+            --        end
+            --
+            --        local Bar = using "[declare] [abstract] [blend]" "INH.ABS.GUM.STEOCA.050.Bar" {
+            --            "IFoo1", IFoo1,
+            --        }
+            --        
+            --        function Bar:Ping(a, b, c)
+            --        end
+            --
+            --        function Bar:New()
+            --            return self:Instantiate()
+            --        end
+            --
+            --        using "[healthcheck] [all]" -- this should throw
+            --    end,
+            --
+            --    ErrorGlob = ""
+            --        .. "*[NR.ENT.HCI.010]*"
+            --        .. "*[INH.ABS.GUM.STEOCA.050.Bar]*"
+            --        .. "*[INH.ABS.GUM.STEOCA.050.IFoo1:Ping()]*"
+            --},
         }
     end,
     function(options)
         -- ARRANGE
 
         -- ACT + ASSERT
+        U.Should.Throw(function() _ = using "[healthcheck]" end) -- vital  todo we should support removing faulty classes altogether
+        
         U.Should.Throw(options.Action, options.ErrorGlob)
     end
 )

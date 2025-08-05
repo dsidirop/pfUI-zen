@@ -16,6 +16,8 @@ TG:AddFact("T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent
             end
 
             -- ASSERT
+            U.Should.Throw(function() _ = using "[healthcheck]" end, "*[NR.ENT.HCP.010]*") -- vital  todo we should support removing faulty classes altogether
+
             U.Should.Throw(action, "*[NR.BM.064]*")
         end
 )
