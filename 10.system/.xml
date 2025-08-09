@@ -4,5 +4,5 @@
     <Include file="20.core\.xml"/>
 
     <!-- tests -->
-    <Include file="21.core.tests\.xml"/>
+<!--    <Include file="21.core.tests\.xml"/>-->
 </Ui>

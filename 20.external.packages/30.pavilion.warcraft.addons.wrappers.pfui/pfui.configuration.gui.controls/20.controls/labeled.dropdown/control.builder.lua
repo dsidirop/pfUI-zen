@@ -33,7 +33,7 @@ Fields(function(upcomingInstance)
     upcomingInstance._menuEntryValuesToIndexes = {}
     upcomingInstance._menuIndexesToMenuValuesArray = {}
 
-    upcomingInstance._eventSelectionChanged = Event:New()
+    upcomingInstance._eventSelectionChanged = Event:New() -- todo   we should replace this with an INotifyPropertyChanged event directly on on pfuiCurrentValueTable["__dummy_keyname_for_value__"]
 
     return upcomingInstance
 end)
@@ -94,7 +94,7 @@ function Class:ParseMenuItems_(menuItemsArray)
     local menuIndexesToMenuValues = {}
     local menuEntryValuesToIndexes = {}
     for i, k in T.GetPairs(menuItemsArray) do
-        local value, _ = A.Unpack(S.Split(k, ":", 2))
+        local value, __ = A.Unpack(S.Split(k, ":", 2))
 
         value = value or ""
         if menuEntryValuesToIndexes[value] ~= nil then

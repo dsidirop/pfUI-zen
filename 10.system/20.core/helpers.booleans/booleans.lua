@@ -7,7 +7,7 @@ local StringsHelper = using "System.Helpers.Strings"
 local Class = using "[declare] [static]" "System.Helpers.Booleans"
 
 function Class.Booleanize(value, defaultValueWhenValueIsNil)
-    _ = defaultValueWhenValueIsNil == nil
+    __ = defaultValueWhenValueIsNil == nil
             and (Guard.Assert.IsBooleanizable(value) or true) -- its vital to have the 'or true' here otherwise the code will call Guard.Assert.IsNilOrBooleanizable() too! 
             or Guard.Assert.IsNilOrBooleanizable(value)
     

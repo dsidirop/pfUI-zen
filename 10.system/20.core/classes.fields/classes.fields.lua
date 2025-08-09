@@ -9,7 +9,7 @@ using "[autocall]" "SetFieldPluggerFunc"
 function Fields:SetFieldPluggerFunc(classFieldPluggerCallbackFunc)
     Guard.Assert.IsNotNil(classFieldPluggerCallbackFunc, "classFieldPluggerCallbackFunc")
     
-    local proto, _ = Guard.Assert.Explained.IsNotNil(Namespacer:GetMostRecentlyDefinedSymbolProtoAndTidbits(), "seems no class is being defined at this moment - cannot plug fields into nothing")
+    local proto, __ = Guard.Assert.Explained.IsNotNil(Namespacer:GetMostRecentlyDefinedSymbolProtoAndTidbits(), "seems no class is being defined at this moment - cannot plug fields into nothing")
 
     Namespacer:ChainSetFieldPluggerFuncForNonStaticClassProto(proto, classFieldPluggerCallbackFunc)
 end

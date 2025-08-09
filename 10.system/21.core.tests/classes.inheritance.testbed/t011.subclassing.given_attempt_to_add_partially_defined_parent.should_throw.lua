@@ -10,13 +10,13 @@ TG:AddFact("T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent
             function action()
                 local Foo = using "[declare]" "T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow.Foo [Partial]"
 
-                local _ = using "[declare] [blend]" "T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow.Bar" {
+                local __ = using "[declare] [blend]" "T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow.Bar" {
                     "Foo", Foo
                 }
             end
 
             -- ASSERT
-            U.Should.Throw(function() _ = using "[healthcheck]" end, "*[NR.ENT.HCP.010]*") -- vital  todo we should support removing faulty classes altogether
+            U.Should.Throw(function() __ = using "[healthcheck]" end, "*[NR.ENT.HCP.010]*") -- vital  todo we should support removing faulty classes altogether
 
             U.Should.Throw(action, "*[NR.BM.064]*")
         end

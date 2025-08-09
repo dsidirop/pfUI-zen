@@ -20,6 +20,8 @@ if U then
 
     U.TestsEngine:RunAllTestGroups()
 
+    -- U.TestsEngine:RunSpecificTest("T021.Inheritance.Abstraction.GivenUnimplementedMethods.ShouldThrowExceptionOnCallAttempts")
+
     -- U.TestsEngine:RunTestGroupsByTag("get-namespace")
 
     -- U.TestsEngine:RunSpecificTest("T002.Inheritance.Subclassing.GivenPlainMixinToBlend.ShouldThrow")

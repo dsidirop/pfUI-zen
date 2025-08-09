@@ -11,8 +11,7 @@ local IPfuiNestedTabFrameWithAreaControlBuilder = using "Pavilion.Warcraft.Addon
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.NestedTabFrameWithArea.PfuiNestedTabFrameWithAreaControlBuilder" { --[[@formatter:on]]
     "PfuiGuiBaseControlBuilder", PfuiGuiBaseControlBuilder,
-
-    -- "IPfuiNestedTabFrameWithAreaControlBuilder", IPfuiNestedTabFrameWithAreaControlBuilder,
+    "IPfuiNestedTabFrameWithAreaControlBuilder", IPfuiNestedTabFrameWithAreaControlBuilder,
 }
 
 

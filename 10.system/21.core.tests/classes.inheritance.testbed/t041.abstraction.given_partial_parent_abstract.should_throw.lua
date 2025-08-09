@@ -9,7 +9,7 @@ TG:AddDynamicTheory("T020.Inheritance.Abstraction.GivenPartialParentAbstract.Sho
                     Action = function()
                         local AFoo = using "[declare] [abstract]" "INH.ABS.GPPA.ST.010.AFoo [Partial]"
 
-                        local _ = using "[declare] [blend]" "INH.ABS.GPPA.ST.010.Bar" {
+                        local __ = using "[declare] [blend]" "INH.ABS.GPPA.ST.010.Bar" {
                             "Foo", AFoo -- AFoo is still partial so this should throw
                         }        
                     end,
@@ -23,7 +23,7 @@ TG:AddDynamicTheory("T020.Inheritance.Abstraction.GivenPartialParentAbstract.Sho
                             "APing", using "[declare] [abstract]" "INH.ABS.GPPA.ST.020.APing"
                         }
 
-                        local _ = using "[declare] [blend]" "INH.ABS.GPPA.ST.020.Bar" {
+                        local __ = using "[declare] [blend]" "INH.ABS.GPPA.ST.020.Bar" {
                             "Foo", AFoo -- AFoo is still partial so this should throw
                         }
                     end,

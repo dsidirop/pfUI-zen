@@ -153,7 +153,7 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
         -- ARRANGE
 
         -- ACT + ASSERT
-        U.Should.Throw(function() _ = using "[healthcheck]" end) -- vital  todo we should support removing faulty classes altogether
+        U.Should.Throw(function() __ = using "[healthcheck]" end) -- vital  todo we should support removing faulty classes altogether
         
         U.Should.Throw(options.Action, options.ErrorGlob)
     end

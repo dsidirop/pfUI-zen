@@ -16,7 +16,7 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 local Class = using "[declare]" "System.Try"
 
 
-Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
+Class._.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
 Fields(function(upcomingInstance)
     upcomingInstance._action                           = nil
@@ -36,7 +36,7 @@ function Class:New(action, optionalExceptionsDeserializationFactory)
     
     instance._action                           = action
     instance._allExceptionHandlers             = {}
-    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance.DefaultExceptionsDeserializationFactory
+    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance._.DefaultExceptionsDeserializationFactory
 
     return instance
 end
