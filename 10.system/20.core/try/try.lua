@@ -26,6 +26,7 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
+using "[autocall]" "New"
 function Class:New(action, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
@@ -39,6 +40,21 @@ function Class:New(action, optionalExceptionsDeserializationFactory)
     instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance._.DefaultExceptionsDeserializationFactory
 
     return instance
+end
+
+function Class:CatchAll(optionalFunc)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNilOrFunction(optionalFunc, "optionalFunc")
+    
+    local catchAllExceptionHandler = _allExceptionHandlers[Class.NamespaceOfBasePlatformException]
+    if catchAllExceptionHandler ~= nil then
+        Throw(Exception:NewWithMessage("Catch-all exception handler already set"))
+    end
+
+    _allExceptionHandlers[Class.NamespaceOfBasePlatformException] = optionalFunc or function() end
+
+    return self
 end
 
 -- for specific exceptions
