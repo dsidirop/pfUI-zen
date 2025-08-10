@@ -26,5 +26,5 @@ function Class:NewWithMessage(customMessage)
 
     local newInstance = self:Instantiate()
 
-    return newInstance.asBase.Exception.New(newInstance, customMessage)
+    return Class.asBase.Exception.New(newInstance, customMessage)
 end

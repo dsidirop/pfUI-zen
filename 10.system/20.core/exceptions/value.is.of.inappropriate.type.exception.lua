@@ -17,7 +17,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
 
     local newInstance = self:Instantiate()
 
-    newInstance = newInstance.asBase.Exception.New(
+    newInstance = Class.asBase.Exception.New(
             newInstance,
             _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     )
@@ -34,7 +34,7 @@ function Class:NewWithMessage(value, customMessage, optionalArgumentName, option
 
     local newInstance = self:Instantiate()
 
-    return newInstance.asBase.Exception.New(
+    return Class.asBase.Exception.New(
             newInstance,
             customMessage .. " because " .. _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     )

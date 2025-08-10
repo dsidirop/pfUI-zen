@@ -22,8 +22,8 @@ function Class:NewWithDBContext(pfuiZenDbContext)
 
     local instance = self:Instantiate()
 
-    instance.asBase.UserPreferencesRepositoryQueryable.New(instance, pfuiZenDbContext)
-    instance.asBase.UserPreferencesRepositoryUpdateable.New(instance, pfuiZenDbContext)
+    instance = Class.asBase.UserPreferencesRepositoryQueryable.New(instance, pfuiZenDbContext)
+    instance = Class.asBase.UserPreferencesRepositoryUpdateable.New(instance, pfuiZenDbContext)
 
     return instance
 end

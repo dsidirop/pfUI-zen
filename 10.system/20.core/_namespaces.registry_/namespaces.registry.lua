@@ -1598,7 +1598,7 @@ do
         local i = 1
         local currentPair = { Name = nil, Proto = nil }
         local transformedMixins = {}
-        for _, mixinNameOrProto in _ipairs(namedMixinsArray) do
+        for _, mixinNameOrProto in _pairs(namedMixinsArray) do -- dont use ipairs here because it will cause error checks to fail!
             -- _g.print("** [" .. targetSymbolProtoNamespace .. "] processing mixin #" .. _stringify(i) .. " with value '" .. _stringify(mixinNameOrProto) .. "'")
 
             if currentPair.Name == nil then

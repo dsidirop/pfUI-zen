@@ -41,7 +41,7 @@ function Class:New(rawWoWFrame, eventSelectionChanged, menuIndexesToMenuValuesAr
 
     local newInstance = self:Instantiate()
     
-    newInstance = newInstance.asBase.FrameX.New(newInstance, rawWoWFrame)
+    newInstance = Class.asBase.FrameX.New(newInstance, rawWoWFrame)
 
     newInstance._eventSelectionChanged = eventSelectionChanged
 

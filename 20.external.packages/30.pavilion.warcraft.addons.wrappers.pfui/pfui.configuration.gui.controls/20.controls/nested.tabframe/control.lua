@@ -23,7 +23,7 @@ function Class:New(nativeFrame)
 
     local newInstance = self:Instantiate()
     
-    newInstance = newInstance.asBase.FrameX.New(newInstance, nativeFrame)
+    newInstance = Class.asBase.FrameX.New(newInstance, nativeFrame)
     
     newInstance._areaSubframe = FrameX:New(nativeFrame.area)
 

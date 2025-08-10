@@ -39,8 +39,8 @@ function Class:New(userPreferencesUnitOfWork, userPreferencesRepositoryQueryable
 
     local instance = self:Instantiate()
 
-    instance.asBase.UserPreferencesUpdateableService.New(instance, userPreferencesUnitOfWork)
-    instance.asBase.UserPreferencesQueryableService.New(instance, userPreferencesRepositoryQueryable)
+    instance = Class.asBase.UserPreferencesUpdateableService.New(instance, userPreferencesUnitOfWork)
+    instance = Class.asBase.UserPreferencesQueryableService.New(instance, userPreferencesRepositoryQueryable)
 
     return instance
 end

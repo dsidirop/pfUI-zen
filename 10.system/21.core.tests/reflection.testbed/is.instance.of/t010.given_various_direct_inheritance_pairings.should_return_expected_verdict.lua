@@ -52,10 +52,11 @@ TG:AddDynamicTheory("T010.Reflection.IsInstanceOf.GivenVariousDirectInheritanceP
                         
                         function Class:New()
                             local newInstance = self:Instantiate()
+
+                            newInstance = Class.asBase.BaseFoo1.New(newInstance) --           calling the abstract constructors from
+                            newInstance = Class.asBase.SomeOtherBaseFoo2.New(newInstance) --  the subclass shouldnt throw
                             
                             return newInstance
-                                    .asBase.BaseFoo1.New(newInstance) --           calling the abstract constructors from
-                                    .asBase.SomeOtherBaseFoo2.New(newInstance) --  the subclass shouldnt throw
                         end
                         
                         return Class:New()
