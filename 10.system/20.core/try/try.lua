@@ -19,7 +19,7 @@ local Class = using "[declare]" "System.Try"
 Class._.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
 Fields(function(upcomingInstance)
-    upcomingInstance._action                           = nil
+    upcomingInstance._tryFunc                          = nil
     upcomingInstance._allExceptionHandlers             = nil
     upcomingInstance._exceptionsDeserializationFactory = nil
 
@@ -27,15 +27,15 @@ Fields(function(upcomingInstance)
 end)
 
 using "[autocall]" "New"
-function Class:New(action, optionalExceptionsDeserializationFactory)
+function Class:New(tryFunc, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsFunction(action, "action")
+    Guard.Assert.IsFunction(tryFunc, "tryFunc")
     Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
     
     local instance = self:Instantiate()
     
-    instance._action                           = action
+    instance._tryFunc                          = tryFunc
     instance._allExceptionHandlers             = {}
     instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance._.DefaultExceptionsDeserializationFactory
 
@@ -78,7 +78,7 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnedValuesArray = { B.ProtectedCall(_action) }
+    local returnedValuesArray = { B.ProtectedCall(_tryFunc) }
 
     local success = A.PopFirst(returnedValuesArray)
     if success then
