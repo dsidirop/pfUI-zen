@@ -20,6 +20,10 @@ if U then
 
     U.TestsEngine:RunAllTestGroups()
 
+    -- U.TestsEngine:RunSpecificTest("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow")
+
+    -- U.TestsEngine:RunTestGroupsByTag("throw")
+
     -- U.TestsEngine:RunSpecificTest("T021.Inheritance.Abstraction.GivenUnimplementedMethods.ShouldThrowExceptionOnCallAttempts")
 
     -- U.TestsEngine:RunTestGroupsByTag("get-namespace")

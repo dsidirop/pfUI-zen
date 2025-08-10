@@ -19,6 +19,22 @@ TG:AddFact("T000.Throw.GivenExceptionToThrow.ShouldThrowException",
         end
 )
 
+TG:AddFact("T005.Throw.GivenValueIsOfInappropriateTypeExceptionToThrow.ShouldThrowException",
+        function()
+            -- ARRANGE
+
+            -- ACT
+            function action()
+                local ValueIsOfInappropriateTypeException = using "System.Exceptions.ValueIsOfInappropriateTypeException"
+
+                Throw(ValueIsOfInappropriateTypeException:New(123, "foobar", "string"))
+            end
+
+            -- ASSERT
+            U.Should.Throw(action, "*foobar*")
+        end
+)
+
 TG:AddTheory("T010.Throw.GivenInvalidExceptionToThrow.ShouldTriggerGuardAssertion",
         {
             ["THR.GIETT.STGA.000"] = { BadException = 1 },
