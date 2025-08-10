@@ -8,7 +8,7 @@ local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 local GroupLootGamblingService = using "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
 
 local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
-local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.Listener"
+local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener"
 
 local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
@@ -49,7 +49,7 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
     }
 
     instance._modifierKeysListener = Nils.Coalesce(modifierKeysListener, ModifierKeysListener:New():ChainSetPollingInterval(0.1)) --todo   refactor this later on so that this gets injected through DI
-    instance._groupLootingListener = Nils.Coalesce(groupLootingListener, PfuiGroupLootingListener:New()) --todo                            refactor this later on so that this gets injected through DI
+    instance._groupLootingListener = Nils.Coalesce(groupLootingListener, PfuiGroupLootingListener.I) --todo                            refactor this later on so that this gets injected through DI
     instance._groupLootGamblingService = Nils.Coalesce(groupLootGamblingService, GroupLootGamblingService:New()) --todo                    refactor this later on so that this gets injected through DI
 
     return instance

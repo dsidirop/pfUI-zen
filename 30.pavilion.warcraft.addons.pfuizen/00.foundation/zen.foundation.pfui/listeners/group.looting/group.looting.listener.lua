@@ -1,17 +1,19 @@
-﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local T = using "System.Helpers.Tables" -- @formatter:off
-
+local T = using "System.Helpers.Tables"
 
 local Event    = using "System.Event"
 local Fields   = using "System.Classes.Fields"
 
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
+local PfuiRoll = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.RawBindings.PfuiRoll"
 
-local PfuiRoll                                 = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiRoll"
-local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.EventArgs.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
+local IPfuiRollsUiFramesListener               = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener.Contracts.IPfuiRollsUiFramesListener"
+local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener.Contracts.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.Listener"
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener" {
+    "IPfuiRollsUiFramesListener", IPfuiRollsUiFramesListener,
+}
 
 
 Fields(function(upcomingInstance)
