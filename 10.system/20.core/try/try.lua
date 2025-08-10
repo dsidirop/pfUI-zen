@@ -26,7 +26,7 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
--- using "[autocall]" "New" --no need
+using "[autocall]" "New" -- just be explicit about it
 function Class:New(tryFunc, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
 

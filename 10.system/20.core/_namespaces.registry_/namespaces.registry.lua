@@ -544,18 +544,12 @@ do
 
     function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
         local variadicsArray = arg
-        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes (both static and non-static) are expected to define these
-        local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
-
-        local hasConstructorFunction = _type(ownNewFuncSnapshot) == "function"
-        local hasOwnImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
-        __ = hasConstructorFunction or hasOwnImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
-
         if variadicsArray ~= nil then
             variadicsArray = _unpack(variadicsArray)
         end
 
-        if hasOwnImplicitCallFunction then
+        local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
+        if _type(ownCallFuncSnapshot) == "function" then
             -- has priority over :new()
             return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
@@ -563,11 +557,16 @@ do
             )
         end
 
-        return ownNewFuncSnapshot(
-                classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                variadicsArray
-        )
+        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes (both static and non-static) are expected to define these
+        if _type(ownNewFuncSnapshot) == "function" then
+            return ownNewFuncSnapshot(
+                    classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
+                    variadicsArray
+            )
+        end
 
+        _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
+        
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end
 
