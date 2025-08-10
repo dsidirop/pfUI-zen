@@ -451,8 +451,9 @@ do
         })
 
         local newClassProto = _spawnSimpleMetatable({
-            --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            ToString = NonStaticClassProtoFactory.Standard_ToStringMethod,
+            -- by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
+            
+            -- ToString = NonStaticClassProtoFactory.Standard_ToStringMethod, --never do this   it creates very nasty problems
 
             _          = { },
             __call     = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
@@ -574,22 +575,17 @@ do
         return NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classInstance)
     end
 
-    function NonStaticClassProtoFactory.Standard__tostring(classInstance)
-        local variadicsArray = arg
+    function NonStaticClassProtoFactory.Standard__tostring(classInstance, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
         local ownToStringFunc = classInstance.ToString
 
         if _type(ownToStringFunc) == "function" then
-            if variadicsArray ~= nil then
-                variadicsArray = _unpack(variadicsArray)
-            end
-
             return _stringify(ownToStringFunc( -- 00
                 classInstance, -- vital to pass the classproto/instance to the call-function
-                variadicsArray
+                a1, a2, a3, a4, a5, a6, a7, a8, a9, a10
             ))
         end
 
-        return "" --10 
+        return NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classInstance) --10 
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
         -- 10  should be impossible but just in case   we cannot use _stringify() here because it will cause an infinite recursion
