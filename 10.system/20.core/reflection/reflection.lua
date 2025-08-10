@@ -180,14 +180,14 @@ function Reflection.IsInstanceOf(object, desiredParentProto)
 
     local _, _, proto, isClassInstance = Reflection.GetInfo(object)
     if not isClassInstance then
-        return false -- interfaces are not instances
+        return false -- interfaces and raw values are not instances
     end
 
     return Reflection.IsSubProtoOf(proto, desiredParentProto)
 end
 
 function Reflection.IsSubProtoOf(proto, desiredParentProto)
-    Guard.Assert.IsInheritanceCapableProto(proto, "proto was expected to be a non-static-class-proto or an abstract-class-proto or an interface but it's not")
+    -- Guard.Assert.IsInheritanceCapableProto(proto, "proto was expected to be a non-static-class-proto or an abstract-class-proto or an interface but it's not") -- nah dont
     Guard.Assert.IsInheritanceCapableProto(desiredParentProto, "desiredClassProto was expected to be a non-static-class-proto or an abstract-class-proto or an interface but it's not")
 
     if proto == desiredParentProto then -- optimization
@@ -233,8 +233,12 @@ function Reflection.IsInstanceImplementing(classInstance, desiredInterfaceProto)
 end
 
 function Reflection.IsProtoImplementing(proto, desiredInterfaceProto)
-    Guard.Assert.IsInheritanceCapableProto(proto, "proto")
+    --Guard.Assert.IsInheritanceCapableProto(proto, "proto") --nah dont
     Guard.Assert.IsInterfaceProto(desiredInterfaceProto, "desiredInterfaceProto")
+
+    if not Reflection.IsInheritanceCapableProto(proto) then
+        return false
+    end
 
     local queue = { proto }
     local currentProto
