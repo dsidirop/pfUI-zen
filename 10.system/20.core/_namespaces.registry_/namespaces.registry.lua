@@ -440,14 +440,16 @@ do
             New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_
+            __call     = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --vital to set __call here as well otherwise it wont work
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_,
         })
 
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
             New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_
+            __call      = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --vital to set __call here as well otherwise it wont work
+            __newindex  = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
         })
 
         local newClassProto = _spawnSimpleMetatable({
@@ -456,8 +458,10 @@ do
             -- ToString = NonStaticClassProtoFactory.Standard_ToStringMethod, --never do this   it creates very nasty problems
 
             _          = { },
-            __call     = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
-            __tostring = NonStaticClassProtoFactory.Standard__tostring
+            __call     = not isAbstract --00 must be here
+                            and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
+                            or nil,
+            __tostring = NonStaticClassProtoFactory.Standard__tostring,
         })
 
         return _setmetatable(newClassProto, isAbstract
@@ -529,7 +533,7 @@ do
                 _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
             ) --@formatter:on
 
-            classProto.__call = value
+            classProto.__Call__ = value
             _rawset(classProto, key, value)
         end
 
@@ -544,14 +548,14 @@ do
         local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
 
         local hasConstructorFunction = _type(ownNewFuncSnapshot) == "function"
-        local hasImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
-        __ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
+        local hasOwnImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
+        __ = hasConstructorFunction or hasOwnImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
 
         if variadicsArray ~= nil then
             variadicsArray = _unpack(variadicsArray)
         end
 
-        if hasImplicitCallFunction then
+        if hasOwnImplicitCallFunction then
             -- has priority over :new()
             return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
@@ -687,11 +691,11 @@ do
         end
 
         if symbolType == SRegistrySymbolTypes.NonStaticClass then
-            return NonStaticClassProtoFactory.Spawn(false)
+            return NonStaticClassProtoFactory.Spawn(--[[isAbstract:]] false)
         end
 
         if symbolType == SRegistrySymbolTypes.AbstractClass then
-            return NonStaticClassProtoFactory.Spawn(true)
+            return NonStaticClassProtoFactory.Spawn(--[[isAbstract:]] true)
         end
 
         if symbolType == SRegistrySymbolTypes.Interface then

@@ -69,11 +69,11 @@ TG:AddDynamicTheory("T021.Inheritance.Abstraction.GivenUnimplementedMethods.Shou
     end,
     function(options)
         -- ARRANGE
-        Try:New(function() using "[healthcheck]" end):CatchAll():Run()
+        Try(function() using "[healthcheck]" end):CatchAll():Run()
 
         -- ACT + ASSERT        
         U.Should.Throw(options.Action, options.ErrorGlob)
 
-        Try:New(function() using "[healthcheck]" end):CatchAll():Run() -- vital  todo we should support removing faulty classes altogether
+        Try(function() using "[healthcheck]" end):CatchAll():Run() -- vital  todo we should support removing faulty classes altogether
     end
 )

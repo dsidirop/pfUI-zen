@@ -26,15 +26,15 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-using "[autocall]" "New"
+-- using "[autocall]" "New" --no need
 function Class:New(tryFunc, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
-    
+
     Guard.Assert.IsFunction(tryFunc, "tryFunc")
     Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
-    
+
     local instance = self:Instantiate()
-    
+
     instance._tryFunc                          = tryFunc
     instance._allExceptionHandlers             = {}
     instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance._.DefaultExceptionsDeserializationFactory

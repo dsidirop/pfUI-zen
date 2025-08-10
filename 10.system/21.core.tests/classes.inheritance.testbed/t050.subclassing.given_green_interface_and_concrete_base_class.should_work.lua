@@ -9,7 +9,7 @@ local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed
 TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()
             -- ARRANGE
-            Try:New(function() using "[healthcheck]" end):CatchAll():Run() -- vital to setup a milestone as to ignore errors from previous tests in terms of healthchecks on testbed classes
+            Try(function() using "[healthcheck]" end):CatchAll():Run() -- vital to setup a milestone as to ignore errors from previous tests in terms of healthchecks on testbed classes
             
             local FoobarInstance
 

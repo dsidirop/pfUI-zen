@@ -7,7 +7,7 @@ local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed
 TG:AddFact("T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent.ShouldThrow",
         function()
             -- ARRANGE
-            Try:New(function() using "[healthcheck]" end):CatchAll():Run()
+            Try(function() using "[healthcheck]" end):CatchAll():Run()
 
             -- ACT
             function action()
@@ -21,6 +21,6 @@ TG:AddFact("T011.Inheritance.Subclassing.GivenAttemptToAddPartiallyDefinedParent
             -- ASSERT
             U.Should.Throw(action, "*[NR.BM.064]*")
 
-            Try:New(function() using "[healthcheck]" end):CatchAll():Run() -- vital  todo we should support removing faulty classes altogether
+            Try(function() using "[healthcheck]" end):CatchAll():Run() -- vital  todo we should support removing faulty classes altogether
         end
 )

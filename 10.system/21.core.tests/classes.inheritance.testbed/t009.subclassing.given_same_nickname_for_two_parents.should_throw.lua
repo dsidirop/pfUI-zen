@@ -7,7 +7,7 @@ local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed
 TG:AddFact("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldThrow",
         function()
             -- ARRANGE
-            Try:New(function() using "[healthcheck]" end):CatchAll():Run() -- vital to set a milestone before we run the test
+            Try(function() using "[healthcheck]" end):CatchAll():Run() -- vital to set a milestone before we run the test
 
             -- ACT
             function action()
@@ -29,6 +29,6 @@ TG:AddFact("T009.Inheritance.Subclassing.GivenSameNicknameForTwoParents.ShouldTh
             -- ASSERT
             U.Should.Throw(action, "*[NR.BM.062]*") -- order
 
-            Try:New(function() using "[healthcheck]" end):CatchAll():Run() -- order   vital  todo we should support removing faulty classes altogether
+            Try(function() using "[healthcheck]" end):CatchAll():Run() -- order   vital  todo we should support removing faulty classes altogether
         end
 )
