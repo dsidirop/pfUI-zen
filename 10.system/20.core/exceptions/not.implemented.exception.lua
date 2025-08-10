@@ -15,5 +15,5 @@ function Class:New(optionalMessage)
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, Nils.Coalesce(optionalMessage, "Not implemented"))
+    return newInstance.asBase.Exception.New(newInstance, Nils.Coalesce(optionalMessage, "Not implemented"))
 end

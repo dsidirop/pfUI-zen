@@ -14,7 +14,7 @@ function Class:New(optionalArgumentName)
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(
+    return newInstance.asBase.Exception.New(
             newInstance,
             optionalArgumentName == nil
                     and "Property/field has already been set"

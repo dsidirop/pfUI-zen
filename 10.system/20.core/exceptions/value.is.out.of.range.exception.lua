@@ -17,7 +17,7 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
+    return newInstance.asBase.Exception.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
 end
 
 function Class:NewWithMessage(customMessage)
@@ -27,7 +27,7 @@ function Class:NewWithMessage(customMessage)
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, customMessage)
+    return newInstance.asBase.Exception.New(newInstance, customMessage)
 end
 
 --- @private

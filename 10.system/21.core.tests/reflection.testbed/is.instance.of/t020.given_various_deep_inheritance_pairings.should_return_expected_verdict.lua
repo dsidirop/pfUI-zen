@@ -19,7 +19,7 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
                     function GrandChildException:New()
                         local newInstance = self:Instantiate()
 
-                        return GrandChildException.base.New(newInstance, "GrandChildException")
+                        return newInstance.asBase.NotImplementedException.New(newInstance, "GrandChildException")
                     end
 
                     return {
@@ -42,7 +42,7 @@ TG:AddDynamicTheory("T020.Reflection.IsInstanceOf.GivenVariousDeepInheritancePai
                     function GrandChildException:New()
                         local newInstance = self:Instantiate()
 
-                        return GrandChildException.base.New(newInstance, "GrandChildException")
+                        return newInstance.asBase.NotImplementedException.New(newInstance, "GrandChildException")
                     end
 
                     return {
