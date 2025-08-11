@@ -14,6 +14,8 @@ local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Fou
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
+local IModifierKeysListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
+
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate" { --@formatter:on
     "IGreeniesGrouplootingAssistantAggregate", using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Contracts.Engine.GreeniesGrouplootingAssistant.IAggregate" 
 }
@@ -35,9 +37,9 @@ end)
 function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
+    Guard.Assert.IsNilOrInstanceImplementing(modifierKeysListener, IModifierKeysListener, "modifierKeysListener")
 
     local instance = self:Instantiate()
 
