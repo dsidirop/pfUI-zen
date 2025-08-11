@@ -3,9 +3,9 @@
 local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]" --[[@formatter:on]]
+local Form = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]" --[[@formatter:on]]
 
-function Class:InitializeControls_()
+function Form:InitializeControls_()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer:SetScript("OnShow", function() self:OnShown_() end) -- note:   _ui.frmAreaInsideContainer == _ui.hdrGrouplootSectionHeader:GetParent():GetParent():GetParent()

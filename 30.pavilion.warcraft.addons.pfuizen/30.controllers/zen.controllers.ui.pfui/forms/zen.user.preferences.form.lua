@@ -21,8 +21,8 @@ local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilio
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
+local Form = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
 
 Fields(function(upcomingInstance)
     upcomingInstance._t = nil    
@@ -45,7 +45,7 @@ end)
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Class:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
+function Form:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
     Scopify(EScopes.Function, self)
 
     local instance = self:Instantiate() --@formatter:off
@@ -61,7 +61,7 @@ function Class:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
     --00 instance._ui.xyz = ... <- this stuff get initialized in the :Initialize() method which must be called separately   @formatter:on
 end
 
-function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
+function Form:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
     Scopify(EScopes.Function, self)
 
     _eventRequestingCurrentUserPreferences:Subscribe(handler, owner)
@@ -69,7 +69,7 @@ function Class:EventRequestingCurrentUserPreferences_Subscribe(handler, owner)
     return self
 end
 
-function Class:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
+function Form:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
     Scopify(EScopes.Function, self)
 
     _eventRequestingCurrentUserPreferences:Unsubscribe(handler)
@@ -77,7 +77,7 @@ function Class:EventRequestingCurrentUserPreferences_Unsubscribe(handler)
     return self
 end
 
-function Class:Initialize()
+function Form:Initialize()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer = _pfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() --00
@@ -95,13 +95,13 @@ function Class:Initialize()
 end
 
 -- privates
-function Class:OnShown_()
+function Form:OnShown_()
     Scopify(EScopes.Function, self)
 
     self:OnRequestingCurrentUserPreferences_()
 end
 
-function Class:OnRequestingCurrentUserPreferences_()
+function Form:OnRequestingCurrentUserPreferences_()
     Scopify(EScopes.Function, self)
 
     local newUserPreferences = self:OnRequestingCurrentUserPreferencesImpl_()
@@ -109,7 +109,7 @@ function Class:OnRequestingCurrentUserPreferences_()
     return self:ApplyNewUserPreferences_(newUserPreferences)
 end
 
-function Class:OnRequestingCurrentUserPreferencesImpl_()
+function Form:OnRequestingCurrentUserPreferencesImpl_()
     Scopify(EScopes.Function, self)
 
     local response = _eventRequestingCurrentUserPreferences:Raise(self, RequestingCurrentUserPreferencesEventArgs:New()).Response
@@ -120,7 +120,7 @@ function Class:OnRequestingCurrentUserPreferencesImpl_()
     return response.UserPreferences
 end
 
-function Class:ApplyNewUserPreferences_(newUserPreferences)
+function Form:ApplyNewUserPreferences_(newUserPreferences)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsInstanceOf(newUserPreferences, UserPreferencesDto, "newUserPreferences")
@@ -145,7 +145,7 @@ function Class:ApplyNewUserPreferences_(newUserPreferences)
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Class:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
+function Form:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
     _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
@@ -161,7 +161,7 @@ function Class:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
     )
 end
 
-function Class:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_, ea)
+function Form:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_, ea)
     Scopify(EScopes.Function, self)
 
     if not _commandsEnabled then

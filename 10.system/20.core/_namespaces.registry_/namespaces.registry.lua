@@ -542,18 +542,15 @@ do
         end
     end
 
-    function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
+    function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...) --@formatter:off
         local variadicsArray = arg
-        if variadicsArray ~= nil then
-            variadicsArray = _unpack(variadicsArray)
-        end
 
         local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
         if _type(ownCallFuncSnapshot) == "function" then
             -- has priority over :new()
             return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                    variadicsArray
+                    _unpack(variadicsArray)
             )
         end
 
@@ -561,7 +558,7 @@ do
         if _type(ownNewFuncSnapshot) == "function" then
             return ownNewFuncSnapshot(
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                    variadicsArray
+                    _unpack(variadicsArray)
             )
         end
 
