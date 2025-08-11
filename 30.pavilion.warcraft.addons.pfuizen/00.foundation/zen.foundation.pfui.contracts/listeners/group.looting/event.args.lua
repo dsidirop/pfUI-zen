@@ -24,6 +24,6 @@ function Class:New(gamblingRequestId)
     return instance
 end
 
-function Class:GetGamblingId()
+function Class:GetGamblingRequestId()
     return self._gamblingRequestId
 end

@@ -83,7 +83,7 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicValidParameters.Sh
 
             -- ASSERT
             U.Should.Be.Equivalent(gambledItemInfo:GetName(), S.Trim(options.Name))
-            U.Should.Be.Equivalent(gambledItemInfo:GetGamblingId(), options.GamblingId)
+            U.Should.Be.Equivalent(gambledItemInfo:GetGamblingRequestId(), options.GamblingId)
             U.Should.Be.Equivalent(gambledItemInfo:GetItemQuality(), options.ItemQuality)
             U.Should.Be.Equivalent(gambledItemInfo:IsBindOnPickUp(), options.IsBindOnPickUp)
 

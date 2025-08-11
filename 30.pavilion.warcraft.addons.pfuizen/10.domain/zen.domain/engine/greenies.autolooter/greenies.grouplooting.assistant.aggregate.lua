@@ -8,7 +8,7 @@ local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 local GroupLootGamblingService = using "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
 
 local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
-local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener"
+local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.GroupLootingListener"
 
 local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
@@ -170,7 +170,7 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    local gamblingId = ea:GetGamblingId()
+    local gamblingId = ea:GetGamblingRequestId()
     local desiredLootGamblingBehaviour = _settings:GetMode()
     if not self:IsEligibleForAutoGamble_(gamblingId, desiredLootGamblingBehaviour) then
         return
@@ -197,7 +197,7 @@ function Class:IsEligibleForAutoGamble_(gamblingId, desiredLootGamblingBehaviour
 
     local gambledItemInfo = _groupLootGamblingService:GetGambledItemInfo(gamblingId) -- rollid essentially
 
-    -- Console.Out:WriteFormatted("[GLL.PLIGD010] ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
+    -- Console.Out:WriteFormatted("[GLL.PLIGD010] ea:GetGamblingRequestId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingRequestId(), _settings:GetMode(), gambledItemInfo)
     if not gambledItemInfo:IsGreenQuality() then
         return false
     end

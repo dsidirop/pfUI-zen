@@ -2,5 +2,5 @@
 
 local PfuiRoll = using "[built-in]" [[  pfUI.roll  ]]
 
-using "[declare] [bind]" "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.RawBindings.PfuiRoll" (PfuiRoll)
+using "[declare] [bind]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.RawBindings.PfuiRoll" (PfuiRoll)
 

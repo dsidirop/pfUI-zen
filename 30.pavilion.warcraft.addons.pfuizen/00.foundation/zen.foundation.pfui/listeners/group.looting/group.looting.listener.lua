@@ -6,13 +6,14 @@ local Event    = using "System.Event"
 local Fields   = using "System.Classes.Fields"
 
 local LRUCache = using "Pavilion.DataStructures.LRUCache"
-local PfuiRoll = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.RawBindings.PfuiRoll"
+local PfuiRoll = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.RawBindings.PfuiRoll"
 
-local IPfuiRollsUiFramesListener               = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener.Contracts.IPfuiRollsUiFramesListener"
 local PendingLootItemGamblingDetectedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener.Contracts.PendingLootItemGamblingDetectedEventArgs" --@formatter:on
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLootingListener" {
-    "IPfuiRollsUiFramesListener", IPfuiRollsUiFramesListener,
+local IGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Contracts.Listeners.GroupLooting.IGroupLootingListener"
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.GroupLootingListener" {
+    "IGroupLootingListener", IGroupLootingListener,
 }
 
 
