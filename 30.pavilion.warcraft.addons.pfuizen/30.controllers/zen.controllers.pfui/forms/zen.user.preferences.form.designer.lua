@@ -3,7 +3,7 @@
 local SGreeniesGrouplootingAutomationMode               = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Form = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm [Partial]" --[[@formatter:on]]
+local Form = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Forms.UserPreferencesForm [Partial]" --[[@formatter:on]]
 
 function Form:InitializeControls_()
     Scopify(EScopes.Function, self)

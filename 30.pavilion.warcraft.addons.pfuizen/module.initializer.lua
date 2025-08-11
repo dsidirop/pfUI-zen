@@ -19,7 +19,7 @@ local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.F
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
-local UserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
+local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Forms.UserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()

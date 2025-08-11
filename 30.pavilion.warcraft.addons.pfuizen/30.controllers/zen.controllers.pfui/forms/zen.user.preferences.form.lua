@@ -17,11 +17,15 @@ local UserPreferencesDto                                        = using "Pavilio
 
 local ITranslatorService                                        = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
 
-local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
+local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Contracts.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
-local Form = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
+local IUserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Contracts.Forms.IUserPreferencesForm"
+
+local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Forms.UserPreferencesForm" {
+    "IUserPreferencesForm", IUserPreferencesForm,
+}
 
 
 Fields(function(upcomingInstance)
@@ -50,9 +54,9 @@ function Form:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
 
     local instance = self:Instantiate() --@formatter:off
 
-    instance._t                                     = Guard.Assert.IsInstanceImplementing(translationService,             ITranslatorService,              "translationService")    
-    instance._pfuiMainSettingsFormGuiControlsFactory        = Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiControlsFactory, IPfuiMainSettingsFormGuiControlsFactory, "pfuiMainSettingsFormGuiControlsFactory")
-    instance._eventRequestingCurrentUserPreferences = Event:New()
+    instance._t                                      = Guard.Assert.IsInstanceImplementing(translationService,                     ITranslatorService,                      "translationService")    
+    instance._pfuiMainSettingsFormGuiControlsFactory = Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiControlsFactory, IPfuiMainSettingsFormGuiControlsFactory, "pfuiMainSettingsFormGuiControlsFactory")
+    instance._eventRequestingCurrentUserPreferences  = Event:New()
     
     instance._commandsEnabled = false --00
     
