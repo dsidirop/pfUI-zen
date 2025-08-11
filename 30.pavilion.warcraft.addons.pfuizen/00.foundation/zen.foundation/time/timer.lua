@@ -55,7 +55,7 @@ function Class:GetInterval()
     return _interval
 end
 
-function Class:ChainSetInterval(newInterval)
+function Class:ChainSet_Interval(newInterval)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsPositiveNumber(newInterval, "newInterval")

@@ -9,9 +9,13 @@ local IsShiftKeyDown   = using "Pavilion.Warcraft.Foundation.Natives.Input.Keybo
 local IsControlKeyDown = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsControlKeyDown"
 
 local Timer                                = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Time.Timer"
-local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
+local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" -- @formatter:on
+local IModifierKeysListener                = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" { -- @formatter:on
+    "IModifierKeysListener", IModifierKeysListener,
+}
 
 
 Fields(function(upcomingInstance)
@@ -42,7 +46,7 @@ function Class:New(timer)
     return instance
 end
 
-function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
+function Class:ChainSet_MustEmitOnFreshStart(mustEmitOnFreshStart)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsBoolean(mustEmitOnFreshStart, "mustEmitOnFreshStart")
@@ -52,12 +56,12 @@ function Class:SetMustEmitOnFreshStart(mustEmitOnFreshStart)
     return self
 end
 
-function Class:ChainSetPollingInterval(interval)
+function Class:ChainSet_PollingInterval(interval)
     Scopify(EScopes.Function, self)
     
     Guard.Assert.IsPositiveNumber(interval, "interval")
 
-    _timer:ChainSetInterval(interval)
+    _timer:ChainSet_Interval(interval)
 
     return self
 end

@@ -4,18 +4,8 @@
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
-
-Fields(function(upcomingInstance)
-    upcomingInstance._stringifiedCached = nil
-
-    upcomingInstance._hasModifierAlt = nil
-    upcomingInstance._hasModifierShift = nil
-    upcomingInstance._hasModifierControl = nil
-
-    return upcomingInstance
-end)
 
 function Class:New(hasModifierAlt, hasModifierShift, hasModifierControl)
     Scopify(EScopes.Function, self)

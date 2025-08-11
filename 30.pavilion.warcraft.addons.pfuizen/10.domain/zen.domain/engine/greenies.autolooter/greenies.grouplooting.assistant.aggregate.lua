@@ -48,9 +48,9 @@ function Class:New(groupLootingListener, modifierKeysListener, groupLootGambling
         MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
     }
 
-    instance._modifierKeysListener = Nils.Coalesce(modifierKeysListener, ModifierKeysListener:New():ChainSetPollingInterval(0.1)) --todo   refactor this later on so that this gets injected through DI
-    instance._groupLootingListener = Nils.Coalesce(groupLootingListener, PfuiGroupLootingListener.I) --todo                            refactor this later on so that this gets injected through DI
-    instance._groupLootGamblingService = Nils.Coalesce(groupLootGamblingService, GroupLootGamblingService:New()) --todo                    refactor this later on so that this gets injected through DI
+    instance._modifierKeysListener = Nils.Coalesce(modifierKeysListener, ModifierKeysListener:New():ChainSet_PollingInterval(0.1)) --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootingListener = Nils.Coalesce(groupLootingListener, PfuiGroupLootingListener.I) --todo                                 refactor this later on so that this gets injected through DI
+    instance._groupLootGamblingService = Nils.Coalesce(groupLootGamblingService, GroupLootGamblingService:New()) --todo                     refactor this later on so that this gets injected through DI
 
     return instance
 
