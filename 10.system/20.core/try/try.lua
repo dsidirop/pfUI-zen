@@ -16,29 +16,45 @@ local ExceptionsDeserializationFactory = using "System.Try.ExceptionsDeserializa
 local Class = using "[declare]" "System.Try"
 
 
-Class.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
+Class._.DefaultExceptionsDeserializationFactory = ExceptionsDeserializationFactory:New()
 
 Fields(function(upcomingInstance)
-    upcomingInstance._action                           = nil
+    upcomingInstance._tryFunc                          = nil
     upcomingInstance._allExceptionHandlers             = nil
     upcomingInstance._exceptionsDeserializationFactory = nil
 
     return upcomingInstance
 end)
 
-function Class:New(action, optionalExceptionsDeserializationFactory)
+using "[autocall]" "New" -- just be explicit about it
+function Class:New(tryFunc, optionalExceptionsDeserializationFactory)
     Scopify(EScopes.Function, self)
-    
-    Guard.Assert.IsFunction(action, "action")
+
+    Guard.Assert.IsFunction(tryFunc, "tryFunc")
     Guard.Assert.IsNilOrInstanceOf(optionalExceptionsDeserializationFactory, ExceptionsDeserializationFactory, "exceptionsDeserializationFactory")
-    
+
     local instance = self:Instantiate()
-    
-    instance._action                           = action
+
+    instance._tryFunc                          = tryFunc
     instance._allExceptionHandlers             = {}
-    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance.DefaultExceptionsDeserializationFactory
+    instance._exceptionsDeserializationFactory = optionalExceptionsDeserializationFactory or instance._.DefaultExceptionsDeserializationFactory
 
     return instance
+end
+
+function Class:CatchAll(optionalFunc)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNilOrFunction(optionalFunc, "optionalFunc")
+    
+    local catchAllExceptionHandler = _allExceptionHandlers[Class.NamespaceOfBasePlatformException]
+    if catchAllExceptionHandler ~= nil then
+        Throw(Exception:NewWithMessage("Catch-all exception handler already set"))
+    end
+
+    _allExceptionHandlers[Class.NamespaceOfBasePlatformException] = optionalFunc or function() end
+
+    return self
 end
 
 -- for specific exceptions
@@ -62,7 +78,7 @@ end
 function Class:Run()
     Scopify(EScopes.Function, self)
 
-    local returnedValuesArray = { B.ProtectedCall(_action) }
+    local returnedValuesArray = { B.ProtectedCall(_tryFunc) }
 
     local success = A.PopFirst(returnedValuesArray)
     if success then

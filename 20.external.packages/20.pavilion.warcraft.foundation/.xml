@@ -10,4 +10,6 @@
     <Include file="addons\.xml"/>
     <Include file="group.looting\.xml"/>
 
+    <Include file="ui.frames\.xml"/>
+
 </Ui>

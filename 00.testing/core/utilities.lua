@@ -70,8 +70,8 @@ end
 function VWoWUnit.Utilities.IsGlobMatch(input, globPattern) --@formatter:off
     _setfenv(1, VWoWUnit.Utilities)
 
-    _ = _type(input) == "string"                             or _assert(false, "the input must be a string")
-    _ = _type(globPattern) == "string" and globPattern ~= "" or _assert(false, "the glob-pattern must be a non-empty string")  --@formatter:on
+    __ = _type(input) == "string"                             or _assert(false, "the input must be a string")
+    __ = _type(globPattern) == "string" and globPattern ~= "" or _assert(false, "the glob-pattern must be a non-empty string")  --@formatter:on
 
     return _strfind(input, VWoWUnit.Utilities.GlobToPattern_(globPattern)) ~= nil
 end
@@ -106,7 +106,7 @@ end
 function VWoWUnit.Utilities.GlobToPattern_(globPattern)
     _setfenv(1, VWoWUnit.Utilities)
 
-    _ = _type(globPattern) == "string" and globPattern ~= "" or _assert(false, "the glob-pattern must be a non-empty string")
+    __ = _type(globPattern) == "string" and globPattern ~= "" or _assert(false, "the glob-pattern must be a non-empty string")
 
     globPattern = _gsub(globPattern, "([%^%$%(%)%%%.%[%]%+%-])", "%%%1") -- escape magic chars
     globPattern = _gsub(globPattern, "%*", ".*")

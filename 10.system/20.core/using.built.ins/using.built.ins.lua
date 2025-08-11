@@ -22,6 +22,9 @@ local _getBuiltIns = function(builtInsString)
     end
 
     local builtIns = func()
+    if _type(builtIns) ~= "table" then
+        _assert(false, "built-ins is not a table!?\n\n" .. _debugstack() .. "\n")
+    end
 
     if _next(builtIns) == nil then
         _assert(false, "no built-ins loaded\n\n" .. _debugstack() .. "\n")

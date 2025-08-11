@@ -1,5 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
+local Nils         = using "System.Nils"
 local Guard        = using "System.Guard"
 local Fields       = using "System.Classes.Fields"
 local LRUCache     = using "Pavilion.DataStructures.LRUCache"
@@ -7,13 +8,17 @@ local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 local GroupLootGamblingService = using "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
 
 local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
-local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Pfui.Listeners.GroupLooting.Listener"
+local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.GroupLootingListener"
 
 local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
-local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
+local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
+local IModifierKeysListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate" { --@formatter:on
+    "IGreeniesGrouplootingAssistantAggregate", using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Contracts.Engine.GreeniesGrouplootingAssistant.IAggregate" 
+}
 
 
 Fields(function(upcomingInstance)
@@ -32,22 +37,22 @@ end)
 function Class:New(groupLootingListener, modifierKeysListener, groupLootGamblingService)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceOf(modifierKeysListener, ModifierKeysListener, "modifierKeysListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootingListener, PfuiGroupLootingListener, "groupLootingListener")
     Guard.Assert.IsNilOrInstanceOf(groupLootGamblingService, GroupLootGamblingService, "groupLootGamblingService")
+    Guard.Assert.IsNilOrInstanceImplementing(modifierKeysListener, IModifierKeysListener, "modifierKeysListener")
 
     local instance = self:Instantiate()
 
-    -- instance._settings = nil -- set independently through :SetSettings()
+    instance._settings = nil -- set independently through :SetSettings()
     instance._isRunning = false
     instance._pendingLootGamblingRequests = LRUCache:New {
         MaxSize                      = 20,
         MaxLifespanPerEntryInSeconds = 1 + 5 * 60,
     }
 
-    instance._modifierKeysListener = modifierKeysListener or ModifierKeysListener:New():ChainSetPollingInterval(0.1) --todo   refactor this later on so that this gets injected through DI
-    instance._groupLootingListener = groupLootingListener or PfuiGroupLootingListener:New() --todo   refactor this later on so that this gets injected through DI
-    instance._groupLootGamblingService = groupLootGamblingService or GroupLootGamblingService:New() --todo   refactor this later on so that this gets injected through DI
+    instance._modifierKeysListener = Nils.Coalesce(modifierKeysListener, ModifierKeysListener:New():ChainSet_PollingInterval(0.1)) --todo   refactor this later on so that this gets injected through DI
+    instance._groupLootingListener = Nils.Coalesce(groupLootingListener, PfuiGroupLootingListener.I) --todo                                 refactor this later on so that this gets injected through DI
+    instance._groupLootGamblingService = Nils.Coalesce(groupLootGamblingService, GroupLootGamblingService:New()) --todo                     refactor this later on so that this gets injected through DI
 
     return instance
 
@@ -165,9 +170,9 @@ end
 function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     Scopify(EScopes.Function, self)
 
-    local gamblingId = ea:GetGamblingId()
+    local gamblingId = ea:GetGamblingRequestId()
     local desiredLootGamblingBehaviour = _settings:GetMode()
-    if not self:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour) then
+    if not self:IsEligibleForAutoGamble_(gamblingId, desiredLootGamblingBehaviour) then
         return
     end
 
@@ -183,7 +188,7 @@ function Class:GroupLootingListener_PendingLootItemGamblingDetected_(_, ea)
     -- todo   take into account CANCEL_LOOT_ROLL event at some point
 end
 
-function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
+function Class:IsEligibleForAutoGamble_(gamblingId, desiredLootGamblingBehaviour)
     Scopify(EScopes.Function, self)
 
     if desiredLootGamblingBehaviour == nil or desiredLootGamblingBehaviour == SGreeniesGrouplootingAutomationMode.LetUserChoose then
@@ -192,7 +197,7 @@ function Class:IsEligibleForAutoGamble(gamblingId, desiredLootGamblingBehaviour)
 
     local gambledItemInfo = _groupLootGamblingService:GetGambledItemInfo(gamblingId) -- rollid essentially
 
-    -- Console.Out:WriteFormatted("[GLL.PLIGD010] ea:GetGamblingId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingId(), _settings:GetMode(), gambledItemInfo)
+    -- Console.Out:WriteFormatted("[GLL.PLIGD010] ea:GetGamblingRequestId()=%s desiredLootGamblingBehaviour=%s rolledItemInfo: %s", ea:GetGamblingRequestId(), _settings:GetMode(), gambledItemInfo)
     if not gambledItemInfo:IsGreenQuality() then
         return false
     end

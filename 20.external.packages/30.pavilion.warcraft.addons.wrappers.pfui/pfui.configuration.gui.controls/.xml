@@ -1,0 +1,8 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
+    <!-- order -->
+    <Include file="00.raw.bindings\.xml"/>
+    <Include file="10.contracts\.xml"/>
+    <Include file="20.controls\.xml"/>
+
+    <Include file="pfui.main.settings.form.gui.controls.factory.lua"/>
+</Ui>

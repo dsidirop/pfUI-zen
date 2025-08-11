@@ -4,25 +4,26 @@ using "[healthcheck] [all]"
 
 local S = using "System.Helpers.Strings"
 
-local Guard = using "System.Guard"
-
-local Throw = using "System.Exceptions.Throw"
+local Guard     = using "System.Guard"
+local Throw     = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Pfui = using "Pavilion.Warcraft.Addons.Bindings.Pfui.Pfui"
-local PfuiGui = using "Pavilion.Warcraft.Addons.Bindings.Pfui.PfuiGui"
 local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
-local AddonsService = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
-local ComboTranslationsService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+local Pfui                                   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
+local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiControlsFactory"
+
+local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
+local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
-local UserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.UI.Pfui.Forms.UserPreferencesForm"
+local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Forms.UserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()
-    
+
     local addon = {
         folderName = "pfUI-Zen",
         fullNameColoredForErrors = "|cff33ffccpf|r|cffffffffUI|r|cffaaaaaa [|r|cFF7FFFD4Zen|r|cffaaaaaa]|r|cffff5555"
@@ -46,12 +47,8 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
         Throw(Exception:New(S.Format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
     end
 
-    if (not PfuiGui.CreateGUIEntry) then
-        Throw(Exception:New(S.Format("[PFUIZ.IM010] %s : The addon needs a recent version of pfUI (2023+) to work as intended - please update pfUI and try again!", addon.fullNameColoredForErrors)))
-    end
-
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(ComboTranslationsService:New())
+                :New(PfuiMainSettingsFormGuiControlsFactory:New(), ComboTranslationsService:New())
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")

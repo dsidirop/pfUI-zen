@@ -12,7 +12,7 @@ TG:AddFact("T000.EnumLookup.GivenAttemptToAccessExistingMember.ShouldNotThrow",
 
                 EFoo.Bar = 1
                 
-                local _ = EFoo.Bar
+                local __ = EFoo.Bar
             end
 
             -- ASSERT
@@ -30,7 +30,7 @@ TG:AddFact("T050.EnumLookup.GivenAttemptToAccessNonExistingMember.ShouldThrow",
                 
                 -- EFoo.Bar = 1
 
-                local _ = EFoo.Bar -- doesnt exist obviously so this should throw
+                local __ = EFoo.Bar -- doesnt exist obviously so this should throw
             end
 
             -- ASSERT

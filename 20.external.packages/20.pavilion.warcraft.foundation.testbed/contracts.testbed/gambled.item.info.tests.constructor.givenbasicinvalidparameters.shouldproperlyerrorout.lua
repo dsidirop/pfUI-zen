@@ -91,7 +91,7 @@ TG:AddDynamicTheory("GambledItemInfoDto.Constructor.GivenBasicInvalidParameters.
             local properExceptionThrown = false
 
             -- ACT
-            local gambledItemInfo = Try:New(function() --@formatter:off
+            local gambledItemInfo = Try(function() --@formatter:off
                 return GambledItemInfoDto:New(options)
             end)
             :Catch(ValueIsOutOfRangeException, function()

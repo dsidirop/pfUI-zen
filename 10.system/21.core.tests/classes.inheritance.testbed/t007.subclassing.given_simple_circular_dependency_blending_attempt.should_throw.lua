@@ -8,7 +8,7 @@ TG:AddFact("T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAt
             do
                 local Foo = using "[declare]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Foo"
 
-                local _ = using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar" {
+                local __ = using "[declare] [blend]" "T007.Inheritance.Subclassing.GivenSimpleCircularDependencyBlendingAttempt.ShouldThrow.Bar" {
                     "Foo", Foo
                 }
             end

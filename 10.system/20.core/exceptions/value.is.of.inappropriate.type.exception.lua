@@ -17,7 +17,12 @@ function Class:New(value, optionalArgumentName, optionalExpectationOrExpectedTyp
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType))
+    newInstance = Class.asBase.Exception.New(
+            newInstance,
+            _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
+    )
+
+    return newInstance
 end
 
 function Class:NewWithMessage(value, customMessage, optionalArgumentName, optionalExpectationOrExpectedType)
@@ -29,7 +34,7 @@ function Class:NewWithMessage(value, customMessage, optionalArgumentName, option
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(
+    return Class.asBase.Exception.New(
             newInstance,
             customMessage .. " because " .. _.FormulateMessage_(value, optionalArgumentName, optionalExpectationOrExpectedType)
     )
@@ -72,3 +77,4 @@ function Class._.GetExpectationMessage_(optionalExpectationOrExpectedType)
 
     return optionalExpectationOrExpectedType
 end
+

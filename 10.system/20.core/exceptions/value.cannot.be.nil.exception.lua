@@ -1,9 +1,8 @@
-﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
+﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Guard   = using "System.Guard" --               @formatter:off
-local EScopes = using "System.EScopes" --             @formatter:on
+local Guard = using "System.Guard"
 
-local Class = using "[declare] [blend]" "System.Exceptions.ValueCannotBeNilException" {
+local Class = using "[declare] [blend]" "System.Exceptions.ValueCannotBeNilException" { -- @formatter:on
     "Exception", using "System.Exceptions.Exception",
 }
 
@@ -27,5 +26,5 @@ function Class:NewWithMessage(customMessage)
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, customMessage)
+    return Class.asBase.Exception.New(newInstance, customMessage)
 end

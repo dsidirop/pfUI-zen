@@ -13,8 +13,8 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
             },
             ["TS.TT.GVT.STS.020"] = {
                 Text           = "Foobar",
-                Color          = "|cFF00FF00",
-                ExpectedResult = "|cFF00FF00(Translated) Foobar|r",
+                Color          = " cFF00FF00",
+                ExpectedResult = " cFF00FF00(Translated) Foobar|r",
             },
         },
         function(options, subTestcaseName)
@@ -29,7 +29,7 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
 
             ----
 
-            local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Bindings.Pfui.IPfuiTranslatorService"
+            local IPfuiTranslatorService  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService"
         
             local PfuiTranslatorAsFallbackMock = using "[declare] [blend]" (subTestcaseName .. ".T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.ShouldTranslateSuccessfully.PfuiTranslatorAsFallbackMock") {
                 "IPfuiTranslatorService", IPfuiTranslatorService
@@ -41,11 +41,11 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
         
             ----
 
-            local translationsService = ComboTranslationsService:New(ZenAddonTranslatorMock:New(), PfuiTranslatorAsFallbackMock:New())
+            local comboTranslationsService = ComboTranslationsService:New(ZenAddonTranslatorMock:New(), PfuiTranslatorAsFallbackMock:New())
 
             -- ACT
             local action = function()
-                return translationsService:TryTranslate(options.Text, options.Color)
+                return comboTranslationsService(options.Text, options.Color)
             end
 
             -- ASSERT

@@ -39,8 +39,8 @@ function TablesHelper.RawGetValue(table, key)
     return B.RawGet(table, key)
 end
 
-function TablesHelper.Clone(tableInstance, seen)
-    if Reflection.IsTable(tableInstance) then
+function TablesHelper.Clone(tableInstance, predicate, seen)
+    if not Reflection.IsTable(tableInstance) then
         return tableInstance
     end
 
@@ -53,7 +53,9 @@ function TablesHelper.Clone(tableInstance, seen)
 
     s[tableInstance] = result
     for k, v in TablesHelper.GetPairs(tableInstance) do
-        result[TablesHelper.Clone(k, s)] = TablesHelper.Clone(v, s)
+        if not predicate or predicate(k, v) then
+            result[TablesHelper.Clone(k, predicate, s)] = TablesHelper.Clone(v, predicate, s)
+        end
     end
 
     return result
@@ -86,6 +88,19 @@ function TablesHelper.Dequeue(table)
     table[firstKey] = nil
 
     return value
+end
+
+function TablesHelper.ConvertTablerayIntoKeysToIndexesTable(tableray)
+    Guard.Assert.IsTable(tableray, "tableray")
+
+    local keysToIndexes = {}
+    for index, value in B.TableGetIndexedPairs(tableray) do
+        if value ~= nil then
+            keysToIndexes[value] = index
+        end
+    end
+
+    return keysToIndexes
 end
 
 function TablesHelper.Pop(table)

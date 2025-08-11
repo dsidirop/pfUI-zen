@@ -1,5 +1,7 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
+local Try = using "System.Try"
+
 local Metatable = using "System.Classes.Metatable"
 
 local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed"
@@ -7,6 +9,8 @@ local TG, U = using "[testgroup]" "System.Core.Tests.Classes.Inheritance.Testbed
 TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass.ShouldWork",
         function()
             -- ARRANGE
+            Try(function() using "[healthcheck]" end):CatchAll():Run() -- vital to setup a milestone as to ignore errors from previous tests in terms of healthchecks on testbed classes
+            
             local FoobarInstance
 
             -- ACT
@@ -111,8 +115,8 @@ TG:AddFact("T050.Inheritance.Subclassing.GivenGreenInterfaceAndConcreteBaseClass
                         -- U.Should.Not.Be.Nil(newInstance.base) -- these should be offlimits and any attempt to access them should generate an exception
                         -- U.Should.Not.Be.Nil(newInstance.asBase) -- these should be offlimits and any attempt to access them should generate an exception
 
-                        newInstance = newInstance.asBase.Zong.New(newInstance) --   order   notice that we are calling it as .New() instead of :New()
-                        newInstance = newInstance.asBase.AGring.New(newInstance) --  order   that is intentional because we want to call the base constructor
+                        newInstance = Class.asBase.Zong.New(newInstance) --   order   notice that we are calling it as .New() instead of :New()
+                        newInstance = Class.asBase.AGring.New(newInstance) --  order   that is intentional because we want to call the base constructor
 
                         newInstance._sum = newInstance._a + newInstance._b -- finally the constructor can work its own magic after all super-constructors have been invoked above
 

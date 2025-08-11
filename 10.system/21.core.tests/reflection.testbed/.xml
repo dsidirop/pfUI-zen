@@ -2,4 +2,5 @@
     <Include file="get.info\.xml"/>
     <Include file="is.instance.of\.xml"/>
     <Include file="is.instance.implementing\.xml"/>
+    <Include file="try.get.namespace.if.class.proto\.xml"/>
 </Ui>

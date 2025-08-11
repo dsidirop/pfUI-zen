@@ -87,7 +87,7 @@ function Class:GetName()
     return _name
 end
 
-function Class:GetGamblingId()
+function Class:GetGamblingRequestId()
     Scopify(EScopes.Function, self)
 
     return _gamblingId
@@ -241,7 +241,7 @@ function Class:ToString()
             "}\n",
             self:GetName(),
             self:GetItemQuality(),
-            self:GetGamblingId(),
+            self:GetGamblingRequestId(),
 
             self:IsNeedable(),
             self:IsGreedable(),

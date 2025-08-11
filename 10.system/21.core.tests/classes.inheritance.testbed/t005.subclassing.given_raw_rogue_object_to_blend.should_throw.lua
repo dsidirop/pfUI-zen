@@ -8,7 +8,7 @@ TG:AddFact("T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow"
 
             -- ACT
             function action()
-                _ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow.Foo" {
+                __ = using "[declare] [blend]" "T005.Inheritance.Subclassing.GivenRawRogueObjectToBlend.ShouldThrow.Foo" {
                     { "Bar", { a = 1, b = 2 } },
                 }
             end

@@ -8,13 +8,12 @@ local Class = using "[declare] [blend]" "System.Exceptions.NotImplementedExcepti
     "Exception", Exception
 }
 
-
 function Class:New(optionalMessage)
     Scopify(EScopes.Function, self)
-   
+
     Guard.Assert.IsNilOrNonDudString(optionalMessage, "message")
 
     local newInstance = self:Instantiate()
 
-    return Class.base.New(newInstance, Nils.Coalesce(optionalMessage, "Not implemented"))
+    return Class.asBase.Exception.New(newInstance, Nils.Coalesce(optionalMessage, "Not implemented"))
 end

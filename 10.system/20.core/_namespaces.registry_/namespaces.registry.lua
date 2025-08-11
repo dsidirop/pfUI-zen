@@ -54,8 +54,8 @@ local function _spawnSimpleMetatable(mt)
 end
 
 local function _stringJoinTableValues(dictionary, separator)
-    _ = _type(dictionary) == "table" or _throw_exception("dictionary must be a table")
-    _ = _type(separator) == "string" or _throw_exception("separator must be a string")
+    __ = _type(dictionary) == "table" or _throw_exception("dictionary must be a table")
+    __ = _type(separator) == "string" or _throw_exception("separator must be a string")
 
     local result = {}
     for _, v in _ipairs(dictionary) do
@@ -66,8 +66,8 @@ local function _stringJoinTableValues(dictionary, separator)
 end
 
 local function _stringStartsWith(input, desiredPrefix)
-    _ = _type(input) == "string" or _throw_exception("input must be a string")
-    _ = _type(desiredPrefix) == "string" or _throw_exception("desiredPrefix must be a string")
+    __ = _type(input) == "string" or _throw_exception("input must be a string")
+    __ = _type(desiredPrefix) == "string" or _throw_exception("desiredPrefix must be a string")
 
     if desiredPrefix == "" then
         return true
@@ -100,8 +100,8 @@ local function _stringStartsWith(input, desiredPrefix)
 end
 
 local function _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, desiredType) --@formatter:off
-    _ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
-    _ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
+    __ = _type(desiredType) == "string"                   or _throw_exception("desiredType must be a string")
+    __ = _type(pendingAttributesArraySnapshot) == "table" or _throw_exception("pendingAttributesSnapshot must be a table") --@formatter:on
 
     local lastMatchingAttributeSpecs
     for i, attributeSpecs in _ipairs(pendingAttributesArraySnapshot) do
@@ -115,8 +115,8 @@ local function _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, des
 end
 
 local function _stringEndsWith(input, desiredPostfix)
-    _ = _type(input) == "string" or _throw_exception("input must be a string")
-    _ = _type(desiredPostfix) == "string" or _throw_exception("desiredPrefix must be a string")
+    __ = _type(input) == "string" or _throw_exception("input must be a string")
+    __ = _type(desiredPostfix) == "string" or _throw_exception("desiredPrefix must be a string")
 
     if desiredPostfix == "" then
         return true
@@ -146,7 +146,7 @@ end
 local function _stringMatch(input, patternString, ...)
     local variadicsArray = arg
 
-    _ = patternString ~= nil or _throw_exception("patternString must not be nil")
+    __ = patternString ~= nil or _throw_exception("patternString must not be nil")
 
     if patternString == "" then
         return nil
@@ -200,10 +200,10 @@ do
 
         local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
 
-        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFABST.CTOR.010] Cannot process 'abstract' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-        _ = latestTidbits:IsAbstractClassEntry()                           or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'abstract' attribute on [%s:%s()] because the target is not an abstract class (did you forget to define it as an abstract class?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
-        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFABST.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
-        _ = latestProto[targetMethodName] == nil                           or _throw_exception("[NR.MA.NFABST.CTOR.030] Cannot apply 'abstract' attribute on [%s:%s()] because it is already defined (defined in the parent class maybe?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
+        __ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFABST.CTOR.010] Cannot process 'abstract' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        __ = latestTidbits:IsAbstractClassEntry()                           or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'abstract' attribute on [%s:%s()] because the target is not an abstract class (did you forget to define it as an abstract class?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        __ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFABST.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
+        __ = latestProto[targetMethodName] == nil                           or _throw_exception("[NR.MA.NFABST.CTOR.030] Cannot apply 'abstract' attribute on [%s:%s()] because it is already defined (defined in the parent class maybe?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
 
         local instance = {
             _attributeType    = SMethodAttributeTypes.Abstract,
@@ -220,9 +220,9 @@ do
 
         local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
 
-        _ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
-        _ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFABST.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the target is not an interface", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
-        _ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
+        __ = latestProto ~= nil                                             or _throw_exception("[NR.MA.NFAUTO.CTOR.010] Cannot process 'autocall' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+        __ = latestTidbits:IsClassEntry()                                   or _throw_exception("[NR.MA.NFAUTO.CTOR.015] Cannot apply 'autocall' attribute on [%s:%s()] because the parent symbol is not a class", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName))
+        __ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.MA.NFAUTO.CTOR.020] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName))) --@formatter:on
 
         latestProto[targetMethodName] = nil --00 crucial
 
@@ -364,7 +364,7 @@ do
             ))
         end
 
-        AllAbstractMethods[autoGeneratedDudInterfaceMethod] = true 
+        AllAbstractMethods[autoGeneratedDudInterfaceMethod] = proto 
 
         _rawset(proto, key, autoGeneratedDudInterfaceMethod)
     end
@@ -394,7 +394,7 @@ do
         local variadicsArray = arg
         local ownCallFuncSnapshot = staticClassProto.__Call__ --   static classes are expected to define it as :__Call__()
 
-        _ = _type(ownCallFuncSnapshot) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
+        __ = _type(ownCallFuncSnapshot) == "function" or _throw_exception("[__call()] Cannot call static_class() because the symbol lacks the method :__Call__()")
 
         return ownCallFuncSnapshot(
                 staticClassProto, --          vital to pass the static-class-proto to the call-function to ensure proper parameter order considering that
@@ -406,7 +406,7 @@ do
         _setfenv(EScope.Function, StaticClassProtoFactory)
 
         local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
-        _ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+        __ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
 
         if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
             _rawset(classProto, key, value)
@@ -415,7 +415,7 @@ do
 
         local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
         if autocallAttributeSpecs ~= nil then
-            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+            __ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SCPF.SNIFFNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
                 _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
                 _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
             ) --@formatter:on
@@ -440,23 +440,28 @@ do
             New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_
+            __call     = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --vital to set __call here as well otherwise it wont work
+            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForAbstractClasses_,
         })
 
         CachedMetaTable_ForAllNonStaticClassProtos = CachedMetaTable_ForAllNonStaticClassProtos or _spawnSimpleMetatable({
             New         = NonStaticClassProtoFactory.StandardDefaultConstructor_,
             Instantiate = NonStaticClassProtoFactory.StandardInstantiator_,
 
-            __newindex = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_
+            __call      = NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_, --vital to set __call here as well otherwise it wont work
+            __newindex  = NonStaticClassProtoFactory.StandardNewIndexFunc_ForNonStaticClasses_,
         })
 
         local newClassProto = _spawnSimpleMetatable({
-            --  by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
-            ToString = NonStaticClassProtoFactory.Standard_ToStringMethod,
+            -- by convention static-utility-methods of instantiatable-classes are to be hosted under 'Class._.*'
+            
+            -- ToString = NonStaticClassProtoFactory.Standard_ToStringMethod, --never do this   it creates very nasty problems
 
             _          = { },
-            __call     = not isAbstract and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_ or nil, --00 must be here
-            __tostring = NonStaticClassProtoFactory.Standard__tostring
+            __call     = not isAbstract --00 must be here
+                            and NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_
+                            or nil,
+            __tostring = NonStaticClassProtoFactory.Standard__tostring,
         })
 
         return _setmetatable(newClassProto, isAbstract
@@ -476,7 +481,7 @@ do
 
         local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
         
-        _ = pendingAttributesArraySnapshot == nil or _type(value) == "function" or _throw_exception("[NR.NSCPF.SNIF.FAC.010] Abstract class [%s] supports attributes on functions but member %q is not a function", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+        __ = pendingAttributesArraySnapshot == nil or _type(value) == "function" or _throw_exception("[NR.NSCPF.SNIF.FAC.010] Abstract class [%s] supports attributes on functions but member %q is not a function", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
 
         if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
             _rawset(classProto, key, value)
@@ -500,7 +505,7 @@ do
                 ))
             end
 
-            AllAbstractMethods[autoGeneratedAbstractMethod] = true
+            AllAbstractMethods[autoGeneratedAbstractMethod] = classProto
             
             _rawset(classProto, key, autoGeneratedAbstractMethod)
         end
@@ -514,7 +519,7 @@ do
         _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
         local pendingAttributesArraySnapshot = NamespaceRegistrySingleton:PopAllPendingAttributes()
-        _ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
+        __ = pendingAttributesArraySnapshot == nil or (key ~= "base" and key ~= "asBase" and _type(value) == "function") or _throw_exception("[NR.NSCPF.SNIF.FNSC.010] Cannot apply attributes on .base or .asBase or to a member that is not a function (member=[%s:%s()])", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)), _stringify(key))
 
         if pendingAttributesArraySnapshot == nil or key == "base" or key == "asBase" or _type(value) ~= "function" then
             _rawset(classProto, key, value)
@@ -523,12 +528,12 @@ do
 
         local autocallAttributeSpecs = _tryPopMethodAttributesOfType(pendingAttributesArraySnapshot, SMethodAttributeTypes.Autocall)
         if autocallAttributeSpecs ~= nil then
-            _ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SNIF.FNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
+            __ = autocallAttributeSpecs:GetTargetProto() == classProto and autocallAttributeSpecs:GetTargetMethodName() == key or _throw_exception("[NR.NSCPF.SNIF.FNSC.020] Autocall attribute for [%s:%s()] is not applicable to [%s:%s()]", --@formatter:off
                 _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(autocallAttributeSpecs:GetTargetProto())), _stringify(autocallAttributeSpecs:GetTargetMethodName()),
                 _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProto)),                              _stringify(key)
             ) --@formatter:on
 
-            classProto.__call = value
+            classProto.__Call__ = value
             _rawset(classProto, key, value)
         end
 
@@ -537,32 +542,28 @@ do
         end
     end
 
-    function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...)
+    function NonStaticClassProtoFactory.OnProtoOrInstanceCalledAsFunction_(classProtoOrInstance, ...) --@formatter:off
         local variadicsArray = arg
-        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes (both static and non-static) are expected to define these
+
         local ownCallFuncSnapshot = classProtoOrInstance.__Call__ --   as :New() and :__Call__() respectively  ( not as .New() or .__Call__()! )
-
-        local hasConstructorFunction = _type(ownNewFuncSnapshot) == "function"
-        local hasImplicitCallFunction = _type(ownCallFuncSnapshot) == "function"
-        _ = hasConstructorFunction or hasImplicitCallFunction or _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
-
-        if variadicsArray ~= nil then
-            variadicsArray = _unpack(variadicsArray)
-        end
-
-        if hasImplicitCallFunction then
+        if _type(ownCallFuncSnapshot) == "function" then
             -- has priority over :new()
             return ownCallFuncSnapshot( -- 00
                     classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                    variadicsArray
+                    _unpack(variadicsArray)
             )
         end
 
-        return ownNewFuncSnapshot(
-                classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
-                variadicsArray
-        )
+        local ownNewFuncSnapshot = classProtoOrInstance.New --         classes (both static and non-static) are expected to define these
+        if _type(ownNewFuncSnapshot) == "function" then
+            return ownNewFuncSnapshot(
+                    classProtoOrInstance, -- vital to pass the classproto/instance to the call-function
+                    _unpack(variadicsArray)
+            )
+        end
 
+        _throw_exception("[NR.NSCPF.OPOICAF.010] Cannot make default-call [%s()] because the symbol lacks both methods :New() and :__Call__()", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classProtoOrInstance)))
+        
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
     end
 
@@ -574,22 +575,17 @@ do
         return NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classInstance)
     end
 
-    function NonStaticClassProtoFactory.Standard__tostring(classInstance)
-        local variadicsArray = arg
+    function NonStaticClassProtoFactory.Standard__tostring(classInstance, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
         local ownToStringFunc = classInstance.ToString
 
         if _type(ownToStringFunc) == "function" then
-            if variadicsArray ~= nil then
-                variadicsArray = _unpack(variadicsArray)
-            end
-
             return _stringify(ownToStringFunc( -- 00
                 classInstance, -- vital to pass the classproto/instance to the call-function
-                variadicsArray
+                a1, a2, a3, a4, a5, a6, a7, a8, a9, a10
             ))
         end
 
-        return "" --10 
+        return NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(classInstance) --10 
 
         -- 00  if both :New(...) and :__Call__() are defined then :__Call__() takes precedence
         -- 10  should be impossible but just in case   we cannot use _stringify() here because it will cause an infinite recursion
@@ -598,7 +594,7 @@ do
     function NonStaticClassProtoFactory.StandardInstantiator_(classProtoOrInstanceBeingEnriched) -- @formatter:off
         _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
-        _ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("[NR.NSCPF.SI.010] classProtoOrInstance was expected to be a table") -- @formatter:on
+        __ = _type(classProtoOrInstanceBeingEnriched) == "table" or _throw_exception("[NR.NSCPF.SI.010] classProtoOrInstance was expected to be a table") -- @formatter:on
 
         local protoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(classProtoOrInstanceBeingEnriched)
         if protoTidbits == nil then
@@ -610,7 +606,7 @@ do
             return classProtoOrInstanceBeingEnriched
         end
 
-        _ = not protoTidbits:IsAbstractClassEntry() or _throw_exception("[NR.NSCPF.SI.020] [%s] is an abstract class and may not be instantiated directly", _stringify(protoTidbits:GetNamespace()))
+        __ = not protoTidbits:IsAbstractClassEntry() or _throw_exception("[NR.NSCPF.SI.020] [%s] is an abstract class and may not be instantiated directly", _stringify(protoTidbits:GetNamespace()))
 
         local newInstance = NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProtoOrInstanceBeingEnriched, protoTidbits)
 
@@ -631,8 +627,8 @@ do
     function NonStaticClassProtoFactory.EnrichInstanceWithFieldsOfBaseClassesAndFinallyWithFieldsOfTheClassItself(classProto, protoTidbits, upcomingInstance) --@formatter:off
         _setfenv(EScope.Function, NonStaticClassProtoFactory)
 
-        _ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
-        _ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type %q", _type(upcomingInstance)) --@formatter:on
+        __ = _type(classProto) == "table"                                  or _throw_exception("classProto was expected to be a table")
+        __ = upcomingInstance == nil or _type(upcomingInstance) == "table" or _throw_exception("newInstance was expected to be a table or nil but it was found to be of type %q", _type(upcomingInstance)) --@formatter:on
 
         upcomingInstance = upcomingInstance or {}
         if classProto.asBase ~= nil then
@@ -691,11 +687,11 @@ do
         end
 
         if symbolType == SRegistrySymbolTypes.NonStaticClass then
-            return NonStaticClassProtoFactory.Spawn(false)
+            return NonStaticClassProtoFactory.Spawn(--[[isAbstract:]] false)
         end
 
         if symbolType == SRegistrySymbolTypes.AbstractClass then
-            return NonStaticClassProtoFactory.Spawn(true)
+            return NonStaticClassProtoFactory.Spawn(--[[isAbstract:]] true)
         end
 
         if symbolType == SRegistrySymbolTypes.Interface then
@@ -717,13 +713,13 @@ do
     function Entry:New(symbolType, symbolProto, namespacePath, isForPartial)
         _setfenv(EScope.Function, self)
 
-        _ = symbolProto ~= nil                                       or  _throw_exception("[NR.ENT.NW.010] symbolProto must not be nil") -- @formatter:off
-        _ = _type(namespacePath) == "string"                         or  _throw_exception("[NR.ENT.NW.020] namespacePath must be a string (got something of type %q)", _type(namespacePath))
-        _ = namespacePath ~= ""                                      or  _throw_exception("[NR.ENT.NW.030] namespacePath must not be an empty string")
-        _ = not _stringEndsWith(namespacePath, ".")                  or  _throw_exception("[NR.ENT.NW.032] namespacePath must not end with a dot (.)")
-        -- _ = _stringMatch(namespacePath, "^[%a_][%w_]+([.][%w_]+)*$") or  _throw_exception("[NR.ENT.NW.035] namespacePath must be a valid identifier (got %q)", namespacePath)
-        _ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("[NR.ENT.NW.040] isForPartial must be a boolean or nil (got %q)", _type(isForPartial))
-        _ = SRegistrySymbolTypes:IsValid(symbolType)                 or  _throw_exception("[NR.ENT.NW.050] symbolType must be a valid SRegistrySymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds   @formatter:on 
+        __ = symbolProto ~= nil                                       or  _throw_exception("[NR.ENT.NW.010] symbolProto must not be nil") -- @formatter:off
+        __ = _type(namespacePath) == "string"                         or  _throw_exception("[NR.ENT.NW.020] namespacePath must be a string (got something of type %q)", _type(namespacePath))
+        __ = namespacePath ~= ""                                      or  _throw_exception("[NR.ENT.NW.030] namespacePath must not be an empty string")
+        __ = not _stringEndsWith(namespacePath, ".")                  or  _throw_exception("[NR.ENT.NW.032] namespacePath must not end with a dot (.)")
+        -- __ = _stringMatch(namespacePath, "^[%a_][%w_]+([.][%w_]+)*$") or  _throw_exception("[NR.ENT.NW.035] namespacePath must be a valid identifier (got %q)", namespacePath)
+        __ = isForPartial == nil or _type(isForPartial) == "boolean"  or  _throw_exception("[NR.ENT.NW.040] isForPartial must be a boolean or nil (got %q)", _type(isForPartial))
+        __ = SRegistrySymbolTypes:IsValid(symbolType)                 or  _throw_exception("[NR.ENT.NW.050] symbolType must be a valid SRegistrySymbolTypes member (got %q)", symbolType) -- todo   auto-enable this only in debug builds   @formatter:on 
 
         local instance = {
             _symbolType               = symbolType,
@@ -754,10 +750,10 @@ do
 
         -- _g.print("[Entry.Healthcheck.000] namespacePath=" .. _namespacePath)
 
-        _ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q - how did this happen?)", _type(_namespacePath))
-        _ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string (how did this happen?)")
-        _ = _symbolType ~= nil or _throw_exception("[NR.ENT.HC.020] symbolType must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
-        _ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.030] symbolProto must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
+        __ = _type(_namespacePath) == "string" or _throw_exception("[NR.ENT.HC.010] namespacePath must be a string (got %q - how did this happen?)", _type(_namespacePath))
+        __ = _namespacePath ~= "" or _throw_exception("[NR.ENT.HC.015] namespacePath must be a non-dud string (how did this happen?)")
+        __ = _symbolType ~= nil or _throw_exception("[NR.ENT.HC.020] symbolType must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
+        __ = _symbolProto ~= nil or _throw_exception("[NR.ENT.HC.030] symbolProto must not be nil (namespace=[%s] - how did this happen?)", _stringify(_namespacePath))
 
         self:UnwireNewIndexInterception()
         
@@ -794,39 +790,40 @@ do
 
         -- _g.print("[Entry.HealthcheckInheritance.000] namespacePath=" .. _namespacePath)
 
-        _ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.ENT.HCI.010] namespaceRegistry must be a table (got %q)", _type(namespaceRegistry))
-        _ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.ENT.HCI.020] errorsAccumulatorArray must be a table (got %q)", _type(errorsAccumulatorArray))
+        __ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.ENT.HCI.010] namespaceRegistry must be a table (got %q)", _type(namespaceRegistry))
+        __ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.ENT.HCI.020] errorsAccumulatorArray must be a table (got %q)", _type(errorsAccumulatorArray))
 
-        if _symbolType ~= SRegistrySymbolTypes.NonStaticClass then
-            -- _g.print("[Entry.HealthcheckInheritance.010]")
-            return -- we want to healthcheck any non-static-class that is based on inheritance
+        if _symbolType ~= SRegistrySymbolTypes.NonStaticClass and _symbolType ~= SRegistrySymbolTypes.AbstractClass then
+            return -- we only want to healthcheck any non-static-classes + abstracts-classes that are based on inheritance
         end
 
-        -- _g.print("[Entry.HealthcheckInheritance.020]")
+        local errorMessages = {}
+        for protoMethodName, protoMethod in _pairs(_symbolProto) do
+            -- _g.print("** Examining protoMethodName=" .. _stringify(protoMethodName))
 
-        local missingMethods = {}
-        for mixinNicknameOrProto, _ in _pairs(_symbolProto.asBase or {}) do
-            if _type(mixinNicknameOrProto) == "table" then
-                local entry = namespaceRegistry:TryGetProtoTidbitsViaSymbolProto(mixinNicknameOrProto)
-                if entry ~= nil and (entry:IsAbstractClassEntry() or entry:IsInterfaceEntry()) then
-                    for protoMethodName, protoMethod in _pairs(_symbolProto) do
-                        if AllAbstractMethods[protoMethod] ~= nil then
-                            _tableInsert(missingMethods, "      - [" .. entry:GetNamespace() .. ":" .. protoMethodName .. "()]")
-                        end
-                    end
+            local proto = AllAbstractMethods[protoMethod]
+            if proto ~= nil and proto ~= _symbolProto then
+                local tidbitsOfParentProto = namespaceRegistry:TryGetProtoTidbitsViaSymbolProto(proto) --@formatter:off
+                if tidbitsOfParentProto ~= nil and (
+                           tidbitsOfParentProto:IsInterfaceEntry()
+                        or (_symbolType == SRegistrySymbolTypes.NonStaticClass and tidbitsOfParentProto:IsAbstractClassEntry()) --@formatter:on
+                ) then
+                    _tableInsert(errorMessages, "      - [" .. tidbitsOfParentProto:GetNamespace() .. ":" .. protoMethodName .. "()]")
                 end
             end
         end
 
-        if _next(missingMethods) then
-            _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _namespacePath, _tableConcat(missingMethods, "\n")))
+        if not _next(errorMessages) then
+            return -- no actual errors found
         end
+
+        _tableInsert(errorsAccumulatorArray, _format("- [NR.ENT.HCI.010] class [%s] lacks implementations for the following method(s):\n\n%s\n", _stringify(namespaceRegistry:TryGetNamespaceIfInstanceOrProto(_symbolProto)), _stringify(_tableConcat(errorMessages, "\n"))))
     end
 
     function Entry:GetFieldPluggerCallbackFunc()
         _setfenv(EScope.Function, self)
 
-        _ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType)
+        __ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.GFPCF.010] trying to get the field-plugger-func makes sense for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType)
 
         return _fieldPluggerCallbackFunc
     end
@@ -834,8 +831,8 @@ do
     function Entry:ChainSetFieldPluggerFuncForNonStaticClassProto(func) -- @formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _type(func) == "function"                                                                                 or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
-        _ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType) -- @formatter:on
+        __ = _type(func) == "function"                                                                                 or _throw_exception("[NR.ENT.CSFPFFNSCP.010] the field-plugger-callback must be a function (got %q)", _type(func))
+        __ = (_symbolType == SRegistrySymbolTypes.NonStaticClass or _symbolType == SRegistrySymbolTypes.AbstractClass) or _throw_exception("[NR.ENT.CSFPFFNSCP.020] setting a field-plugger-callback makes sense only for non-static-classes and abstract-classes but the proto of [%s] is of type %q", _namespacePath, _symbolType) -- @formatter:on
 
         if _fieldPluggerCallbackFunc == nil then
             _fieldPluggerCallbackFunc = func
@@ -862,7 +859,7 @@ do
     function Entry:GetNamespace()
         _setfenv(EScope.Function, self)
 
-        _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
+        __ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
 
         return _namespacePath
     end
@@ -870,7 +867,7 @@ do
     function Entry:GetSymbolName()
         _setfenv(EScope.Function, self)
 
-        _ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
+        __ = _type(_namespacePath) == "string" or _throw_exception("spotted unset namespace-path for a namespace-entry (how is this even possible?)")
 
         return _stringMatch(_namespacePath, "([^%.]+)$")
     end
@@ -878,7 +875,7 @@ do
     function Entry:GetSymbolProto()
         _setfenv(EScope.Function, self)
 
-        _ = _symbolProto ~= nil or _throw_exception("spotted unset symbol (nil) for a namespace-entry (how is this even possible?)")
+        __ = _symbolProto ~= nil or _throw_exception("spotted unset symbol (nil) for a namespace-entry (how is this even possible?)")
 
         return _symbolProto
     end
@@ -886,7 +883,7 @@ do
     function Entry:GetRegistrySymbolType()
         _setfenv(EScope.Function, self)
 
-        _ = _symbolType ~= nil or _throw_exception("spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)")
+        __ = _symbolType ~= nil or _throw_exception("spotted unset symbol-type (nil) for a namespace-entry (how is this even possible?)")
 
         return _symbolType
     end
@@ -894,7 +891,7 @@ do
     function Entry:IsPartialEntry()
         _setfenv(EScope.Function, self)
 
-        _ = _isForPartial ~= nil or _throw_exception("spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)")
+        __ = _isForPartial ~= nil or _throw_exception("spotted unset is-for-partial (nil) for a namespace-entry (how is this even possible?)")
 
         return _isForPartial
     end
@@ -924,6 +921,13 @@ do
 
         return _symbolType == SRegistrySymbolTypes.StaticClass
             or _symbolType == SRegistrySymbolTypes.AbstractClass
+            or _symbolType == SRegistrySymbolTypes.NonStaticClass
+    end
+    
+    function Entry:IsInstantiatableClassEntry()
+        _setfenv(EScope.Function, self)
+        
+        return _symbolType == SRegistrySymbolTypes.AbstractClass
             or _symbolType == SRegistrySymbolTypes.NonStaticClass
     end
 
@@ -1087,11 +1091,11 @@ do
 
     NamespaceRegistry.Assert = {}
     NamespaceRegistry.Assert.NoStrayPendingAttributes = function()
-        _ = NamespaceRegistrySingleton:PopAllPendingAttributes() == nil or _throw_exception("[NR.ASR.NSPA.010] There are stray attributes that were not applied to any symbol - did you forget to apply them?")
+        __ = NamespaceRegistrySingleton:PopAllPendingAttributes() == nil or _throw_exception("[NR.ASR.NSPA.010] There are stray attributes that were not applied to any symbol - did you forget to apply them?")
     end
     NamespaceRegistry.Assert.NamespacePathIsHealthy = function(namespacePath) --@formatter:off
-        _ = _type(namespacePath) == "string"                                                      or _throw_exception("[NR.ASR.NPIH.010] the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
-        _ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("[NR.ASR.NPIH.020] namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
+        __ = _type(namespacePath) == "string"                                                      or _throw_exception("[NR.ASR.NPIH.010] the namespace-path is supposed to be a string but was given a %q", _type(namespacePath))
+        __ = namespacePath == _stringTrim(namespacePath) and namespacePath ~= "" and namespacePath or _throw_exception("[NR.ASR.NPIH.020] namespace-path %q is invalid - it must be a non-empty string without prefixed/postfixed whitespaces", namespacePath)
     end --@formatter:on
     NamespaceRegistry.Assert.SymbolTypeIsForDeclarableSymbol = function(symbolType)
         local isDeclarableSymbol = symbolType == SRegistrySymbolTypes.Enum
@@ -1100,19 +1104,19 @@ do
                 or symbolType == SRegistrySymbolTypes.AbstractClass
                 or symbolType == SRegistrySymbolTypes.NonStaticClass
 
-        _ = isDeclarableSymbol or _throw_exception("[NR.ASR.STIFDS.010] the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
+        __ = isDeclarableSymbol or _throw_exception("[NR.ASR.STIFDS.010] the symbol you're trying to declare (type=%q) is not a Class/Enum/Interface to be declarable - so try binding it instead!", symbolType)
     end
 
     NamespaceRegistry.Assert.EntryUpdateConcernsEntryWithTheSameSymbolType = function(incomingSymbolType, preExistingEntry, namespacePath)
-        _ = incomingSymbolType == preExistingEntry:GetRegistrySymbolType() or _throw_exception("[NR.ASR.EUCEWTSST.010] cannot re-register namespace [%s] with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetRegistrySymbolType()) -- 10
+        __ = incomingSymbolType == preExistingEntry:GetRegistrySymbolType() or _throw_exception("[NR.ASR.EUCEWTSST.010] cannot re-register namespace [%s] with type=%q as it has already been registered as symbol-type=%q", namespacePath, incomingSymbolType, preExistingEntry:GetRegistrySymbolType()) -- 10
     end
 
     NamespaceRegistry.Assert.EitherTheIncomingUpdateIsForPartialOrThePreexistingEntryIsPartial = function(isForPartial, preExistingEntry, sanitizedNamespacePath)
-        _ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("[NR.ASR.ETIUIFPOTPEIP.010] namespace [%s] has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetRegistrySymbolType()) -- 10
+        __ = isForPartial or preExistingEntry:IsPartialEntry() or _throw_exception("[NR.ASR.ETIUIFPOTPEIP.010] namespace [%s] has already been assigned to a symbol marked as %q (did you mean to register a 'partial' symbol?)", sanitizedNamespacePath, preExistingEntry:GetRegistrySymbolType()) -- 10
     end
 
     NamespaceRegistry.Assert.HasNotBeenEmployedAsParentClassYet = function(preExistingEntry, sanitizedNamespacePath)
-        _ = not preExistingEntry:GetWasEmployedAsParentClassSomewhere() or _throw_exception("[NR.ASR.HNBEAPCY.010] Symbol [%s] is being amended through [partial] but it was already used as a parent-symbol at least once - this is forbidden as it can lead to unexpected behaviour in runtime", sanitizedNamespacePath) -- 10
+        __ = not preExistingEntry:GetWasEmployedAsParentClassSomewhere() or _throw_exception("[NR.ASR.HNBEAPCY.010] Symbol [%s] is being amended through [partial] but it was already used as a parent-symbol at least once - this is forbidden as it can lead to unexpected behaviour in runtime", sanitizedNamespacePath) -- 10
     end
 
     function NamespaceRegistry:Healthcheck(errorsAccumulatorArray, forceCheckAll)
@@ -1120,7 +1124,7 @@ do
 
         -- _g.print("[NamespaceRegistry.Healthcheck.000]")
 
-        _ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.HC.010] errorsAccumulator must be a table (got %q)", _type(errorsAccumulatorArray))
+        __ = _type(errorsAccumulatorArray) == "table" or _throw_exception("[NR.HC.010] errorsAccumulator must be a table (got %q)", _type(errorsAccumulatorArray))
 
         for _, protoTidbits in _pairs(_namespaces_registry) do
             -- _g.print("[NamespaceRegistry.Healthcheck.010]")
@@ -1212,11 +1216,11 @@ do
     end
 
     NamespaceRegistry.Assert.RawSymbolNamespaceIsAvailable = function(possiblePreexistingEntry, namespacePath)
-        _ = possiblePreexistingEntry == nil or _throw_exception("namespace [%s] has already been assigned to another symbol", namespacePath)
+        __ = possiblePreexistingEntry == nil or _throw_exception("namespace [%s] has already been assigned to another symbol", namespacePath)
     end
 
     NamespaceRegistry.Assert.ProtoForRawSymbolEntryMustNotBeNil = function(rawSymbolProto)
-        _ = rawSymbolProto ~= nil or _throw_exception("rawSymbolProto must not be nil")
+        __ = rawSymbolProto ~= nil or _throw_exception("rawSymbolProto must not be nil")
     end
 
     -- used for binding external libs to a local namespace
@@ -1228,8 +1232,8 @@ do
     function NamespaceRegistry:BindKeyword(keyword, keywordFunc) --@formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")   or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
-        _ = _type(keywordFunc) == "function"                                    or _throw_exception("the keyword-func must be a function (got %q)", _type(keywordFunc)) --@formatter:on
+        __ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]")   or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword)
+        __ = _type(keywordFunc) == "function"                                    or _throw_exception("the keyword-func must be a function (got %q)", _type(keywordFunc)) --@formatter:on
 
         self:BindImpl_(keyword, keywordFunc, SRegistrySymbolTypes.Keyword)
     end
@@ -1238,8 +1242,8 @@ do
     function NamespaceRegistry:BindAutorunKeyword(keyword, func) --@formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = _type(func) == "function"                                         or _throw_exception("the autorun keyword must be bound to a function (got %q)", _type(func))
-        _ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]") or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword) --@formatter:on
+        __ = _type(func) == "function"                                         or _throw_exception("the autorun keyword must be bound to a function (got %q)", _type(func))
+        __ = _stringStartsWith(keyword, "[") and _stringEndsWith(keyword, "]") or _throw_exception("the keyword must be [enclosed] in brackets (got %q)", keyword) --@formatter:on
 
         self:BindImpl_(keyword, func, SRegistrySymbolTypes.AutorunKeyword)
     end
@@ -1247,8 +1251,8 @@ do
     function NamespaceRegistry:BindRawSymbol(keywordOrNamespacePath, rawSymbol) --@formatter:off
         _setfenv(EScope.Function, self)
 
-        _ = rawSymbol ~= nil                          or _throw_exception("the raw-symbol must not be nil (got %q)", _type(rawSymbol))
-        _ = _type(keywordOrNamespacePath) == "string" or _throw_exception("the keyword-or-namespace-path must be a string (got %q)", _type(keywordOrNamespacePath)) --@formatter:on
+        __ = rawSymbol ~= nil                          or _throw_exception("the raw-symbol must not be nil (got %q)", _type(rawSymbol))
+        __ = _type(keywordOrNamespacePath) == "string" or _throw_exception("the keyword-or-namespace-path must be a string (got %q)", _type(keywordOrNamespacePath)) --@formatter:on
 
         self:BindImpl_(keywordOrNamespacePath, rawSymbol, SRegistrySymbolTypes.RawSymbol)
     end
@@ -1309,19 +1313,19 @@ do
     end
 
     -- importer()
-    function NamespaceRegistry:Get(namespacePath, suppressExceptionIfNotFound)
+    function NamespaceRegistry:Get(namespacePathOrKeyword, suppressExceptionIfNotFound)
         _setfenv(EScope.Function, self)
 
-        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePath)
+        NamespaceRegistry.Assert.NamespacePathIsHealthy(namespacePathOrKeyword)
         NamespaceRegistry.Assert.NoStrayPendingAttributes()
 
-        local entry = _namespaces_registry[namespacePath]
+        local entry = _namespaces_registry[namespacePathOrKeyword]
         if entry == nil then
             if suppressExceptionIfNotFound then
                 return nil
             end
 
-            _throw_exception("namespace/keyword [%s] has not been registered.", namespacePath) -- dont turn this into an debug.assertion   we want to know about this in production builds too
+            _throw_exception("namespace/keyword [%s] has not been registered.", namespacePathOrKeyword) -- dont turn this into an debug.assertion   we want to know about this in production builds too
         end
 
         --if entry:IsPartialEntry() then -- dont   use "[healthcheck] [all]" to find out about dangling partial entries
@@ -1348,7 +1352,7 @@ do
     function NamespaceRegistry:QueueAttribute(attributeSpecs)
         _setfenv(EScope.Function, self)
         
-        _ = _type(attributeSpecs) == "table" or _throw_exception("[NR.QD.010] AttributeSpecs must be a table (got %q)", _type(attributeSpecs))
+        __ = _type(attributeSpecs) == "table" or _throw_exception("[NR.QD.010] AttributeSpecs must be a table (got %q)", _type(attributeSpecs))
 
         _pendingAttributesArray = _pendingAttributesArray or {} -- order   keep this last
         _tableInsert(_pendingAttributesArray, attributeSpecs)
@@ -1396,17 +1400,17 @@ do
     function NamespaceRegistry.HasCircularProtoDependency(mixinProtoSymbol, targetSymbolProto)
         _setfenv(EScope.Function, NamespaceRegistry)
 
-        _ = _type(mixinProtoSymbol) == "table" or _throw_exception("mixinProtoSymbol must be a table but it was found to be of type %q", _type(mixinProtoSymbol))
-        _ = _type(targetSymbolProto) == "table" or _throw_exception("targetSymbolProto must be a table but it was found to be of type %q", _type(targetSymbolProto))
+        __ = _type(mixinProtoSymbol) == "table" or _throw_exception("mixinProtoSymbol must be a table but it was found to be of type %q", _type(mixinProtoSymbol))
+        __ = _type(targetSymbolProto) == "table" or _throw_exception("targetSymbolProto must be a table but it was found to be of type %q", _type(targetSymbolProto))
 
         local protosCheckedCount = 0
 
         function impl_(mixinProtoSymbol_, targetSymbolProto_, depth_)
-            if mixinProtoSymbol_ == nil then
+            if mixinProtoSymbol__ == nil then
                 return false
             end
 
-            if mixinProtoSymbol_ == targetSymbolProto_ then
+            if mixinProtoSymbol__ == targetSymbolProto_ then
                 return true
             end
 
@@ -1449,9 +1453,9 @@ do
         _setfenv(EScope.Function, self)
 
         local protoTidbits = self:TryGetProtoTidbitsViaSymbolProto(targetSymbolProto) --@formatter:off
-        _ = protoTidbits ~= nil            or _throw_exception("[NR.BM.000] targetSymbolProto [%q] is not a symbol-proto", protoTidbits:GetNamespace())
-        _ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto [%q] must be a class/interface/enum to be blendable (symbol-type=%q)", protoTidbits:GetNamespace(), protoTidbits:GetRegistrySymbolType())
-        
+        __ = protoTidbits ~= nil            or _throw_exception("[NR.BM.000] targetSymbolProto [%q] is not a symbol-proto", protoTidbits:GetNamespace())
+        __ = protoTidbits:CanBeSubclassed() or _throw_exception("[NR.BM.002] targetSymbolProto [%q] must be a class/interface/enum to be blendable (symbol-type=%q)", protoTidbits:GetNamespace(), protoTidbits:GetRegistrySymbolType())
+
         namedMixins = NamespaceRegistry.ConvertNamedMixinsToNameValuePairs_(protoTidbits:GetNamespace(), namedMixins)
 
         local targetSymbolProto_baseProp = targetSymbolProto.base or {} -- create a .base and .asBase tables to hold per-mixin fields/methods
@@ -1468,33 +1472,42 @@ do
 
         -- for each named mixin, create a table with closures that bind the target as self
         local systemReservedMemberNames_forDirectMembers, systemReservedStaticMemberNames_forMembersOfUnderscore = protoTidbits:GetSpecialReservedNames()
-        
-        -- todo   we should apply mixins in the following order    interface-mixins -> abstract-mixins -> concrete-mixins  to ensure that the concrete-mixins have the last say 
-        for i, mixinSpecs in _ipairs(namedMixins) do --@formatter:off
+
+        --local jackpot = _strfind(protoTidbits:GetNamespace(), "Area") ~= nil and _strfind(protoTidbits:GetNamespace(), "Builder") ~= nil
+        --if jackpot then
+        --    _g.print("")
+        --    _g.print("** target-symbol-proto '" .. protoTidbits:GetNamespace() .. "'")
+        --end
+
+        for _, mixinSpecs in _ipairs(namedMixins) do --@formatter:off
             local specific_MixinNickname    = mixinSpecs.Name
             local specific_MixinProtoSymbol = mixinSpecs.Proto
 
-            _ = targetSymbolProto ~= specific_MixinProtoSymbol                                                 or _throw_exception("[NR.BM.050] mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
-            _ = _type(specific_MixinNickname) == "string" and specific_MixinNickname ~= ""                     or _throw_exception("[NR.BM.051] mixin nicknamed %q has a nickname that is either not a string or its dud - its type is %q", specific_MixinNickname, _type(specific_MixinNickname))
-            _ = _type(specific_MixinProtoSymbol) == "table"                                                    or _throw_exception("[NR.BM.052] mixin nicknamed %q has a proto-symbol that is not a table (type=%q)", specific_MixinNickname, _type(specific_MixinProtoSymbol))
-            _ = not NamespaceRegistry.HasCircularProtoDependency(specific_MixinProtoSymbol, targetSymbolProto) or _throw_exception("[NR.BM.053] mixin nicknamed %q introduces a circular dependency", specific_MixinNickname)
+            --if jackpot then
+            --    _g.print("**** applying mixin '" .. _g.tostring(specific_MixinNickname) .. "'")
+            --end
+
+            __ = targetSymbolProto ~= specific_MixinProtoSymbol                                                 or _throw_exception("[NR.BM.050] mixin nicknamed %q tries to add its target-symbol-proto directly into itself (how did you even manage this?)", specific_MixinNickname)
+            __ = _type(specific_MixinNickname) == "string" and specific_MixinNickname ~= ""                     or _throw_exception("[NR.BM.051] mixin nicknamed %q has a nickname that is either not a string or its dud - its type is %q", specific_MixinNickname, _type(specific_MixinNickname))
+            __ = _type(specific_MixinProtoSymbol) == "table"                                                    or _throw_exception("[NR.BM.052] mixin nicknamed %q has a proto-symbol that is not a table (type=%q)", specific_MixinNickname, _type(specific_MixinProtoSymbol))
+            __ = not NamespaceRegistry.HasCircularProtoDependency(specific_MixinProtoSymbol, targetSymbolProto) or _throw_exception("[NR.BM.053] mixin nicknamed %q introduces a circular dependency", specific_MixinNickname)
 
             local mixinProtoTidbits = self:TryGetProtoTidbitsViaSymbolProto(specific_MixinProtoSymbol) -- also accounts for specific_MixinProtoSymbol being nil (nil is hard to come by but not impossible)
-            _ = mixinProtoTidbits                                       ~= nil or _throw_exception("[NR.BM.060] mixin nicknamed %q is not a registered proto-symbol for a class/interface/enum", specific_MixinNickname)
-            _ = _next(specific_MixinProtoSymbol)                        ~= nil or _throw_exception("[NR.BM.061] mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
-            _ = targetSymbolProto_asBaseProp[specific_MixinNickname]    == nil or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
-            _ = targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] == nil or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
-            _ = not mixinProtoTidbits:IsPartialEntry()                         or _throw_exception("[NR.BM.064] mixin nicknamed %q is only partially defined and cannot be blended until it is fully defined", specific_MixinNickname) --@formatter:on
+            __ = _type(mixinProtoTidbits)                                == "table" or _throw_exception("[NR.BM.060] mixin nicknamed %q is not a registered proto-symbol for a class/interface/enum", specific_MixinNickname)
+            __ = _next(specific_MixinProtoSymbol)                        ~= nil     or _throw_exception("[NR.BM.061] mixin nicknamed %q has dud specs (uh oh how is this even possible?)", specific_MixinNickname)
+            __ = targetSymbolProto_asBaseProp[specific_MixinNickname]    == nil     or _throw_exception("[NR.BM.062] mixin nicknamed %q cannot be added because another mixin has registered this nickname", specific_MixinNickname)
+            __ = targetSymbolProto_asBaseProp[specific_MixinProtoSymbol] == nil     or _throw_exception("[NR.BM.063] mixin nicknamed %q has already been added to the target under a different nickname", specific_MixinNickname) --@formatter:on
+            __ = not mixinProtoTidbits:IsPartialEntry()                             or _throw_exception("[NR.BM.064] mixin nicknamed %q is only partially defined and cannot be blended until it is fully defined", specific_MixinNickname) --@formatter:on
 
             local mixinIsEnum           = mixinProtoTidbits:IsEnumEntry()
             local mixinIsInterface      = mixinProtoTidbits:IsInterfaceEntry()
             local mixinIsStaticClass    = mixinProtoTidbits:IsStaticClassEntry()
             local mixinIsAbstractClass  = mixinProtoTidbits:IsAbstractClassEntry()
             local mixinIsNonStaticClass = mixinProtoTidbits:IsNonStaticClassEntry()
-            _ = (not targetIsEnum                                           or mixinIsEnum           or mixinIsStaticClass                      ) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = (not targetIsInterface                                      or mixinIsInterface                                                 ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = (not targetIsStaticClass                                    or mixinIsStaticClass    or mixinIsInterface                        ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
-            _ = ((not targetIsNonStaticClass and not targetIsAbstractClass) or mixinIsNonStaticClass or mixinIsAbstractClass or mixinIsInterface) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an abstract-class or an interface - cannot mix it in the blend", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
+            __ = (not targetIsEnum                                           or mixinIsEnum           or mixinIsStaticClass                      ) or _throw_exception("[NR.BM.070] mixin nicknamed %q (symbol-type=%s) is not an enum or a static-class - cannot mix it into an enum", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            __ = (not targetIsInterface                                      or mixinIsInterface                                                 ) or _throw_exception("[NR.BM.071] mixin nicknamed %q (symbol-type=%s) is not an interface - cannot mix it into an interface", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            __ = (not targetIsStaticClass                                    or mixinIsStaticClass    or mixinIsInterface                        ) or _throw_exception("[NR.BM.072] mixin nicknamed %q (symbol-type=%s) is not a static-class or an interface - cannot mix it into a static-class", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType())
+            __ = ((not targetIsNonStaticClass and not targetIsAbstractClass) or mixinIsNonStaticClass or mixinIsAbstractClass or mixinIsInterface) or _throw_exception("[NR.BM.073] mixin nicknamed %q (symbol-type=%s) is not a non-static-class or an abstract-class or an interface - cannot mix it in the blend", specific_MixinNickname, mixinProtoTidbits:GetRegistrySymbolType()) --@formatter:on
 
             mixinProtoTidbits:MarkEmployedAsParentClass()
 
@@ -1506,16 +1519,16 @@ do
             end
 
             for specific_MixinMemberName, specific_MixinMemberSymbol in _pairs(specific_MixinProtoSymbol) do --@formatter:off   _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
-                _ = _type(specific_MixinMemberName) == "string"                          or _throw_exception("[NR.BM.080] mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
-                _ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("[NR.BM.081] mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
+                __ = _type(specific_MixinMemberName) == "string"                          or _throw_exception("[NR.BM.080] mixin nicknamed %q has a direct-member whose name is not a string - its type is %q", _type(specific_MixinMemberName))
+                __ = (specific_MixinMemberName ~= nil and specific_MixinMemberName ~= "") or _throw_exception("[NR.BM.081] mixin nicknamed %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
 
                 if specific_MixinMemberName == "_" then
                     -- todo   try refactor this part to just use __index with a custom look up function for the base statics and be done with it nice and easy (not sure if wow-lua indeed supports multi-mt lookups though!)
 
                     -- blend-in all whitelisted statics ._.* from every mixin directly under targetSymbolProto._.*
                     for _staticMemberName, _staticMember in _pairs(specific_MixinMemberSymbol) do --@formatter:off
-                        _ = _type(_staticMemberName) == "string"                   or _throw_exception("[NR.BM.090] static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
-                        _ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("[NR.BM.091] statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
+                        __ = _type(_staticMemberName) == "string"                   or _throw_exception("[NR.BM.090] static-mixin-member-name is not a string - its type is %q", _type(_staticMemberName))
+                        __ = (_staticMemberName ~= nil and _staticMemberName ~= "") or _throw_exception("[NR.BM.091] statics of mixin named %q has a member with a dud name - this is not allowed", specific_MixinNickname) --@formatter:on
 
                         -- must not let the mixins overwrite the default fields
                         local hasGreenName = systemReservedStaticMemberNames_forMembersOfUnderscore[_staticMemberName] == nil
@@ -1528,21 +1541,27 @@ do
 
                     local isFunction = _type(specific_MixinMemberSymbol) == "function"
                     local hasBaseRelatedName = specific_MixinMemberName == "base" or specific_MixinMemberName == "asBase"
-                    _ = (not isFunction or not hasBaseRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'base'/'asBase' - this is so odd it's treated as an error", specific_MixinMemberName)
-
-                    -- _g.print("** [" .. _g.tostring(mixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+                    __ = (not isFunction or not hasBaseRelatedName) or _throw_exception("mixin-member %q is a function and yet it is named 'base'/'asBase' - this is so odd it's treated as an error", specific_MixinMemberName)
 
                     local hasGreenName = systemReservedMemberNames_forDirectMembers[specific_MixinMemberName] == nil
                     if hasGreenName then
-                        -- _g.print("****** [" .. _g.tostring(specific_MixinNickname) .. "] adding mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "' to targetSymbolProto")
+                        local preexistingMethod = targetSymbolProto[specific_MixinMemberName]
+                        if preexistingMethod == nil or AllAbstractMethods[preexistingMethod] ~= nil then
+                            --if jackpot then
+                            --    _g.print("****** (a) [" .. _g.tostring(specific_MixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+                            --end
 
-                        if not (mixinIsInterface or mixinIsAbstractClass) or targetSymbolProto[specific_MixinMemberName] == nil then
                             targetSymbolProto[specific_MixinMemberName] = specific_MixinMemberSymbol -- combine all members/methods provided by mixins directly under proto.*     later mixins override earlier ones
                         end
 
-                        if not (mixinIsInterface or mixinIsAbstractClass) or targetSymbolProto_baseProp[specific_MixinMemberName] == nil then
-                            targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol    
-                        end                        
+                        local preexistAsBaseMethod = targetSymbolProto_baseProp[specific_MixinMemberName]
+                        if preexistAsBaseMethod == nil or AllAbstractMethods[preexistAsBaseMethod] ~= nil then
+                            --if jackpot then
+                            --    _g.print("****** (b) [" .. _g.tostring(specific_MixinNickname) .. "] processing mixin-member '" .. _g.tostring(specific_MixinMemberName) .. "'")
+                            --end
+                            
+                            targetSymbolProto_baseProp[specific_MixinMemberName] = specific_MixinMemberSymbol
+                        end
 
                         targetSymbolProto_asBaseProp[specific_MixinNickname][specific_MixinMemberName] = specific_MixinMemberSymbol -- append methods provided by a specific mixin under proto.asBase.<specific-mixin-nickname>.<specific-member-name>
                         -- else
@@ -1572,34 +1591,34 @@ do
     -- }
     function NamespaceRegistry.ConvertNamedMixinsToNameValuePairs_(targetSymbolProtoNamespace, namedMixinsArray) --@formatter:off
         _setfenv(EScope.Function, NamespaceRegistry)
-        
-        _ = _type(namedMixinsArray) == "table"  or _throw_exception("[NR.BM.005] [%s] namedMixinsArray must be an array-table", targetSymbolProtoNamespace)
-        _ = _next(namedMixinsArray) ~= nil      or _throw_exception("[NR.BM.010] [%s] namedMixinsArray must not be an empty array", targetSymbolProtoNamespace)
+
+        __ = _type(namedMixinsArray) == "table"  or _throw_exception("[NR.BM.005] [%s] namedMixinsArray must be an array-table", targetSymbolProtoNamespace)
+        __ = _next(namedMixinsArray) ~= nil      or _throw_exception("[NR.BM.010] [%s] namedMixinsArray must not be an empty array", targetSymbolProtoNamespace)
 
         local i = 1
         local currentPair = { Name = nil, Proto = nil }
         local transformedMixins = {}
-        for index, mixinNameOrProto in _pairs(namedMixinsArray) do
+        for _, mixinNameOrProto in _pairs(namedMixinsArray) do -- dont use ipairs here because it will cause error checks to fail!
             -- _g.print("** [" .. targetSymbolProtoNamespace .. "] processing mixin #" .. _stringify(i) .. " with value '" .. _stringify(mixinNameOrProto) .. "'")
 
             if currentPair.Name == nil then
-                _ = _type(mixinNameOrProto) == "string" and mixinNameOrProto ~= "" or _throw_exception("[NR.BM.020] Upon trying to create blend for [%s], blend-item#%d was expected to be a non-dud mixin-nickname string but it was found to be %q (type=%q)", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
+                __ = _type(mixinNameOrProto) == "string" and mixinNameOrProto ~= "" or _throw_exception("[NR.BM.020] Upon trying to create blend for [%s], blend-item#%d was expected to be a non-dud mixin-nickname string but it was found to be %q (type=%q)", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
 
                 currentPair.Name = mixinNameOrProto -- the first item in the pair is the name
 
             else
                 local mixinProtoTidbits = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(mixinNameOrProto)
 
-                _ = mixinProtoTidbits ~= nil or _throw_exception("[NR.BM.030] Upon trying to create blend for [%s], blend-item#%d was expected to be a proto but it is not", targetSymbolProtoNamespace, i, _stringify(mixinNameOrProto), _type(mixinNameOrProto))
+                __ = mixinProtoTidbits ~= nil or _throw_exception("[NR.BM.030] Upon trying to create blend for [%s], blend-item#%d was expected to be a proto but it is not (type=%q, mixinNameOrProto=%q)", targetSymbolProtoNamespace, i, _type(mixinNameOrProto), _stringify(mixinNameOrProto))
 
                 currentPair.Proto = mixinNameOrProto --           order    the second item in the pair is the proto-symbol
                 _tableInsert(transformedMixins, currentPair) --   order
                 currentPair = { Name = nil, Proto = nil } --      order    reset the pair for the next iteration
             end
 
-            i = i + 1            
+            i = i + 1
         end
-    
+
         _tableSort(transformedMixins, NamespaceRegistry.NamedMixinsSortingFunc_)
 
         return transformedMixins
@@ -1611,8 +1630,8 @@ do
         local protoTidbitsA = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(a.Proto)
         local protoTidbitsB = NamespaceRegistrySingleton:TryGetProtoTidbitsViaSymbolProto(b.Proto)
         
-        _ = protoTidbitsA ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsA = nil (how?)", _stringify(a))
-        _ = protoTidbitsB ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsB = nil (how?)", _stringify(b))
+        __ = protoTidbitsA ~= nil or _throw_exception("[NR.BM.NMSF.010] [%s] protoTidbitsA = nil (how?)", _stringify(a))
+        __ = protoTidbitsB ~= nil or _throw_exception("[NR.BM.NMSF.020] [%s] protoTidbitsB = nil (how?)", _stringify(b))
 
         local typeA = protoTidbitsA:GetRegistrySymbolType()
         local typeB = protoTidbitsB:GetRegistrySymbolType()
@@ -1628,16 +1647,15 @@ do
     
     function NamespaceRegistry.GetMixinProtoSortingScore_(protoType) --@formatter:off
         _setfenv(EScope.Function, NamespaceRegistry)
-        
-        return     protoType == SRegistrySymbolTypes.NonStaticClass    and 90 -- must be appear last in the sorted-array
-               or  protoType == SRegistrySymbolTypes.StaticClass       and 80
-               or  protoType == SRegistrySymbolTypes.AbstractClass     and 70
-               or  protoType == SRegistrySymbolTypes.Interface         and 60 -- must appear at the beginning of the sorted-array
 
-               or  protoType == SRegistrySymbolTypes.Enum              and 50 -- these shouldnt appear but just in case ... 
-               or  protoType == SRegistrySymbolTypes.Keyword           and 40
-               or  protoType == SRegistrySymbolTypes.RawSymbol         and 20
+        return     protoType == SRegistrySymbolTypes.RawSymbol         and 20 -- these shouldnt appear but just in case ...
                or  protoType == SRegistrySymbolTypes.AutorunKeyword    and 30
+               or  protoType == SRegistrySymbolTypes.Keyword           and 40
+               or  protoType == SRegistrySymbolTypes.Enum              and 50 
+               or  protoType == SRegistrySymbolTypes.Interface         and 60 -- <- must appear at the beginning of the sorted-array
+               or  protoType == SRegistrySymbolTypes.AbstractClass     and 70
+               or  protoType == SRegistrySymbolTypes.StaticClass       and 80
+               or  protoType == SRegistrySymbolTypes.NonStaticClass    and 90 -- <- must appear last in the sorted-array
                or  10 -- this is a fallback for any other type that we might not have accounted for
     end --@formatter:on
 
@@ -1673,7 +1691,7 @@ do
     function HealthChecker:Run(namespaceRegistry, forceCheckAll)
         _setfenv(EScope.Function, self)
 
-        _ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.HCR.RN.010] namespaceRegistry must be a table but it was found to be of type %q", _type(namespaceRegistry))
+        __ = _type(namespaceRegistry) == "table" or _throw_exception("[NR.HCR.RN.010] namespaceRegistry must be a table but it was found to be of type %q", _type(namespaceRegistry))
 
         local errorsAccumulatorArray = {}
 
@@ -1681,7 +1699,7 @@ do
         -- add more healthchecks here in the future ...
 
         if _next(errorsAccumulatorArray) then
-            _throw_exception("[NR.HCR.RN.020] Healthcheck failed with the following errors:\n\n%s", _tableConcat(errorsAccumulatorArray, "\n\n"))
+            _throw_exception("[NR.HCR.RN.020] Healthcheck failed with the following errors:\n\n%s", _stringify(errorsAccumulatorArray[1])) -- _tableConcat({}, "\n\n")) -- errorsAccumulatorArray  
         end
     end
 end
@@ -1719,10 +1737,33 @@ do
         end
     end)
 
+    NamespaceRegistrySingleton:BindKeyword("[wrap]", function(wrapSpecsArray) --@formatter:off
+        __ = _type(wrapSpecsArray) == "table" or _throw_exception("[NR.BAK.005] 'wrap' must be given an array-table with exactly two items (got: %s)", _stringify(_type(wrapSpecsArray)))
+    
+        local latestProto, latestTidbits = NamespaceRegistrySingleton:GetMostRecentlyDefinedSymbolProtoAndTidbits()
+        __ = latestProto ~= nil or _throw_exception("[NR.BAK.010] Cannot process 'wrap' attribute because the latest symbol proto is nil (did you forget to define a symbol in this file?)")
+
+        local wrappedFieldName = wrapSpecsArray[1] -- the first item in the array is the field to wrap around
+        local targetMethodName = wrapSpecsArray[2] -- the second item in the array is the target method name
+        __ = _type(wrappedFieldName) == "string" and wrappedFieldName ~= "" or _throw_exception("[NR.BAK.020] wrappedFieldName must be a non-dud string ( got %q )", _stringify(_type(wrappedFieldName)))
+        __ = _type(targetMethodName) == "string" and targetMethodName ~= "" or _throw_exception("[NR.BAK.025] targetMethodName must be a non-dud string ( got %q )", _stringify(_type(targetMethodName)))
+        __ = latestTidbits:IsInstantiatableClassEntry()                     or _throw_exception("[NR.BAK.035] Cannot apply 'wrap' attribute on [%s:%s()] because the parent symbol is not a non-static class", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName)) --@formatter:on
+        
+        latestProto[targetMethodName] = function (self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
+            local targetField = self[wrappedFieldName]
+            __ = _type(targetField) == "table" or _throw_exception("[NR.BAK.040] Cannot call wrapper-method [%s:%s()] because the wrapped field [%s] is not a table (yet?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName), _stringify(wrappedFieldName))
+
+            local targetMethod = targetField[targetMethodName]
+            __ = _type(targetMethod) == "function" or _throw_exception("[NR.BAK.045] Cannot call wrapper-method [%s:%s()] because the target method [%s] is not a function (yet?)", _stringify(NamespaceRegistrySingleton:TryGetNamespaceIfInstanceOrProto(latestProto)), _stringify(targetMethodName), _stringify(targetMethodName))
+
+            return targetMethod(targetField, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
+        end
+    end)
+
     -- @formatter:off   todo   also introduce [declare] [partial] etc and remove the [Partial] postfix-technique on the namespace path since it will no longer be needed
     NamespaceRegistrySingleton:BindKeyword("[autocall]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAutocall(targetMethodName)) end)
     NamespaceRegistrySingleton:BindKeyword("[abstract]",                     function(targetMethodName) NamespaceRegistrySingleton:QueueAttribute(MethodAttributeSpecs:NewForAbstract(targetMethodName)) end)
-
+    
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck]",           function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] false)               end)
     NamespaceRegistrySingleton:BindAutorunKeyword("[healthcheck] [all]",     function() HealthCheckerSingleton:Run(NamespaceRegistrySingleton, --[[forceCheckAll:]] true)                end)
 

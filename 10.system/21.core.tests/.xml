@@ -3,14 +3,15 @@
     <Include file="_setup_\.xml"/>
 
     <Include file="io.testbed\.xml"/>
+    <Include file="try.testbed\.xml"/>
     <Include file="nils.testbed\.xml"/>
     <Include file="time.testbed\.xml"/>
-    <Include file="throw.testbed\.xml"/>    
+    <Include file="throw.testbed\.xml"/>
     <Include file="enums.testbed\.xml"/>
     <Include file="guard.testbed\.xml"/>
     <Include file="reflection.testbed\.xml"/>
     <Include file="exceptions.testbed\.xml"/>
-    <Include file="strings.helper.testbed\.xml"/>    
+    <Include file="strings.helper.testbed\.xml"/>
     <Include file="using.built.ins.testbed\.xml"/>
 
     <Include file="classes.fields.testbed\.xml"/>

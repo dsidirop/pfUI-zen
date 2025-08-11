@@ -2,12 +2,12 @@
 
 local Exception = using "System.Exceptions.Exception"
 
-local TG, U = using "[testgroup] [tagged]" "System.Exceptions" { "system", "exceptions" }
+local TG, U = using "[testgroup] [tagged]" "System.Core.Tests.Exceptions.Testbed" { "system", "exceptions" }
 
-TG:AddTheory("Exceptions.Exception.Constructor.GivenGreenInput.ShouldNotErrorOut",
+TG:AddTheory("T000.ExceptionConstructor.GivenGreenInput.ShouldNotErrorOut",
         {
-            ["EXC.EXC.CTOR.GGI.SNE.0000"] = { Message = nil },
-            ["EXC.EXC.CTOR.GGI.SNE.0010"] = { Message = "abc" },
+            ["EXCCTOR.GGI.SNE.0000"] = { Message = nil },
+            ["EXCCTOR.GGI.SNE.0010"] = { Message = "abc" },
         },
         function(options)
             -- ACT + ASSERT
@@ -19,16 +19,14 @@ TG:AddTheory("Exceptions.Exception.Constructor.GivenGreenInput.ShouldNotErrorOut
         end
 )
 
-TG:AddTheory("Exceptions.Exception.Constructor.GivenRedInput.ShouldThrowGuardException",
+TG:AddTheory("T010.ExceptionConstructor.GivenRedInput.ShouldThrowGuardException", --@formatter:off
         {
-            ["EXC.EXC.CTOR.GRI.STGE.0000"] = { Message = 0 },
-            ["EXC.EXC.CTOR.GRI.STGE.0010"] = { Message = { x = 123 } },
-            ["EXC.EXC.CTOR.GRI.STGE.0020"] = { Message = function()
-                return 123
-            end },
-            ["EXC.EXC.CTOR.GRI.STGE.0030"] = { Message = "" },
-            ["EXC.EXC.CTOR.GRI.STGE.0040"] = { Message = "   " },
-        },
+            ["EXCCTOR.GRI.STGE.0000"] = { Message = 0                         },
+            ["EXCCTOR.GRI.STGE.0010"] = { Message = { x = 123 }               },
+            ["EXCCTOR.GRI.STGE.0020"] = { Message = function() return 123 end },
+            ["EXCCTOR.GRI.STGE.0030"] = { Message = ""                        },
+            ["EXCCTOR.GRI.STGE.0040"] = { Message = "   "                     },
+        }, --@formatter:on
         function(options)
             -- ACT + ASSERT
             U.Should.Throw(function()

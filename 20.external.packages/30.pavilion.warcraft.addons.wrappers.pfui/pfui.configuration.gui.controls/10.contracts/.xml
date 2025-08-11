@@ -1,0 +1,12 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    <!-- order -->
+    <Include file="_base.builder_\.xml"/>
+    
+    <!-- controls-specific contracts -->
+    <Include file="header\.xml"/>
+    <Include file="nested.tabframe\.xml"/>
+    <Include file="labeled.dropdown\.xml"/>
+
+    <!-- keep last -->
+    <Include file="i.pfui.main.settings.form.gui.controls.factory.lua"/>
+</Ui>
