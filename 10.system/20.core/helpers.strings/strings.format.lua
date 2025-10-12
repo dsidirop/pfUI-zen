@@ -19,51 +19,53 @@ function StringsHelper.Format(format, ...)
     if argCount == 0 then
         return format
     end
-    
+
+    local stringifySnapshot = StringsHelper.Stringify
+
     if argCount == 1 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]))
     end
 
     if argCount == 2 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]))
     end
 
     if argCount == 3 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]))
     end
 
     if argCount == 4 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]))
     end
 
     if argCount == 5 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]))
     end
 
     if argCount == 6 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]), stringifySnapshot(variadiacsArray[6]))
     end
 
     if argCount == 7 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]), stringifySnapshot(variadiacsArray[6]), stringifySnapshot(variadiacsArray[7]))
     end
 
     if argCount == 8 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]), stringifySnapshot(variadiacsArray[6]), stringifySnapshot(variadiacsArray[7]), stringifySnapshot(variadiacsArray[8]))
     end
 
     if argCount == 9 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]), stringifySnapshot(variadiacsArray[6]), stringifySnapshot(variadiacsArray[7]), stringifySnapshot(variadiacsArray[8]), stringifySnapshot(variadiacsArray[9]))
     end
 
     if argCount == 10 then
-        return B.StringFormat(format, StringsHelper.Stringify(variadiacsArray[1]), StringsHelper.Stringify(variadiacsArray[2]), StringsHelper.Stringify(variadiacsArray[3]), StringsHelper.Stringify(variadiacsArray[4]), StringsHelper.Stringify(variadiacsArray[5]), StringsHelper.Stringify(variadiacsArray[6]), StringsHelper.Stringify(variadiacsArray[7]), StringsHelper.Stringify(variadiacsArray[8]), StringsHelper.Stringify(variadiacsArray[9]), StringsHelper.Stringify(variadiacsArray[10]))
+        return B.StringFormat(format, stringifySnapshot(variadiacsArray[1]), stringifySnapshot(variadiacsArray[2]), stringifySnapshot(variadiacsArray[3]), stringifySnapshot(variadiacsArray[4]), stringifySnapshot(variadiacsArray[5]), stringifySnapshot(variadiacsArray[6]), stringifySnapshot(variadiacsArray[7]), stringifySnapshot(variadiacsArray[8]), stringifySnapshot(variadiacsArray[9]), stringifySnapshot(variadiacsArray[10]))
     end
 
     local stringifiedArgs = {}
     for i = 1, argCount do
-        stringifiedArgs[i] = StringsHelper.Stringify(variadiacsArray[i])
+        stringifiedArgs[i] = stringifySnapshot(variadiacsArray[i])
     end
-    
+
     return B.StringFormat(format, A.Unpack(stringifiedArgs))
 end
