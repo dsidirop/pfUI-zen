@@ -9,7 +9,7 @@ local WoWCreateFrame = using "Pavilion.Warcraft.Foundation.Natives.UI.CreateFram
 
 -- todo   it would make sense to have a timer-factory so that it will generate the best possible
 -- todo   timer for the underlying platform   newer wow clients do support C_Timer afterall 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Time.Timer" -- @formatter:on
+local Class = using "[declare]" "Pavilion.Warcraft.Foundation.Time.FrameTimer" -- @formatter:on
 
 
 Fields(function(upcomingInstance)

@@ -12,4 +12,6 @@
 
     <Include file="ui.frames\.xml"/>
 
+    <Include file="timers\.xml"/>
+
 </Ui>
