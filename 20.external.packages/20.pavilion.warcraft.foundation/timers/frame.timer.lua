@@ -1,15 +1,18 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
+local Event  = using "System.Event"
 local Guard  = using "System.Guard"
 local Global = using "System.Global"
 local Fields = using "System.Classes.Fields"
 
-local Event          = using "System.Event"
+local ITimer         = using "Pavilion.Warcraft.Foundation.Timers.Contracts.ITimer"
 local WoWCreateFrame = using "Pavilion.Warcraft.Foundation.Natives.UI.CreateFrame"
 
 -- todo   it would make sense to have a timer-factory so that it will generate the best possible
 -- todo   timer for the underlying platform   newer wow clients do support C_Timer afterall 
-local Class = using "[declare]" "Pavilion.Warcraft.Foundation.Time.FrameTimer" -- @formatter:on
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.Timers.FrameTimer" { -- @formatter:on
+    "ITimer", ITimer,
+}
 
 
 Fields(function(upcomingInstance)
