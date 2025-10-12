@@ -2,11 +2,14 @@
 
 local B = using "[built-ins]" [[ GetLocale = GetLocale ]]
 
-local Class = using "[declare]" "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService" -- todo   introduce an interface here
+local ILocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.Contracts.ILocalizationInfoService"
+
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService" {
+    "ILocalizationInfoService", ILocalizationInfoService
+}
 
 function Class:GetUILocale()
     return B.GetLocale()
 end
 
 Class.I = Class:New() -- todo  turn this into DI
-

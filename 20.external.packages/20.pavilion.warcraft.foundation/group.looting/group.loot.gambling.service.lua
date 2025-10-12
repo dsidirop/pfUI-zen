@@ -8,11 +8,13 @@ local Fields       = using "System.Classes.Fields"
 local WoWRollOnLoot            = using "Pavilion.Warcraft.Foundation.Natives.GroupLooting.RollOnLoot"
 local WoWGetLootRollItemInfo   = using "Pavilion.Warcraft.Foundation.Natives.GroupLooting.GetLootRollItemInfo"
 
-local GambledItemInfoDto       = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto"
-local EWowGamblingResponseType = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType" -- @formatter:on
+local EWowGamblingResponseType  = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType"
+local GambledItemInfoDto        = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.GambledItemInfoDto"
+local IGroupLootGamblingService = using "Pavilion.Warcraft.Foundation.GroupLooting.Contracts.IGroupLootGamblingService"
 
-local Service = using "[declare]" "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
-
+local Service = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService" { -- @formatter:on
+    "IGroupLootGamblingService", IGroupLootGamblingService,
+}
 
 Fields(function(upcomingInstance)
     upcomingInstance.RollOnLootFunc_ = nil --          to help unit testing

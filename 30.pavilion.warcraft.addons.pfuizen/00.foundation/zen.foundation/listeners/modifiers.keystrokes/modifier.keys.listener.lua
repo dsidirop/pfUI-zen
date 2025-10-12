@@ -4,11 +4,11 @@ local Guard  = using "System.Guard"
 local Event  = using "System.Event"
 local Fields = using "System.Classes.Fields"
 
+local Timer            = using "Pavilion.Warcraft.Foundation.Timers.FrameTimer"
 local IsAltKeyDown     = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsAltKeyDown"
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsShiftKeyDown"
 local IsControlKeyDown = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsControlKeyDown"
 
-local Timer                                = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Time.Timer"
 local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
 local IModifierKeysListener                = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
