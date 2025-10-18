@@ -9,11 +9,10 @@ local IsAltKeyDown     = using "Pavilion.Warcraft.Foundation.Natives.Input.Keybo
 local IsShiftKeyDown   = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsShiftKeyDown"
 local IsControlKeyDown = using "Pavilion.Warcraft.Foundation.Natives.Input.Keyboard.IsControlKeyDown"
 
-local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
+local IModifierKeysListener                = using "Pavilion.Warcraft.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
+local ModifierKeysStatusesChangedEventArgs = using "Pavilion.Warcraft.Foundation.Contracts.Listeners.ModifiersKeystrokes.EventArgs.ModifierKeysStatusesChangedEventArgs"
 
-local IModifierKeysListener                = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
-
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" { -- @formatter:on
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener" { -- @formatter:on
     "IModifierKeysListener", IModifierKeysListener,
 }
 

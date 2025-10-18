@@ -7,14 +7,14 @@ local LRUCache     = using "Pavilion.DataStructures.LRUCache"
 
 local GroupLootGamblingService = using "Pavilion.Warcraft.Foundation.GroupLooting.GroupLootGamblingService"
 
-local ModifierKeysListener     = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
+local ModifierKeysListener     = using "Pavilion.Warcraft.Foundation.Listeners.ModifiersKeystrokes.ModifierKeysListener"
 local PfuiGroupLootingListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Pfui.Listeners.GroupLooting.GroupLootingListener"
 
 local EWowGamblingResponseType                    = using "Pavilion.Warcraft.Foundation.Enums.EWowGamblingResponseType"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local IModifierKeysListener = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
+local IModifierKeysListener = using "Pavilion.Warcraft.Foundation.Contracts.Listeners.ModifiersKeystrokes.IModifierKeysListener"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate" { --@formatter:on
     "IGreeniesGrouplootingAssistantAggregate", using "Pavilion.Warcraft.Addons.PfuiZen.Domain.Contracts.Engine.GreeniesGrouplootingAssistant.IAggregate" 
