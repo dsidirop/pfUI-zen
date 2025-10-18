@@ -1,8 +1,7 @@
 --[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local PfuiTranslationTable = using "[built-in]" [[ pfUI.env.T or {} ]]
+local ITranslatorService = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
 
-local IPfuiTranslatorService = using "[declare] [interface]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService"
-
-function IPfuiTranslatorService:TryTranslate(message)
-end
+local IPfuiTranslatorService = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.IPfuiTranslatorService" {
+    "ITranslatorService", ITranslatorService,
+}

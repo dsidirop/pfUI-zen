@@ -14,5 +14,6 @@
 
     <Include file="timers\.xml"/>
     <Include file="listeners\.xml"/>
+    <Include file="internationalization\.xml"/>
 
 </Ui>

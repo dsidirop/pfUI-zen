@@ -1,8 +1,8 @@
 --[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local ComboTranslationsService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+local ComboTranslationsService = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
-local TG, U = using "[testgroup]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService.Tests"
+local TG, U = using "[testgroup]" "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService.Tests"
 
 TG:AddTheory("T005.ComboTranslationsService.TryTranslateWithDefaultCall.GivenValidTranslators.ShouldTranslateSuccessfully",
         {

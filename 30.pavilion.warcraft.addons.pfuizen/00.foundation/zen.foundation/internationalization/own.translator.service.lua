@@ -4,14 +4,14 @@ local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local ITranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Contracts.Internationalization.ITranslatorService"
+local ITranslatorService = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
 
 local LocalizationInfoService = using "Pavilion.Warcraft.Foundation.Localization.LocalizationInfoService"
 
 local PfuiConfigurationReader = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiEnvConfigurationReader"
-local ZenAllTranslations      = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.Translations.All" --@formatter:on
+local ZenAllTranslations      = using "Pavilion.Warcraft.Foundation.Internationalization.Translations.All" --@formatter:on
 
-local ZenOwnTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.AddonSpecific.OwnTranslatorService" { -- [note]   dont use this directly   use the TranslationService instead       todo  rename this to ZenOwnTranslatorService and move it into its own separate subfolder
+local ZenOwnTranslatorService = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.Internationalization.OwnTranslatorService" { -- [note]   dont use this directly   use the ComboTranslationService instead
     "ITranslatorService", ITranslatorService
 }
 

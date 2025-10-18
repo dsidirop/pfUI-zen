@@ -14,10 +14,13 @@ local Pfui                                   = using "Pavilion.Warcraft.Addons.W
 local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiControlsFactory"
 
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
-local ComboTranslationsService       = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.ComboTranslationsService"
+local ComboTranslationsService       = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
 local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Mediators.ForZenEngine.ZenEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
+
+local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
+local ZenOwnTranslatorService = using "Pavilion.Warcraft.Foundation.Internationalization.OwnTranslatorService"
 
 local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Pfui.Forms.UserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
@@ -43,12 +46,15 @@ Pfui:RegisterModule("Zen", "vanilla:tbc", function()
                             :Select(function (addonInfo) return addonInfo:GetFolderName() end)
                             :FirstOrDefault() -- @formatter:on
 
-    if (not addonPath) then
+    if not addonPath then
         Throw(Exception:New(S.Format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
     end
 
+    local comboTranslationsService = ComboTranslationsService:New(ZenOwnTranslatorService:NewForActiveUILanguage(), PfuiTranslatorService:New()) -- todo   put all of these in di
+    local pfuiMainSettingsFormGuiControlsFactory = PfuiMainSettingsFormGuiControlsFactory:New()
+
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(PfuiMainSettingsFormGuiControlsFactory:New(), ComboTranslationsService:New())
+                :New(pfuiMainSettingsFormGuiControlsFactory, comboTranslationsService)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")
