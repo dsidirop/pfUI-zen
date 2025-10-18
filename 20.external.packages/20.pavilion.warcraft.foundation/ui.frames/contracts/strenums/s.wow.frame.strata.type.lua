@@ -1,6 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local SWoWFrameStrataType = using "[declare] [enum]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.UI.ManagedElements.Strenums.SWoWFrameStrataType" --@formatter:off
+local SWoWFrameStrataType = using "[declare] [enum]" "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.Strenums.SWoWFrameStrataType" --@formatter:off
 
 SWoWFrameStrataType.Low              = "LOW"
 SWoWFrameStrataType.High             = "HIGH"

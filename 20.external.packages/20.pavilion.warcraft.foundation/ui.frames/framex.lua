@@ -6,7 +6,7 @@ local Fields  = using "System.Classes.Fields"
 local IFrameX = using "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.IFrameX"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Foundation.UI.Frames.FrameX" { --@formatter:on  https://wowpedia.fandom.com/wiki/UIOBJECT_Frame
-    "IFrameX", IFrameX
+    "IFrameX", IFrameX,
 }
 
 
@@ -31,8 +31,45 @@ function Class:GetRawWowFrame()
     return self._rawWoWFrame
 end
 
+function Class:ChainSet_PropagateKeyboardInput(value)
+    Scopify(EScopes.Function, self)
 
--- extra pavilion methods on the frame
+    Guard.Assert.IsBoolean(value, "value")
+
+    self:SetPropagateKeyboardInput(value)
+
+    return self
+end
+
+function Class:ChainSet_FrameStrata(value)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsString(value, "value") -- todo   validate against a strata strenum
+
+    _rawWoWFrame:SetFrameStrata(value)
+
+    return self
+end
+
+function Class:ChainSet_KeystrokeListenerEnabled(onOrOff)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsBoolean(onOrOff, "onOrOff")
+
+    _rawWoWFrame:EnableKeyboard(onOrOff)
+
+    return self
+end
+
+function Class:ChainSet_FrameStrata(strata)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsString(strata, "strata")
+
+    _rawWoWFrame:SetStrata(strata)
+
+    return self
+end
 
 function Class:ChainSet_Height(height)
     Scopify(EScopes.Function, self)
@@ -40,6 +77,16 @@ function Class:ChainSet_Height(height)
     Guard.Assert.IsPositiveNumber(height, "height")
 
     _rawWoWFrame:SetHeight(height)
+
+    return self
+end
+
+function Class:ChainSet_Width(width)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsPositiveNumber(width, "Width")
+
+    _rawWoWFrame:SetWidth(width)
 
     return self
 end
@@ -54,41 +101,6 @@ function Class:ChainSet_Visibility(showNotHide)
     else
         _rawWoWFrame:Hide()
     end
-
-    return self
-end
-
-function Class:ChainApply_NudgingX(xNudge)
-    Scopify(EScopes.Function, self)
-
-    return self:ChainApply_NudgingXY(xNudge, 0)
-end
-
-function Class:ChainApply_NudgingY(yNudge)
-    Scopify(EScopes.Function, self)
-
-    return self:ChainApply_NudgingXY(0, yNudge)
-end
-
-function Class:ChainApply_NudgingXY(xNudge, yNudge)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsNumber(xNudge, "xNudge") -- +/-px horizontally from the default position
-    Guard.Assert.IsNumber(yNudge, "yNudge") -- +/-px vertically   from the default position
-
-    if xNudge == 0 and yNudge == 0 then
-        return self -- nothing to do
-    end
-
-    local anchor, relativeControl, relativeAnchor, xpos, ypos = _rawWoWFrame.caption:GetPoint()
-
-    _rawWoWFrame.caption:SetPoint(
-        anchor,
-        relativeControl,
-        relativeAnchor,
-        xpos + xNudge,
-        ypos + yNudge
-    )
 
     return self
 end

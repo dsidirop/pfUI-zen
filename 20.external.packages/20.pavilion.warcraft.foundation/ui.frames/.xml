@@ -1,7 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../Ui.xsd">
-    <!-- order -->
+    <!-- order   @formatter:off -->
     <Include file="contracts\.xml"/>
 
     <Include file="framex.wraps.partial.lua"/>
+    <Include file="framex.nudging.xy.partial.lua"/>
+    <Include file="framex.events.keydown.partial.lua"/>
+    <Include file="framex.events.gamenotificationreceived.partial.lua"/>
     <Include file="framex.lua"/>
+
+    <Include file="framex.builder\.xml"/> <!-- the framex-builder most be loaded after the framex -->
 </Ui>

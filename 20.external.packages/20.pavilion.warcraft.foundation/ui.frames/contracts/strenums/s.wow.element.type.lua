@@ -1,6 +1,6 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
 
-local SWoWElementType = using "[declare] [enum]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.UI.ManagedElements.Strenums.SWoWElementType"
+local SWoWElementType = using "[declare] [enum]" "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.Strenums.SWoWElementType"
 
 SWoWElementType.Model                    = "Model" --@formatter:off
 SWoWElementType.Frame                    = "Frame"

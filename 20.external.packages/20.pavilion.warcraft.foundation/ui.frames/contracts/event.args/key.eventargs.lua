@@ -4,9 +4,9 @@
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local EKeyEventType = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.UI.ManagedElements.Enums.EKeyEventType"
+local EKeyEventType = using "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.Enums.EKeyEventType"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Foundation.UI.ManagedElements.EventArgs.KeyEventArgs"
+local Class = using "[declare]" "Pavilion.Warcraft.Foundation.UI.Frames.Contracts.EventArgs.KeyEventArgs"
 
 Scopify(EScopes.Function, Class)
 
