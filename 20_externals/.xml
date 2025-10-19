@@ -1,12 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
     <!-- order is important here -->
     <Include file="10.structures\.xml"/>
-    <Include file="10.structures.testbed\.xml"/>
+    <Include file="10.structures.tests\.xml"/>
     
     <Include file="15.mtalualinq\.xml"/>
 
     <Include file="20.foundation\.xml"/>
-    <Include file="25.foundation.testbed\.xml"/>
+    <Include file="25.foundation.tests\.xml"/>
     
     <Include file="30.wrappers.pfui\.xml"/>
 </Ui>

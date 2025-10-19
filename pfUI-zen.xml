@@ -9,8 +9,8 @@
     <Include file="20_externals\.xml"/>
 
     <!-- addon-core itself -->
-    <Include file="30.pfuizen.autoloot\.xml"/>
-    <Include file="31.pfuizen.autoloot.tests\.xml"/>
+    <Include file="30_pfzautoloot\.xml"/>
+    <Include file="31_pfzautoloot_tests\.xml"/>
 
     <!-- keep last -->
     <Include file="00_testing\10.vwowunit\tests.runner.lua"/>
