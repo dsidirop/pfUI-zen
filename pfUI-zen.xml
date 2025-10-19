@@ -5,8 +5,8 @@
     <Include file="00.testing\.xml"/>
 
     <!-- system + packages -->
-    <Include file="10.system\.xml"/>
-    <Include file="20.external.packages\.xml"/>
+    <Include file="10_system\.xml"/>
+    <Include file="20_externals\.xml"/>
 
     <!-- addon-core itself -->
     <Include file="30.pfuizen.autoloot\.xml"/>
