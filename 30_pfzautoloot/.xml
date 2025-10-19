@@ -7,5 +7,5 @@
     <Include file="30_controllers\.xml"/>
 
     <!-- 50 module initializer -->
-    <Include file="module.initializer.lua"/>
+    <Include file="autoloot.module.initializer.lua"/>
 </Ui>

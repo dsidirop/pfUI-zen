@@ -85,8 +85,8 @@ function Form:Initialize()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer = _pfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() --00
-        :ChainSet_Caption(_t("Zen", "|cFF7FFFD4")) --          reminder   this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
-        :ChainSet_ParentRootTabFrameName(_t("Thirdparty")) --  reminder   this is just a shorthand for _t:TryTranslate("Thirdparty")
+        :ChainSet_Caption(_t("[Zen] Autoloot", "|cFF7FFFD4")) --  reminder   this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
+        :ChainSet_ParentRootTabFrameName(_t("Thirdparty")) --     reminder   this is just a shorthand for _t:TryTranslate("Thirdparty")
         :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
             self:InitializeControls_() --                         order   from the [partial]
             self:OnRequestingCurrentUserPreferences_() --         order
@@ -95,7 +95,7 @@ function Form:Initialize()
         :GetArea()
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
-    --     navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
+    --     navigates to the "thirdparty" section and clicks on the "[zen] autoloot" tab   otherwise it never gets called
 end
 
 -- privates

@@ -8,7 +8,7 @@ local Guard     = using "System.Guard"
 local Throw     = using "System.Exceptions.Throw"
 local Exception = using "System.Exceptions.Exception"
 
-local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Externals.MTALuaLinq.Enumerable"
+local Enumerable = using "Pavilion.Warcraft.Addons.PfuiZen.Externals.MTALuaLinq.Enumerable"
 
 local Pfui                                   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.Pfui" -- todo  replace this with a service
 local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.PfuiMainSettingsFormGuiControlsFactory"
@@ -16,16 +16,16 @@ local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.W
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService       = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
+local AutolootEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService"
 
-local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
-local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
+local UserPreferencesForm          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
+local RestartAutolootEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
 
-Pfui:RegisterModule("Zen Autoloot", "vanilla:tbc", function()
+Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
 
     local addon = {
         folderName = "pfUI-Zen",
@@ -47,7 +47,7 @@ Pfui:RegisterModule("Zen Autoloot", "vanilla:tbc", function()
                             :FirstOrDefault() -- @formatter:on
 
     if not addonPath then
-        Throw(Exception:New(S.Format("[PFUIZ.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
+        Throw(Exception:New(S.Format("[PFUIZA.IM000] %s : Failed to find addon folder - please make sure that the addon is installed correctly!", addon.fullNameColoredForErrors)))
     end
 
     local comboTranslationsService = ComboTranslationsService:New(ZenOwnTranslatorService:NewForActiveUILanguage(), PfuiTranslatorService:New()) -- todo   put all of these in di
@@ -63,5 +63,5 @@ Pfui:RegisterModule("Zen Autoloot", "vanilla:tbc", function()
                 end)
                 :Initialize() -- @formatter:on
 
-    ZenEngineCommandHandlersService:New():Handle_RestartEngineCommand(StartZenEngineCommand:New())
+    AutolootEngineMediatorService:New():Handle_RestartEngineCommand(RestartAutolootEngineCommand:New())
 end)

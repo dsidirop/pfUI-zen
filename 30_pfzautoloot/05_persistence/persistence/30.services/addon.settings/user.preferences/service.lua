@@ -3,13 +3,14 @@
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiAutolootDBContext                   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
+local PfuiAutolootDBContext              = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
+local IPfuiAutolootDBContext             = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContext"
 
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.RepositoryQueryable"
 
 local UserPreferencesQueryableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
-local UserPreferencesUpdateableService    = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.UpdateableService"
+local UserPreferencesUpdateableService   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.UpdateableService"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.Service" { --@formatter:on
     "UserPreferencesQueryableService", UserPreferencesQueryableService,
