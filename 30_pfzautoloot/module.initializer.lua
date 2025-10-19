@@ -16,14 +16,14 @@ local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.W
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService       = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForZenEngine.ZenEngineMediatorService"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Internationalization.OwnTranslatorService"
 
-local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.UserPreferencesForm"
-local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
+local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
+local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
 
 Pfui:RegisterModule("Zen", "vanilla:tbc", function()
 

@@ -6,7 +6,7 @@ local Fields  = using "System.Classes.Fields"
 local UserPreferencesUnitOfWork                   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.UnitOfWork"
 local IUserPreferencesUnitOfWork                  = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.IUnitOfWork"
 
-local PfuiZenDbContext                            = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
+local PfuiZenDbContext                            = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 

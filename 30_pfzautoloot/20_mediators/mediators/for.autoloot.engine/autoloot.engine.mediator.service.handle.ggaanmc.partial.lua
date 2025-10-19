@@ -4,14 +4,14 @@ local Guard  = using "System.Guard"
 
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForZenEngine.ZenEngineMediatorService [Partial]" -- @formatter:on
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService [Partial]" -- @formatter:on
 
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(command)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand, "command")
 
-    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
+    _autolootEngine:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
 
     local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateActOnKeybind(command:GetNewValue()) --  order
     if success then

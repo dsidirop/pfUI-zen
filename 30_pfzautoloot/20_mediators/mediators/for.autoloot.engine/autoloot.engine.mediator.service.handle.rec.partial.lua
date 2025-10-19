@@ -2,10 +2,10 @@
 
 local Guard  = using "System.Guard" 
 
-local ZenEngineSettings    = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.ZenEngineSettings"
-local RestartEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.ZenEngine.RestartEngineCommand"
+local AutolootEngineSettings    = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.AutolootEngineSettings"
+local RestartEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForZenEngine.ZenEngineMediatorService [Partial]" -- @formatter:on
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService [Partial]" -- @formatter:on
 
 function Class:Handle_RestartEngineCommand(command)
     Scopify(EScopes.Function, self)
@@ -14,7 +14,7 @@ function Class:Handle_RestartEngineCommand(command)
 
     local userPreferencesDto = _userPreferencesService:GetAllUserPreferences()
 
-    local zenEngineSettings = ZenEngineSettings:New()
+    local zenEngineSettings = AutolootEngineSettings:New()
 
     zenEngineSettings:GetGreeniesGrouplootingAssistantAggregateSettings()
                      :ChainSetMode(userPreferencesDto:Get_GreeniesGrouplootingAutomation_Mode())
@@ -22,7 +22,7 @@ function Class:Handle_RestartEngineCommand(command)
     
     -- todo   add more settings-sections here
 
-    _zenEngineSingleton:Stop() -- todo   wrap this in a try-catch block to normalize exceptions
+    _autolootEngine:Stop() -- todo   wrap this in a try-catch block to normalize exceptions
                        :SetSettings(zenEngineSettings)
                        :Start()
 

@@ -2,5 +2,5 @@
     <!-- order -->
     <Include file="rcup.ea.lua" />
 
-    <Include file="i.zen.user.preferences.form.lua"/>
+    <Include file="i.autoloot.user.preferences.form.lua"/>
 </Ui>

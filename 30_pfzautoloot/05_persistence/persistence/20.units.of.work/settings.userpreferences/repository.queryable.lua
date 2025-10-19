@@ -9,10 +9,10 @@ local IUserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.Pfui
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
+local PfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
 local UserPreferencesDto = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 
-local IPfuiZenDBContextUntrackable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContextUntrackable"
+local IPfuiAutolootDBContextUntrackable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContextUntrackable"
 
 local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.RepositoryQueryable" {
     "IUserPreferencesRepositoryQueryable", IUserPreferencesRepositoryQueryable
@@ -27,11 +27,11 @@ end)
 function Class:New(dbcontextReadonly)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceImplementing(dbcontextReadonly, IPfuiZenDBContextUntrackable, "dbcontextReadonly") -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrInstanceImplementing(dbcontextReadonly, IPfuiAutolootDBContextUntrackable, "dbcontextReadonly") -- todo  remove this later on in favour of DI
 
     local instance = self:Instantiate()
     
-    instance._dbcontextReadonly = Nils.Coalesce(dbcontextReadonly, PfuiZenDBContext:New())
+    instance._dbcontextReadonly = Nils.Coalesce(dbcontextReadonly, PfuiAutolootDBContext:New())
     
     return instance
 end

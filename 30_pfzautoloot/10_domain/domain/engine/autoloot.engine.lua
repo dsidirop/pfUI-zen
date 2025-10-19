@@ -4,13 +4,13 @@ local Nils   = using "System.Nils"
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local ZenEngineSettings = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.ZenEngineSettings"
+local AutolootEngineSettings = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.AutolootEngineSettings"
 
 local GreeniesGrouplootingAssistantAggregate  = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Engine.GreeniesGrouplootingAssistant.Aggregate"
 local IGreeniesGrouplootingAssistantAggregate = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.GreeniesGrouplootingAssistant.IAggregate"
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Engine.ZenEngine" {
-    "IZenEngine", using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.IZenEngine",
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Engine.AutolootEngine" { -- aggregate-root of the autolooting-subdomain
+    "IAutolootEngine", using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.IAutolootEngine",
 }
 
 
@@ -25,11 +25,11 @@ end)
 function Class:New(greeniesGrouplootingAssistantAggregate)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsNilOrInstanceImplementing(greeniesGrouplootingAssistantAggregate, IGreeniesGrouplootingAssistantAggregate, "greeniesGrouplootingAssistantAggregate") -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrInstanceImplementing(greeniesGrouplootingAssistantAggregate, IGreeniesGrouplootingAssistantAggregate, "greeniesGrouplootingAssistantAggregate")
 
     local instance = self:Instantiate()
     
-    instance._greeniesGrouplootingAssistantAggregate = Nils.Coalesce(greeniesGrouplootingAssistantAggregate, GreeniesGrouplootingAssistantAggregate:New()) -- todo  use di
+    instance._greeniesGrouplootingAssistantAggregate = Nils.Coalesce(greeniesGrouplootingAssistantAggregate, GreeniesGrouplootingAssistantAggregate:New())-- todo  remove this later on in favour of di
     
     return instance
 end
@@ -45,7 +45,7 @@ function Class:SetSettings(settings) -- todo   partial classes
     
     Guard.Assert.Explained.IsFalse(_isRunning, "cannot change settings while engine is running - stop the engine first")
 
-    Guard.Assert.IsNilOrInstanceOf(settings, ZenEngineSettings, "settings")
+    Guard.Assert.IsNilOrInstanceOf(settings, AutolootEngineSettings, "settings")
     
     if settings == _settings then
         return self -- nothing to do

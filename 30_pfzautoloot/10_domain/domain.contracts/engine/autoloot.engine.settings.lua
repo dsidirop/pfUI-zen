@@ -4,7 +4,7 @@ local Fields = using "System.Classes.Fields"
 
 local GreeniesAutolooterAggregateSettings = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.GreeniesGrouplootingAssistant.AggregateSettings"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.ZenEngineSettings"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.AutolootEngineSettings"
 
 
 Fields(function(upcomingInstance)

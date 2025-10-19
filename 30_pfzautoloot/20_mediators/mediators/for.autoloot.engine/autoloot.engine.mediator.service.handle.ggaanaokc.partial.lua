@@ -4,14 +4,14 @@ local Guard  = using "System.Guard"
 
 local GreeniesGrouplootingAutomationApplyNewModeCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForZenEngine.ZenEngineMediatorService [Partial]" -- @formatter:on
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService [Partial]" -- @formatter:on
 
 function Class:Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(command)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewModeCommand, "command")
 
-    _zenEngineSingleton:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) -- order   todo   suppress exceptions here   handlers advertise successes/failures through domain-events only!
+    _autolootEngine:GreeniesGrouplootingAutomation_SwitchMode(command:GetNewValue()) -- order   todo   suppress exceptions here   handlers advertise successes/failures through domain-events only!
 
     local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateMode(command:GetNewValue()) -- order
     if success then

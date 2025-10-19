@@ -9,7 +9,7 @@ TG:AddTheory("T000.ComboTranslationsService.TryTranslate.GivenValidTranslators.S
             ["TS.TT.GVT.STS.010"] = {
                 Text           = "Foobar",
                 Color          = nil,
-                ExpectedResult = "(Translated) Foobar2",
+                ExpectedResult = "(Translated) Foobar",
             },
             ["TS.TT.GVT.STS.020"] = {
                 Text           = "Foobar",

@@ -7,7 +7,7 @@ local Reflection   = using "System.Reflection"
 local Fields       = using "System.Classes.Fields"
 local TablesHelper = using "System.Helpers.Tables"
 
-local IPfuiZenDB   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Db.IPfuiZenDB"
+local IPfuiAutolootDB   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Db.IPfuiAutolootDB"
 
 local Schema               = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Db.Schemas.SchemaV1"
 local PfuiEnvConfiguration = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiEnvConfiguration"
@@ -15,8 +15,8 @@ local PfuiEnvConfiguration = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBi
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Db.PfuiZenDB" { --[[@formatter:on]]
-    "IPfuiZenDB", IPfuiZenDB
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Db.PfuiAutolootDB" { --[[@formatter:on]]
+    "IPfuiAutolootDB", IPfuiAutolootDB
 }
 
 ---  @return {

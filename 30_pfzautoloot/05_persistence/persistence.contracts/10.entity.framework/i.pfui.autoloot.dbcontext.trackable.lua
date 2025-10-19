@@ -1,10 +1,10 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local IPfuiZenDBContextTrackable = using "[declare] [interface]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContextTrackable" --[[@formatter:on]]
+local IPfuiAutolootDBContextTrackable = using "[declare] [interface]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContextTrackable" --[[@formatter:on]]
 
 -- todo   enhance interfaces so that they will also support setting properties
 --
--- IPfuiZenDBContextTrackable.Settings = { --public entity-properties
+-- IPfuiAutolootDBContextTrackable.Settings = { --public entity-properties
 --      LoadTracked   = function() end,
 --      LoadUntracked = function() end,
 --      
@@ -19,11 +19,11 @@ local IPfuiZenDBContextTrackable = using "[declare] [interface]" "Pavilion.Warcr
 -- } --@formatter:on
 
 
-function IPfuiZenDBContextTrackable:LoadTracked_Settings(asTracking)
+function IPfuiAutolootDBContextTrackable:LoadTracked_Settings(asTracking)
 end
 
-function IPfuiZenDBContextTrackable:LoadTracked_Settings_UserPreferences(asTracking)
+function IPfuiAutolootDBContextTrackable:LoadTracked_Settings_UserPreferences(asTracking)
 end
 
-function IPfuiZenDBContextTrackable:SaveChanges()
+function IPfuiAutolootDBContextTrackable:SaveChanges()
 end

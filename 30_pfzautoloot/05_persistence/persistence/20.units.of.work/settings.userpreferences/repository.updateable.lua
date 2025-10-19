@@ -6,8 +6,8 @@ local Fields = using "System.Classes.Fields"
 
 local IUserPreferencesRepositoryUpdateable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.IRepositoryUpdateable"
 
-local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
-local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
+local PfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
+local IPfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContext"
 
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -27,11 +27,11 @@ end)
 function Class:New(dbcontext)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiZenDBContext, "dbcontext") -- todo  remove this later on in favour of DI
+    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiAutolootDBContext, "dbcontext") -- todo  remove this later on in favour of DI
 
     local instance = self:Instantiate()
 
-    instance._dbcontext = Nils.Coalesce(dbcontext, PfuiZenDBContext:New())
+    instance._dbcontext = Nils.Coalesce(dbcontext, PfuiAutolootDBContext:New())
     instance._hasChanges = false
     
     return instance

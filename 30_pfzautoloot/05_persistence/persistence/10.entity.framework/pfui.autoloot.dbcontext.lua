@@ -7,13 +7,13 @@ local Reflection   = using "System.Reflection"
 local Fields       = using "System.Classes.Fields"
 local TablesHelper = using "System.Helpers.Tables"
 
-local PfuiZenDB         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Db.PfuiZenDB"
+local PfuiAutolootDB         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Db.PfuiAutolootDB"
 
-local IPfuiZenDB        = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Db.IPfuiZenDB"
-local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
+local IPfuiAutolootDB        = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Db.IPfuiAutolootDB"
+local IPfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContext"
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext" { --[[@formatter:on]]
-    "IPfuiZenDBContext", IPfuiZenDBContext,
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext" { --[[@formatter:on]]
+    "IPfuiAutolootDBContext", IPfuiAutolootDBContext,
 }
 
 Fields(function(upcomingInstance)
@@ -43,14 +43,14 @@ Fields(function(upcomingInstance)
     return upcomingInstance
 end)
 
-function Class:New(pfuiZenDB)
+function Class:New(pfuiAutolootDB)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceImplementing(pfuiZenDB, IPfuiZenDB, "pfuiZenDB")
+    Guard.Assert.IsNilOrInstanceImplementing(pfuiAutolootDB, IPfuiAutolootDB, "pfuiAutolootDB")
 
     local instance = self:Instantiate()
 
-    instance._zendb = Nils.Coalesce(pfuiZenDB, PfuiZenDB:New())
+    instance._zendb = Nils.Coalesce(pfuiAutolootDB, PfuiAutolootDB:New())
 
     return instance
 end

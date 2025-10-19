@@ -7,8 +7,8 @@ local Fields = using "System.Classes.Fields"
 
 local IUnitOfWork = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.IUnitOfWork"
 
-local PfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
-local IPfuiZenDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.PfuiZen.IPfuiZenDBContext"
+local PfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
+local IPfuiAutolootDBContext = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.EntityFramework.IPfuiAutolootDBContext"
 
 local UserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.Repository"
 local IUserPreferencesRepository = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.IRepository"
@@ -29,10 +29,10 @@ end)
 function Class:New(dbcontext, userPreferencesRepository) -- we need both params because both need to be mockable for unit testing
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiZenDBContext, "dbcontext")
+    Guard.Assert.IsNilOrInstanceImplementing(dbcontext, IPfuiAutolootDBContext, "dbcontext")
     Guard.Assert.IsNilOrInstanceImplementing(userPreferencesRepository, IUserPreferencesRepository, "userPreferencesRepository")
 
-    dbcontext = Nils.Coalesce(dbcontext, PfuiZenDBContext:New()) --keep this here
+    dbcontext = Nils.Coalesce(dbcontext, PfuiAutolootDBContext:New()) --keep this here
 
     local instance = self:Instantiate() -- @formatter:off
 

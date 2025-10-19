@@ -3,7 +3,7 @@
 local Guard  = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 
-local PfuiZenDBContext                   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiZen.PfuiZenDBContext"
+local PfuiAutolootDBContext                   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.EntityFramework.PfuiAutolootDBContext"
 
 local UserPreferencesUnitOfWork          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.UnitOfWork"
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.RepositoryQueryable"
@@ -21,9 +21,9 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autolo
 function Class:NewWithDBContext(optionalDbContext) -- todo  get rid of this once we get DI going
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrInstanceImplementing(optionalDbContext, IPfuiZenDBContext, "optionalDbContext")
+    Guard.Assert.IsNilOrInstanceImplementing(optionalDbContext, IPfuiAutolootDBContext, "optionalDbContext")
 
-    optionalDbContext = optionalDbContext or PfuiZenDBContext:New()
+    optionalDbContext = optionalDbContext or PfuiAutolootDBContext:New()
 
     return Class:New(
         UserPreferencesUnitOfWork:New(optionalDbContext),

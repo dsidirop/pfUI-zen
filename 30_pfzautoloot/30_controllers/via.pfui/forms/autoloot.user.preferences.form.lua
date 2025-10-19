@@ -8,7 +8,7 @@ local Fields = using "System.Classes.Fields"
 
 local IPfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
 
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForZenEngine.ZenEngineMediatorService"
+local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -21,10 +21,10 @@ local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilio
 local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
 
-local IUserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.IUserPreferencesForm"
+local IAutolootUserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.IAutolootUserPreferencesForm"
 
-local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.UserPreferencesForm" {
-    "IUserPreferencesForm", IUserPreferencesForm,
+local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm" {
+    "IAutolootUserPreferencesForm", IAutolootUserPreferencesForm,
 }
 
 
