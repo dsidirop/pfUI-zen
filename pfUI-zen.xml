@@ -2,7 +2,7 @@
     <!-- order -->
 
     <!-- testing-framework -->
-    <Include file="00.testing\.xml"/>
+    <Include file="00_testing\.xml"/>
 
     <!-- system + packages -->
     <Include file="10_system\.xml"/>
@@ -13,5 +13,5 @@
     <Include file="31.pfuizen.autoloot.tests\.xml"/>
 
     <!-- keep last -->
-    <Include file="00.testing\tests.runner.lua"/>
+    <Include file="00_testing\10.vwowunit\tests.runner.lua"/>
 </Ui>
