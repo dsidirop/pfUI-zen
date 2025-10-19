@@ -20,12 +20,12 @@ local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
-local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Internationalization.OwnTranslatorService"
+local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService"
 
 local UserPreferencesForm   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
 local StartZenEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
 
-Pfui:RegisterModule("Zen", "vanilla:tbc", function()
+Pfui:RegisterModule("Zen Autoloot", "vanilla:tbc", function()
 
     local addon = {
         folderName = "pfUI-Zen",

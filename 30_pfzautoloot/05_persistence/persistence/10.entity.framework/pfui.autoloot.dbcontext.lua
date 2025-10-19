@@ -20,7 +20,7 @@ Fields(function(upcomingInstance)
 
     local upcomingInstanceSnapshot = upcomingInstance
     
-    upcomingInstance._zendb = nil    
+    upcomingInstance._db = nil    
     upcomingInstance.Settings = { --@formatter:off   public entity-properties
         _isLoaded       = false,
         LoadTracked     = function() return upcomingInstanceSnapshot:LoadTracked_Settings()   end,
@@ -50,7 +50,7 @@ function Class:New(pfuiAutolootDB)
 
     local instance = self:Instantiate()
 
-    instance._zendb = Nils.Coalesce(pfuiAutolootDB, PfuiAutolootDB:New())
+    instance._db = Nils.Coalesce(pfuiAutolootDB, PfuiAutolootDB:New())
 
     return instance
 end
@@ -103,7 +103,7 @@ function Class:Load_Settings_UserPreferences_(asTracking)
         return Settings.UserPreferences -- tracked flavor already loaded, so just return it
     end
 
-    local rawUserPreferences = _zendb:TryLoadDocUserPreferences()
+    local rawUserPreferences = _db:TryLoadDocUserPreferences()
     
     Settings.UserPreferences.GreeniesGrouplootingAutomation.Mode = rawUserPreferences.GreeniesGrouplootingAutomation.Mode --                 mapping
     Settings.UserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind = rawUserPreferences.GreeniesGrouplootingAutomation.ActOnKeybind -- mapping
@@ -122,5 +122,5 @@ end
 function Class:SaveChanges()
     Scopify(EScopes.Function, self)
     
-    _zendb:UpdateDocUserPreferences(Settings.UserPreferences)
+    _db:UpdateDocUserPreferences(Settings.UserPreferences)
 end

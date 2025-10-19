@@ -28,7 +28,7 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autolo
 function Class:TryLoadDocUserPreferences()
     Scopify(EScopes.Function, self)
 
-    local rawAllAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.v1"]
+    local rawAllAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname] or {} -- pfUI.env.C["zen.autoloot.v1"]
 
     return { --@formatter:off
         GreeniesGrouplootingAutomation = {

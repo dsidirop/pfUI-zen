@@ -8,9 +8,15 @@
     <Include file="10_system\.xml"/>
     <Include file="20_externals\.xml"/>
 
-    <!-- addon-core itself -->
+    <!-- load the common utilities of the addon -->
+    <Include file="25_pfz\.xml"/>
+    
+    <!-- [subdomain] pzen-autoloot -->
     <Include file="30_pfzautoloot\.xml"/>
     <Include file="31_pfzautoloot_tests\.xml"/>
+
+    <!-- [subdomain] pzen-quicklaunch -->
+    <!-- <Include file="40_pfzquicklaunch\.xml"/> -->
 
     <!-- keep last -->
     <Include file="00_testing\10.vwowunit\tests.runner.lua"/>
