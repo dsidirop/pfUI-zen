@@ -7,7 +7,7 @@ local SchemaV1 = using "[declare] [static]" "Pavilion.Warcraft.Addons.PfuiZen.Au
 
 -- todo  take this into account in the future when we have new versions that we have to smoothly upgrade the preexisting versions to
 
-SchemaV1.RootKeyname = "zen.v1" -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
+SchemaV1.RootKeyname = "zen.autoloot.v1" -- must be hardcoded right here   its an integral part of the settings specs and not of the addon specs 
 
 SchemaV1.Settings = {
     Logging = {

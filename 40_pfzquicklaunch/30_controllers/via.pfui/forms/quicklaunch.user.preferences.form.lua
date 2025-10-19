@@ -6,25 +6,17 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
+-- local QuicklaunchEngineMediatorService        = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
 local IPfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
 
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 
-local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
-local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
+local UserPreferencesDto                        = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
+local ITranslatorService                        = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
+local IQuicklaunchUserPreferencesForm           = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Contracts.Forms.IQuicklaunchUserPreferencesForm"
+local RequestingCurrentUserPreferencesEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Contracts.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 
-local UserPreferencesDto                                        = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
-
-local ITranslatorService                                        = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
-
-local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
-local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
-local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
-
-local IAutolootUserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.IAutolootUserPreferencesForm"
-
-local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm" {
-    "IAutolootUserPreferencesForm", IAutolootUserPreferencesForm,
+local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Forms.QuicklaunchUserPreferencesForm" {
+    "IQuicklaunchUserPreferencesForm", IQuicklaunchUserPreferencesForm,
 }
 
 
@@ -34,11 +26,8 @@ Fields(function(upcomingInstance)
     
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
-        frmAreaInsideContainer                         = nil,
-        
-        hdrGrouplootSectionHeader                      = nil,
-        lddGreeniesGrouplootingAutomation_Mode         = nil,
-        lddGreeniesGrouplootingAutomation_ActOnKeybind = nil,
+        frmAreaInsideContainer    = nil,
+        hdrGrouplootSectionHeader = nil,
     }
 
     upcomingInstance._commandsEnabled = false
@@ -85,8 +74,8 @@ function Form:Initialize()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer = _pfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() --00
-        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Autoloot")) --  reminder   this is just a shorthand for _t:TryTranslate("Zen", "|cFF7FFFD4")
-        :ChainSet_ParentRootTabFrameName(_t("Thirdparty")) --     reminder   this is just a shorthand for _t:TryTranslate("Thirdparty")
+        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Quicklaunch")) --       reminder   this is just a shorthand for _t:TryTranslate("foobar", "|cFF7FFFD4")
+        :ChainSet_ParentRootTabFrameName(_t("Thirdparty"))
         :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
             self:InitializeControls_() --                         order   from the [partial]
             self:OnRequestingCurrentUserPreferences_() --         order
@@ -95,7 +84,7 @@ function Form:Initialize()
         :GetArea()
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
-    --     navigates to the "thirdparty" section and clicks on the "[zen] autoloot" tab   otherwise it never gets called
+    --     navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
 end
 
 -- privates
@@ -131,13 +120,13 @@ function Form:ApplyNewUserPreferences_(newUserPreferences)
 
     _commandsEnabled = false --00
 
-    if not _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
-        _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
-    end
-
-    if not _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
-        _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
-    end
+    --if not _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
+    --    _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
+    --end
+    --
+    --if not _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
+    --    _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
+    --end
 
     _commandsEnabled = true
 
@@ -149,33 +138,3 @@ function Form:ApplyNewUserPreferences_(newUserPreferences)
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
-function Form:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
-    Scopify(EScopes.Function, self)
-
-    _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
-    if not _commandsEnabled then
-        return
-    end
-    
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
-        GreeniesGrouplootingAutomationApplyNewModeCommand
-        :New()
-        :ChainSetOld(ea:GetOldValue())
-        :ChainSetNew(ea:GetNewValue())
-    )
-end
-
-function Form:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_, ea)
-    Scopify(EScopes.Function, self)
-
-    if not _commandsEnabled then
-        return
-    end
-
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
-        GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand
-        :New()
-        :ChainSetOld(ea:GetOldValue())
-        :ChainSetNew(ea:GetNewValue())
-    )
-end

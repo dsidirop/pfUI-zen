@@ -1,0 +1,11 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../Ui.xsd">
+    <!-- ordering is important here -->
+    <Include file="01_foundation\.xml"/>
+    <Include file="05_persistence\.xml"/>
+    <Include file="10_domain\.xml"/>
+    <Include file="20_mediators\.xml"/>
+    <Include file="30_controllers\.xml"/>
+
+    <!-- 50 module initializer -->
+    <Include file="quicklaunch.module.initializer.lua"/>
+</Ui>
