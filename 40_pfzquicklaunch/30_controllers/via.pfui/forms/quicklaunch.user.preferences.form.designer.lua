@@ -19,4 +19,13 @@ function Form:InitializeControls_()
                                                                 :ChainSet_Caption(_t("Enabled"))
                                                                 :Build() --@formatter:on
 
+    _ui.txtQuicklaunchCustomAssociations = _pfuiMainSettingsFormGuiControlsFactory --@formatter:off
+                                                                :SpawnLabeledTextboxControlBuilder()
+                                                                :ChainApply_NudgingX(17) -- nudge the caption a bit to the right
+                                                                :ChainSet_Caption(_t("Associations"))
+                                                                -- :ChainSet_Width(400):ChainSet_Height(400)  -- todo   fix the rendering issues ...
+                                                                :ChainSet_IsMultiLine(true)
+                                                                :ChainSet_JustifyHorizontally("LEFT")
+                                                                :Build() --@formatter:on
+
 end

@@ -4,22 +4,22 @@
 ---
 --- @class Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Gui.IPfuiMainSettingsFormGuiControlsFactory
 ---
-local IPfuiMainSettingsFormGuiControlsFactory = using "[declare] [interface]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
+local IPfuiMainSettingsFormGuiControlsFactory = using "[declare] [interface]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"  --[[@formatter:off]]
 
 --- @return IPfuiHeaderControlBuilder IPfuiHeaderControlBuilder a builder for a header-label control - upon being build it will get plugged into the pfui-config-form automatically
-function IPfuiMainSettingsFormGuiControlsFactory:SpawnHeaderControlBuilder()
-end
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnHeaderControlBuilder() end;
+
+--- @return IPfuiLabeledTextboxControlBuilder IPfuiLabeledTextboxControlBuilder a builder for a textbox control - upon being build it will get plugged into the pfui-config-form automatically
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledTextboxControlBuilder() end;
 
 --- @return IPfuiLabeledCheckboxControlBuilder IPfuiLabeledCheckboxControlBuilder a builder for a checkbox control - upon being build it will get plugged into the pfui-config-form automatically
-function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledCheckboxControlBuilder()
-end
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledCheckboxControlBuilder() end;
 
 --- @return IPfuiLabeledDropdownControlBuilder IPfuiLabeledDropdownControlBuilder a builder for a labeled dropdown control - upon being build it will get plugged into the pfui-config-form automatically
-function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledDropdownControlBuilder()
-end
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledDropdownControlBuilder() end;
 
 --- Creates a builder for {nested-tab-frame + area-frame} that will be automatically get plugged into the pfui-config-form when build.<br/>
 ---
 --- @return IPfuiNestedTabFrameWithAreaControlBuilder IPfuiNestedTabFrameWithAreaControlBuilder a builder of type `Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Gui.Controls.IPfuiNestedTabFrameWithAreaControlBuilder`
-function IPfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() -- pfUI.gui.frames[][*].area
-end
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() end; -- pfUI.gui.frames[][*].area
+

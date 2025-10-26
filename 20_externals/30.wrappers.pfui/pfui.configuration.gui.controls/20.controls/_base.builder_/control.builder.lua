@@ -16,7 +16,9 @@ local Class = using "[declare] [abstract] [blend]" "Pavilion.Warcraft.Addons.Wra
 Fields(function(upcomingInstance)
     upcomingInstance._caption = ""
 
+    upcomingInstance._width           = nil
     upcomingInstance._height          = nil
+    
     upcomingInstance._xposNudging     = 0
     upcomingInstance._yposNudging     = 0
     upcomingInstance._visibleOrHidden = true
@@ -35,6 +37,15 @@ function Class:ChainSet_Caption(caption)
     return self
 end
 
+function Class:ChainSet_Width(width)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsNumber(width, "width")
+
+    _width = width
+
+    return self
+end
 
 function Class:ChainSet_Height(height)
     Scopify(EScopes.Function, self)
@@ -82,6 +93,10 @@ function Class:Build()
     local frxControl = self:BuildImpl()
     
     Guard.Assert.IsInstanceImplementing(frxControl, IFrameX, "frxControl")
+
+    if _width ~= nil then
+        frxControl:ChainSet_Width(_width)
+    end
     
     if _height ~= nil then
         frxControl:ChainSet_Height(_height)

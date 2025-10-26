@@ -2,12 +2,11 @@
 
 local IPfuiLabeledCheckboxControlBuilder = using "[declare] [interface] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.LabeledCheckbox.IPfuiLabeledCheckboxControlBuilder" {
     "IPfuiGuiBaseControlBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.BaseBuilder.IPfuiGuiBaseControlBuilder",
-}
+}  --[[@formatter:off]]
 
 
---- @param menuItems table an array-table of menu items, each item is a table with the following structure: "<value-nickname>:<human-readable-description>"
-function IPfuiLabeledCheckboxControlBuilder:ChainSet_InitialState(menuItems)
-end
+--- @param initialState boolean  The initial checked state of the checkbox.
+--- @return IPfuiLabeledCheckboxControlBuilder
+function IPfuiLabeledCheckboxControlBuilder:ChainSet_InitialState(initialState) end;
 
---- function IPfuiLabeledCheckboxControlBuilder:Build() -- inherited from IPfuiGuiBaseControlBuilder
---- end
+--- function IPfuiLabeledCheckboxControlBuilder:Build() end; -- inherited from IPfuiGuiBaseControlBuilder

@@ -3,6 +3,7 @@
 local Guard = using "System.Guard"
 
 local PfuiHeaderControlBuilder                 = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.Header.PfuiHeaderControlBuilder"
+local PfuiLabeledTextboxControlBuilder         = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledTextbox.PfuiLabeledTextboxControlBuilder"
 local PfuiLabeledCheckboxControlBuilder        = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledCheckbox.PfuiLabeledCheckboxControlBuilder"
 local PfuiLabeledDropdownControlBuilder        = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledDropdown.PfuiLabeledDropdownControlBuilder"
 local PfuiNestedTabFrameWithAreaControlBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.NestedTabFrameWithArea.PfuiNestedTabFrameWithAreaControlBuilder"
@@ -15,6 +16,12 @@ function Class:SpawnHeaderControlBuilder()
     Scopify(EScopes.Function, self)
 
     return PfuiHeaderControlBuilder:New()
+end
+
+function Class:SpawnLabeledTextboxControlBuilder()
+    Scopify(EScopes.Function, self)
+
+    return PfuiLabeledTextboxControlBuilder:New()
 end
 
 function Class:SpawnLabeledCheckboxControlBuilder()

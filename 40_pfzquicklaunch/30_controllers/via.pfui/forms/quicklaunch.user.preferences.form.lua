@@ -26,10 +26,11 @@ Fields(function(upcomingInstance)
     
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
-        frmAreaInsideContainer      = nil,
-        hdrQuicklaunchSectionHeader = nil,
+        frmAreaInsideContainer       = nil,
+        hdrQuicklaunchSectionHeader  = nil,
 
-        chbQuicklaunchEnabled       = nil,
+        chbQuicklaunchEnabled        = nil,
+        txtQuicklaunchCustomAssociations = nil,
     }
 
     upcomingInstance._commandsEnabled = false
@@ -123,7 +124,8 @@ function Form:ApplyNewUserPreferences_(newUserPreferences)
 
     _commandsEnabled = false --00
 
-    _ui.chbQuicklaunchEnabled:TrySetState(newUserPreferences:Get_IsEnabled())
+    _ui.chbQuicklaunchEnabled:ChainSet_State(newUserPreferences:Get_IsEnabled())
+    _ui.txtQuicklaunchCustomAssociations:ChainSet_Text(newUserPreferences:Get_CustomAssociations())
 
     _commandsEnabled = true
 

@@ -44,13 +44,13 @@ function Class:New(rawWoWFrame, eventStateChanged, pfuiCurrentValueTable, pfuiCu
     return newInstance
 end
 
-function Class:TrySetState(desiredState)
+function Class:ChainSet_State(desiredState)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsBoolean(desiredState, "desiredState")
 
-    if _rawWoWFrame.input.state == desiredState then
-        return true -- already in desired state   nothing to do
+    if _rawWoWFrame.input:GetChecked() == desiredState then
+        return self -- already in desired state   nothing to do
     end
 
     _pfuiCurrentValueTable[_pfuiCurrentValueKeyName] = desiredState -- order
@@ -62,7 +62,7 @@ function Class:TrySetState(desiredState)
                     :ChainSet_NewState(desiredState)
     )
 
-    return true
+    return self
 end
 
 function Class:eventStateChanged_Subscribe(handler, owner)
