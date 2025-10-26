@@ -18,7 +18,7 @@ end)
 
 -- GETTERS
 
-function Class:Get_Enabled()
+function Class:Get_IsEnabled()
     Scopify(EScopes.Function, self)
 
     return _enabled

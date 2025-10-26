@@ -10,6 +10,10 @@ local IPfuiMainSettingsFormGuiControlsFactory = using "[declare] [interface]" "P
 function IPfuiMainSettingsFormGuiControlsFactory:SpawnHeaderControlBuilder()
 end
 
+--- @return IPfuiLabeledCheckboxControlBuilder IPfuiLabeledCheckboxControlBuilder a builder for a checkbox control - upon being build it will get plugged into the pfui-config-form automatically
+function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledCheckboxControlBuilder()
+end
+
 --- @return IPfuiLabeledDropdownControlBuilder IPfuiLabeledDropdownControlBuilder a builder for a labeled dropdown control - upon being build it will get plugged into the pfui-config-form automatically
 function IPfuiMainSettingsFormGuiControlsFactory:SpawnLabeledDropdownControlBuilder()
 end

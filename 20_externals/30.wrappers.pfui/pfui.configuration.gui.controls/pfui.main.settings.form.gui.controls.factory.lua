@@ -3,6 +3,7 @@
 local Guard = using "System.Guard"
 
 local PfuiHeaderControlBuilder                 = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.Header.PfuiHeaderControlBuilder"
+local PfuiLabeledCheckboxControlBuilder        = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledCheckbox.PfuiLabeledCheckboxControlBuilder"
 local PfuiLabeledDropdownControlBuilder        = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.LabeledDropdown.PfuiLabeledDropdownControlBuilder"
 local PfuiNestedTabFrameWithAreaControlBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.NestedTabFrameWithArea.PfuiNestedTabFrameWithAreaControlBuilder"
 
@@ -10,11 +11,16 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.
     "IPfuiMainSettingsFormGuiControlsFactory", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory",
 }
 
-
-function Class:SpawnNestedTabFrameWithAreaControlBuilder() -- pfUI.gui.frames[][*].area
+function Class:SpawnHeaderControlBuilder()
     Scopify(EScopes.Function, self)
 
-    return PfuiNestedTabFrameWithAreaControlBuilder:New()
+    return PfuiHeaderControlBuilder:New()
+end
+
+function Class:SpawnLabeledCheckboxControlBuilder()
+    Scopify(EScopes.Function, self)
+
+    return PfuiLabeledCheckboxControlBuilder:New()
 end
 
 function Class:SpawnLabeledDropdownControlBuilder()
@@ -23,8 +29,9 @@ function Class:SpawnLabeledDropdownControlBuilder()
     return PfuiLabeledDropdownControlBuilder:New()
 end
 
-function Class:SpawnHeaderControlBuilder()
+function Class:SpawnNestedTabFrameWithAreaControlBuilder() -- pfUI.gui.frames[][*].area
     Scopify(EScopes.Function, self)
 
-    return PfuiHeaderControlBuilder:New()
+    return PfuiNestedTabFrameWithAreaControlBuilder:New()
 end
+

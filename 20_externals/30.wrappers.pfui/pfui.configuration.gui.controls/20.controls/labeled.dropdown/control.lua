@@ -125,7 +125,7 @@ end
 function Class:OnSelectionChanged_(ea)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsTable(ea, "ea")
+    Guard.Assert.IsInstanceOf(ea, DropdownSelectionChangedEventArgs, "ea")
 
     _eventSelectionChanged:Raise(self, ea)
 end

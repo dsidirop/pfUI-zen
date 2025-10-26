@@ -3,8 +3,8 @@
 local Guard     = using "System.Guard"
 local Fields    = using "System.Classes.Fields"
 
-local PfuiGui                = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
-local PfuiGuiBaseControlBuilder = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.BaseBuilder.PfuiGuiBaseControlBuilder"
+local PfuiGui                    = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.RawBindings.PfuiGui"
+local PfuiGuiBaseControlBuilder  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.BaseBuilder.PfuiGuiBaseControlBuilder"
 
 local PfuiHeaderControl          = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Configuration.Gui.Controls.Header.PfuiHeaderControl"
 local IPfuiHeaderControlBuilder  = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Header.IPfuiHeaderControlBuilder"

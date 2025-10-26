@@ -23,8 +23,6 @@ local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.
 }
 
 Fields(function(upcomingInstance)
-    upcomingInstance._nativePfuiControlFrame = nil
-
     -- upcomingInstance._caption = "" --    provided from the base class
     -- upcomingInstance._xposNudging = 0 -- provided from the base class
     -- upcomingInstance._yposNudging = 0 -- provided from the base class
@@ -33,7 +31,7 @@ Fields(function(upcomingInstance)
     upcomingInstance._menuEntryValuesToIndexes = {}
     upcomingInstance._menuIndexesToMenuValuesArray = {}
 
-    upcomingInstance._eventSelectionChanged = Event:New() -- todo   we should replace this with an INotifyPropertyChanged event directly on on pfuiCurrentValueTable["__dummy_keyname_for_value__"]
+    upcomingInstance._eventSelectionChanged = Event:New() -- todo   we should replace this with an INotifyPropertyChanged event directly on pfuiCurrentValueTable["__dummy_keyname_for_value__"]
 
     return upcomingInstance
 end)
@@ -61,7 +59,7 @@ function Class:BuildImpl()
     local pfuiCurrentValueTable = {}
     local pfuiCurrentValueKeyName = "__dummy_keyname_for_value__"
 
-    _nativePfuiControlFrame = PfuiGui.CreateConfig(
+    local nativePfuiControlFrame = PfuiGui.CreateConfig(
         function() -- this function is called when the dropdown is shown and only then
             _eventSelectionChanged:Raise(
                 self,
@@ -76,7 +74,7 @@ function Class:BuildImpl()
     )
 
     return PfuiLabeledDropdownControl:New(
-        _nativePfuiControlFrame,
+        nativePfuiControlFrame,
         _eventSelectionChanged,
         _menuIndexesToMenuValuesArray,
         pfuiCurrentValueTable,

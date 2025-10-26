@@ -4,15 +4,15 @@ local Guard = using "System.Guard"
 
 local Fields = using "System.Classes.Fields"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.Dropdown.DropdownSelectionChangedEventArgs"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.LabeledCheckbox.CheckboxStateChangedEventArgs"
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._old = nil
     upcomingInstance._new = nil
 
     return upcomingInstance
 end)
+
 
 function Class:New()
     Scopify(EScopes.Function, self)
@@ -20,32 +20,16 @@ function Class:New()
     return self:Instantiate()
 end
 
-function Class:GetOldValue()
-    Scopify(EScopes.Function, self)
-
-    return _old
-end
-
-function Class:GetNewValue()
+function Class:GetNewState()
     Scopify(EScopes.Function, self)
 
     return _new
 end
 
-function Class:ChainSet_Old(old)
+function Class:ChainSet_NewState(new)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsNilOrString(old, "old")
-
-    _old = old
-
-    return self
-end
-
-function Class:ChainSet_New(new)
-    Scopify(EScopes.Function, self)
-
-    Guard.Assert.IsString(new, "new")
+    Guard.Assert.IsBoolean(new, "new")
     
     _new = new
 

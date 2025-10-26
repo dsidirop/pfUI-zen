@@ -7,10 +7,16 @@ function Form:InitializeControls_()
 
     _ui.frmAreaInsideContainer:SetScript("OnShow", function() self:OnShown_() end) -- [note]   _ui.frmAreaInsideContainer == _ui.hdrGrouplootSectionHeader:GetParent():GetParent():GetParent()
 
-    _ui.hdrGrouplootSectionHeader = _pfuiMainSettingsFormGuiControlsFactory --@formatter:off
+    _ui.hdrQuicklaunchSectionHeader = _pfuiMainSettingsFormGuiControlsFactory --@formatter:off
                                                                 :SpawnHeaderControlBuilder()
                                                                 :ChainSet_Height(30)
                                                                 :ChainSet_Caption(_t("Quicklaunch"))
+                                                                :Build() --@formatter:on
+
+    _ui.chbQuicklaunchEnabled = _pfuiMainSettingsFormGuiControlsFactory --@formatter:off
+                                                                :SpawnLabeledCheckboxControlBuilder()
+                                                                :ChainApply_NudgingX(17) -- nudge the caption a bit to the right
+                                                                :ChainSet_Caption(_t("Enabled"))
                                                                 :Build() --@formatter:on
 
 end

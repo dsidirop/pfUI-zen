@@ -5,6 +5,7 @@
     <!-- controls-specific contracts -->
     <Include file="header\.xml"/>
     <Include file="nested.tabframe\.xml"/>
+    <Include file="labeled.checkbox\.xml"/>
     <Include file="labeled.dropdown\.xml"/>
 
     <!-- keep last -->

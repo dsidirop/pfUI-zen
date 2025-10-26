@@ -6,12 +6,12 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
--- local QuicklaunchEngineMediatorService        = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
-local IPfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
+-- local QuicklaunchEngineMediatorService       = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
+local IPfuiMainSettingsFormGuiControlsFactory   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
 
-
-local UserPreferencesDto                        = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 local ITranslatorService                        = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
+
+local QuicklaunchUserPreferencesDto             = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 local IQuicklaunchUserPreferencesForm           = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Contracts.Forms.IQuicklaunchUserPreferencesForm"
 local RequestingCurrentUserPreferencesEventArgs = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Contracts.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
 
@@ -26,8 +26,10 @@ Fields(function(upcomingInstance)
     
     upcomingInstance._ui = {
         -- these are initialized when the :Initialize() is invoked after the constructor
-        frmAreaInsideContainer    = nil,
-        hdrGrouplootSectionHeader = nil,
+        frmAreaInsideContainer      = nil,
+        hdrQuicklaunchSectionHeader = nil,
+
+        chbQuicklaunchEnabled       = nil,
     }
 
     upcomingInstance._commandsEnabled = false
@@ -35,6 +37,7 @@ Fields(function(upcomingInstance)
 
     return upcomingInstance
 end)
+
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
@@ -74,7 +77,7 @@ function Form:Initialize()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer = _pfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() --00
-        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Quicklaunch")) --       reminder   this is just a shorthand for _t:TryTranslate("foobar", "|cFF7FFFD4")
+        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Quicklaunch")) -- reminder   this is just a shorthand for _t:TryTranslate("foobar", "|cFF7FFFD4")
         :ChainSet_ParentRootTabFrameName(_t("Thirdparty"))
         :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
             self:InitializeControls_() --                         order   from the [partial]
@@ -107,8 +110,8 @@ function Form:OnRequestingCurrentUserPreferencesImpl_()
 
     local response = _eventRequestingCurrentUserPreferences:Raise(self, RequestingCurrentUserPreferencesEventArgs:New()).Response
 
-    Guard.Assert.Explained.IsNotNil(response.UserPreferences, "[ZUPF.OCUPR.010] failed to retrieve user-preferences")
-    Guard.Assert.Explained.IsInstanceOf(response.UserPreferences, UserPreferencesDto, "[ZUPF.OCUPR.020] failed to retrieve user-preferences", "ea.Response.UserPreferences")
+    Guard.Assert.Explained.IsNotNil(response.UserPreferences, "[QLUPF.OCUPR.010] failed to retrieve user-preferences")
+    Guard.Assert.Explained.IsInstanceOf(response.UserPreferences, QuicklaunchUserPreferencesDto, "[QLUPF.OCUPR.020] failed to retrieve user-preferences", "ea.Response.UserPreferences")
 
     return response.UserPreferences
 end
@@ -116,17 +119,11 @@ end
 function Form:ApplyNewUserPreferences_(newUserPreferences)
     Scopify(EScopes.Function, self)
 
-    Guard.Assert.IsInstanceOf(newUserPreferences, UserPreferencesDto, "newUserPreferences")
+    Guard.Assert.IsInstanceOf(newUserPreferences, QuicklaunchUserPreferencesDto, "newUserPreferences")
 
     _commandsEnabled = false --00
 
-    --if not _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
-    --    _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
-    --end
-    --
-    --if not _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
-    --    _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
-    --end
+    _ui.chbQuicklaunchEnabled:TrySetState(newUserPreferences:Get_IsEnabled())
 
     _commandsEnabled = true
 
