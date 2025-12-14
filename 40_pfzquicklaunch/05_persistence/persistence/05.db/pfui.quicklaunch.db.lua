@@ -41,9 +41,33 @@ function Class:UpdateDocUserPreferences(newUserPreferences)
     Guard.Assert.IsBoolean(newUserPreferences.Enabled, "newUserPreferences.Enabled")
     -- Guard.Assert.IsBoolean(newUserPreferences.IsFirstLoading, "newUserPreferences.IsFirstLoading") -- no need
 
-    local existingRawAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname] or {}
+    local isVeryFirstSave = false
+    local existingRawAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname]
+    if not Reflection.IsNilOrTable(existingRawAddonSettings) then
+        if existingRawAddonSettings ~= nil then
+            Console.Error:WriteFormatted("[PQDB.UDUP.010] The pfUI.env.C[%q] exists but is not nil or a table (it is a '%s' instead - how did this even happen?). Will auto-correct this in the db now but you should report report this incident and what you did you to cause it!", Schema.RootKeyname, Reflection.GetRawType(existingRawAddonSettings))
+        else
+            -- todo log   "[PQDB.UDUP.005] This seems to be the very first save of autoloot-user-preferences; creating new PfuiEnvConfiguration[Schema.RootKeyname]"    
+        end
+
+        isVeryFirstSave = true
+        existingRawAddonSettings = {}
+    end
 
     existingRawAddonSettings[Schema.Settings.UserPreferences.Enabled.Keyname] = newUserPreferences.Enabled
     existingRawAddonSettings[Schema.Settings.UserPreferences.IsFirstLoading.Keyname] = false -- if we are updating it is no longer the first loading
     existingRawAddonSettings[Schema.Settings.UserPreferences.CustomAssociations.Keyname] = newUserPreferences.CustomAssociations
+
+    if isVeryFirstSave then -- optimization to avoid overwriting the table-entry-pointer when it is not necessary
+        PfuiEnvConfiguration[Schema.RootKeyname] = existingRawAddonSettings
+    end
+
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.012] Updating autoloot-user-preferences in pfUI.env.C['%s'] (PfuiEnvConfiguration[Schema.RootKeyname]=%s)", Schema.RootKeyname, PfuiEnvConfiguration[Schema.RootKeyname])
+    -- 
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.015] [before] existingRawAddonSettings[%s]='%s'", Schema.Settings.UserPreferences.Enabled.Keyname, existingRawAddonSettings[Schema.Settings.UserPreferences.Enabled.Keyname])
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.016] [before] existingRawAddonSettings[%s]='%s'", Schema.Settings.UserPreferences.IsFirstLoading.Keyname, existingRawAddonSettings[Schema.Settings.UserPreferences.IsFirstLoading.Keyname])
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.016] [before] existingRawAddonSettings[%s]='%s'", Schema.Settings.UserPreferences.CustomAssociations.Keyname, existingRawAddonSettings[Schema.Settings.UserPreferences.CustomAssociations.Keyname])
+    -- 
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.017] [new settings] newUserPreferences.Enabled            = '%s'", newUserPreferences.Enabled)
+    -- Console.Out:WriteFormatted("[PQDB.UDUP.018] [new settings] newUserPreferences.CustomAssociations = '%s'", newUserPreferences.CustomAssociations)
 end
