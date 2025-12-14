@@ -6,9 +6,8 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
+local IAutolootEngineMediatorService          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.Contracts.ForAutolootEngine.IAutolootEngineMediatorService"
 local IPfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
-
-local AutolootEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -29,7 +28,8 @@ local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloo
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._t = nil    
+    upcomingInstance._t = nil
+    upcomingInstance._autolootEngineMediatorService = nil
     upcomingInstance._pfuiMainSettingsFormGuiControlsFactory = nil -- IPfuiMainSettingsFormGuiControlsFactory
     
     upcomingInstance._ui = {
@@ -49,13 +49,15 @@ end)
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Form:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
+function Form:New(pfuiMainSettingsFormGuiControlsFactory, autolootEngineMediatorService, translatorService)
     Scopify(EScopes.Function, self)
 
     local instance = self:Instantiate() --@formatter:off
 
-    instance._t                                      = Guard.Assert.IsInstanceImplementing(translationService,                     ITranslatorService,                      "translationService")    
+    instance._t                                      = Guard.Assert.IsInstanceImplementing(translatorService,                      ITranslatorService,                      "translatorService")    
+    instance._autolootEngineMediatorService          = Guard.Assert.IsInstanceImplementing(autolootEngineMediatorService,          IAutolootEngineMediatorService,          "autolootEngineMediatorService")
     instance._pfuiMainSettingsFormGuiControlsFactory = Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiControlsFactory, IPfuiMainSettingsFormGuiControlsFactory, "pfuiMainSettingsFormGuiControlsFactory")
+    
     instance._eventRequestingCurrentUserPreferences  = Event:New()
     
     instance._commandsEnabled = false --00
@@ -163,8 +165,8 @@ function Form:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
         -- todo   logging here ("[ZUPF.LGGA_MSCE010] Commands are currently disabled - ignoring selection-changed event for lddGreeniesGrouplootingAutomation_Mode (newValue='%s')", ea:GetNewValue())
         return
     end
-    
-    AutolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
+
+    _autolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
         GreeniesGrouplootingAutomationApplyNewModeCommand
         :New()
         :ChainSetOld(ea:GetOldValue())
@@ -180,7 +182,7 @@ function Form:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_
         return
     end
 
-    AutolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
+    _autolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
         GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand
         :New()
         :ChainSetOld(ea:GetOldValue())

@@ -1,4 +1,4 @@
---[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {}) --[[@formatter:on]]
+--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
 using "[healthcheck] [all]"
 
@@ -16,14 +16,14 @@ local PfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.W
 local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addons.AddonsService"
 local ComboTranslationsService       = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
-local AutolootEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
+local AutolootEngineMediatorService   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService"
 
 local UserPreferencesForm          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
-local RestartAutolootEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
+local RestartAutolootEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"  --[[@formatter:on]]
 
 Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
 
@@ -51,10 +51,11 @@ Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
     end
 
     local comboTranslationsService = ComboTranslationsService:New(ZenOwnTranslatorService:NewForActiveUILanguage(), PfuiTranslatorService:New()) -- todo   put all of these in di
+    local autolootEngineMediatorService = AutolootEngineMediatorService:New() -- todo   put this in di (probably as singleton)
     local pfuiMainSettingsFormGuiControlsFactory = PfuiMainSettingsFormGuiControlsFactory:New()
-
+    
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(pfuiMainSettingsFormGuiControlsFactory, comboTranslationsService)
+                :New(pfuiMainSettingsFormGuiControlsFactory, autolootEngineMediatorService, comboTranslationsService)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")
@@ -63,5 +64,5 @@ Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
                 end)
                 :Initialize() -- @formatter:on
 
-    AutolootEngineMediatorService:New():Handle_RestartEngineCommand(RestartAutolootEngineCommand:New())
+    autolootEngineMediatorService:Handle_RestartEngineCommand(RestartAutolootEngineCommand:New())
 end)

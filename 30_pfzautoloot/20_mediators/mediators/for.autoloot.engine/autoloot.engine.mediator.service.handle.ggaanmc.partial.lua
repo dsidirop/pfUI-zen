@@ -1,6 +1,9 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local Guard  = using "System.Guard" 
+local Guard  = using "System.Guard"
+
+local AutolootEngine         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Engine.AutolootEngine"
+local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.Service"
 
 local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
 
@@ -11,9 +14,12 @@ function Class:Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
 
     Guard.Assert.IsInstanceOf(command, GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand, "command")
 
-    _autolootEngine:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) --                      order
+    local autolootEngine = AutolootEngine.I --todo   refactor this later on so that these get injected in the command-handler through DI
+    local userPreferencesService = UserPreferencesService:NewWithDBContext()
 
-    local success = _userPreferencesService:GreeniesGrouplootingAutomation_UpdateActOnKeybind(command:GetNewValue()) --  order
+    autolootEngine:GreeniesGrouplootingAutomation_SwitchActOnKeybind(command:GetNewValue()) -- order
+
+    local success = userPreferencesService:GreeniesGrouplootingAutomation_UpdateActOnKeybind(command:GetNewValue()) --  order
     if success then
         -- todo   raise side-effect domain-events here
     end
