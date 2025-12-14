@@ -103,7 +103,7 @@ function Form:OnRequestingCurrentUserPreferences_()
 
     local newUserPreferences = self:OnRequestingCurrentUserPreferencesImpl_()
 
-    return self:ApplyNewUserPreferences_(newUserPreferences)
+    return self:ApplyNewUserPreferencesOnUIControls_(newUserPreferences)
 end
 
 function Form:OnRequestingCurrentUserPreferencesImpl_()
@@ -117,7 +117,7 @@ function Form:OnRequestingCurrentUserPreferencesImpl_()
     return response.UserPreferences
 end
 
-function Form:ApplyNewUserPreferences_(newUserPreferences)
+function Form:ApplyNewUserPreferencesOnUIControls_(newUserPreferences)
     Scopify(EScopes.Function, self)
 
     Guard.Assert.IsInstanceOf(newUserPreferences, QuicklaunchUserPreferencesDto, "newUserPreferences")
