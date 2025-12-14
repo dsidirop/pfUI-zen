@@ -55,7 +55,7 @@ function Class:BuildImpl()
     pfuiCurrentValueTable[pfuiCurrentValueKeyName] = _state -- set the initial state before building the control
 
     local nativePfuiControlFrame = PfuiGui.CreateConfig(
-        function() -- this function is called when the Checkbox is shown and only then
+        function() -- this function is called when the Checkbox changes state via user interaction
             _eventSelectionChanged:Raise(
                 self,
                 CheckboxStateChangedEventArgs:New():ChainSet_NewState(pfuiCurrentValueTable[pfuiCurrentValueKeyName])

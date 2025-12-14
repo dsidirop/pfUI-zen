@@ -3,7 +3,6 @@
 local Nils = using "System.Nils"
 local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
-local Console = using "System.Console"
 
 local UserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Settings.UserPreferences.RepositoryQueryable"
 local IUserPreferencesRepositoryQueryable = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Contracts.Settings.UserPreferences.IRepositoryQueryable"
