@@ -44,6 +44,12 @@ function Class:New(rawWoWFrame, eventTextChanged, pfuiCurrentValueTable, pfuiCur
     return newInstance
 end
 
+function Class:GetText(desiredText)
+    Scopify(EScopes.Function, self)
+
+    return _rawWoWFrame.input:GetText()
+end
+
 function Class:ChainSet_Text(desiredText)
     Scopify(EScopes.Function, self)
 
@@ -56,7 +62,7 @@ function Class:ChainSet_Text(desiredText)
     _pfuiCurrentValueTable[_pfuiCurrentValueKeyName] = desiredText -- order
     _rawWoWFrame.input:SetText(desiredText) --                        order
 
-    self:OnTextChanged_(TextboxTextChangedEventArgs:New())
+    self:OnTextChanged_(TextboxTextChangedEventArgs:New():ChainSet_NewText(desiredText))
 
     return self
 end
@@ -92,7 +98,7 @@ function Class:ChainSet_Autofocus(autofocus)
 end
 
 
-function Class:eventTextChanged_Subscribe(handler, owner)
+function Class:EventTextChanged_Subscribe(handler, owner)
     Scopify(EScopes.Function, self)
 
     _eventTextChanged:Subscribe(handler, owner)
@@ -100,7 +106,7 @@ function Class:eventTextChanged_Subscribe(handler, owner)
     return self
 end
 
-function Class:eventTextChanged_Unsubscribe(handler)
+function Class:EventTextChanged_Unsubscribe(handler)
     Scopify(EScopes.Function, self)
 
     _eventTextChanged:Unsubscribe(handler)

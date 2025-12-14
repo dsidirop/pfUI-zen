@@ -65,7 +65,7 @@ function Class:ChainSet_State(desiredState)
     return self
 end
 
-function Class:eventStateChanged_Subscribe(handler, owner)
+function Class:EventStateChanged_Subscribe(handler, owner)
     Scopify(EScopes.Function, self)
 
     _eventStateChanged:Subscribe(handler, owner)
@@ -73,7 +73,7 @@ function Class:eventStateChanged_Subscribe(handler, owner)
     return self
 end
 
-function Class:eventStateChanged_Unsubscribe(handler)
+function Class:EventStateChanged_Unsubscribe(handler)
     Scopify(EScopes.Function, self)
 
     _eventStateChanged:Unsubscribe(handler)

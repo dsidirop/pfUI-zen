@@ -4,7 +4,6 @@ local IPfuiLabeledTextboxControlBuilder = using "[declare] [interface] [blend]" 
     "IPfuiGuiBaseControlBuilder", using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.BaseBuilder.IPfuiGuiBaseControlBuilder",
 }  --[[@formatter:off]]
 
-
 function IPfuiLabeledTextboxControlBuilder:ChainSet_Text(text) end;
 function IPfuiLabeledTextboxControlBuilder:ChainSet_IsMultiLine(isMultiLine) end;
 function IPfuiLabeledTextboxControlBuilder:ChainSet_IsAutofocus(isAutofocus) end;

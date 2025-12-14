@@ -90,13 +90,17 @@ function Class:BuildImpl()
     pfuiCurrentValueTable[pfuiCurrentValueKeyName] = _text -- set the initial text before building the control
 
     local nativePfuiControlFrame = PfuiGui.CreateConfig(
-        function() -- this function is called when the textbox is shown and only then
-            _eventTextChanged:Raise(self, TextboxTextChangedEventArgs:New())
+        function() -- this function is called each time the textbox text changes
+            _eventTextChanged:Raise(self, TextboxTextChangedEventArgs:New():ChainSet_NewText(pfuiCurrentValueTable[pfuiCurrentValueKeyName]))
         end,
         _caption,
         pfuiCurrentValueTable,
         pfuiCurrentValueKeyName,
-        "text"
+        "text",
+        nil, --     event-values (ignored for textboxes)
+        false, --   skip
+        false, --   named (ignored in general)
+        "string" -- type must be set to string otherwise pfui will not even fire the text-changed-event
     )
 
     --@formatter:off
@@ -106,8 +110,8 @@ function Class:BuildImpl()
                                             pfuiCurrentValueTable,
                                             pfuiCurrentValueKeyName
                                     )
-                                    :ChainSet_IsMultiLine(_isMultiLine)
                                     :ChainSet_Autofocus(_isAutofocus)
+                                    :ChainSet_IsMultiLine(_isMultiLine)
                                     :ChainSet_JustifyHorizontally(_justifyHorizontallyMode)
     --@formatter:on
 

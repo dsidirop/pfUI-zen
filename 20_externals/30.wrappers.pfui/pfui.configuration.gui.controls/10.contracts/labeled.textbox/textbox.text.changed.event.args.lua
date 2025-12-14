@@ -6,4 +6,24 @@ local Fields = using "System.Classes.Fields"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.LabeledTextbox.TextboxTextChangedEventArgs"
 
--- nothing to add really
+Fields(function(upcomingInstance)
+    upcomingInstance._newText = nil
+
+    return upcomingInstance
+end)
+
+function Class:GetNewText()
+    Scopify(EScopes.Function, self)
+
+    return _newText
+end
+
+function Class:ChainSet_NewText(newText)
+    Scopify(EScopes.Function, self)
+
+    Guard.Assert.IsString(newText, "newText")
+
+    _newText = newText
+
+    return self
+end
