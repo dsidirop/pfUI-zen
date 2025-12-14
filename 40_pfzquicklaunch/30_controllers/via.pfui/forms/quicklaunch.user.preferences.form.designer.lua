@@ -17,7 +17,8 @@ function Form:InitializeControls_()
                                                                 :SpawnLabeledCheckboxControlBuilder()
                                                                 :ChainApply_NudgingX(17) -- nudge the caption a bit to the right
                                                                 :ChainSet_Caption(_t("Enabled"))
-                                                                :Build() --@formatter:on
+                                                                :Build()
+                                                                :EventStateChanged_Subscribe(self.chbQuicklaunchEnabled_StateChanged_, self) --@formatter:on
 
     _ui.txtQuicklaunchCustomAssociations = _pfuiMainSettingsFormGuiControlsFactory --@formatter:off
                                                                 :SpawnLabeledTextboxControlBuilder()
@@ -26,6 +27,7 @@ function Form:InitializeControls_()
                                                                 -- :ChainSet_Width(400):ChainSet_Height(400)  -- todo   fix the rendering issues ...
                                                                 :ChainSet_IsMultiLine(true)
                                                                 :ChainSet_JustifyHorizontally("LEFT")
-                                                                :Build() --@formatter:on
+                                                                :Build()
+                                                                :EventTextChanged_Subscribe(self.txtQuicklaunchCustomAssociations_TextChanged_, self) --@formatter:on
 
 end

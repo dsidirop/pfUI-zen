@@ -78,14 +78,14 @@ function Form:Initialize()
     Scopify(EScopes.Function, self)
 
     _ui.frmAreaInsideContainer = _pfuiMainSettingsFormGuiControlsFactory:SpawnNestedTabFrameWithAreaControlBuilder() --00
-        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Quicklaunch")) -- reminder   this is just a shorthand for _t:TryTranslate("foobar", "|cFF7FFFD4")
-        :ChainSet_ParentRootTabFrameName(_t("Thirdparty"))
-        :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
-            self:InitializeControls_() --                         order   from the [partial]
-            self:OnRequestingCurrentUserPreferences_() --         order
-        end)
-        :Build()
-        :GetArea()
+                                                                        :ChainSet_Caption(_t("[|cFF7FFFD4Zen|r] Quicklaunch")) -- reminder   this is just a shorthand for _t:TryTranslate("foobar", "|cFF7FFFD4")
+                                                                        :ChainSet_ParentRootTabFrameName(_t("Thirdparty"))
+                                                                        :ChainSet_AreaPopulatorWhenFirstShownFunc(function()
+        self:InitializeControls_() --                         order   from the [partial]
+        self:OnRequestingCurrentUserPreferences_() --         order
+    end)
+                                                                        :Build()
+                                                                        :GetArea()
 
     -- 00  this only gets called during a user session the very first time that the user explicitly
     --     navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
@@ -137,3 +137,30 @@ function Form:ApplyNewUserPreferencesOnUIControls_(newUserPreferences)
     --    we only want the change-events to be advertised when the user actually tweaks the user preferences by hand
 end
 
+function Form:chbQuicklaunchEnabled_StateChanged_(_, ea)
+    Scopify(EScopes.Function, self)
+
+    if not _commandsEnabled then
+        -- todo   logging here
+        return
+    end
+
+    -- todo
+    -- ZenEngineCommandHandlersService:New():Handle_QuicklaunchApplyNewEnabledStatusCommand(--todo   we should get the service through di
+    --         QuicklaunchApplyNewEnabledStateCommand:New():ChainSetEnabledStatus(ea:GetNewState())
+    -- )
+end
+
+function Form:txtQuicklaunchCustomAssociations_TextChanged_(_, ea)
+    Scopify(EScopes.Function, self)
+
+    if not _commandsEnabled then
+        -- todo   logging here
+        return
+    end
+
+    -- todo
+    -- ZenEngineCommandHandlersService:New():Handle_QuicklaunchApplyNewCustomAssociationsConfigurationCommand(--todo   we should get the service through di
+    --         QuicklaunchApplyNewEnabledStateCommand:New():ChainSetCustomAssociationsConfiguration(ea:GetNewText())
+    -- )
+end
