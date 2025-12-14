@@ -131,11 +131,17 @@ function Form:ApplyNewUserPreferencesOnUIControls_(newUserPreferences)
 
     _commandsEnabled = false --00
 
+    -- todo   logging ("[ZUPF.ANUPUOC010] Applying new user-preferences on UI controls: GreeniesGrouplootingAutomation_Mode='%s', GreeniesGrouplootingAutomation_ActOnKeybind='%s'", newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode(), newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
+
     if not _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode()) then
+        -- todo   logging here ("[ZUPF.ANUPUOC020] [WARNING] Failed to set lddGreeniesGrouplootingAutomation_Mode to value '%s' - falling back to 'RollGreed'", newUserPreferences:Get_GreeniesGrouplootingAutomation_Mode())
+
         _ui.lddGreeniesGrouplootingAutomation_Mode:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationMode.RollGreed)
     end
 
     if not _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind()) then
+        -- todo   logging here ("[ZUPF.ANUPUOC030] [WARNING] Failed to set lddGreeniesGrouplootingAutomation_ActOnKeybind to value '%s' - falling back to 'Automatic'", newUserPreferences:Get_GreeniesGrouplootingAutomation_ActOnKeybind())
+
         _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:TrySetSelectedOptionByValue(SGreeniesGrouplootingAutomationActOnKeybind.Automatic)
     end
 
@@ -154,10 +160,11 @@ function Form:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
 
     _ui.lddGreeniesGrouplootingAutomation_ActOnKeybind:ChainSet_Visibility(ea:GetNewValue() ~= SGreeniesGrouplootingAutomationMode.LetUserChoose)
     if not _commandsEnabled then
+        -- todo   logging here ("[ZUPF.LGGA_MSCE010] Commands are currently disabled - ignoring selection-changed event for lddGreeniesGrouplootingAutomation_Mode (newValue='%s')", ea:GetNewValue())
         return
     end
     
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
+    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand( --todo   we should get the service through di
         GreeniesGrouplootingAutomationApplyNewModeCommand
         :New()
         :ChainSetOld(ea:GetOldValue())
@@ -169,10 +176,11 @@ function Form:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_
     Scopify(EScopes.Function, self)
 
     if not _commandsEnabled then
+        -- todo   logging here ("[ZUPF.LGGA_AKBSCE010] Commands are currently disabled - ignoring selection-changed event for lddGreeniesGrouplootingAutomation_ActOnKeybind (newValue='%s')", ea:GetNewValue())
         return
     end
 
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
+    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand( --todo   we should get the service through di
         GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand
         :New()
         :ChainSetOld(ea:GetOldValue())
