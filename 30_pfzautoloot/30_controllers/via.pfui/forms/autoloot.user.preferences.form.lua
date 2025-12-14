@@ -8,7 +8,7 @@ local Fields = using "System.Classes.Fields"
 
 local IPfuiMainSettingsFormGuiControlsFactory = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
 
-local ZenEngineCommandHandlersService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
+local AutolootEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService"
 
 local SGreeniesGrouplootingAutomationMode         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind"
@@ -164,7 +164,7 @@ function Form:lddGreeniesGrouplootingAutomation_Mode_SelectionChanged_(_, ea)
         return
     end
     
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand( --todo   we should get the service through di
+    AutolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewModeCommand(
         GreeniesGrouplootingAutomationApplyNewModeCommand
         :New()
         :ChainSetOld(ea:GetOldValue())
@@ -180,7 +180,7 @@ function Form:lddGreeniesGrouplootingAutomation_ActOnKeybind_SelectionChanged_(_
         return
     end
 
-    ZenEngineCommandHandlersService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand( --todo   we should get the service through di
+    AutolootEngineMediatorService:New():Handle_GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand(
         GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand
         :New()
         :ChainSetOld(ea:GetOldValue())
