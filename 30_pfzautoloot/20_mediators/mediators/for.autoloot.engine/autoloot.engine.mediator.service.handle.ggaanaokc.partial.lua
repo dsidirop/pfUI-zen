@@ -5,7 +5,7 @@ local Guard   = using "System.Guard"
 local AutolootEngine         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Engine.AutolootEngine"
 local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.Service"
 
-local GreeniesGrouplootingAutomationApplyNewModeCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
+local GreeniesGrouplootingAutomationApplyNewModeCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.NewConfigForGreenies.ApplyNewModeCommand"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService [Partial]" -- @formatter:on
 

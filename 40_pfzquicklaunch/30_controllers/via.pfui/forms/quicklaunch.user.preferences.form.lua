@@ -6,10 +6,12 @@ local Event = using "System.Event"
 
 local Fields = using "System.Classes.Fields"
 
--- local QuicklaunchEngineMediatorService       = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
+local IQuicklaunchEngineMediatorService         = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.Contracts.ForQuicklaunchEngine.IQuicklaunchEngineMediatorService"
 local IPfuiMainSettingsFormGuiControlsFactory   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.Contracts.Configuration.Gui.Controls.IPfuiMainSettingsFormGuiControlsFactory"
 
 local ITranslatorService                        = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
+
+local TweakEnabledStateOnEngineCommand          = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.Contracts.Commands.EngineControl.TweakEnabledStateOnEngineCommand"
 
 local QuicklaunchUserPreferencesDto             = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Persistence.Contracts.Settings.UserPreferences.UserPreferencesDto"
 local IQuicklaunchUserPreferencesForm           = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Contracts.Forms.IQuicklaunchUserPreferencesForm"
@@ -21,7 +23,8 @@ local Form = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Quickla
 
 
 Fields(function(upcomingInstance)
-    upcomingInstance._t = nil    
+    upcomingInstance._t = nil
+    upcomingInstance._quicklaunchEngineMediatorService = nil
     upcomingInstance._pfuiMainSettingsFormGuiControlsFactory = nil -- IPfuiMainSettingsFormGuiControlsFactory
     
     upcomingInstance._ui = {
@@ -29,7 +32,7 @@ Fields(function(upcomingInstance)
         frmAreaInsideContainer       = nil,
         hdrQuicklaunchSectionHeader  = nil,
 
-        chbQuicklaunchEnabled        = nil,
+        chbQuicklaunchEnabled            = nil,
         txtQuicklaunchCustomAssociations = nil,
     }
 
@@ -42,13 +45,15 @@ end)
 
 -- this only gets called once during a user session the very first time that the user explicitly
 -- navigates to the "thirdparty" section and clicks on the "zen" tab   otherwise it never gets called
-function Form:New(pfuiMainSettingsFormGuiControlsFactory, translationService)
+function Form:New(pfuiMainSettingsFormGuiControlsFactory, quicklaunchEngineMediatorService, translatorService)
     Scopify(EScopes.Function, self)
 
     local instance = self:Instantiate() --@formatter:off
 
-    instance._t                                      = Guard.Assert.IsInstanceImplementing(translationService,                     ITranslatorService,                      "translationService")    
+    instance._t                                      = Guard.Assert.IsInstanceImplementing(translatorService,                      ITranslatorService,                      "translatorService")
+    instance._quicklaunchEngineMediatorService       = Guard.Assert.IsInstanceImplementing(quicklaunchEngineMediatorService,       IQuicklaunchEngineMediatorService,       "quicklaunchEngineMediatorService")
     instance._pfuiMainSettingsFormGuiControlsFactory = Guard.Assert.IsInstanceImplementing(pfuiMainSettingsFormGuiControlsFactory, IPfuiMainSettingsFormGuiControlsFactory, "pfuiMainSettingsFormGuiControlsFactory")
+
     instance._eventRequestingCurrentUserPreferences  = Event:New()
     
     instance._commandsEnabled = false --00
@@ -145,10 +150,9 @@ function Form:chbQuicklaunchEnabled_StateChanged_(_, ea)
         return
     end
 
-    -- todo
-    -- ZenEngineCommandHandlersService:New():Handle_QuicklaunchApplyNewEnabledStatusCommand(--todo   we should get the service through di
-    --         QuicklaunchApplyNewEnabledStateCommand:New():ChainSetEnabledStatus(ea:GetNewState())
-    -- )
+    _quicklaunchEngineMediatorService:Handle_TweakEnabledStateOnEngineCommand(
+            TweakEnabledStateOnEngineCommand:New():ChainSet_DesiredNewState(ea:GetNewState())
+    )
 end
 
 function Form:txtQuicklaunchCustomAssociations_TextChanged_(_, ea)
@@ -159,8 +163,7 @@ function Form:txtQuicklaunchCustomAssociations_TextChanged_(_, ea)
         return
     end
 
-    -- todo
-    -- ZenEngineCommandHandlersService:New():Handle_QuicklaunchApplyNewCustomAssociationsConfigurationCommand(--todo   we should get the service through di
-    --         QuicklaunchApplyNewEnabledStateCommand:New():ChainSetCustomAssociationsConfiguration(ea:GetNewText())
+    -- _quicklaunchEngineMediatorService:Handle_QuicklaunchApplyNewCustomAssociationsConfigurationCommand(
+    --      QuicklaunchApplyNewEnabledStateCommand:New():ChainSet_CustomAssociationsString(ea:GetNewText())
     -- )
 end

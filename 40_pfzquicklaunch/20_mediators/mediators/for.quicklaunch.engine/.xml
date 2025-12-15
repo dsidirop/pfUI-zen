@@ -1,0 +1,10 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
+    
+    <!-- order -->
+    <Include file="quicklaunch.engine.mediator.service.handle.reiac.partial.lua"/>
+    <Include file="quicklaunch.engine.mediator.service.handle.sncac.partial.lua"/>
+    <Include file="quicklaunch.engine.mediator.service.handle.tesoec.partial.lua"/>
+
+    <Include file="quicklaunch.engine.mediator.service.lua"/>
+
+</Ui>

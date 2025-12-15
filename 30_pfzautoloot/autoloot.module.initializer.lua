@@ -22,8 +22,8 @@ local UserPreferencesQueryableService = using "Pavilion.Warcraft.Addons.PfuiZen.
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService"
 
-local UserPreferencesForm          = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
-local RestartAutolootEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"  --[[@formatter:on]]
+local UserPreferencesForm                      = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Forms.AutolootUserPreferencesForm"
+local RestartAutolootEngineIfApplicableCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.EngineControl.RestartEngineIfApplicableCommand"  --[[@formatter:on]]
 
 Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
 
@@ -64,5 +64,5 @@ Pfui:RegisterModule("ZenAutoloot", "vanilla:tbc", function()
                 end)
                 :Initialize() -- @formatter:on
 
-    autolootEngineMediatorService:Handle_RestartEngineCommand(RestartAutolootEngineCommand:New())
+    autolootEngineMediatorService:Handle_RestartEngineIfApplicableCommand(RestartAutolootEngineIfApplicableCommand:New())
 end)

@@ -5,7 +5,7 @@ local Guard = using "System.Guard"
 local Fields = using "System.Classes.Fields"
 local SGreeniesGrouplootingAutomationMode = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationMode"
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.NewConfigForGreenies.ApplyNewModeCommand"
 
 Fields(function(upcomingInstance)
     upcomingInstance._old = nil

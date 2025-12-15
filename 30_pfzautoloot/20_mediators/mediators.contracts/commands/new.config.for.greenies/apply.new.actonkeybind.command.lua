@@ -6,7 +6,7 @@ local Fields  = using "System.Classes.Fields"
 
 local SGreeniesGrouplootingAutomationActOnKeybind = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Foundation.Contracts.Strenums.SGreeniesGrouplootingAutomationActOnKeybind" --@formatter:on
 
-local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand"
+local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.NewConfigForGreenies.ApplyNewActOnKeybindCommand"
 
 Fields(function(upcomingInstance)
     upcomingInstance._old = nil

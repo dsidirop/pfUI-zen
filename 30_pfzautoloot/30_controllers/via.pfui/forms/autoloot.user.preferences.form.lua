@@ -17,8 +17,8 @@ local UserPreferencesDto                                        = using "Pavilio
 local ITranslatorService                                        = using "Pavilion.Warcraft.Foundation.Contracts.Internationalization.Contracts.ITranslatorService"
 
 local RequestingCurrentUserPreferencesEventArgs                 = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.Events.RequestingCurrentUserPreferencesEventArgs"
-local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewModeCommand"
-local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.GreeniesGrouplootingAutomation.ApplyNewActOnKeybindCommand" -- @formatter:on
+local GreeniesGrouplootingAutomationApplyNewModeCommand         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.NewConfigForGreenies.ApplyNewModeCommand"
+local GreeniesGrouplootingAutomationApplyNewActOnKeybindCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.NewConfigForGreenies.ApplyNewActOnKeybindCommand" -- @formatter:on
 
 local IAutolootUserPreferencesForm = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.ViaPfui.Contracts.Forms.IAutolootUserPreferencesForm"
 

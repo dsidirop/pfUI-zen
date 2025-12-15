@@ -1,4 +1,6 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/   ../../../../Ui.xsd">
-    <Include file="engine.control\.xml"/>
-    <Include file="new.config.for.greenies\.xml"/>
+    <Include file="quicklauncher\.xml"/>
+
+    <Include file="quicklaunch.engine.settings.lua"/>
+    <Include file="i.quicklaunch.engine.lua"/>
 </Ui>

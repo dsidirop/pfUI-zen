@@ -53,7 +53,7 @@ function Class:UpdateDocUserPreferences(newUserPreferences)
 
     local isVeryFirstSave = false
     local existingRawAddonSettings = PfuiEnvConfiguration[Schema.RootKeyname]
-    if not Reflection.IsNilOrTable(existingRawAddonSettings) then
+    if Reflection.IsNilOrTable(existingRawAddonSettings) then
         if existingRawAddonSettings ~= nil then
             Console.Error:WriteFormatted("[PADB.UDUP.010] The pfUI.env.C[%q] exists but is not nil or a table (it is a '%s' instead - how did this even happen?). Will auto-correct this in the db now but you should report report this incident and what you did you to cause it!", Schema.RootKeyname, Reflection.GetRawType(existingRawAddonSettings))
         else

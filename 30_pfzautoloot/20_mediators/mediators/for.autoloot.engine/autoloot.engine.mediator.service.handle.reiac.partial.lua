@@ -6,14 +6,14 @@ local AutolootEngine         = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.
 local UserPreferencesService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Persistence.Services.AddonSettings.UserPreferences.Service"
 local AutolootEngineSettings = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Domain.Contracts.Engine.AutolootEngineSettings"
 
-local RestartEngineCommand   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.AutolootEngine.RestartEngineCommand"
+local RestartEngineIfApplicableCommand   = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Controllers.Contracts.Commands.EngineControl.RestartEngineIfApplicableCommand"
 
 local Class = using "[declare]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService [Partial]" -- @formatter:on
 
-function Class:Handle_RestartEngineCommand(command)
+function Class:Handle_RestartEngineIfApplicableCommand(command)
     Scopify(EScopes.Function, self)
     
-    Guard.Assert.IsInstanceOf(command, RestartEngineCommand, "command")
+    Guard.Assert.IsInstanceOf(command, RestartEngineIfApplicableCommand, "command")
 
     local autolootEngine = AutolootEngine.I --todo   refactor this later on so that these get injected in the command-handler through DI
     local userPreferencesService = UserPreferencesService:NewWithDBContext()

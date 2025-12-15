@@ -1,9 +1,9 @@
 ﻿--[[@formatter:off]] local using = assert((_G or getfenv(0) or {})["ZENSHARP:USING"]); local Scopify = using "System.Scopify"; local EScopes = using "System.EScopes"; Scopify(EScopes.Function, {})
 
-local IAutolootEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.Contracts.ForAutolootEngine.IAutolootEngineMediatorService"
+local IQuicklaunchEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.Contracts.ForQuicklaunchEngine.IQuicklaunchEngineMediatorService"
 
-local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Autoloot.Mediators.ForAutolootEngine.AutolootEngineMediatorService" { -- @formatter:on
-    "IAutolootEngineMediatorService", IAutolootEngineMediatorService
+local Class = using "[declare] [blend]" "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService" { -- @formatter:on
+    "IQuicklaunchEngineMediatorService", IQuicklaunchEngineMediatorService
 }
 
 function Class:New()
@@ -13,4 +13,3 @@ function Class:New()
     
     return self:Instantiate()
 end
-

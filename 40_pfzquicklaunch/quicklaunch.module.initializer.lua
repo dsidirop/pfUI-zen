@@ -17,13 +17,13 @@ local AddonsService                  = using "Pavilion.Warcraft.Foundation.Addon
 local ComboTranslationsService       = using "Pavilion.Warcraft.Foundation.Internationalization.ComboTranslationsService"
 
 local UserPreferencesQueryableService  = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Persistence.Services.AddonSettings.UserPreferences.QueryableService"
--- local QuicklaunchEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
+local QuicklaunchEngineMediatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Mediators.ForQuicklaunchEngine.QuicklaunchEngineMediatorService"
 
 local PfuiTranslatorService   = using "Pavilion.Warcraft.Addons.Wrappers.Pfui.PfuiTranslatorService"
 local ZenOwnTranslatorService = using "Pavilion.Warcraft.Addons.PfuiZen.Foundation.Internationalization.OwnTranslatorService"
 
-local UserPreferencesForm             = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Forms.QuicklaunchUserPreferencesForm"
--- local RestartQuicklaunchEngineCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.Contracts.Commands.QuicklaunchEngine.RestartEngineCommand"
+local UserPreferencesForm              = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.ViaPfui.Forms.QuicklaunchUserPreferencesForm"
+local RestartEngineIfApplicableCommand = using "Pavilion.Warcraft.Addons.PfuiZen.Quicklaunch.Controllers.Contracts.Commands.EngineControl.RestartEngineIfApplicableCommand"
 
 Pfui:RegisterModule("ZenQuicklaunch", "vanilla:tbc", function()
 
@@ -51,10 +51,11 @@ Pfui:RegisterModule("ZenQuicklaunch", "vanilla:tbc", function()
     end
 
     local comboTranslationsService = ComboTranslationsService:New(ZenOwnTranslatorService:NewForActiveUILanguage(), PfuiTranslatorService:New()) -- todo   put all of these in di
+    local quicklaunchEngineMediatorService = QuicklaunchEngineMediatorService:New() -- todo   put this in di (probably as singleton)
     local pfuiMainSettingsFormGuiControlsFactory = PfuiMainSettingsFormGuiControlsFactory:New()
 
     UserPreferencesForm -- @formatter:off   todo  consolidate this into the gui-service
-                :New(pfuiMainSettingsFormGuiControlsFactory, comboTranslationsService)
+                :New(pfuiMainSettingsFormGuiControlsFactory, quicklaunchEngineMediatorService, comboTranslationsService)
                 :EventRequestingCurrentUserPreferences_Subscribe(function(_, ea_)
                     Guard.Assert.IsNotNil(ea_, "ea")
                     Guard.Assert.IsNotNil(ea_.Response, "ea.Response")
@@ -63,5 +64,5 @@ Pfui:RegisterModule("ZenQuicklaunch", "vanilla:tbc", function()
                 end)
                 :Initialize() -- @formatter:on
 
-    -- QuicklaunchEngineMediatorService:New():Handle_RestartEngineCommand(RestartQuicklaunchEngineCommand:New())
+    quicklaunchEngineMediatorService:Handle_RestartEngineIfApplicableCommand(RestartEngineIfApplicableCommand:New())
 end)
